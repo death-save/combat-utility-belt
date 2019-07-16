@@ -1,0 +1,10 @@
+{
+  "name": "boiler-plate",
+  "title": "Boiler Plate",
+  "description": "This is a description",
+  "version": "0.1",
+  "author": "You",
+  "scripts": ["basic.js"],
+  "styles" : [],
+  "packs": []
+}
