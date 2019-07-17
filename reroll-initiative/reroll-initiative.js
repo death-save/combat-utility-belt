@@ -10,7 +10,7 @@ class RerollInitiative {
         this.postUpdateCombatHook();
     }
 
-    postUpdateHook() {
+    postUpdateCombatHook() {
         Hooks.on("updateCombat", (update,combat) =>  {
             console.log("postupdate:\n",combat);
             console.log(roundChanged);
