@@ -76,12 +76,21 @@ const conditionMapping = {
  */
  class EnhancedConditions {
      constructor(){
-         this.postTokenUpdateHook;
+         this.preTokenUpdateHook();
+         //this.postTokenUpdateHook;
      }
 
      /**
       * @todo hook on token update when status icon is selected. need to find the right hook!
       */
+     preTokenUpdateHook(){
+         Hooks.on("preUpdateToken",(id,updateData) => {
+             console.log(id,updateData);
+             this.lookupConditionMapping(updateData.effects);
+         })
+     }
+
+
      postTokenUpdateHook(){
          Hooks.on("updateToken", (update,token) => {
             //if the update was a status icon selection -> run lookupConditionMapping
@@ -99,16 +108,20 @@ const conditionMapping = {
       * @todo take a collection of icons in case we use this elsewhere
       */
      async lookupConditionMapping(icons){
+         let conditions = [];
          //iterate through incoming icons and check the conditionMap for the corresponding entry
          for (var icon of icons){
-             if(this.conditionMap.hasKey(icon)){
-                condition = this.conditionMap.get(icon);
+             
+             if(conditionMapping.hasOwnProperty(icon)){
+                
+                let condition = conditionMapping.icon;
+                console.log(condtion);
                 conditions+= condition;
              }
             
             
          }
-         
+         console.log(conditions);
         return conditions;
      }
 
@@ -155,3 +168,5 @@ const conditionMapping = {
       }
 
  }
+
+ let ec = new EnhancedConditions;
