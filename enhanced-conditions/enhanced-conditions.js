@@ -45,7 +45,7 @@ const conditionMapping = {
 
     "icons/svg/radiation.svg":"",
     "icons/svg/biohazard.svg":"",
-    "icons/svg/poison.svg":"",
+    "icons/svg/poison.svg":"poisoned",
     "icons/svg/hazard.svg":"",
 
     "icons/svg/pill.svg":"",
@@ -83,14 +83,16 @@ const conditionMapping = {
      /**
       * @todo hook on token update when status icon is selected. need to find the right hook!
       */
+     
      preTokenUpdateHook(){
          Hooks.on("preUpdateToken",(id,updateData) => {
              console.log(id,updateData);
+             console.log(updateData.effects);
              this.lookupConditionMapping(updateData.effects);
          })
      }
-
-
+     
+     /*
      postTokenUpdateHook(){
          Hooks.on("updateToken", (update,token) => {
             //if the update was a status icon selection -> run lookupConditionMapping
@@ -102,6 +104,8 @@ const conditionMapping = {
             
          });
      }
+     */
+
 
      /**
       * @todo check icon <-> condition mapping table? or journal? and if matches, call condition journal entry lookup
@@ -109,38 +113,51 @@ const conditionMapping = {
       */
      async lookupConditionMapping(icons){
          let conditions = [];
+         console.log(conditionMapping);
+
          //iterate through incoming icons and check the conditionMap for the corresponding entry
          for (var icon of icons){
-             
+             console.log(icon);
              if(conditionMapping.hasOwnProperty(icon)){
-                
-                let condition = conditionMapping.icon;
-                console.log(condtion);
-                conditions+= condition;
+                //using bracket notation due to special characters in object properties
+                let condition = conditionMapping[icon];
+                console.log(condition);
+                conditions.push(condition);
              }
             
             
          }
          console.log(conditions);
-        return conditions;
+         this.lookupConditionEntry(conditions);
+        //return conditions;
      }
 
       /**
        * @todo lookup condition journal/compendium entry and display in chat. Should use a config setting to determine if chat display is necessary
        */
      async lookupConditionEntry(conditions){
+        let journalEntries = [];
         for (var condition of conditions){
-            if(!isBlank(condition)){
+            if(condition){
+                let re = new RegExp(condition,'i');
                 //retrieve the journal entry and hold it in a obj var
+                let journalEntry = await game.journal.entities.find(j => j.name.match(re));
+                console.log(journalEntry);
+                journalEntries.push(journalEntry);
             }
         }
-        return jounalEntries
+        console.log(journalEntries);
+        return journalEntries;
+        
       }
       /**
        * @todo if flag is set: output condition text to chat -- i think this has to be async
        */
       async conditionChatOutput (conditions){
         //iterate through the journal entries and output to chat
+        for (let c of conditions){
+            
+        }
       }
     
  }
