@@ -1,7 +1,7 @@
 /**
  * @name "Enhanced Conditions"
  * @author "Evan Clarke (errational)"
- * @description "Links token status icons to conditions stored in journal entries and displays them in chat"
+ * @description "Links token status icons to conditions stored in journal entries and displays them in chat. Concept stolen from Robin Kuiper's StatusInfo script for Roll20 (https://github.com/Roll20/roll20-api-scripts/tree/master/StatusInfo)"
  * @todo 
  */
 
@@ -76,14 +76,16 @@ const conditionMapping = {
  */
  class EnhancedConditions {
      constructor(){
-         this.preTokenUpdateHook();
-         //this.postTokenUpdateHook;
+         //this.preTokenUpdateHook();
+         this.postTokenUpdateHook();
      }
 
+     tokenData = {};
      /**
       * @todo hook on token update when status icon is selected. need to find the right hook!
       */
      
+    /*
      preTokenUpdateHook(){
          Hooks.on("preUpdateToken",(id,updateData) => {
              console.log(id,updateData);
@@ -91,20 +93,30 @@ const conditionMapping = {
              this.lookupConditionMapping(updateData.effects);
          })
      }
+     */
      
-     /*
      postTokenUpdateHook(){
-         Hooks.on("updateToken", (update,token) => {
+         Hooks.on("updateToken", (update,id) => {
+            console.log(update,id);
+            let effects = update.data.effects;
+            //this.token.user = update.data.user;
+            
+            this.tokenData = update.data;
+            this.tokenData.id = id;
+            
             //if the update was a status icon selection -> run lookupConditionMapping
-            for(var effect of update.data.effects){
-                if(!isBlank(effect)){
-
+            this.lookupConditionMapping(effects)
+            /* not really necessary to loop through the effects, better to just pass them all over and let the mapper handle it
+            for(let effect of update.data.effects){
+                if(effect){
+                    console.log(effect);
+                    this.lookupConditionMapping(effect)
                 }
             }
-            
+            */
          });
      }
-     */
+     
 
 
      /**
@@ -116,26 +128,25 @@ const conditionMapping = {
          console.log(conditionMapping);
 
          //iterate through incoming icons and check the conditionMap for the corresponding entry
-         for (var icon of icons){
-             console.log(icon);
+         for (let icon of icons){
+             //console.log(icon);
              if(conditionMapping.hasOwnProperty(icon)){
                 //using bracket notation due to special characters in object properties
                 let condition = conditionMapping[icon];
-                console.log(condition);
+                //console.log(condition);
                 conditions.push(condition);
              }
-            
-            
+             
          }
          console.log(conditions);
-         this.lookupConditionEntry(conditions);
+         return this.lookupConditionJournalEntries(conditions);
         //return conditions;
      }
 
       /**
        * @todo lookup condition journal/compendium entry and display in chat. Should use a config setting to determine if chat display is necessary
        */
-     async lookupConditionEntry(conditions){
+     async lookupConditionJournalEntries(conditions){
         let journalEntries = [];
         for (var condition of conditions){
             if(condition){
@@ -147,18 +158,41 @@ const conditionMapping = {
             }
         }
         console.log(journalEntries);
-        return journalEntries;
+        return this.outputChatMessage(journalEntries);
+        //return journalEntries;
         
       }
       /**
        * @todo if flag is set: output condition text to chat -- i think this has to be async
        */
-      async conditionChatOutput (conditions){
+      async outputChatMessage (entries){
+        let chatUser = game.userId;
+        let tokenId = this.tokenData.id;
+        let actorId = this.tokenData.actorId;
+
+        console.log("current token",this.tokenData);
+        console.log("actor id",this.tokenData.actorId);
+        console.log("token id",this.tokenData.id);
+
+        let tokenSpeaker = ChatMessage.getSpeaker({actor:actorId,token:tokenId});
+        //console.log(this.token.name);
+        //let chatMessages = [];
         //iterate through the journal entries and output to chat
-        for (let c of conditions){
+        for (let e of entries){
+            //let journalLink = "@JournalEntry["+e.name+"]";
+            let journalLink = e.name;
+            
+            await ChatMessage.create({
+                speaker:tokenSpeaker,
+                content:journalLink,
+                user:chatUser});
             
         }
       }
+
+      /**
+       * @todo need a function for returning the condition mapping?
+       */
     
  }
 
