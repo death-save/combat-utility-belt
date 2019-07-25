@@ -79,8 +79,9 @@ const conditionMapping = {
          //this.preTokenUpdateHook();
          this.postTokenUpdateHook();
      }
+     //Holds the tokenActor for use in lookups
+     tokenActor = {};
 
-     tokenData = {};
      /**
       * @todo hook on token update when status icon is selected. need to find the right hook!
       */
@@ -94,15 +95,25 @@ const conditionMapping = {
          })
      }
      */
-     
+     async lookupTokenActor(id){
+        let actor = {};
+        if(id){
+            actor = await game.actors.entities.find(a => a.id === id);
+        }
+        console.log("found actor: ",actor)
+        return this.tokenActor = actor;
+     }
+
      postTokenUpdateHook(){
          Hooks.on("updateToken", (update,id) => {
             console.log(update,id);
             let effects = update.data.effects;
+            let actorId = update.actor.data.id;
             //this.token.user = update.data.user;
             
-            this.tokenData = update.data;
-            this.tokenData.id = id;
+            this.lookupTokenActor(actorId);
+            //this.tokenData = update.data;
+            //this.tokenData.id = id;
             
             //if the update was a status icon selection -> run lookupConditionMapping
             this.lookupConditionMapping(effects)
@@ -167,14 +178,22 @@ const conditionMapping = {
        */
       async outputChatMessage (entries){
         let chatUser = game.userId;
-        let tokenId = this.tokenData.id;
-        let actorId = this.tokenData.actorId;
+        //let token = this.token;
+        let actor = this.tokenActor;
+        let tokenSpeaker = {};
 
-        console.log("current token",this.tokenData);
-        console.log("actor id",this.tokenData.actorId);
-        console.log("token id",this.tokenData.id);
-
-        let tokenSpeaker = ChatMessage.getSpeaker({actor:actorId,token:tokenId});
+        console.log("current token",actor);
+        //console.log("actor id",this.tokenData.actorId);
+        //console.log("token id",this.tokenData.id);
+        
+        if(actor){
+            tokenSpeaker = ChatMessage.getSpeaker({"actor":actor});
+        }
+        else {
+            tokenSpeaker = ChatMessage.getSpeaker({"token":token});
+        }
+        
+        //let tokenSpeaker =ChatMessage.getSpeaker({actor:actorId,token:tokenId});
         //console.log(this.token.name);
         //let chatMessages = [];
         //iterate through the journal entries and output to chat
