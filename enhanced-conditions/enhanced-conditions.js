@@ -1,9 +1,12 @@
 /**
  * @name Enhanced Conditions
- * @version 0.0.1
+ * @version 0.1
  * @author Evan Clarke (errational)
  * @description "Links token status icons to conditions stored in journal entries and displays them in chat. Concept stolen from Robin Kuiper's StatusInfo script for Roll20 (https://github.com/Roll20/roll20-api-scripts/tree/master/StatusInfo)"
- * @todo 
+ * @todo 1. clickable links in chat to condition description
+ * @todo 2. condition icons in chat
+ * @todo 3. config gui
+ * @todo 4. conditions added to actor sheet
  */
 
 /**
@@ -196,7 +199,7 @@ const conditionMapping = {
         for (let e of entries){
             //let journalLink = "@JournalEntry["+e.name+"]";
             let journalLink = e.name;
-            
+            //need to figure out best way to break out entries -- newline is being turned into space
             chatContent.push("\n"+journalLink);
 
                
