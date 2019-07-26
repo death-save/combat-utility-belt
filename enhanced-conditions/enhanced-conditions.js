@@ -107,7 +107,7 @@ const conditionMapping = {
      postTokenUpdateHook(){
          Hooks.on("updateToken", (token,sceneId,update) => {
             console.log(token,sceneId,update);
-            let effects = update.data.effects;
+            let effects = update.effects;
             
             //If the update has effects in it, lookup mapping and set the current token
             if(effects){
@@ -174,35 +174,37 @@ const conditionMapping = {
        */
       async outputChatMessage (entries){
         let chatUser = game.userId;
-        //let token = this.token;
-        let actor = this.tokenActor;
+        let token = this.currentToken;
+        let actor = await this.lookupTokenActor(token.actor.id);
         let tokenSpeaker = {};
+        let chatContent = [];
 
-        console.log("current token",actor);
-        //console.log("actor id",this.tokenData.actorId);
+        console.log("current token",token);
+        console.log("current actor",actor);
         //console.log("token id",this.tokenData.id);
         
         if(actor){
+            console.log("Speaker is an actor:",actor);
             tokenSpeaker = ChatMessage.getSpeaker({"actor":actor});
         }
         else {
+            console.log("Speaker is a token:",token);
             tokenSpeaker = ChatMessage.getSpeaker({"token":token});
         }
         
-        //let tokenSpeaker =ChatMessage.getSpeaker({actor:actorId,token:tokenId});
-        //console.log(this.token.name);
-        //let chatMessages = [];
         //iterate through the journal entries and output to chat
         for (let e of entries){
             //let journalLink = "@JournalEntry["+e.name+"]";
             let journalLink = e.name;
             
-            await ChatMessage.create({
-                speaker:tokenSpeaker,
-                content:journalLink,
-                user:chatUser});
-            
+            chatContent.push("\n"+journalLink);
+
+               
         }
+        await ChatMessage.create({
+            speaker:tokenSpeaker,
+            content:chatContent,
+            user:chatUser});
       }
 
       /**
