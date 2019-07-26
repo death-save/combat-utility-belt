@@ -1,31 +1,44 @@
 /**
- * @name "Enhanced Conditions"
- * @author "Evan Clarke (errational)"
+ * @name Enhanced Conditions
+ * @version 0.0.1
+ * @author Evan Clarke (errational)
  * @description "Links token status icons to conditions stored in journal entries and displays them in chat. Concept stolen from Robin Kuiper's StatusInfo script for Roll20 (https://github.com/Roll20/roll20-api-scripts/tree/master/StatusInfo)"
  * @todo 
  */
 
 /**
- * set global variables
+ * --------------------
+ * Set module variables
+ * --------------------
  */
 
 /**
- * @todo set a path to the status icons -- it could be the existing FVTT path or a custom set -- needs to be settable using config
+ * @description defines the path to the status icons
+ * @todo it could be the existing FVTT path or a custom set -- needs to be settable using config
  */
-let CONFIG_ICON_PATH = '/icons/';
+let EC_CONFIG_iconPath = '/icons/';
+
+/**
+ * @description Defines whether the conditions are stored in the world's journal or a compendium
+ * @todo allow user to define value via config gui
+ */
+let EC_CONFIG_folderType = 'journal';
 
  /**
-  * @todo set the name of the journal folder? / compendium? that contains the conditions -- needs to be settable using config
+  * @description name of the journal/compendium folder that contains the conditions
+  * @todo allow user to define value via config gui
   */
-let CONFIG_PACK_NAME = 'conditions-5e';
+let EC_CONFIG_folderName = 'conditions';
 
 /**
- * @todo set flag for whether conditions are output to chat when selected - default to true?
+ * @description flag for whether conditions are output to chat when selected
+ * @todo allow user to define value via config gui
  */
-let CONFIG_OUTPUT_CHAT = Boolean(true);
+let EC_CONFIG_outputChat = Boolean(true);
 
 /**
- * Manually define the mapping for now
+ * @description Mapping of status icons to condition
+ * @todo allow user definable mapping via config gui
  */
 const conditionMapping = {
     "icons/svg/skull.svg":"",
@@ -70,31 +83,29 @@ const conditionMapping = {
 
 /**
  * @name class EnhancedConditions
- * @description "class to perform the main module functions"
+ * @description class to perform the main module functions
+ * @author Evan Clarke <errational>
  * @todo set condition in reverse (select token then select condition name)
  * @todo set timeframe for condition and track via combat hook
  */
  class EnhancedConditions {
      constructor(){
-         //this.preTokenUpdateHook();
          this.postTokenUpdateHook();
      }
-     //Holds the tokenActor for use in lookups
-     tokenActor = {};
 
      /**
-      * @todo hook on token update when status icon is selected. need to find the right hook!
+      * @name currentToken
+      * @type {Token}
+      * @description holds the token for use elsewhere in the class
       */
-     
-    /*
-     preTokenUpdateHook(){
-         Hooks.on("preUpdateToken",(id,updateData) => {
-             console.log(id,updateData);
-             console.log(updateData.effects);
-             this.lookupConditionMapping(updateData.effects);
-         })
-     }
-     */
+     currentToken = {};
+
+     /**
+      * @name lookupTokenActor
+      * @description looks up the corresponding actor entity for the token
+      * @param {String} id 
+      * @returns {Actor} actor
+      */
      async lookupTokenActor(id){
         let actor = {};
         if(id){
@@ -104,27 +115,20 @@ const conditionMapping = {
         return this.tokenActor = actor;
      }
 
+    /**
+     * @name postTokenUpdateHook
+     * @description hooks on token updates. If the update includes effects, calls the lookups
+     */
      postTokenUpdateHook(){
-         Hooks.on("updateToken", (update,id) => {
-            console.log(update,id);
+         Hooks.on("updateToken", (token,sceneId,update) => {
+            console.log(token,sceneId,update);
             let effects = update.data.effects;
             let actorId = update.actor.data.id;
-            //this.token.user = update.data.user;
             
-            this.lookupTokenActor(actorId);
-            //this.tokenData = update.data;
-            //this.tokenData.id = id;
-            
-            //if the update was a status icon selection -> run lookupConditionMapping
-            this.lookupConditionMapping(effects)
-            /* not really necessary to loop through the effects, better to just pass them all over and let the mapper handle it
-            for(let effect of update.data.effects){
-                if(effect){
-                    console.log(effect);
-                    this.lookupConditionMapping(effect)
-                }
+            if(effects){
+                return this.lookupConditionMapping(effects);
             }
-            */
+            return;
          });
      }
      
@@ -134,7 +138,7 @@ const conditionMapping = {
       * @todo check icon <-> condition mapping table? or journal? and if matches, call condition journal entry lookup
       * @todo take a collection of icons in case we use this elsewhere
       */
-     async lookupConditionMapping(icons){
+     async lookupConditionMapping(effects){
          let conditions = [];
          console.log(conditionMapping);
 
