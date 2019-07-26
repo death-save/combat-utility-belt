@@ -95,27 +95,12 @@ const conditionMapping = {
 
      /**
       * @name currentToken
-      * @type {Token}
+      * @type Object {Token}
       * @description holds the token for use elsewhere in the class
       */
      currentToken = {};
 
      /**
-      * @name lookupTokenActor
-      * @description looks up the corresponding actor entity for the token
-      * @param {String} id 
-      * @returns {Actor} actor
-      */
-     async lookupTokenActor(id){
-        let actor = {};
-        if(id){
-            actor = await game.actors.entities.find(a => a.id === id);
-        }
-        console.log("found actor: ",actor)
-        return this.tokenActor = actor;
-     }
-
-    /**
      * @name postTokenUpdateHook
      * @description hooks on token updates. If the update includes effects, calls the lookups
      */
@@ -123,9 +108,10 @@ const conditionMapping = {
          Hooks.on("updateToken", (token,sceneId,update) => {
             console.log(token,sceneId,update);
             let effects = update.data.effects;
-            let actorId = update.actor.data.id;
             
+            //If the update has effects in it, lookup mapping and set the current token
             if(effects){
+                this.currentToken = token;
                 return this.lookupConditionMapping(effects);
             }
             return;
@@ -135,48 +121,54 @@ const conditionMapping = {
 
 
      /**
-      * @todo check icon <-> condition mapping table? or journal? and if matches, call condition journal entry lookup
-      * @todo take a collection of icons in case we use this elsewhere
+      * @name lookupConditionMapping
+      * @description check icon <-> condition mapping and call condition journal entry lookup against matches
+      * @todo 
+      * @parameter {Object} effects
       */
      async lookupConditionMapping(effects){
          let conditions = [];
-         console.log(conditionMapping);
+         //console.log(conditionMapping);
 
          //iterate through incoming icons and check the conditionMap for the corresponding entry
-         for (let icon of icons){
+         for (let e of effects){
              //console.log(icon);
-             if(conditionMapping.hasOwnProperty(icon)){
+             if(conditionMapping.hasOwnProperty(e)){
                 //using bracket notation due to special characters in object properties
-                let condition = conditionMapping[icon];
+                let condition = conditionMapping[e];
                 //console.log(condition);
                 conditions.push(condition);
              }
              
          }
          console.log(conditions);
-         return this.lookupConditionJournalEntries(conditions);
-        //return conditions;
+         return this.lookupConditionEntries(conditions);
      }
 
       /**
-       * @todo lookup condition journal/compendium entry and display in chat. Should use a config setting to determine if chat display is necessary
+       * @name lookupConditionEntries
+       * @description lookup condition journal/compendium entry and call chat output if option set
+       * @todo rebuild to allow switching between journal/compendium lookup
        */
-     async lookupConditionJournalEntries(conditions){
-        let journalEntries = [];
+     async lookupConditionEntries(conditions){
+        let conditionEntries = [];
+
         for (var condition of conditions){
             if(condition){
                 let re = new RegExp(condition,'i');
-                //retrieve the journal entry and hold it in a obj var
-                let journalEntry = await game.journal.entities.find(j => j.name.match(re));
-                console.log(journalEntry);
-                journalEntries.push(journalEntry);
+                let ce = await game.journal.entities.find(j => j.name.match(re));
+                console.log(ce);
+                conditionEntries.push(ce);
             }
         }
-        console.log(journalEntries);
-        return this.outputChatMessage(journalEntries);
-        //return journalEntries;
-        
+
+        console.log(conditionEntries);
+        if(EC_CONFIG_outputChat){
+            return this.outputChatMessage(conditionEntries);
+        }
+        return;        
       }
+
       /**
        * @todo if flag is set: output condition text to chat -- i think this has to be async
        */
@@ -212,6 +204,21 @@ const conditionMapping = {
             
         }
       }
+
+      /**
+      * @name lookupTokenActor
+      * @description looks up the corresponding actor entity for the token
+      * @param {String} id 
+      * @returns {Actor} actor
+      */
+     async lookupTokenActor(id){
+        let actor = {};
+        if(id){
+            actor = await game.actors.entities.find(a => a.id === id);
+        }
+        console.log("found actor: ",actor)
+        return actor;
+     }
 
       /**
        * @todo need a function for returning the condition mapping?
