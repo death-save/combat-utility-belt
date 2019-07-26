@@ -1,20 +1,23 @@
 /**
  * @author Evan Clarke <errational>
- * @version 0.0.2
+ * @version 0.1
  * @description Rerolls initiative on combat round change
  */
-var roundChanged = false;
 
+/**
+ * @author Evan Clarke <errational>
+ * @description Hooks on combat update and rerolls initiative for all combatants
+ * @todo Add configurability for when to reroll and for whom
+ */
 class RerollInitiative {
     constructor() {
         this.postUpdateCombatHook();
     }
 
     postUpdateCombatHook() {
-        Hooks.on("updateCombat", (update,combat) =>  {
-            console.log("postupdate:\n",combat);
-            console.log(roundChanged);
-            if(!isBlank(update.round) && update.round > combat.round){
+        Hooks.on("updateCombat", (combat,update) =>  {
+            if(update.round && update.round > combat._previous[0]){
+                console.log("Reroll-Initiative: Round incremented - Rerolling Initiative")
                 this.resetAndReroll(combat);
             }
         }); 
