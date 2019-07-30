@@ -23,6 +23,45 @@ let RRI_CONFIG = {
 class RerollInitiative {
     constructor() {
         this.postUpdateCombatHook();
+        this.settings = RRI_CONFIG;
+    }
+    /**
+     * module settings
+     */
+    _registerSettings () {
+        game.settings.register('reroll-initiative', "defaultSettings", {
+            name: "Reroll-Initiative Settings",
+            hint: "Basic settings for Reroll-Initiative",
+            default: "",
+            //default: this._defaultSettings(),
+            type: Object,
+            scope: 'user',
+            onChange: settings => {
+              this.settings = JSON.parse(settings);
+            }
+        });
+    }
+
+    _defaultSettings() {
+        game.settings.register("reroll-initiative","defaultSettings",{
+            name: "Reroll-Initiative Settings",
+            hint: "Reroll-Initiative module basic settings",
+            type: String,
+            scope: 'world',
+            default: "",
+            onChange: settings => {
+               this.settings = JSON.parse(settings); 
+            }
+
+        });
+    }
+
+    _saveSettings () {
+        game.settings.set("reroll-initiative","defaultSettings",JSON.stringify(this.settings));
+    }
+
+    _loadSettings (){
+        this.settings = game.settings.get("reroll-initiative","defaultSettings");
     }
 
     /**
@@ -31,7 +70,7 @@ class RerollInitiative {
      */
     postUpdateCombatHook() {
         Hooks.on("updateCombat", (combat,update) =>  {
-            if(RerollInitiativeSettings.getSettings.enabled){
+            if(RerollInitiativeSettings.loadSettings.enabled){
                 //Currently the previous round is captured in the 1st index of the Combat._previous array
                 if(update.round && combat._previous && update.round > combat._previous[0]){
                     //console.log("Reroll-Initiative: Round incremented - rerolling initiative")
@@ -63,40 +102,6 @@ class RerollInitiativeConfig extends CombatTrackerConfig{
     }
 
     
-}
-
-/**
- * @class RerollInitiativeSettings
- * @description Manages the settings for the module
- */
-class RerollInitiativeSettings {
-    constructor(){
-        this._registerSettings();
-    }
-
-    static _registerSettings () {
-        game.settings.register("reroll-initiative","defaultSettings",{
-            name: "Reroll-Initiative Settings",
-            config: RRI_CONFIG,
-            default: this._defaultSettings,
-            onChange: {
-               this.settings  
-            }
-
-        })
-    }
-
-    static _defaultSettings() {
-
-    }
-
-    static _saveSettings () {
-
-    }
-
-    static _loadSettings (){
-        this.settings = game.settings.get("reroll-initiative")
-    }
 }
 
 let rri = new RerollInitiative();
