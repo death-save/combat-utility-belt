@@ -23,28 +23,28 @@ let RRI_CONFIG = {
 class RerollInitiative {
     constructor() {
         this.postUpdateCombatHook();
-        //this.settings = RRI_CONFIG;
+        this.settings = {};
         this._registerSettings();
     }
     /**
      * module settings
      */
     _registerSettings () {
-        game.settings.register('reroll-initiative', "defaultSettings", {
-            name: "Reroll-Initiative Settings",
-            hint: "Basic settings for Reroll-Initiative",
-            //default: this._defaultSettings(),
-            default: "",
-            type: String,
-            scope: 'world',
-            /*onChange: settings => {
-              this.settings = JSON.parse(settings);
-            }*/
+        game.settings.register('reroll-initiative', "defaultSetting", {
+            name: "Reroll-Initiative Setting",
+            hint: "Enable the module true/false",
+            default: RRI_CONFIG,
+            //default: "",
+            type: Object,
+            scope: "world",
+            onChange: setting => {
+              console.log("setting change",setting);
+            }
         });
     }
 
     _defaultSettings() {
-        let defaults = JSON.stringify(RRI_CONFIG);
+        let defaults = RRI_CONFIG;
 
         return defaults;
     }
@@ -54,7 +54,7 @@ class RerollInitiative {
     }
 
     _loadSettings (){
-        this.settings = game.settings.get("reroll-initiative","defaultSettings");
+        this.settings = game.settings.get("reroll-initiative","defaultSetting");
     }
 
     /**
@@ -63,7 +63,9 @@ class RerollInitiative {
      */
     postUpdateCombatHook() {
         Hooks.on("updateCombat", (combat,update) =>  {
-            if(this._loadSettings().enabled){
+            this._loadSettings();
+
+            if(this.settings.enabled){
                 //Currently the previous round is captured in the 1st index of the Combat._previous array
                 if(update.round && combat._previous && update.round > combat._previous[0]){
                     //console.log("Reroll-Initiative: Round incremented - rerolling initiative")
