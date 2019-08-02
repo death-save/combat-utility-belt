@@ -7,11 +7,12 @@
 
  /**
   * --------------------
-  * Set module variables
+  * Set module constants
   * --------------------
   */
-let RRI_CONFIG = {
-    enabled: true
+const RRI_CONFIG = {
+    reroll: true,
+    actorTypes: all
 }
   
 
@@ -26,16 +27,29 @@ class RerollInitiative {
         this.settings = {};
         this._registerSettings();
     }
+
     /**
      * module settings
      */
     _registerSettings () {
-        game.settings.register('reroll-initiative', "defaultSetting", {
-            name: "Reroll-Initiative Setting",
-            hint: "Enable the module true/false",
-            default: RRI_CONFIG,
+        game.settings.register('reroll-initiative', "rriStatus", {
+            name: "Reroll-Initiative Status",
+            hint: "Enable the rerolling initiative true/false",
+            default: RRI_CONFIG.reroll,
             //default: "",
-            type: Object,
+            type: Boolean,
+            scope: "world",
+            onChange: setting => {
+              console.log("setting change",setting);
+            }
+        });
+
+        game.settings.register('reroll-initiative', "actorTypesToReroll", {
+            name: "Actor Types to Reroll",
+            hint: "Specify the actor types to reroll PCs/NPCs/All",
+            default: RRI_CONFIG.actorTypes,
+            //default: "",
+            type: String,
             scope: "world",
             onChange: setting => {
               console.log("setting change",setting);
@@ -66,8 +80,8 @@ class RerollInitiative {
             this._loadSettings();
 
             if(this.settings.enabled){
-                //Currently the previous round is captured in the 1st index of the Combat._previous array
-                if(update.round && combat._previous && update.round > combat._previous[0]){
+                
+                if(update.round && combat._previous && update.round > combat.previous.round){
                     //console.log("Reroll-Initiative: Round incremented - rerolling initiative")
                     this.resetAndReroll(combat);
                 }
@@ -88,13 +102,17 @@ class RerollInitiative {
 }
 
 class RerollInitiativeConfig extends CombatTrackerConfig{
-    static get defaultOptions(){
-        const options = super.defaultOptions;
-        //in the template, find the last element and then add a checkbox that flags whether to reroll or not
-        const template = options.template;
-
-
+    constructor(){
+        defaultOptions = super.defaultOptions;
+        template = defaultOptions.template;
     }
+    //in the template, find the last element and then add a checkbox that flags whether to reroll or not
+    
+    _updateObject(){
+      //update the rri setting based on the forms data  
+    }
+    
+    
 
     
 }
