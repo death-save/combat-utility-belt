@@ -1,6 +1,6 @@
 /**
  * @name Reroll-Initiative
- * @version 0.1
+ * @version 0.2
  * @author Evan Clarke <errational>
  * @description Rerolls initiative on combat round change
  */
@@ -106,6 +106,11 @@ class RerollInitiative {
     }
 }
 
+/**
+ * @class RerollInitiativeConfig
+ * @description Handles the configuration of the module
+ * @
+ */
 class RerollInitiativeConfig {
     constructor(){
         this._addCheckbox();
@@ -128,7 +133,13 @@ class RerollInitiativeConfig {
     
 }
 
-let rri = new RerollInitiative();
+/**
+ * Hook on game ready and instantiate the main module class
+ */
+Hooks.on("ready", ()=> {
+    let rri = new RerollInitiative();
+});
+
 
 
 
