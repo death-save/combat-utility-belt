@@ -12,7 +12,7 @@
   */
 const RRI_CONFIG = {
     reroll: true,
-    actorTypes: all
+    actorTypes: "all"
 }
   
 
@@ -103,14 +103,15 @@ class RerollInitiative {
 
 class RerollInitiativeConfig extends CombatTrackerConfig{
     constructor(){
-        defaultOptions = super.defaultOptions;
-        template = defaultOptions.template;
+   
     }
-    //in the template, find the last element and then add a checkbox that flags whether to reroll or not
-    
-    _updateObject(){
-      //update the rri setting based on the forms data  
+
+    _addCheckbox(){
+        Hooks.on("renderCombatTrackerConfig", (html, data) => {
+            //html.append(<p>Testing</p>)
+        });
     }
+   
     
     
 
