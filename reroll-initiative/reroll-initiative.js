@@ -26,10 +26,12 @@ class RerollInitiative {
         this.postUpdateCombatHook();
         this.settings = {};
         this._registerSettings();
+        let config = new RerollInitiativeConfig();
     }
 
     /**
      * module settings
+     * @todo need to store settings as an object so they can easily be retrieved
      */
     _registerSettings () {
         game.settings.register('reroll-initiative', "rriStatus", {
@@ -68,7 +70,10 @@ class RerollInitiative {
     }
 
     _loadSettings (){
-        this.settings = game.settings.get("reroll-initiative","defaultSetting");
+        for(let s of RRI_CONFIG){
+            console.log(s);
+            this.settings.add(game.settings.settings.get("reroll-initiative"+s))
+        }
     }
 
     /**
@@ -101,14 +106,19 @@ class RerollInitiative {
     }
 }
 
-class RerollInitiativeConfig extends CombatTrackerConfig{
+class RerollInitiativeConfig {
     constructor(){
-   
+        this._addCheckbox();
     }
 
     _addCheckbox(){
         Hooks.on("renderCombatTrackerConfig", (html, data) => {
-            //html.append(<p>Testing</p>)
+            $(".form-group").after(
+                `<div class="form-group">
+                    <label>Test Checkbox</label>
+                    <input type="checkbox" name="testCheckbox" data-dtype="Boolean">
+                </div>`
+            );
         });
     }
    
