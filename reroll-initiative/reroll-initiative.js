@@ -118,11 +118,15 @@ class RerollInitiativeConfig {
 
     _hookRenderCombatTrackerConfig(){
         Hooks.on("renderCombatTrackerConfig", (app, html) => {
+            let settings = RerollInitiative.settings;
+            let reroll = settings.reroll;
+
             let submit = html.find('button[type="submit"]');
             submit.before(
               `<div class="form-group">
-                  <label>Test Checkbox</label>
-                  <input type="checkbox" name="testCheckbox" data-dtype="Boolean" {{checked testCheckbox}}>
+                  <label>Reroll Initiative</label>
+                  <input type="checkbox" name="rerollInitiative" data-dtype="Boolean" {{checked reroll}}>
+                  <hint>Reroll Initiative for all combatants each round</hint>
               </div>`
             );
 
