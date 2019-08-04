@@ -113,24 +113,29 @@ class RerollInitiative {
  */
 class RerollInitiativeConfig {
     constructor(){
-        this._addCheckbox();
+        this._hookRenderCombatTrackerConfig();
     }
 
-    _addCheckbox(){
-        Hooks.on("renderCombatTrackerConfig", (html, data) => {
-            $(".form-group").after(
-                `<div class="form-group">
-                    <label>Test Checkbox</label>
-                    <input type="checkbox" name="testCheckbox" data-dtype="Boolean">
-                </div>`
+    _hookRenderCombatTrackerConfig(){
+        Hooks.on("renderCombatTrackerConfig", (app, html) => {
+            let submit = html.find('button[type="submit"]');
+            submit.before(
+              `<div class="form-group">
+                  <label>Test Checkbox</label>
+                  <input type="checkbox" name="testCheckbox" data-dtype="Boolean" {{checked testCheckbox}}>
+              </div>`
             );
-        });
-    }
-   
-    
-    
 
-    
+            // Adjust the window height
+            app.setPosition({height: app.position.height + 30});
+        
+            // Handle form submission
+            const form = submit.parent();
+            form.on("submit", ev => {
+                console.log("submit", ev);
+            });
+        })
+    }    
 }
 
 /**
