@@ -19,7 +19,7 @@ const RRI_CONFIG = {
 /**
  * @class RerollInitiative
  * @description Hooks on combat update and rerolls initiative for all combatants
- * @todo Add configurability for when to reroll and for whom
+ * @todo Add configurability for when to reroll and for whom, make enable setting define whether the hook is registered or not
  */
 class RerollInitiative {
     constructor() {
@@ -34,6 +34,18 @@ class RerollInitiative {
      * @todo need to store settings as an object so they can easily be retrieved
      */
     _registerSettings () {
+        game.settings.register("reroll-initiative", "rriSettings", {
+            name: "Reroll-Initiative Settings",
+            hint: "Settings for Reroll-Initiative module",
+            default: RRI_CONFIG,
+            type: Object,
+            scope: "world",
+            onChange: setting => {
+                this.settings = JSON.stringify(setting);
+            }
+        })
+
+        /* add settings as object instead
         game.settings.register('reroll-initiative', "rriStatus", {
             name: "Reroll-Initiative Status",
             hint: "Enable the rerolling initiative true/false",
@@ -57,6 +69,7 @@ class RerollInitiative {
               console.log("setting change",setting);
             }
         });
+        */
     }
 
     _defaultSettings() {
@@ -66,14 +79,11 @@ class RerollInitiative {
     }
 
     _saveSettings () {
-        game.settings.set("reroll-initiative","defaultSettings",JSON.stringify(this.settings));
+        game.settings.set("reroll-initiative","rriSettings",JSON.stringify(this.settings));
     }
 
     _loadSettings (){
-        for(let s of RRI_CONFIG){
-            console.log(s);
-            this.settings.add(game.settings.settings.get("reroll-initiative"+s))
-        }
+        this.settings = game.settings.get("reroll-initiative","rriSettings");
     }
 
     /**
@@ -84,7 +94,7 @@ class RerollInitiative {
         Hooks.on("updateCombat", (combat,update) =>  {
             this._loadSettings();
 
-            if(this.settings.enabled){
+            if(this.settings.reroll){
                 
                 if(update.round && combat._previous && update.round > combat.previous.round){
                     //console.log("Reroll-Initiative: Round incremented - rerolling initiative")
