@@ -28,7 +28,6 @@ class RerollInitiative {
         this.postUpdateCombatHook();
         //this.settings = {};
         this._registerSettings();
-        let config = new RerollInitiativeConfig();
     }
 
     /**
@@ -157,11 +156,13 @@ class RerollInitiativeConfig {
     constructor(){
         this._hookRenderCombatTrackerConfig();
     }
+    //create an easily referencable version of the singleton instance of the main class
+    rri = game["reroll-initiative"]["rri"]
 
     _hookRenderCombatTrackerConfig(){
         Hooks.on("renderCombatTrackerConfig", (app, html) => {
-            console.log(rri);
-            let settings = rri.settings;
+            console.log(this.rri);
+            let settings = this.rri.settings;
             console.log(settings);
             let reroll = settings.reroll;
             console.log(reroll);
@@ -194,6 +195,7 @@ class RerollInitiativeConfig {
  */
 Hooks.on("ready", ()=> {
     //instantiate under game global var
-    game["reroll-initiative"][rri] = new RerollInitiative();
+    game["reroll-initiative"]["rri"] = new RerollInitiative;
+    game["reroll-initiative"]["rriConfig"] = new RerollInitiativeConfig;
     console.log(rri);
 });
