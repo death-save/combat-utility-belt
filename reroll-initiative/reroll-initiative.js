@@ -14,8 +14,6 @@
     reroll: true,
     actorTypes: "all"
 }
-
-let rri;
   
 
 /**
@@ -195,6 +193,7 @@ class RerollInitiativeConfig {
  * Hook on game ready and instantiate the main module class
  */
 Hooks.on("ready", ()=> {
-    rri = new RerollInitiative();
+    //instantiate under game global var
+    game["reroll-initiative"][rri] = new RerollInitiative();
     console.log(rri);
 });
