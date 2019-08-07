@@ -155,11 +155,12 @@ class RerollInitiative {
 class RerollInitiativeConfig {
     constructor(){
         this._hookRenderCombatTrackerConfig();
-        this.rri = game["reroll-initiative"]["rri"];
+        this.rri = {};
     }    
 
     _hookRenderCombatTrackerConfig(){
         Hooks.on("renderCombatTrackerConfig", (app, html) => {
+            this.rri = game["reroll-initiative"].rri;
             console.log(this.rri);
             let settings = this.rri.settings;
             console.log(settings);
@@ -171,20 +172,21 @@ class RerollInitiativeConfig {
               `<hr/>
               <div class="form-group">
                   <label>Reroll Initiative</label>
-                  <input type="checkbox" name="rerollInitiative" data-dtype="Boolean" {{checked reroll}}>
+                  <input type="checkbox" name="rerollInitiative" data-dtype="Boolean">
                   <p class=hint>Reroll Initiative for all combatants each round</p>
               </div>`
             );
-            let rriCheckboxValue = html.find('input[name="rerollInitiative"').value;
+            console.log(html);
+            let rriCheckboxValue = html.find('input[name="rerollInitiative"]');
             console.log(rriCheckboxValue);
             // Adjust the window height
-            app.setPosition({height: app.position.height + 50});
+            app.setPosition({height: app.position.height + 60});
         
             // Handle form submission
             const form = submit.parent();
             form.on("submit", ev => {
                 console.log("submit", ev);
-                rri.settings.reroll = rriCheckboxValue;
+                game["reroll-initiative"].rri.settings = ev.target.form[1].checked;
             });
         })
     }    
@@ -197,7 +199,7 @@ Hooks.on("ready", ()=> {
     //instantiate under game global var
     game["reroll-initiative"] = {
         rri: new RerollInitiative()
-        //rriConfig: new RerollInitiativeConfig()
     }
+    game["reroll-initiative"]["rriConfig"] = new RerollInitiativeConfig();
     console.log(game["reroll-initiative"]);
 });
