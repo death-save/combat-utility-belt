@@ -25,7 +25,7 @@ class RerollInitiative {
     settings = {};
 
     constructor() {
-        this.postUpdateCombatHook();
+        this._postUpdateCombatHook();
         //this.settings = {};
         this._registerSettings();
     }
@@ -114,14 +114,25 @@ class RerollInitiative {
      */
     set settings(incomingSettings) {
         this.settings = incomingSettings;
-        return this._saveSettings();
+        this._saveSettings();
+    }
+
+    updateSettings(settingName,newValue){
+        if(this.settings.hasOwnProperty(settingName)){
+            console.log(settingName);
+            this.settings[settingName] = newValue;
+            this._saveSettings();
+        }
+        else{
+            console.exception("Setting "+settingName+" does not exist!");
+        }
     }
 
     /**
      * @name postUpdateCombatHook
      * @description Hook on combat update and if round in update is greater than previous -- call resetAndReroll
      */
-    postUpdateCombatHook() {
+    _postUpdateCombatHook() {
         Hooks.on("updateCombat", (combat,update) =>  {
             this._loadSettings();
 
@@ -177,16 +188,21 @@ class RerollInitiativeConfig {
               </div>`
             );
             console.log(html);
-            let rriCheckboxValue = html.find('input[name="rerollInitiative"]');
-            console.log(rriCheckboxValue);
+            let rriCheckbox = html.find('input[name="rerollInitiative"]');
+            rriCheckbox.prop("checked",reroll);
+            console.log(rriCheckbox);
             // Adjust the window height
             app.setPosition({height: app.position.height + 60});
         
             // Handle form submission
             const form = submit.parent();
             form.on("submit", ev => {
+                let rriCheckboxValue = rriCheckbox.prop("checked");
                 console.log("submit", ev);
-                game["reroll-initiative"].rri.settings = ev.target.form[1].checked;
+                console.log("rriCheckbox is: ",rriCheckbox.prop("checked"));
+                //grab the value of the rriCheckbox and send a call to the RerollInitiaitive class to update settings accordingly;
+                this.rri.updateSettings("reroll", rriCheckboxValue);
+                
             });
         })
     }    
