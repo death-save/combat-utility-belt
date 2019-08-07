@@ -175,7 +175,7 @@ class RerollInitiativeConfig {
                   <hint>Reroll Initiative for all combatants each round</hint>
               </div>`
             );
-            let rriCheckboxValue = html.find('checkbox[name="rerollInitiative"').value;
+            let rriCheckboxValue = html.find('input[name="rerollInitiative"').value;
             console.log(rriCheckboxValue);
             // Adjust the window height
             app.setPosition({height: app.position.height + 30});
@@ -195,7 +195,9 @@ class RerollInitiativeConfig {
  */
 Hooks.on("ready", ()=> {
     //instantiate under game global var
-    game["reroll-initiative"]["rri"] = new RerollInitiative;
-    game["reroll-initiative"]["rriConfig"] = new RerollInitiativeConfig;
+    game["reroll-initiative"] = {
+        rri: new RerollInitiative(),
+        rriConfig: new RerollInitiativeConfig()
+    }
     console.log(rri);
 });
