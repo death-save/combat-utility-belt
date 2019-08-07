@@ -155,9 +155,8 @@ class RerollInitiative {
 class RerollInitiativeConfig {
     constructor(){
         this._hookRenderCombatTrackerConfig();
-    }
-    //create an easily referencable version of the singleton instance of the main class
-    rri = game["reroll-initiative"]["rri"]
+        this.rri = game["reroll-initiative"]["rri"];
+    }    
 
     _hookRenderCombatTrackerConfig(){
         Hooks.on("renderCombatTrackerConfig", (app, html) => {
@@ -176,10 +175,10 @@ class RerollInitiativeConfig {
                   <p class=hint>Reroll Initiative for all combatants each round</p>
               </div>`
             );
-            let rriCheckboxValue = html.find('checkbox[name="rerollInitiative"').value;
+            let rriCheckboxValue = html.find('input[name="rerollInitiative"').value;
             console.log(rriCheckboxValue);
             // Adjust the window height
-            app.setPosition({height: app.position.height + 40});
+            app.setPosition({height: app.position.height + 50});
         
             // Handle form submission
             const form = submit.parent();
@@ -196,8 +195,9 @@ class RerollInitiativeConfig {
  */
 Hooks.on("ready", ()=> {
     //instantiate under game global var
-    game["reroll-initiative"] = {};
-    game["reroll-initiative"]["rri"] = new RerollInitiative;
-    game["reroll-initiative"]["rriConfig"] = new RerollInitiativeConfig;
+    game["reroll-initiative"] = {
+        rri: new RerollInitiative()
+        //rriConfig: new RerollInitiativeConfig()
+    }
     console.log(game["reroll-initiative"]);
 });
