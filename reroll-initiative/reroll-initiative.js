@@ -6,9 +6,10 @@
  */
 
  /**
-  * --------------------
+  * -------------------------------------------
   * Set module constants
-  * --------------------
+  * todo: need to move this out of global scope
+  * -------------------------------------------
   */
  const RRI_DEFAULT_SETTINGS = {
     reroll: true,
@@ -18,20 +19,21 @@
 
 /**
  * @class RerollInitiative
- * @description Hooks on combat update and rerolls initiative for all combatants
+ * @description Hooks on combat update and rerolls initiative for all combatants depending on current value of setting
  * @todo Add configurability for when to reroll and for whom, make enable setting define whether the hook is registered or not
  */
 class RerollInitiative {
     settings = {};
 
     constructor() {
-        this._postUpdateCombatHook();
-        //this.settings = {};
+        this.settings = settings;
         this._registerSettings();
+        this._loadSettings();
+        this._postUpdateCombatHook();
     }
 
     /**
-     * module settings
+     * Register module settings with game settings
      * @todo need to store settings as an object so they can easily be retrieved
      */
     _registerSettings () {
@@ -42,46 +44,19 @@ class RerollInitiative {
             type: Object,
             scope: "world",
             onChange: setting => {
+                //todo: Add any steps to occur when settings change
                 console.log("settings changed, new values: ",setting)
-                //this.settings = JSON.stringify(setting);
             }
         });
-
-        this._loadSettings();
-
-        /* add settings as object instead
-        game.settings.register('reroll-initiative', "rriStatus", {
-            name: "Reroll-Initiative Status",
-            hint: "Enable the rerolling initiative true/false",
-            default: RRI_CONFIG.reroll,
-            //default: "",
-            type: Boolean,
-            scope: "world",
-            onChange: setting => {
-              console.log("setting change",setting);
-            }
-        });
-
-        game.settings.register('reroll-initiative', "actorTypesToReroll", {
-            name: "Actor Types to Reroll",
-            hint: "Specify the actor types to reroll PCs/NPCs/All",
-            default: RRI_CONFIG.actorTypes,
-            //default: "",
-            type: String,
-            scope: "world",
-            onChange: setting => {
-              console.log("setting change",setting);
-            }
-        });
-        */
     }
 
     /**
-     * Returns the default module settings
+     * Resets settings back to default
      */
     _defaultSettings() {
         this.settings = RRI_SETTINGS;
-        console.log("Restting reroll-initiative settings to defaults:",RRI_DEFAULT_SETTINGS);
+        console.log("Resetting reroll-initiative settings to defaults:",RRI_DEFAULT_SETTINGS);
+        this._saveSettings();
     }
 
     /**
@@ -117,7 +92,12 @@ class RerollInitiative {
         this._saveSettings();
     }
 
-    updateSettings(settingName,newValue){
+    /**
+     * Update a single setting
+     * @param {String} settingName The setting to change
+     * @param {Any} newValue The new value of the setting
+     */
+    updateSetting(settingName,newValue){
         if(this.settings.hasOwnProperty(settingName)){
             console.log(settingName);
             this.settings[settingName] = newValue;
@@ -129,8 +109,7 @@ class RerollInitiative {
     }
 
     /**
-     * @name postUpdateCombatHook
-     * @description Hook on combat update and if round in update is greater than previous -- call resetAndReroll
+     * Hook on combat update and if round in update is greater than previous -- call resetAndReroll
      */
     _postUpdateCombatHook() {
         Hooks.on("updateCombat", (combat,update) =>  {
@@ -151,6 +130,7 @@ class RerollInitiative {
      * @name resetAndReroll
      * @param {Combat} combat
      * @description For the given combat instance, call the resetAll method and the rollAll method
+     * @todo Not sure if this should be marked private...
      */
     async resetAndReroll(combat){
         await combat.resetAll();
@@ -164,19 +144,21 @@ class RerollInitiative {
  * @
  */
 class RerollInitiativeConfig {
+    //Create an object to be used later to hold the RerollInitiative class instance
+    rri = {};
+
     constructor(){
+        this.rri = rri;
         this._hookRenderCombatTrackerConfig();
-        this.rri = {};
     }    
 
     _hookRenderCombatTrackerConfig(){
         Hooks.on("renderCombatTrackerConfig", (app, html) => {
+            //Grab the values from the current instance of RerollInitiative 
             this.rri = game["reroll-initiative"].rri;
             console.log(this.rri);
             let settings = this.rri.settings;
             console.log(settings);
-            let reroll = settings.reroll;
-            console.log(reroll);
 
             let submit = html.find('button[type="submit"]');
             submit.before(
@@ -188,9 +170,13 @@ class RerollInitiativeConfig {
               </div>`
             );
             console.log(html);
+            //Find the checkbox that was just created
             let rriCheckbox = html.find('input[name="rerollInitiative"]');
-            rriCheckbox.prop("checked",reroll);
+            
+            //Set the state of the checkbox to match the current value of the "reroll" setting
+            rriCheckbox.prop("checked",settings.reroll);
             console.log(rriCheckbox);
+
             // Adjust the window height
             app.setPosition({height: app.position.height + 60});
         
@@ -201,7 +187,7 @@ class RerollInitiativeConfig {
                 console.log("submit", ev);
                 console.log("rriCheckbox is: ",rriCheckbox.prop("checked"));
                 //grab the value of the rriCheckbox and send a call to the RerollInitiaitive class to update settings accordingly;
-                this.rri.updateSettings("reroll", rriCheckboxValue);
+                this.rri.updateSetting("reroll", rriCheckboxValue);
                 
             });
         })
