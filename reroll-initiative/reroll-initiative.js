@@ -13,7 +13,13 @@
 class RerollInitiative {
 
     constructor() {
+        this.SETTINGS_MODULE = "reroll-initiative";
+        this.SETTINGS_KEY = "rriSettings";
+        this.SETTINGS_NAME = "Reroll-Initiative Settings";
+        this.SETTINGS_HINT = "Settings for Reroll-Initiative module";
+
         this.settings = {};
+
         this._registerSettings();
         this._loadSettings();
         this._postUpdateCombatHook();
@@ -28,17 +34,16 @@ class RerollInitiative {
 
     /**
      * Register module settings with game settings
-     * @todo need to store settings as an object so they can easily be retrieved
+     * @todo: Add any steps to occur when settings change
      */
     _registerSettings () {
-        game.settings.register("reroll-initiative", "rriSettings", {
-            name: "Reroll-Initiative Settings",
-            hint: "Settings for Reroll-Initiative module",
+        game.settings.register(this.SETTINGS_MODULE, this.SETTINGS_KEY, {
+            name: this.SETTINGS_NAME,
+            hint: this.SETTINGS_HINT,
             default: RerollInitiative.defaultSettings,
             type: Object,
             scope: "world",
             onChange: setting => {
-                //todo: Add any steps to occur when settings change
                 console.log("settings changed, new values: ",setting)
             }
         });
@@ -57,14 +62,14 @@ class RerollInitiative {
      * Saves current class instance settings back to game settings
      */
     _saveSettings () {
-        game.settings.set("reroll-initiative","rriSettings",this.settings);
+        game.settings.set(this.SETTINGS_MODULE,this.SETTINGS_KEY,this.settings);
     }
 
     /**
      * Loads current class instance settings from game settings
      */
     _loadSettings (){
-        let settings = game.settings.get("reroll-initiative","rriSettings");
+        let settings = game.settings.get(this.SETTINGS_MODULE,this.SETTINGS_KEY);
         this.settings = settings;
         console.log(this.settings);
     }
@@ -190,10 +195,12 @@ class RerollInitiativeConfig {
  * Hook on game ready and instantiate the main module class
  */
 Hooks.on("ready", ()=> {
+    const MODULE_NAME = "reroll-initiative"
+
     //instantiate RerollInitiative under game global var
-    game["reroll-initiative"] = {
+    game[MODULE_NAME] = {
         rri: new RerollInitiative(),
         rriConfig: new RerollInitiativeConfig()
     }
-    console.log(game["reroll-initiative"]);
+    console.log(game[MODULE_NAME]);
 });
