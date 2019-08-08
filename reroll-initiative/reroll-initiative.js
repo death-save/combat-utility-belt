@@ -5,31 +5,25 @@
  * @description Rerolls initiative on combat round change
  */
 
- /**
-  * -------------------------------------------
-  * Set module constants
-  * todo: need to move this out of global scope
-  * -------------------------------------------
-  */
- const RRI_DEFAULT_SETTINGS = {
-    reroll: true,
-    actorTypes: "all"
-}
-  
-
 /**
  * @class RerollInitiative
  * @description Hooks on combat update and rerolls initiative for all combatants depending on current value of setting
- * @todo Add configurability for when to reroll and for whom, make enable setting define whether the hook is registered or not
+ * @todo Add configurability for whom to reroll, make enable setting define whether the hook is registered or not??
  */
 class RerollInitiative {
-    settings = {};
 
     constructor() {
-        this.settings = settings;
+        this.settings = {};
         this._registerSettings();
         this._loadSettings();
         this._postUpdateCombatHook();
+    }
+
+    static get defaultSettings() {
+        return {
+            reroll: true,
+            actorTypes: "all"
+        };
     }
 
     /**
@@ -40,7 +34,7 @@ class RerollInitiative {
         game.settings.register("reroll-initiative", "rriSettings", {
             name: "Reroll-Initiative Settings",
             hint: "Settings for Reroll-Initiative module",
-            default: RRI_DEFAULT_SETTINGS,
+            default: RerollInitiative.defaultSettings,
             type: Object,
             scope: "world",
             onChange: setting => {
@@ -53,9 +47,9 @@ class RerollInitiative {
     /**
      * Resets settings back to default
      */
-    _defaultSettings() {
-        this.settings = RRI_SETTINGS;
-        console.log("Resetting reroll-initiative settings to defaults:",RRI_DEFAULT_SETTINGS);
+    _applyDefaultSettings() {
+        this.settings = RerollIinitiative.defaultSettings;
+        console.log("Resetting reroll-initiative settings to defaults:",RerollInitiative.defaultSettings);
         this._saveSettings();
     }
 
@@ -77,20 +71,20 @@ class RerollInitiative {
     
     /**
      * Get the current class instance settings (for external use)
-     */
+     *
     get settings() {
-        this._loadSettings();
         return this.settings;
     }
+    */
 
     /**
      * Change the current class instance settings (for external use)
      * @param {Object} incomingSettings
-     */
+     *
     set settings(incomingSettings) {
         this.settings = incomingSettings;
-        this._saveSettings();
     }
+    */
 
     /**
      * Update a single setting
@@ -144,11 +138,9 @@ class RerollInitiative {
  * @
  */
 class RerollInitiativeConfig {
-    //Create an object to be used later to hold the RerollInitiative class instance
-    rri = {};
 
     constructor(){
-        this.rri = rri;
+        this.rri = {};
         this._hookRenderCombatTrackerConfig();
     }    
 
@@ -198,10 +190,10 @@ class RerollInitiativeConfig {
  * Hook on game ready and instantiate the main module class
  */
 Hooks.on("ready", ()=> {
-    //instantiate under game global var
+    //instantiate RerollInitiative under game global var
     game["reroll-initiative"] = {
-        rri: new RerollInitiative()
+        rri: new RerollInitiative(),
+        rriConfig: new RerollInitiativeConfig()
     }
-    game["reroll-initiative"]["rriConfig"] = new RerollInitiativeConfig();
     console.log(game["reroll-initiative"]);
 });
