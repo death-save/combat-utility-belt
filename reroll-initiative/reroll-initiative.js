@@ -145,12 +145,11 @@ class RerollInitiative {
 /**
  * @class RerollInitiativeConfig
  * @description Handles the configuration form for the module. Currently inserts within Combat Tracker Config
- * @
+ * @todo: tear down all the setting updates here and use the RerollInitiative class instead
  */
 class RerollInitiativeConfig {
 
     constructor(){
-        this.rri = {};
         this._hookRenderCombatTrackerConfig();
     }    
 
@@ -159,69 +158,76 @@ class RerollInitiativeConfig {
      */
     _hookRenderCombatTrackerConfig(){
         Hooks.on("renderCombatTrackerConfig", (app, html) => {
-
             const settings = this._loadSettings();
 
             if(html){
-                this._injectCheckbox(html);
-            }
+                rriCheckbox = this._injectCheckboxFormgroup(html);
 
-            
-            
-                // Adjust the window height
-                app.setPosition({height: app.position.height + 60});
-        
-                // Handle form submission
-                const form = submit.parent();
-                form.on("submit", ev => {
-                    let rriCheckboxValue = rriCheckbox.prop("checked");
-                    console.log("submit", ev);
-                    console.log("rriCheckbox is: ",rriCheckbox.prop("checked"));
-                    //grab the value of the rriCheckbox and send a call to the RerollInitiaitive class to update settings accordingly;
-                    //this.rri.updateOption("reroll", rriCheckboxValue);
-                    game.settings.set(RerollInitiative.SETTINGS.module,RerollInitiative.SETTINGS.key,)
+                if(rriCheckbox){
+                    //Set the state of the checkbox to match the current module reroll setting
+                    rriCheckbox.prop("checked",settings.reroll);
+
+                    // Adjust the window height to allow for new content
+                    app.setPosition({height: app.position.height + 60});
                 
-                });
-                    
-            
-        })
+                    // Handle form submission
+                    //todo: break this out into a separate method?
+                    const form = submit.parent();
+                    form.on("submit", ev => {
+                        const targetSetting = "reroll";
+                        //Retrieve the checkbox state
+                        let rriCheckboxValue = rriCheckbox.prop("checked");
+                        console.log("submit", ev);
+                        console.log("rriCheckbox is: ",rriCheckbox.prop("checked"));
+
+                        //Update target setting with new value
+                        //todo: this needs to be async. break out into new method?
+                        //this.rri.updateOption("reroll", rriCheckboxValue);
+                        settings.targetSetting = rriCheckboxValue;
+                        game.settings.set(RerollInitiative.SETTINGS.module,RerollInitiative.SETTINGS.key,settings);
+                    });
+                }
+            }
+        });
     }
 
     /**
-     * Injects a checkbox inside the designated element
+     * Injects a checkbox formgroup inside the designated element
      * @param {*} html
      * @returns {Object} checkbox The checkbox element that was injected
      */
-    _injectCheckbox(html){
-        //name of the checkbox to be injected
-        const nextElementIdentifier = 'button[type="submit"]';
+    _injectCheckboxFormgroup(html){
+        const elementIdentifier = 'button[type="submit"]';
+        const label = "Reroll Initiative";
         const name = "rerollInitiative";
         const hint = "Reroll Initiative for all combatants each round"
 
-        let nextElement = html.find(nextElementIdentifier);
+        let element = html.find(elementIdentifier);
         
-        nextElement.before(
-              `<hr/>
-              <div class="form-group">
-                  <label>Reroll Initiative</label>
-                  <input type="checkbox" name=${name} data-dtype="Boolean">
-                  <p class=hint>${hint}</p>
-              </div>`
+        if(element){
+            element.before(
+                `<hr/>
+                <div class="form-group">
+                    <label>${label}</label>
+                    <input type="checkbox" name=${name} data-dtype="Boolean">
+                    <p class=hint>${hint}</p>
+                </div>`
             );
             console.log(html);
-        //Find the checkbox that was just created
-        if(html.find('input[name="rerollInitiative"]')){
-            let checkbox = html.find('input[name="rerollInitiative"]');
-            
-            //Set the state of the checkbox to match the current value of the "reroll" setting
-            rriCheckbox.prop("checked",settings.reroll);
-            console.log(rriCheckbox);
+        }
+        else {
+            console.log("Failed to inject checkbox... " +elementIdentifier+ " does not exist.")
+        }
+        
+        //Find and return the checkbox that was just created for use downstream
+        if(html.find('input[name="'+name+'"]')){
+            let checkbox = html.find('input[name="'+name+'"]');
+            return checkbox;
         }
         else {
             console.log("Couldn't find reroll-initiative checkbox.");
-        }   
-
-        return this._injectCheckbox;
+            return;
+        }      
     }
 
     async _loadSettings() {
