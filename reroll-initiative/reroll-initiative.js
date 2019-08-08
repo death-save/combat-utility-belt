@@ -1,6 +1,6 @@
 /**
  * @name Reroll-Initiative
- * @version 0.2
+ * @version 0.4
  * @author Evan Clarke <errational>
  * @description Rerolls initiative on combat round change
  */
@@ -13,22 +13,40 @@
 class RerollInitiative {
 
     constructor() {
-        this.SETTINGS_MODULE = "reroll-initiative";
-        this.SETTINGS_KEY = "rriSettings";
-        this.SETTINGS_NAME = "Reroll-Initiative Settings";
-        this.SETTINGS_HINT = "Settings for Reroll-Initiative module";
+        /**
+         * Initialize object to hold the config for this instance
+         */
+        this.config = {};
 
-        this.settings = {};
-
+        /**
+         * Register settings with 
+         */
         this._registerSettings();
         this._loadSettings();
         this._postUpdateCombatHook();
     }
 
-    static get defaultSettings() {
+    /**
+     * Define the default config for the module. Restricted to get only
+     */
+    static get DEFAULT_CONFIG() {
         return {
             reroll: true,
             actorTypes: "all"
+        };
+    }
+
+    /**
+     * Define the settings metadata for the module. Restricted to get only
+     */
+    static get SETTINGS(){
+        return {
+            module: "reroll-initiative",
+            key: "rriSettings",
+            name: "Reroll-Initiative Settings",
+            hint: "Settings for Reroll-Initiative module",
+            default: RerollInitiative.DEFAULT_CONFIG,
+            scope: "world"
         };
     }
 
@@ -37,73 +55,57 @@ class RerollInitiative {
      * @todo: Add any steps to occur when settings change
      */
     _registerSettings () {
-        game.settings.register(this.SETTINGS_MODULE, this.SETTINGS_KEY, {
-            name: this.SETTINGS_NAME,
-            hint: this.SETTINGS_HINT,
-            default: RerollInitiative.defaultSettings,
+        game.settings.register(RerollInitiative.SETTINGS.module, RerollInitiative.SETTINGS.key, {
+            name: RerollInitiative.SETTINGS.name,
+            hint: RerollInitiative.SETTINGS.hint,
+            default: RerollInitiative.SETTINGS.default,
             type: Object,
-            scope: "world",
-            onChange: setting => {
-                console.log("settings changed, new values: ",setting)
+            scope: RerollInitiative.SETTINGS.scope,
+            onChange: options => {
+                console.log("Module settings changed, new option values: ",options)
             }
         });
     }
 
     /**
      * Resets settings back to default
+     * @todo: maybe expand this to deregister and register settings
      */
-    _applyDefaultSettings() {
-        this.settings = RerollIinitiative.defaultSettings;
-        console.log("Resetting reroll-initiative settings to defaults:",RerollInitiative.defaultSettings);
+    _applydefaultConfig() {
+        this.options = RerollIinitiative.DEFAULT_CONFIG;
+        console.log("Resetting reroll-initiative settings to defaults:",RerollInitiative.DEFAULT_OPTIONS);
         this._saveSettings();
     }
 
     /**
-     * Saves current class instance settings back to game settings
+     * Saves current class instance options back to game settings
      */
-    _saveSettings () {
-        game.settings.set(this.SETTINGS_MODULE,this.SETTINGS_KEY,this.settings);
+    async _saveSettings () {
+        await game.settings.set(RerollInitiative.SETTINGS.module,RerollInitiative.SETTINGS.key,this.settings);
     }
 
     /**
      * Loads current class instance settings from game settings
      */
-    _loadSettings (){
-        let settings = game.settings.get(this.SETTINGS_MODULE,this.SETTINGS_KEY);
-        this.settings = settings;
-        console.log(this.settings);
+    async _loadSettings (){
+        let config = await game.settings.get(RerollInitiative.SETTINGS.module,RerollInitiative.SETTINGS.key);
+        this.config = config;
+        console.log(this.config);
     }
     
     /**
-     * Get the current class instance settings (for external use)
-     *
-    get settings() {
-        return this.settings;
-    }
-    */
-
-    /**
-     * Change the current class instance settings (for external use)
-     * @param {Object} incomingSettings
-     *
-    set settings(incomingSettings) {
-        this.settings = incomingSettings;
-    }
-    */
-
-    /**
      * Update a single setting
-     * @param {String} settingName The setting to change
-     * @param {Any} newValue The new value of the setting
+     * @param {String} option The setting option to change
+     * @param {*} value The new value of the option
      */
-    updateSetting(settingName,newValue){
-        if(this.settings.hasOwnProperty(settingName)){
-            console.log(settingName);
-            this.settings[settingName] = newValue;
+    updateSetting(option,value){
+        if(this.options.hasOwnProperty(option)){
+            console.log(option);
+            this.options[option] = value;
             this._saveSettings();
         }
         else{
-            console.exception("Setting "+settingName+" does not exist!");
+            console.exception("Module setting option: "+option+" does not exist!");
         }
     }
 
@@ -114,12 +116,15 @@ class RerollInitiative {
         Hooks.on("updateCombat", (combat,update) =>  {
             this._loadSettings();
 
-            if(this.settings.reroll){
+            if(this.config.reroll){
                 
                 if(update.round && combat.previous && update.round > combat.previous.round){
                     //console.log("Reroll-Initiative: Round incremented - rerolling initiative")
                     this.resetAndReroll(combat);
                 }
+            }
+            else {
+                Console.log("Rerolling Initiative is currently turned off")
             }
             
         }); 
@@ -139,7 +144,7 @@ class RerollInitiative {
 
 /**
  * @class RerollInitiativeConfig
- * @description Handles the configuration of the module
+ * @description Handles the configuration form for the module. Currently inserts within Combat Tracker Config
  * @
  */
 class RerollInitiativeConfig {
@@ -149,46 +154,80 @@ class RerollInitiativeConfig {
         this._hookRenderCombatTrackerConfig();
     }    
 
+    /**
+     * Hooks on the render of combat tracker config and insert the module config
+     */
     _hookRenderCombatTrackerConfig(){
         Hooks.on("renderCombatTrackerConfig", (app, html) => {
-            //Grab the values from the current instance of RerollInitiative 
-            this.rri = game["reroll-initiative"].rri;
-            console.log(this.rri);
-            let settings = this.rri.settings;
-            console.log(settings);
 
-            let submit = html.find('button[type="submit"]');
-            submit.before(
+            const settings = this._loadSettings();
+
+            if(html){
+                this._injectCheckbox(html);
+            }
+
+            
+            
+                // Adjust the window height
+                app.setPosition({height: app.position.height + 60});
+        
+                // Handle form submission
+                const form = submit.parent();
+                form.on("submit", ev => {
+                    let rriCheckboxValue = rriCheckbox.prop("checked");
+                    console.log("submit", ev);
+                    console.log("rriCheckbox is: ",rriCheckbox.prop("checked"));
+                    //grab the value of the rriCheckbox and send a call to the RerollInitiaitive class to update settings accordingly;
+                    //this.rri.updateOption("reroll", rriCheckboxValue);
+                    game.settings.set(RerollInitiative.SETTINGS.module,RerollInitiative.SETTINGS.key,)
+                
+                });
+                    
+            
+        })
+    }
+
+    /**
+     * Injects a checkbox inside the designated element
+     * @param {*} html
+     * @returns {Object} checkbox The checkbox element that was injected
+     */
+    _injectCheckbox(html){
+        //name of the checkbox to be injected
+        const nextElementIdentifier = 'button[type="submit"]';
+        const name = "rerollInitiative";
+        const hint = "Reroll Initiative for all combatants each round"
+
+        let nextElement = html.find(nextElementIdentifier);
+        
+        nextElement.before(
               `<hr/>
               <div class="form-group">
                   <label>Reroll Initiative</label>
-                  <input type="checkbox" name="rerollInitiative" data-dtype="Boolean">
-                  <p class=hint>Reroll Initiative for all combatants each round</p>
+                  <input type="checkbox" name=${name} data-dtype="Boolean">
+                  <p class=hint>${hint}</p>
               </div>`
             );
             console.log(html);
-            //Find the checkbox that was just created
-            let rriCheckbox = html.find('input[name="rerollInitiative"]');
+        //Find the checkbox that was just created
+        if(html.find('input[name="rerollInitiative"]')){
+            let checkbox = html.find('input[name="rerollInitiative"]');
             
             //Set the state of the checkbox to match the current value of the "reroll" setting
             rriCheckbox.prop("checked",settings.reroll);
             console.log(rriCheckbox);
+        }
+        else {
+            console.log("Couldn't find reroll-initiative checkbox.");
+        }   
 
-            // Adjust the window height
-            app.setPosition({height: app.position.height + 60});
-        
-            // Handle form submission
-            const form = submit.parent();
-            form.on("submit", ev => {
-                let rriCheckboxValue = rriCheckbox.prop("checked");
-                console.log("submit", ev);
-                console.log("rriCheckbox is: ",rriCheckbox.prop("checked"));
-                //grab the value of the rriCheckbox and send a call to the RerollInitiaitive class to update settings accordingly;
-                this.rri.updateSetting("reroll", rriCheckboxValue);
-                
-            });
-        })
-    }    
+        return this._injectCheckbox;
+    }
+
+    async _loadSettings() {
+        let settings = await game.settings.get[RerollInitiative.SETTINGS.module,RerollInitiative.SETTINGS.key];
+        return settings;
+    }
 }
 
 /**
