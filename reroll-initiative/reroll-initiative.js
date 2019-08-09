@@ -19,19 +19,10 @@ class RerollInitiative {
          */
         this.config = {};
 
-        /**
-         * Register settings with game
-         */
         this._registerSettings();
 
-        /**
-         * Load settings into instance config variable
-         */
         this._loadSettings();
 
-        /**
-         * Register postUpdate hook for Combat
-         */
         this._postUpdateCombatHook();
     }
 
