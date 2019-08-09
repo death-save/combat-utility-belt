@@ -41,20 +41,21 @@ class RerollInitiative {
     static get DEFAULT_CONFIG() {
         return {
             reroll: true,
-            actorTypes: "all"
+            actorTypes: "all" //future feature
         };
     }
 
     /**
      * Define the settings metadata for the module. Restricted to get only
      */
-    static get SETTINGS(){
+    static get SETTINGS() {
         return {
             module: "reroll-initiative",
             key: "rriSettings",
             name: "Reroll-Initiative Settings",
             hint: "Settings for Reroll-Initiative module",
             default: RerollInitiative.DEFAULT_CONFIG,
+            type: Object,
             scope: "world"
         };
     }
@@ -68,10 +69,11 @@ class RerollInitiative {
             name: RerollInitiative.SETTINGS.name,
             hint: RerollInitiative.SETTINGS.hint,
             default: RerollInitiative.SETTINGS.default,
-            type: Object,
+            type: RerollInitiative.SETTINGS.type,
             scope: RerollInitiative.SETTINGS.scope,
-            onChange: options => {
-                console.log("Module settings changed, new option values: ",options)
+            onChange: settings => {
+                
+                console.log("Module settings changed, new option values: ",settings)
             }
         });
     }
@@ -81,8 +83,8 @@ class RerollInitiative {
      * @todo: maybe expand this to deregister and register settings
      */
     _applydefaultConfig() {
-        this.options = RerollIinitiative.DEFAULT_CONFIG;
-        console.log("Resetting reroll-initiative settings to defaults:",RerollInitiative.DEFAULT_OPTIONS);
+        this.config = RerollIinitiative.DEFAULT_CONFIG;
+        console.log("Resetting reroll-initiative settings to defaults:",RerollInitiative.DEFAULT_CONFIG);
         this._saveSettings();
     }
 
@@ -96,24 +98,24 @@ class RerollInitiative {
     /**
      * Loads current class instance settings from game settings
      */
-    async _loadSettings (){
+    async _loadSettings () {
         let config = await game.settings.get(RerollInitiative.SETTINGS.module,RerollInitiative.SETTINGS.key);
         this.config = config;
         console.log(this.config);
     }
     
     /**
-     * Update a single setting
+     * Update a single module setting
      * @param {String} setting The setting to change
      * @param {*} value The new value of the option
      */
     static async updateSetting(setting,value){
-        let settings = await game.settings.get(RerollInitiative.SETTINGS.module,RerollInitiative.SETTINGS.key);
+        let settings = game.settings.get(RerollInitiative.SETTINGS.module,RerollInitiative.SETTINGS.key);
 
         if(settings.hasOwnProperty(setting)){
             console.log(setting);
             settings[setting] = value;
-            await game.settings.set(RerollInitiative.SETTINGS.module,RerollInitiative.SETTINGS.key);
+            await game.settings.set(RerollInitiative.SETTINGS.module,RerollInitiative.SETTINGS.key,settings);
         }
         else{
             console.error("Module setting : "+setting+" does not exist!");
@@ -121,13 +123,11 @@ class RerollInitiative {
     }
 
     /**
-     * Retrieve settings from game
-     * @returns {Object} settings
+     * Helper function to retrieve module settings from game instance
+     * @returns {Object} settings An object containing the queried settings
      */
-    static async querySettings() {
-        let settings = await game.settings.get(RerollInitiative.SETTINGS.module,RerollInitiative.SETTINGS.key);
-        console.log("query found these settings:",settings);
-        return settings;
+    static querySettings() {
+        return game.settings.get(RerollInitiative.SETTINGS.module,RerollInitiative.SETTINGS.key)
     }
 
     /**
@@ -142,23 +142,21 @@ class RerollInitiative {
                 
                 if(update.round && combat.previous && update.round > combat.previous.round){
                     //console.log("Reroll-Initiative: Round incremented - rerolling initiative")
-                    this.resetAndReroll(combat);
+                    this._resetAndReroll(combat);
                 }
             }
             else {
-                Console.log("Rerolling Initiative is currently turned off")
+                console.log("Rerolling Initiative is currently turned off")
             }
             
         }); 
     }
 
     /**
-     * @name resetAndReroll
-     * @param {Object} combat A Combat instance
      * For the given combat instance, call the resetAll method and the rollAll method
-     * @todo Not sure if this should be marked private...
+     * @param {Object} combat A Combat instance
      */
-    async resetAndReroll(combat){
+    async _resetAndReroll(combat){
         await combat.resetAll();
         combat.rollAll();
     }
@@ -183,6 +181,7 @@ class RerollInitiativeConfig {
             
             let settings = RerollInitiative.querySettings();
             console.log(settings);
+            const targetSetting = "reroll";
 
             if(html){
                 let rriCheckbox = this._injectCheckboxFormgroup(html);
@@ -199,7 +198,7 @@ class RerollInitiativeConfig {
                     const submit = html.find('button[type="submit"]');
                     const form = submit.parent();
                     form.on("submit", ev => {
-                        const targetSetting = "reroll";
+                        
                         //Retrieve the checkbox state
                         let rriCheckboxValue = rriCheckbox.prop("checked");
                         console.log("submit", ev);
@@ -208,7 +207,7 @@ class RerollInitiativeConfig {
                         //Update target setting with new value
                         //todo: this needs to be async. break out into new method?
                         //this.rri.updateOption("reroll", rriCheckboxValue);
-                        RerollInitiative.updateSetting(settings.reroll,rriCheckboxValue)
+                        RerollInitiative.updateSetting(targetSetting,rriCheckboxValue);
                     });
                 }
             }
