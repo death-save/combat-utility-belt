@@ -15,14 +15,23 @@ class RerollInitiative {
     constructor() {
         /**
          * Initialize object to hold the config for this instance
+         * @type {Object}
          */
         this.config = {};
 
         /**
-         * Register settings with 
+         * Register settings with game
          */
         this._registerSettings();
+
+        /**
+         * Load settings into instance config variable
+         */
         this._loadSettings();
+
+        /**
+         * Register postUpdate hook for Combat
+         */
         this._postUpdateCombatHook();
     }
 
@@ -158,6 +167,7 @@ class RerollInitiativeConfig {
      */
     _hookRenderCombatTrackerConfig(){
         Hooks.on("renderCombatTrackerConfig", (app, html) => {
+            
             const settings = this._loadSettings();
 
             if(html){
