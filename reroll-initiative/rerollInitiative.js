@@ -1,13 +1,16 @@
 Hooks.on("ready", () => {
-    game["rri"] = rerollInitiative();
+    rerollInitiative();
 });
 
 function rerollInitiative() {
+    console.log("RRI Function executing...")
     //module name
     const MODULE_NAME = "rerollInitiative";
 
     //default config
-    const DEFAULT_CONFIG = {};
+    const DEFAULT_CONFIG = {
+        reroll: true
+    };
 
     //settings name
     const SETTINGS_NAME = "rriSettings";
@@ -33,6 +36,7 @@ function rerollInitiative() {
     //update settings
     async function updateSettings(setting,value) {
         settings[setting] = value;
+        console.log("updating settings:",settings);
         await game.settings.set(MODULE_NAME,SETTINGS_NAME,settings);
     }
 
@@ -45,7 +49,7 @@ function rerollInitiative() {
     }));
 
     //hook on combat tracket config render
-    Hooks.on("combatTrackerConfigRender", (app,html) => {
+    Hooks.on("renderCombatTrackerConfig", (app,html) => {
         const LABEL = "Reroll Initiative";
         const NAME = "rriCheckbox"
         const HINT = "Reroll Initiative for all combatants each round"
@@ -55,13 +59,13 @@ function rerollInitiative() {
             }
         }
 
-        let submit = html.find('form["type=submit"]');
+        const submit = html.find('button[type="submit"]');
 
         submit.before(
             `<hr/>
             <div class="form-group">
                 <label>${LABEL}</label>
-                <input type="checkbox" name=${NAME} data-dtype="Boolean" ${checked}>
+                <input type="checkbox" name=${NAME} data-dtype="Boolean" ${checked()}>
                 <p class=hint>${HINT}</p>
             </div>`
         );
@@ -71,9 +75,11 @@ function rerollInitiative() {
         const form = submit.parent();
 
         form.on("submit", ev => {
-            if(ev[0].find(n => n.name === NAME) == "on") {
-                updateSettings(settings[reroll],true);
-            }
+            const input = ev.target.elements.NAME;
+
+            if(input) {
+                updateSettings(settings[reroll],input.checked);
+            } 
         });
         
 
