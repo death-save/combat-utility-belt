@@ -126,6 +126,7 @@ class RerollInitiative {
      */
     static async querySettings() {
         let settings = await game.settings.get(RerollInitiative.SETTINGS.module,RerollInitiative.SETTINGS.key);
+        console.log("query found these settings:",settings);
         return settings;
     }
 
