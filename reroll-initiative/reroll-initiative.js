@@ -90,7 +90,7 @@ class RerollInitiative {
      * Saves current class instance options back to game settings
      */
     async _saveSettings () {
-        await game.settings.set(RerollInitiative.SETTINGS.module,RerollInitiative.SETTINGS.key,this.settings);
+        await game.settings.set(RerollInitiative.SETTINGS.module,RerollInitiative.SETTINGS.key,this.config);
     }
 
     /**
@@ -104,18 +104,29 @@ class RerollInitiative {
     
     /**
      * Update a single setting
-     * @param {String} option The setting option to change
+     * @param {String} setting The setting to change
      * @param {*} value The new value of the option
      */
-    updateSetting(option,value){
-        if(this.options.hasOwnProperty(option)){
-            console.log(option);
-            this.options[option] = value;
-            this._saveSettings();
+    static async updateSetting(setting,value){
+        let settings = await game.settings.get(RerollInitiative.SETTINGS.module,RerollInitiative.SETTINGS.key);
+
+        if(settings.hasOwnProperty(setting)){
+            console.log(setting);
+            settings[setting] = value;
+            await game.settings.set(RerollInitiative.SETTINGS.module,RerollInitiative.SETTINGS.key);
         }
         else{
-            console.exception("Module setting option: "+option+" does not exist!");
+            console.error("Module setting : "+setting+" does not exist!");
         }
+    }
+
+    /**
+     * Retrieve settings from game
+     * @returns {Object} settings
+     */
+    static async querySettings() {
+        let settings = await game.settings.get(RerollInitiative.SETTINGS.module,RerollInitiative.SETTINGS.key);
+        return settings;
     }
 
     /**
@@ -123,7 +134,8 @@ class RerollInitiative {
      */
     _postUpdateCombatHook() {
         Hooks.on("updateCombat", (combat,update) =>  {
-            this._loadSettings();
+            //this is probably an unnecessary hit on the db
+            //this._loadSettings();
 
             if(this.config.reroll){
                 
@@ -141,8 +153,8 @@ class RerollInitiative {
 
     /**
      * @name resetAndReroll
-     * @param {Combat} combat
-     * @description For the given combat instance, call the resetAll method and the rollAll method
+     * @param {Object} combat A Combat instance
+     * For the given combat instance, call the resetAll method and the rollAll method
      * @todo Not sure if this should be marked private...
      */
     async resetAndReroll(combat){
@@ -168,10 +180,11 @@ class RerollInitiativeConfig {
     _hookRenderCombatTrackerConfig(){
         Hooks.on("renderCombatTrackerConfig", (app, html) => {
             
-            const settings = this._loadSettings();
+            let settings = RerollInitiative.querySettings();
+            console.log(settings);
 
             if(html){
-                rriCheckbox = this._injectCheckboxFormgroup(html);
+                let rriCheckbox = this._injectCheckboxFormgroup(html);
 
                 if(rriCheckbox){
                     //Set the state of the checkbox to match the current module reroll setting
@@ -182,6 +195,7 @@ class RerollInitiativeConfig {
                 
                     // Handle form submission
                     //todo: break this out into a separate method?
+                    const submit = html.find('button[type="submit"]');
                     const form = submit.parent();
                     form.on("submit", ev => {
                         const targetSetting = "reroll";
@@ -193,8 +207,7 @@ class RerollInitiativeConfig {
                         //Update target setting with new value
                         //todo: this needs to be async. break out into new method?
                         //this.rri.updateOption("reroll", rriCheckboxValue);
-                        settings.targetSetting = rriCheckboxValue;
-                        game.settings.set(RerollInitiative.SETTINGS.module,RerollInitiative.SETTINGS.key,settings);
+                        RerollInitiative.updateSetting(settings.reroll,rriCheckboxValue)
                     });
                 }
             }
@@ -238,11 +251,6 @@ class RerollInitiativeConfig {
             console.log("Couldn't find reroll-initiative checkbox.");
             return;
         }      
-    }
-
-    async _loadSettings() {
-        let settings = await game.settings.get[RerollInitiative.SETTINGS.module,RerollInitiative.SETTINGS.key];
-        return settings;
     }
 }
 
