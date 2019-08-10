@@ -28,7 +28,7 @@ function rerollInitiative() {
     }
 
     //object to hold settings
-    let settings = {};
+    let settings = DEFAULT_CONFIG;
 
     //register settings
     game.settings.register(MODULE_NAME,SETTINGS_NAME,SETTINGS_META);
@@ -54,6 +54,8 @@ function rerollInitiative() {
         const NAME = "rriCheckbox"
         const HINT = "Reroll Initiative for all combatants each round"
         function checked() {
+            console.log(settings);
+            console.log(settings.reroll);
             if(settings.reroll) {
                 return "checked"
             }
@@ -73,9 +75,10 @@ function rerollInitiative() {
         app.setPosition({height: app.position.height + 60});
 
         const form = submit.parent();
-
-        form.on("submit", ev => {
+        //other block vars not passing through? need to see why
+        form.on("submit", (ev) => {
             const input = ev.target.elements.NAME;
+            console.log(input);
 
             if(input) {
                 updateSettings(settings[reroll],input.checked);
