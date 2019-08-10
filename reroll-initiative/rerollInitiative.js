@@ -1,21 +1,31 @@
+/**
+ * @name Reroll-Initiative
+ * @version 0.4
+ * @author Evan Clarke <errational>
+ * @description Rerolls initiative on combat round change
+ */
+
+/**
+ * Hook on game ready and then execute the module function
+ */
 Hooks.on("ready", () => {
     rerollInitiative();
 });
 
+/**
+ * Main module function
+ */
 function rerollInitiative() {
     console.log("RRI Function executing...")
-    //module name
+    
     const MODULE_NAME = "rerollInitiative";
 
-    //default config
     const DEFAULT_CONFIG = {
         reroll: true
     };
 
-    //settings name
     const SETTINGS_NAME = "rriSettings";
 
-    //settings metadata
     const SETTINGS_META = {
         name: "rriSettings",
         scope: "world",
@@ -27,64 +37,90 @@ function rerollInitiative() {
         }
     }
 
-    //object to hold settings
+    //initialise an object to hold settings in memory. assign the default config for now.
     let settings = DEFAULT_CONFIG;
 
-    //register settings
+    //register settings with the game
     game.settings.register(MODULE_NAME,SETTINGS_NAME,SETTINGS_META);
 
-    //update settings
+    /**
+     * Update module settings and save to the game
+     * @param {String} setting 
+     * @param {*} value 
+     */
     async function updateSettings(setting,value) {
         settings[setting] = value;
-        console.log("updating settings:",settings);
+        console.log("Updating rerollInitiative module settings:",settings);
         await game.settings.set(MODULE_NAME,SETTINGS_NAME,settings);
     }
 
-    //hook on combat update
+    /**
+     * Hook on update of Combat class. 
+     * Reroll initiative if requirements met
+     */
     Hooks.on("updateCombat",(async (combat,update) => {
-        if(settings.reroll && combat.round && update.round && update.round > combat.round){
+        const SETTING = "reroll";
+        
+        /**
+         *  firstly is rerolling turned on, 
+         *  then test for the presence of a combat.previous and an update object,
+         *  check that the round props are numbers,
+         *  finally test if the update's round is greater than the previous combat round 
+         */
+         if(settings[SETTING] && (combat.previous && update) && !isNaN(combat.previous.round || update.round) && update.round > combat.previous.round){
             await combat.resetAll();
             combat.rollAll();
         }
     }));
 
-    //hook on combat tracket config render
+    /**
+     * Hook on render of Combat Tracker Config app. 
+     * Inject checkbox formgroup, resize window and add new logic on submit
+     */
     Hooks.on("renderCombatTrackerConfig", (app,html) => {
+        const SETTING = "reroll";
         const LABEL = "Reroll Initiative";
         const NAME = "rriCheckbox"
         const HINT = "Reroll Initiative for all combatants each round"
+
+        //use the current value of the module setting to determine the checkbox state
         function checked() {
-            console.log(settings);
-            console.log(settings.reroll);
-            if(settings.reroll) {
+            if(settings[SETTING]) {
                 return "checked"
+            }
+            else {
+                return ""
             }
         }
 
+        //find the submit button on the form then inject the new checkbox formgroup above it
         const submit = html.find('button[type="submit"]');
 
-        submit.before(
-            `<hr/>
-            <div class="form-group">
-                <label>${LABEL}</label>
-                <input type="checkbox" name=${NAME} data-dtype="Boolean" ${checked()}>
-                <p class=hint>${HINT}</p>
-            </div>`
-        );
-
-        app.setPosition({height: app.position.height + 60});
-
-        const form = submit.parent();
-        //other block vars not passing through? need to see why
-        form.on("submit", (ev) => {
-            const input = ev.target.elements.NAME;
-            console.log(input);
-
-            if(input) {
-                updateSettings(settings[reroll],input.checked);
-            } 
-        });
+        if(submit) {
+            submit.before(
+                `<hr/>
+                <div class="form-group">
+                    <label>${LABEL}</label>
+                    <input type="checkbox" name=${NAME} data-dtype="Boolean" ${checked()}>
+                    <p class=hint>${HINT}</p>
+                </div>`
+            );
+            
+            //resize the window to fit the new elements
+            app.setPosition({height: app.position.height + 60});
+            
+            //find the form then latch onto the submit event to update the module settings    
+            const form = submit.parent();
+    
+            form.on("submit", (ev) => {
+                const input = ev.target.elements[NAME];
+    
+                if(input) {
+                    updateSettings(SETTING,input.checked);
+                } 
+            });
+        }
         
-
+        
     });
 }
