@@ -1,0 +1,11 @@
+{
+    "name": "hide-npc-names",
+    "title": "Hide NPC Combatant Names",
+    "description": "Hides names of NPCs in the Combat Tracker",
+    "version": "0.1",
+    "author": "Evan Clarke (errational)",
+    "scripts": ["hide-npc-names.js"],
+    "styles" : [],
+    "packs": []
+  }
+  
