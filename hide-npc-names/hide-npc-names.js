@@ -17,7 +17,7 @@ function hideNPCNames() {
                 }
                 
             }
-            app._render(true);
+            
         }
     });
     
