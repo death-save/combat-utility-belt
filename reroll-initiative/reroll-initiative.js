@@ -27,13 +27,13 @@ function rerollInitiative() {
     const SETTINGS_NAME = "rriSettings";
 
     const SETTINGS_META = {
-        name: "rriSettings",
+        name: SETTINGS_NAME,
         scope: "world",
         type: Object,
         default: DEFAULT_CONFIG,
         onChange: s => {
             settings = s;
-            console.log("Settings changed to",s);
+            console.log(MODULE_NAME+" settings changed to", s);
         }
     }
 
@@ -41,24 +41,24 @@ function rerollInitiative() {
     let settings = DEFAULT_CONFIG;
 
     //register settings with the game
-    game.settings.register(MODULE_NAME,SETTINGS_NAME,SETTINGS_META);
+    game.settings.register(MODULE_NAME, SETTINGS_NAME, SETTINGS_META);
 
     /**
      * Update module settings and save to the game
      * @param {String} setting 
      * @param {*} value 
      */
-    async function updateSettings(setting,value) {
+    async function updateSettings(setting, value) {
         settings[setting] = value;
-        console.log("Updating rerollInitiative module settings:",settings);
-        await game.settings.set(MODULE_NAME,SETTINGS_NAME,settings);
+        console.log("Updating rerollInitiative module settings:", settings);
+        await game.settings.set(MODULE_NAME, SETTINGS_NAME, settings);
     }
 
     /**
      * Hook on update of Combat class. 
      * Reroll initiative if requirements met
      */
-    Hooks.on("updateCombat",(async (combat,update) => {
+    Hooks.on("updateCombat",(async (combat, update) => {
         const SETTING = "reroll";
         
         /**
@@ -77,7 +77,7 @@ function rerollInitiative() {
      * Hook on render of Combat Tracker Config app. 
      * Inject checkbox formgroup, resize window and add new logic on submit
      */
-    Hooks.on("renderCombatTrackerConfig", (app,html) => {
+    Hooks.on("renderCombatTrackerConfig", (app, html) => {
         const SETTING = "reroll";
         const LABEL = "Reroll Initiative";
         const NAME = "rriCheckbox"
@@ -116,7 +116,7 @@ function rerollInitiative() {
                 const input = ev.target.elements[NAME];
     
                 if(input) {
-                    updateSettings(SETTING,input.checked);
+                    updateSettings(SETTING, input.checked);
                 } 
             });
         }
