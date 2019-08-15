@@ -48,19 +48,30 @@ function hideNPCNames() {
         }
     }
 
+    //initialise settings as object
     let settings = {};
     
-    if(game.settings.get(MODULE_NAME, SETTINGS_NAME)){
-        settings = game.settings.get(MODULE_NAME, SETTINGS_NAME);
+    try {
+        settings = getModuleSettings();
     }
-    else {
-        game.settings.register(MODULE_NAME, SETTINGS_NAME, SETTINGS_META);
-        settings = game.settings.get(MODULE_NAME, SETTINGS_NAME);
-    }
-    
+    catch (e) {
+        if(e.message == "This is not a registered game setting") {
+            registerModuleSettings();
+            settings = getModuleSettings();
+        }
+        else {
+            throw e;
+        }
 
-    //initialise settings based on new game setting
+    }
+
+    function getModuleSettings() {
+        return game.settings.get(MODULE_NAME, SETTINGS_NAME);
+    }
     
+    function registerModuleSettings() {
+        game.settings.register(MODULE_NAME, SETTINGS_NAME, SETTINGS_META);
+    }    
     
     /**
      * Update module settings and save to the game
