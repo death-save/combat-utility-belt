@@ -36,18 +36,27 @@ function rerollInitiative() {
         }
     }
 
-    //initialise an object to hold settings in memory.
-    let settings = {};
+    try {
+        settings = getModuleSettings();
+    }
+    catch (e) {
+        if(e.message == "This is not a registered game setting") {
+            registerModuleSettings();
+            settings = getModuleSettings();
+        }
+        else {
+            throw e;
+        }
 
-    //if the game settings already include module settings, assign them to settings
-    if(game.settings.get(MODULE_NAME, SETTINGS_NAME)) {
-        settings = game.settings.get(MODULE_NAME, SETTINGS_NAME);
     }
-    //else register settings with the game then assign them to settings
-    else {
+
+    function getModuleSettings() {
+        return game.settings.get(MODULE_NAME, SETTINGS_NAME);
+    }
+    
+    function registerModuleSettings() {
         game.settings.register(MODULE_NAME, SETTINGS_NAME, SETTINGS_META);
-        settings = game.settings.get(MODULE_NAME, SETTINGS_NAME);
-    }
+    }    
 
     /**
      * Update module settings and save to the game
