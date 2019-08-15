@@ -16,9 +16,8 @@ Hooks.on("ready", () => {
  * Main module function
  */
 function rerollInitiative() {
-    console.log("reroll-initiative starting up...")
-    
     const MODULE_NAME = "reroll-initiative";
+    console.log(MODULE_NAME + " starting.");
 
     const DEFAULT_CONFIG = {
         reroll: true
@@ -32,16 +31,23 @@ function rerollInitiative() {
         type: Object,
         default: DEFAULT_CONFIG,
         onChange: s => {
-            settings = s;
+            //settings = s;
             console.log(MODULE_NAME+" settings changed to", s);
         }
     }
 
-    //initialise an object to hold settings in memory. assign the default config for now.
-    let settings = DEFAULT_CONFIG;
+    //initialise an object to hold settings in memory.
+    let settings = {};
 
-    //register settings with the game
-    game.settings.register(MODULE_NAME, SETTINGS_NAME, SETTINGS_META);
+    //if the game settings already include module settings, assign them to settings
+    if(game.settings.get(MODULE_NAME, SETTINGS_NAME)) {
+        settings = game.settings.get(MODULE_NAME, SETTINGS_NAME);
+    }
+    //else register settings with the game then assign them to settings
+    else {
+        game.settings.register(MODULE_NAME, SETTINGS_NAME, SETTINGS_META);
+        settings = game.settings.get(MODULE_NAME, SETTINGS_NAME);
+    }
 
     /**
      * Update module settings and save to the game
@@ -50,7 +56,7 @@ function rerollInitiative() {
      */
     async function updateSettings(setting, value) {
         settings[setting] = value;
-        console.log("Updating rerollInitiative module settings:", settings);
+        console.log("Updating " + MODULE_NAME + " settings:", settings);
         await game.settings.set(MODULE_NAME, SETTINGS_NAME, settings);
     }
 
