@@ -1,0 +1,10 @@
+{
+  "name": "combat-utility-belt",
+  "title": "Combat Utility Belt",
+  "description": "Adds some additional functionality in combat",
+  "version": "0.1",
+  "author": "Evan Clarke [errational]",
+  "scripts": ["combat-utility-belt.js"],
+  "styles" : [],
+  "packs": []
+}
