@@ -4,6 +4,7 @@ function cubGetModuleName () {
 
 Hooks.on("ready",  function() {
 	//invoke the functions in turn
+	cubConfigSidekick();
 	cubRerollInitiative();
 	cubHideNPCNames();
 }); 
@@ -11,7 +12,7 @@ Hooks.on("ready",  function() {
 
 /**
  * required functions:
- * 1. settings helper
+ * 1. settings helpercub
  * 2. reroll initiative
  * 3. hide npc names
  * 4. enhanced conditions
@@ -24,7 +25,9 @@ Hooks.on("ready",  function() {
  */
 //
 function cubConfigSidekick () {
+	console.log("cubConfigSidekick initializing")
 	const MODULE_NAME = cubGetModuleName();
+	console.log("Module name is:",MODULE_NAME);
 
 	function registerGadgetSettings(gadget, settings) {
 		game.settings.register(MODULE_NAME, gadget, settings);
@@ -35,15 +38,20 @@ function cubConfigSidekick () {
 	}
 
 	function initGadgetSettings(gadget, settings) {
+		console.log("inc gadget name:",gadget);
+		console.log("inc gadget metadata:",settings);
 		let config;
 
 		try {
-			config = cubConfigSidekick.getGadgetSettings(MODULE_NAME, gadget);
+			config = getGadgetSettings(MODULE_NAME, gadget);
+			console.log("config found:", config);
 		}
 		catch (e) {
 			if(e.message == "This is not a registered game setting") {
-				cubConfigSidekick.registerModuleSettings(MODULE_NAME, gadget, settings);
-				config = cubConfigSidekick.getGadgetSettings(MODULE_NAME, gadget);
+				console.log("Setting not registered... trying to register");
+				registerGadgetSettings(gadget, settings);
+				config = getGadgetSettings(MODULE_NAME, gadget);
+				console.log("config after reg: ",config);
 			}
 			else {
 				throw e;
@@ -51,7 +59,9 @@ function cubConfigSidekick () {
 	
 		}
 		finally {
+			console.log(config);
 			return config;
+			
 		} 
 	}
 
@@ -64,7 +74,11 @@ function cubConfigSidekick () {
         settings[setting] = value;
         console.log("Updating " + GADGET_NAME + " settings:", settings);
         await game.settings.set(GADGET_NAME, SETTINGS_NAME, settings);
-    }
+	}
+	
+	cubConfigSidekick.initGadgetSettings = initGadgetSettings;
+	cubConfigSidekick.getGadgetSettings = getGadgetSettings;
+	cubConfigSidekick.registerGadgetSettings = registerGadgetSettings;
 
 }
 
@@ -72,7 +86,9 @@ function cubConfigSidekick () {
  * Rerolls initiative for all combatants
  */
 function cubRerollInitiative() {
+	console.log("cubRerollInitiative initialising");
 	const MODULE_NAME = cubGetModuleName();
+	console.log("Module name is: ",MODULE_NAME);
 
 	const GADGET_NAME = "reroll-initiative";
 
@@ -94,16 +110,16 @@ function cubRerollInitiative() {
             console.log(GADGET_NAME+" settings changed to", s);
         }
 	}
-	
+	console.log(cubConfigSidekick);
 	//intialise settings
 	let settings = cubConfigSidekick.initGadgetSettings(GADGET_NAME, SETTINGS_META);
+	console.log(settings);
 
     /**
      * Hook on update of Combat class. 
      * Reroll initiative if requirements met
      */
     Hooks.on("updateCombat",(async (combat, update) => {
-        const SETTING = "reroll";
         
         /**
          *  firstly is the specified module setting turned on (eg. is rerolling enabled), 
@@ -120,7 +136,9 @@ function cubRerollInitiative() {
 
 //hide npc names
 function cubHideNPCNames() {
+	console.log("cubHideNPCNames initialising");
 	const MODULE_NAME = cubGetModuleName();
+	console.log("Module name is: ",MODULE_NAME);
 
     const GADGET_NAME = "hide-npc-names";
 
@@ -143,6 +161,7 @@ function cubHideNPCNames() {
 
 	//intialise settings
 	let settings = cubConfigSidekick.initGadgetSettings(GADGET_NAME, SETTINGS_META);
+	console.log(settings);
 
     //hook on combat render
     Hooks.on("renderCombatTracker", (app,html) => {
