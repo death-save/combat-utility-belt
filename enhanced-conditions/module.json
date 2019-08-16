@@ -1,0 +1,10 @@
+{
+  "name": "enhanced-conditions",
+  "title": "Enhanced Conditions",
+  "description": "Attaches conditions to token status icons",
+  "version": "0.0.1",
+  "author": "Evan Clarke (errational)",
+  "scripts": ["enhanced-conditions.js"],
+  "styles" : ["dnd5e"],
+  "packs": []
+}
