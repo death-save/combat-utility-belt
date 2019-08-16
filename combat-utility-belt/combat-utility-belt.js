@@ -1,3 +1,7 @@
+function cubGetModuleName () {
+	return "combat-utility-belt";
+}
+
 Hooks.on("ready",  function() {
 	//invoke the functions in turn
 }); 
@@ -16,18 +20,61 @@ Hooks.on("ready",  function() {
  * maybe include gadget as the param for this
  * the purpose of this function is to register, get and set settings for each gadget
  */
- function cubConfigSidekick (gadget) {
+//
+function cubConfigSidekick () {
+	const MODULE_NAME = cubGetModuleName();
+
+	function registerGadgetSettings(gadget, settings) {
+		game.settings.register(MODULE_NAME, gadget, settings);
+	}
+
+	function getGadgetSettings(gadget) {
+		return game.settings.get(MODULE_NAME, gadget);
+	}
+
+	function initGadgetSettings(gadget, settings) {
+		let config;
+
+		try {
+			config = cubConfigSidekick.getGadgetSettings(MODULE_NAME, gadget);
+		}
+		catch (e) {
+			if(e.message == "This is not a registered game setting") {
+				cubConfigSidekick.registerModuleSettings(MODULE_NAME, gadget, settings);
+				config = cubConfigSidekick.getGadgetSettings(MODULE_NAME, gadget);
+			}
+			else {
+				throw e;
+			}
+	
+		}
+		finally {
+			return config;
+		} 
+	}
+
+	/**
+     * (NB: probably deprecated now.) Update module settings and save to the game
+     * @param {String} setting 
+     * @param {*} value 
+     */
+    async function setGadgetSettings(gadget, setting, value) {
+        settings[setting] = value;
+        console.log("Updating " + GADGET_NAME + " settings:", settings);
+        await game.settings.set(GADGET_NAME, SETTINGS_NAME, settings);
+    }
 
 }
 
-//reroll initiative
+/**
+ * Rerolls initiative for all combatants
+ */
 function cubRerollInitiative() {
-    const FUNCTION_NAME = "reroll-initiative";
-    console.log(FUNCTION_NAME + " starting.");
+	const MODULE_NAME = cubGetModuleName();
 
-    let settings = {};
+	const GADGET_NAME = "reroll-initiative";
 
-    const DEFAULT_CONFIG = true;
+	const DEFAULT_CONFIG = true;
 
     const SETTINGS_NAME = "Reroll Initiative";
 
@@ -42,42 +89,12 @@ function cubRerollInitiative() {
         config: true,
         onChange: s => {
             settings = s;
-            console.log(FUNCTION_NAME+" settings changed to", s);
+            console.log(GADGET_NAME+" settings changed to", s);
         }
-    }
-
-    try {
-        settings = getModuleSettings();
-    }
-    catch (e) {
-        if(e.message == "This is not a registered game setting") {
-            registerModuleSettings();
-            settings = getModuleSettings();
-        }
-        else {
-            throw e;
-        }
-
-    }
-
-    function getModuleSettings() {
-        return game.settings.get(FUNCTION_NAME, SETTINGS_NAME);
-    }
-    
-    function registerModuleSettings() {
-        game.settings.register(FUNCTION_NAME, SETTINGS_NAME, SETTINGS_META);
-    }    
-
-    /**
-     * Update module settings and save to the game
-     * @param {String} setting 
-     * @param {*} value 
-     */
-    async function updateSettings(setting, value) {
-        settings[setting] = value;
-        console.log("Updating " + FUNCTION_NAME + " settings:", settings);
-        await game.settings.set(FUNCTION_NAME, SETTINGS_NAME, settings);
-    }
+	}
+	
+	//intialise settings
+	let settings = cubConfigSidekick.initGadgetSettings(GADGET_NAME, SETTINGS_META);
 
     /**
      * Hook on update of Combat class. 
@@ -98,7 +115,50 @@ function cubRerollInitiative() {
         }
 	}));
 }
+
 //hide npc names
+function cubHideNPCNames() {
+	const MODULE_NAME = cubGetModuleName();
+
+    const GADGET_NAME = "hide-npc-names";
+
+    const SETTINGS_NAME = "Hide NPC Names";
+
+    const DEFAULT_CONFIG = false;
+
+    const SETTINGS_META = {
+        name: SETTINGS_NAME,
+        scope: "world",
+        type: Boolean,
+		default: DEFAULT_CONFIG,
+		config: true,
+        onChange: s => {
+            console.log(GADGET_NAME+" settings changed. New settings:", s);
+            settings = s;
+        }
+    }
+
+
+	//intialise settings
+	let settings = cubConfigSidekick.initGadgetSettings(GADGET_NAME, SETTINGS_META);
+
+    //hook on combat render
+    Hooks.on("renderCombatTracker", (app,html) => {
+        // if not GM
+        if(!game.user.isGM) {
+            //for each combatant
+            for(let t of app.getData().turns) {
+                //if not PC, module is enabled, and token disposition matches settings
+                if(!t.actor.isPC && settings) {
+                    //name = ""
+                    t.name = "";
+                }
+                
+            }
+            
+        }
+	});
+}
 
 //enhanced conditions
 
