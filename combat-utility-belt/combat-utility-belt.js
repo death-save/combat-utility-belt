@@ -4,6 +4,8 @@ function cubGetModuleName () {
 
 Hooks.on("ready",  function() {
 	//invoke the functions in turn
+	cubRerollInitiative();
+	cubHideNPCNames();
 }); 
 
 
