@@ -1,16 +1,29 @@
-console.log("lol javascript module, you can put classes and what not too..");
-
 Hooks.on("ready",  function() {
-	console.log("this is shown after the ready hook is invoked, when all elements are currently loaded (canvas/sidebars etc...)"); 
+	//invoke the functions in turn
 }); 
 
 
 /**
- * you can technically do whatever after,
- * see onHooks examples from other modules, currently
- * the docs are super basic. This example class
- * declartion is optional even.
+ * required functions:
+ * 1. settings helper
+ * 2. reroll initiative
+ * 3. hide npc names
+ * 4. enhanced conditions
  */
-class MyApplication extends Application {
+
+
+/**
+ * maybe include gadget as the param for this
+ * the purpose of this function is to register, get and set settings for each gadget
+ */
+ function cubConfigSidekick (gadget) {
 
 }
+
+//reroll initiative
+
+//hide npc names
+
+//enhanced conditions
+
+//auto bloodied and dead
