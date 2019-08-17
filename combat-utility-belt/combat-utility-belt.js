@@ -166,7 +166,7 @@ function cubHideNPCNames() {
 	console.log("hnn settings are:",settings);
 
 	//hook on combat render
-	//TODO: add hook for sidebar tab render
+	//TODO: add hook for sidebar tab first render -- need to hook on init instead of ready!
     Hooks.on("renderCombatTracker", (app,html) => {
         // if not GM
         if(!game.user.isGM) {
