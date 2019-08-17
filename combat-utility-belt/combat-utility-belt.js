@@ -6,9 +6,11 @@ Hooks.on("ready",  function() {
 	//invoke the functions in turn
 	cubConfigSidekick();
 	cubRerollInitiative();
-	cubHideNPCNames();
+	//cubHideNPCNames();
 }); 
-
+Hooks.on("init", function() {
+	cubHideNPCNames();
+})
 
 /**
  * required functions:
@@ -204,3 +206,37 @@ function cubHideNPCNames() {
 //enhanced conditions
 
 //auto bloodied and dead
+function cubInjuredAndDead() {
+	const GADGET_NAME = "injured-and-dead";
+
+	const SETTINGS_NAME = "Mark Injured Tokens";
+
+	const SETTINGS_HINT = "Set status markers on tokens based on HP threshold";
+
+	const SETTINGS_META = {
+		name: SETTINGS_NAME,
+		hint: SETTINGS_HINT,
+		default: DEFAULT_CONFIG,
+		scope: "world",
+		type: Boolean,
+		config: true,
+		onChange: s => {
+			settings = s;
+		}
+
+	}
+
+	let settings = cubConfigSidekick.initGadgetSettings(GADGET_NAME, SETTINGS_META);
+
+	//hook on token update
+	Hooks.on("updateToken", (token,update) => {
+		const maxHP = token.data.hpMax;
+		
+		//if hp less than threshold
+		if(update.data.hp < (maxHP*threshold)) {
+			
+		}
+	//set status effect on token
+	});
+	
+}
