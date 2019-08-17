@@ -175,14 +175,20 @@ function cubHideNPCNames() {
             //for each combatant
             for(let e of combatantListElement) {
                 let token = game.scenes.active.data.tokens.find(t => t.id == e.dataset.tokenId);
-                //if not PC, module is enabled, and token disposition matches settings
+                
                 let actor = game.actors.entities.find(a => a.id === token.actorId);
+
+                //if not PC, module is enabled
                 if(!actor.isPC && settings) {
-                    //name = ""
-					let flexcol = e.getElementsByClassName("token-name");
+                    //find the flexcol elements
+                    let flexcol = e.getElementsByClassName("token-name");
+                    //iterate through the returned elements
 					for(let f of flexcol){
-						let header = f.getElementsByTagName("H4");
+                        //find the h4 elements
+                        let header = f.getElementsByTagName("H4");
+                        //iterate through
 						for(let h of header){
+                            //blank out the name
 							h.textContent = "";
 						}
 					}
@@ -192,7 +198,7 @@ function cubHideNPCNames() {
             }
             
         }
-	});
+    });
 }
 
 //enhanced conditions
