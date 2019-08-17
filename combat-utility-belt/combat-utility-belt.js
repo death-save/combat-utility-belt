@@ -43,14 +43,14 @@ function cubConfigSidekick () {
 		let config;
 
 		try {
-			config = getGadgetSettings(MODULE_NAME, gadget);
+			config = getGadgetSettings(gadget);
 			console.log("config found:", config);
 		}
 		catch (e) {
 			if(e.message == "This is not a registered game setting") {
 				console.log("Setting not registered... trying to register");
 				registerGadgetSettings(gadget, settings);
-				config = getGadgetSettings(MODULE_NAME, gadget);
+				config = getGadgetSettings(gadget);
 				console.log("config after reg: ",config);
 			}
 			else {
@@ -113,7 +113,7 @@ function cubRerollInitiative() {
 	console.log(cubConfigSidekick);
 	//intialise settings
 	let settings = cubConfigSidekick.initGadgetSettings(GADGET_NAME, SETTINGS_META);
-	console.log(settings);
+	console.log("rri settings:",settings);
 
     /**
      * Hook on update of Combat class. 
@@ -163,9 +163,10 @@ function cubHideNPCNames() {
 
 	//intialise settings
 	let settings = cubConfigSidekick.initGadgetSettings(GADGET_NAME, SETTINGS_META);
-	console.log(settings);
+	console.log("hnn settings are:",settings);
 
-    //hook on combat render
+	//hook on combat render
+	//TODO: add hook for sidebar tab render
     Hooks.on("renderCombatTracker", (app,html) => {
         // if not GM
         if(!game.user.isGM) {
@@ -178,8 +179,14 @@ function cubHideNPCNames() {
                 let actor = game.actors.entities.find(a => a.id === token.actorId);
                 if(!actor.isPC && settings) {
                     //name = ""
-                    let header = e.find('h4');
-                    header.textContent = "";
+					let flexcol = e.getElementsByClassName("token-name");
+					for(let f of flexcol){
+						let header = f.getElementsByTagName("H4");
+						for(let h of header){
+							h.textContent = "";
+						}
+					}
+
                 }
                 
             }
