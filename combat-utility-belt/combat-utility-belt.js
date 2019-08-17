@@ -144,10 +144,13 @@ function cubHideNPCNames() {
 
     const SETTINGS_NAME = "Hide NPC Names";
 
+    const SETTINGS_HINT = "Hides NPC names in the Combat Tracker."
+
     const DEFAULT_CONFIG = false;
 
     const SETTINGS_META = {
         name: SETTINGS_NAME,
+        hint: SETTINGS_HINT,
         scope: "world",
         type: Boolean,
 		default: DEFAULT_CONFIG,
@@ -158,7 +161,6 @@ function cubHideNPCNames() {
         }
     }
 
-
 	//intialise settings
 	let settings = cubConfigSidekick.initGadgetSettings(GADGET_NAME, SETTINGS_META);
 	console.log(settings);
@@ -167,12 +169,17 @@ function cubHideNPCNames() {
     Hooks.on("renderCombatTracker", (app,html) => {
         // if not GM
         if(!game.user.isGM) {
+            let combatantListElement = html.find('li');
+
             //for each combatant
-            for(let t of app.getData().turns) {
+            for(let e of combatantListElement) {
+                let token = game.scenes.active.data.tokens.find(t => t.id == e.dataset.tokenId);
                 //if not PC, module is enabled, and token disposition matches settings
-                if(!t.actor.isPC && settings) {
+                let actor = game.actors.entities.find(a => a.id === token.actorId);
+                if(!actor.isPC && settings) {
                     //name = ""
-                    t.name = "";
+                    let header = e.find('h4');
+                    header.textContent = "";
                 }
                 
             }
