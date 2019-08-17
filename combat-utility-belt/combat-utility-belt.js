@@ -2,15 +2,17 @@ function cubGetModuleName () {
 	return "combat-utility-belt";
 }
 
+Hooks.on("init", function() {
+	cubHideNPCNames();
+})
+
 Hooks.on("ready",  function() {
 	//invoke the functions in turn
 	cubConfigSidekick();
 	cubRerollInitiative();
 	//cubHideNPCNames();
 }); 
-Hooks.on("init", function() {
-	cubHideNPCNames();
-})
+
 
 /**
  * required functions:
@@ -209,34 +211,74 @@ function cubHideNPCNames() {
 function cubInjuredAndDead() {
 	const GADGET_NAME = "injured-and-dead";
 
-	const SETTINGS_NAME = "Mark Injured Tokens";
-
-	const SETTINGS_HINT = "Set status markers on tokens based on HP threshold";
-
-	const SETTINGS_META = {
-		name: SETTINGS_NAME,
-		hint: SETTINGS_HINT,
-		default: DEFAULT_CONFIG,
-		scope: "world",
-		type: Boolean,
-		config: true,
-		onChange: s => {
-			settings = s;
-		}
-
+	const SETTINGS = {
+		InjuredN: "Mark Injured Tokens",
+		InjuredH: "Sets a status marker on tokens that meet the threshold below",
+		ThresholdN: "Injured Token Threshold",
+		ThresholdH: "Enter the percentage of HP lost when a token should be considered injured",
+		DeadN: "Mark Dead Tokens",
+		DeadH: "Sets a status marker on tokens that reach 0 hp"
 	}
 
-	let settings = cubConfigSidekick.initGadgetSettings(GADGET_NAME, SETTINGS_META);
+	const DEFAULT_CONFIG = {
+		Injured: false,
+		Threshold: 0.5,
+		Dead: false
+	}
+
+	const SETTINGS_META = {
+		Injured: {
+			name: SETTINGS_NAME,
+			hint: SETTINGS_HINT,
+			default: DEFAULT_CONFIG.Injured,
+			scope: "world",
+			type: Boolean,
+			config: true,
+			onChange: s => {
+				injured = s;
+			}
+
+		},
+		Threshold: {
+			name: ThresholdN,
+			hint: ThresholdH,
+			default: DEFAULT_CONFIG.Threshold,
+			scope: "world",
+			type: Number,
+			config: true,
+			onChange: s => {
+				threshold = s;
+			}
+		},
+		Dead: {
+			name: DeadN,
+			hint: DeadH,
+			default: DEFAULT_CONFIG.Dead,
+			scope: "world",
+			type: Boolean,
+			config: true,
+			onChange: s => {
+				dead = s;
+			}
+		}
+	}
+
+	let injured = cubConfigSidekick.initGadgetSettings(GADGET_NAME, SETTINGS_META.Injured);
+	let threshold = cubConfigSidekick.initGadgetSettings(GADGET_NAME, SETTINGS_META.Threshold);
+	let dead = cubConfigSidekick.initGadgetSettings(GADGET_NAME, SETTINGS_META.Dead);
 
 	//hook on token update
 	Hooks.on("updateToken", (token,update) => {
 		const maxHP = token.data.hpMax;
 		
-		//if hp less than threshold
-		if(update.data.hp < (maxHP*threshold)) {
+		//if hp = 0 mark as dead
+		if(dead && update.data.hp == 0){
+			//set status effect on token
+		} else if(injured && update.data.hp < (maxHP*threshold)) {
+			//set status effect on token
 			
 		}
-	//set status effect on token
+	
 	});
 	
 }
