@@ -3,14 +3,16 @@ function cubGetModuleName () {
 }
 
 Hooks.on("init", function() {
+	cubConfigSidekick();
 	cubHideNPCNames();
 })
 
 Hooks.on("ready",  function() {
 	//invoke the functions in turn
-	cubConfigSidekick();
+	//cubConfigSidekick();
 	cubRerollInitiative();
 	//cubHideNPCNames();
+	cubInjuredAndDead();
 }); 
 
 
@@ -114,7 +116,6 @@ function cubRerollInitiative() {
             console.log(GADGET_NAME+" settings changed to", s);
         }
 	}
-	console.log(cubConfigSidekick);
 	//intialise settings
 	let settings = cubConfigSidekick.initGadgetSettings(GADGET_NAME, SETTINGS_META);
 	console.log("rri settings:",settings);
@@ -228,8 +229,8 @@ function cubInjuredAndDead() {
 
 	const SETTINGS_META = {
 		Injured: {
-			name: SETTINGS_NAME,
-			hint: SETTINGS_HINT,
+			name: SETTINGS.InjuredN,
+			hint: SETTINGS.InjuredH,
 			default: DEFAULT_CONFIG.Injured,
 			scope: "world",
 			type: Boolean,
@@ -240,8 +241,8 @@ function cubInjuredAndDead() {
 
 		},
 		Threshold: {
-			name: ThresholdN,
-			hint: ThresholdH,
+			name: SETTINGS.ThresholdN,
+			hint: SETTINGS.ThresholdH,
 			default: DEFAULT_CONFIG.Threshold,
 			scope: "world",
 			type: Number,
@@ -251,8 +252,8 @@ function cubInjuredAndDead() {
 			}
 		},
 		Dead: {
-			name: DeadN,
-			hint: DeadH,
+			name: SETTINGS.DeadN,
+			hint: SETTINGS.DeadH,
 			default: DEFAULT_CONFIG.Dead,
 			scope: "world",
 			type: Boolean,
@@ -268,13 +269,14 @@ function cubInjuredAndDead() {
 	let dead = cubConfigSidekick.initGadgetSettings(GADGET_NAME, SETTINGS_META.Dead);
 
 	//hook on token update
-	Hooks.on("updateToken", (token,update) => {
+	Hooks.on("updateToken", (token,sceneid,update) => {
+		console.log(token,sceneid,update);
 		const maxHP = token.data.hpMax;
 		
 		//if hp = 0 mark as dead
 		if(dead && update.data.hp == 0){
 			//set status effect on token
-		} else if(injured && update.data.hp < (maxHP*threshold)) {
+		} else if(injured && update.actorData.attributes.hp.value < (maxHP*threshold)) {
 			//set status effect on token
 			
 		}
