@@ -17,16 +17,6 @@ Hooks.on("ready",  function() {
 
 
 /**
- * required functions:
- * 1. settings helpercub
- * 2. reroll initiative
- * 3. hide npc names
- * 4. enhanced conditions
- */
-
-
-/**
- * maybe include gadget as the param for this
  * the purpose of this function is to register, get and set settings for each gadget
  */
 //
@@ -321,7 +311,7 @@ function cubInjuredAndDead() {
                 }
             }
         //if injured tracking is enabled and the current hp is less than the maxHP * the decimal version of the threshold
-		} else if(!linked && injured && update.actorData && update.actorData.data.attributes.hp.value < (maxHP*(threshold/100))) {
+		} else if(!linked && injured && update.actorData && update.actorData.data.attributes.hp.value < (maxHP*(threshold/100)) && !token.data.effects.find(e => e = injuredIcon)) {
 			//set status effect on token
             token.toggleEffect(injuredIcon);
             //if the dead tracking is enabled and the token has an overlay, remove the dead overlay
@@ -344,43 +334,44 @@ function cubInjuredAndDead() {
 	
     });
     
-    Hooks.on("updateActor", (actor,update) => {
+    Hooks.on("updateActor", async (actor,update) => {
         console.log(actor, update);
         const maxHP = actor.data.data.attributes.hp.max;
         let token = canvas.tokens.placeables.find(t => t.actor.id == actor.id);
-        
+
+        console.log(token);
+
 		//if hp = 0 mark as dead
-		if(dead && update["data.attributes.hp.value"] && update["data.attributes.hp.value"] == 0){
+		if(dead && update["data.attributes.hp.value"] == 0){
             //set death overlay on token
-            token.toggleOverlay(deadIcon);
+            await token.toggleOverlay(deadIcon);
             //if the token has effects, remove them
             if(token.data.effects.length > 0) {
                 for(let e of token.data.effects) {
-                    token.toggleEffect(e);
+                    await token.toggleEffect(e);
                 }
             }
         //if injured tracking is enabled and the current hp is less than the maxHP * the decimal version of the threshold
-		} else if(injured && update["data.attributes.hp.value"] && update["data.attributes.hp.value"] < (maxHP*(threshold/100))) {
+		} else if(injured && update["data.attributes.hp.value"] <= (maxHP*(threshold/100)) && !token.data.effects.find(e => e = injuredIcon)) {
 			//set status effect on token
-            token.toggleEffect(injuredIcon);
+            await token.toggleEffect(injuredIcon);
             //if the dead tracking is enabled and the token has an overlay, remove the dead overlay
             if(dead && token.data.overlayEffect && token.data.overlayEffect == deadIcon) {
-                token.toggleOverlay(deadIcon);
+                await token.toggleOverlay(deadIcon);
             }
 
         //if injured tracking is enabled and the current hp is greater than the maxHP * the decimal version of the threshold
-		} else if(injured && update["data.attributes.hp.value"] && update["data.attributes.hp.value"] > (maxHP*(threshold/100))) {
+		} else if(injured && update["data.attributes.hp.value"] > (maxHP*(threshold/100))) {
             //if the token has the injured icon, remove it
             if(injured && token.data.effects && token.data.effects.length > 0 && token.data.effects.find(e => e = injuredIcon)) {
-                token.toggleEffect(injuredIcon);
+                await token.toggleEffect(injuredIcon);
             }
 
             //if the token has the dead icon, remove it
             if(dead && token.data.overlayEffect && token.data.overlayEffect == deadIcon) {
-                token.toggleOverlay(deadIcon);
+                await token.toggleOverlay(deadIcon);
             }
         }
-
-    })
+    });
 	
 }
