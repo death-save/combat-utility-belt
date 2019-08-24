@@ -4,6 +4,9 @@
         "target": "es2016",
         "jsx": "preserve"
     },
+    "include": [
+        "foundry.js"
+    ],
     "exclude": [
         "node_modules",
         "**/node_modules/*"
