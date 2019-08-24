@@ -1,0 +1,24 @@
+<form autocomplete="off" onsubmit="event.preventDefault();">
+<h2>Condition Status Icon Assignment</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Condition</th>
+            <th>Status Icon</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{#each conditionmap}}
+        <tr>
+            <td>{{@key}}</td>
+            <td><input type="text" name="icon" title="Status Icon" value="{{this}}" placeholder="/icons/example.svg"></td>
+        </tr>
+        {{/each}}
+    </tbody>
+</table>
+
+<button type="submit" name="submit">
+    <i class="far fa-save"></i> Save URL
+</button>
+
+</form>

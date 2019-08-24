@@ -20,20 +20,20 @@ Hooks.on("ready",  function() {
  * the purpose of this function is to register, get and set settings for each gadget
  */
 //
-function cubConfigSidekick () {
-	console.log("cubConfigSidekick initializing")
-	const MODULE_NAME = cubGetModuleName();
-	console.log("Module name is:",MODULE_NAME);
+class CUBConfigSidekick  {
+    constructor(){
+        this.MODULE_NAME = cubGetModuleName();
+    }
 
-	function registerGadgetSettings(gadget, settings) {
+	registerGadgetSettings(gadget, settings) {
 		game.settings.register(MODULE_NAME, gadget, settings);
 	}
 
-	function getGadgetSettings(gadget) {
+	getGadgetSettings(gadget) {
 		return game.settings.get(MODULE_NAME, gadget);
 	}
 
-	function initGadgetSettings(gadget, settings) {
+	initGadgetSettings(gadget, settings) {
 		console.log("inc gadget name:",gadget);
 		console.log("inc gadget metadata:",settings);
 		let config;
@@ -44,20 +44,15 @@ function cubConfigSidekick () {
 		}
 		catch (e) {
 			if(e.message == "This is not a registered game setting") {
-				console.log("Setting not registered... trying to register");
 				registerGadgetSettings(gadget, settings);
 				config = getGadgetSettings(gadget);
-				console.log("config after reg: ",config);
 			}
 			else {
 				throw e;
 			}
-	
 		}
 		finally {
-			console.log(config);
 			return config;
-			
 		} 
 	}
 
@@ -66,7 +61,7 @@ function cubConfigSidekick () {
      * @param {String} setting 
      * @param {*} value 
      */
-    async function setGadgetSettings(gadget, setting, value) {
+    async setGadgetSettings(gadget, setting, value) {
         settings[setting] = value;
         console.log("Updating " + GADGET_NAME + " settings:", settings);
         await game.settings.set(GADGET_NAME, SETTINGS_NAME, settings);
