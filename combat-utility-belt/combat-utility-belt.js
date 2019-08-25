@@ -525,9 +525,9 @@ class CUBEnhancedConditionsConfig extends FormApplication {
 class CUBInjuredAndDead {
     constructor(){
         this.MODULE_NAME = cubGetModuleName();
-        this.GADGET_NAME = CUBEnhancedConditions.GADGET_NAME;
     }
-	static get GADGET_NAME() {
+    
+	get GADGET_NAME() {
         return "injured-and-dead";
     } 
 
