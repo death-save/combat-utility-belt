@@ -1,3 +1,6 @@
+var cubEnhancedConditions;
+
+
 function cubGetModuleName () {
 	return "combat-utility-belt";
 }
@@ -11,7 +14,7 @@ Hooks.on("ready",  function() {
 	//invoke the functions in turn
 	const cubRerollInitiative = new CUBRerollInitiative();
     const cubInjuredAndDead = new CUBInjuredAndDead();
-    const cubEnhancedConditions = new CUBEnhancedConditions();
+    cubEnhancedConditions = new CUBEnhancedConditions();
     CUBEnhancedConditionsConfig._createSidebarButton();
 }); 
 
@@ -202,9 +205,9 @@ class CUBHideNPCNames {
 class CUBEnhancedConditions {
     constructor(){
         this.MODULE_NAME = cubGetModuleName();
-
     }
-    static get GADGET_NAME() {
+
+    get GADGET_NAME() {
         return "enhanced-conditions";
     }
 
@@ -228,8 +231,8 @@ class CUBEnhancedConditions {
         SystemH: "Game System to use for condition mapping",
         OutputChatN: "Output to Chat",
         OutputChatH: "Output matched conditions to chat",
-        ConditionN: "Conditions",
-        ConditionH: "List of conditions for the game system",
+        ConditionsN: "Conditions",
+        ConditionsH: "List of conditions for the game system",
         MapN: "Condition Map",
         MapH: "Map of conditions to icons"
     }
@@ -237,7 +240,7 @@ class CUBEnhancedConditions {
     SETTINGS_META = {
         enhancedConditions: {
             name: this.SETTINGS.EnhancedConditionsN,
-            hint: this.SETTNGSS.EnhancedConditionsH,
+            hint: this.SETTINGS.EnhancedConditionsH,
             scope: "world",
             type: Boolean,
             default: false,
@@ -248,8 +251,8 @@ class CUBEnhancedConditions {
         },
 
         system: {
-            name: this.SystemN,
-            hint: this.SystemH,
+            name: this.SETTINGS.SystemN,
+            hint: this.SETTINGS.SystemH,
             scope: "world",
             type: String,
             default: this.DEFAULT_CONFIG.system,
@@ -259,8 +262,8 @@ class CUBEnhancedConditions {
         },
 
         conditions: {
-            name: this.ConditionsN,
-            hint: this.ConditionsH,
+            name: this.SETTINGS.ConditionsN,
+            hint: this.SETTINGS.ConditionsH,
             scope: "world",
             type: Object,
             default: this.DEFAULT_CONDITIONS_5E,
@@ -270,8 +273,8 @@ class CUBEnhancedConditions {
         },
 
         map: {
-            name: this.MapN,
-            hint: this.MapH,
+            name: this.SETTINGS.MapN,
+            hint: this.SETTINGS.MapH,
             scope: "world",
             type: Object,
             default: this.DEFAULT_CONDITION_MAP_5E,
@@ -281,8 +284,8 @@ class CUBEnhancedConditions {
         },
 
         outputChat: {
-            name: this.OutputChatN,
-            hint: this.OutputChatH,
+            name: this.SETTINGS.OutputChatN,
+            hint: this.SETTINGS.OutputChatH,
             scope: "world",
             type: Boolean,
             default: this.DEFAULT_CONFIG.outputChat,
@@ -340,10 +343,10 @@ class CUBEnhancedConditions {
     }
 
     settings = {
-        system: cubConfigSidekick.initGadgetSettings(this.GADGET_NAME + "(" + this.SETTINGS.SystemN + ")", this.SETTINGS_META.system ),
-        conditions: cubConfigSidekick.initGadgetSettings(this.GADGET_NAME + "(" + this.SETTINGS.ConditionsN + ")", this.SETTINGS_META.conditions),
-        map: cubConfigSidekick.initGadgetSettings(this.GADGET_NAME + "(" + this.SETTINGS.MapN + ")", this.SETTINGS_META.map),
-        output: cubConfigSidekick.initGadgetSettings(this.GADGET_NAME + "(" + this.SETTINGS.OutputChatN + ")", this.SETTINGS_META.output)
+        system: CUBConfigSidekick.initGadgetSettings(this.GADGET_NAME + "(" + this.SETTINGS.SystemN + ")", this.SETTINGS_META.system ),
+        conditions: CUBConfigSidekick.initGadgetSettings(this.GADGET_NAME + "(" + this.SETTINGS.ConditionsN + ")", this.SETTINGS_META.conditions),
+        map: CUBConfigSidekick.initGadgetSettings(this.GADGET_NAME + "(" + this.SETTINGS.MapN + ")", this.SETTINGS_META.map),
+        output: CUBConfigSidekick.initGadgetSettings(this.GADGET_NAME + "(" + this.SETTINGS.OutputChatN + ")", this.SETTINGS_META.outputChat)
     }
 
 
@@ -501,7 +504,7 @@ class CUBEnhancedConditionsConfig extends FormApplication {
 
     getData() {
         //map = game.settings.get(cubGetModuleName(), CUBEnhancedConditions.GADGET_NAME + "(" + CUBEnhancedConditions.SETTINGS.MapN + ")");
-        map = cubEnhancedConditions.settings.map;
+        const map = CUBConfigSidekick.getGadgetSettings(CUBEnhancedConditions.GADGET_NAME + "(" + CUBEnhancedConditions.SETTINGS.MapN + ")");
         let data = {
             conditionmap: map
         }
@@ -522,6 +525,7 @@ class CUBEnhancedConditionsConfig extends FormApplication {
 class CUBInjuredAndDead {
     constructor(){
         this.MODULE_NAME = cubGetModuleName();
+        this.GADGET_NAME = CUBEnhancedConditions.GADGET_NAME;
     }
 	static get GADGET_NAME() {
         return "injured-and-dead";
