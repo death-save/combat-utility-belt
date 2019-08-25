@@ -204,7 +204,7 @@ class CUBEnhancedConditions {
         this.MODULE_NAME = cubGetModuleName();
 
     }
-    get GADGET_NAME() {
+    static get GADGET_NAME() {
         return "enhanced-conditions";
     }
 
@@ -213,11 +213,85 @@ class CUBEnhancedConditions {
      * Set gadget variables
      * --------------------
      */
-    CONFIG = {
+    DEFAULT_CONFIG = {
         iconPath: "/icons/",
         folderType: "journal",
         folderName: "conditions",
+        system: "dnd5e",
         outputChat: true
+    }
+
+    SETTINGS = {
+        EnhancedConditionsN: "Enhanced Conditions",
+        EnhancedConditionsH: "Links conditions to status icons",
+        SystemN: "Game System",
+        SystemH: "Game System to use for condition mapping",
+        OutputChatN: "Output to Chat",
+        OutputChatH: "Output matched conditions to chat",
+        ConditionN: "Conditions",
+        ConditionH: "List of conditions for the game system",
+        MapN: "Condition Map",
+        MapH: "Map of conditions to icons"
+    }
+
+    SETTINGS_META = {
+        enhancedConditions: {
+            name: this.SETTINGS.EnhancedConditionsN,
+            hint: this.SETTNGSS.EnhancedConditionsH,
+            scope: "world",
+            type: Boolean,
+            default: false,
+            onChange: s => {
+                this.settings.EnhancedConditions = s;
+            }
+
+        },
+
+        system: {
+            name: this.SystemN,
+            hint: this.SystemH,
+            scope: "world",
+            type: String,
+            default: this.DEFAULT_CONFIG.system,
+            onChange: s => {
+                this.settings.system = s;
+            }
+        },
+
+        conditions: {
+            name: this.ConditionsN,
+            hint: this.ConditionsH,
+            scope: "world",
+            type: Object,
+            default: this.DEFAULT_CONDITIONS_5E,
+            onChange: s => {
+                this.settings.conditions = s;
+            }
+        },
+
+        map: {
+            name: this.MapN,
+            hint: this.MapH,
+            scope: "world",
+            type: Object,
+            default: this.DEFAULT_CONDITION_MAP_5E,
+            onChange: s => {
+                this.settings.map = s;
+            }
+        },
+
+        outputChat: {
+            name: this.OutputChatN,
+            hint: this.OutputChatH,
+            scope: "world",
+            type: Boolean,
+            default: this.DEFAULT_CONFIG.outputChat,
+            onChange: s => {
+                this.settings.output = s;
+            }
+        }
+
+
     }
 
     /**
@@ -263,6 +337,13 @@ class CUBEnhancedConditions {
         "restrained5e":"icons/svg/net.svg",
         "stunned5e":"",
         "unconscious5e":"icons/svg/sleep.svg"
+    }
+
+    settings = {
+        system: cubConfigSidekick.initGadgetSettings(this.GADGET_NAME + "(" + this.SETTINGS.SystemN + ")", this.SETTINGS_META.system ),
+        conditions: cubConfigSidekick.initGadgetSettings(this.GADGET_NAME + "(" + this.SETTINGS.ConditionsN + ")", this.SETTINGS_META.conditions),
+        map: cubConfigSidekick.initGadgetSettings(this.GADGET_NAME + "(" + this.SETTINGS.MapN + ")", this.SETTINGS_META.map),
+        output: cubConfigSidekick.initGadgetSettings(this.GADGET_NAME + "(" + this.SETTINGS.OutputChatN + ")", this.SETTINGS_META.output)
     }
 
 
@@ -419,7 +500,8 @@ class CUBEnhancedConditionsConfig extends FormApplication {
     }
 
     getData() {
-        map = game.settings.get(cubEnhancedConditions.MODULE_NAME, cubEnhancedConditions.GADGET_NAME);
+        //map = game.settings.get(cubGetModuleName(), CUBEnhancedConditions.GADGET_NAME + "(" + CUBEnhancedConditions.SETTINGS.MapN + ")");
+        map = cubEnhancedConditions.settings.map;
         let data = {
             conditionmap: map
         }
