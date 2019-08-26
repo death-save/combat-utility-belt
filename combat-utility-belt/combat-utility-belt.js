@@ -1,6 +1,3 @@
-var cubEnhancedConditions;
-
-
 function cubGetModuleName () {
 	return "combat-utility-belt";
 }
@@ -14,7 +11,7 @@ Hooks.on("ready",  function() {
 	//invoke the functions in turn
 	const cubRerollInitiative = new CUBRerollInitiative();
     const cubInjuredAndDead = new CUBInjuredAndDead();
-    cubEnhancedConditions = new CUBEnhancedConditions();
+    const cubEnhancedConditions = new CUBEnhancedConditions();
     CUBEnhancedConditionsConfig._createSidebarButton();
 }); 
 
@@ -32,11 +29,11 @@ class CUBConfigSidekick  {
     }
 
 	static registerGadgetSettings(gadget, settings) {
-		game.settings.register(this.MODULE_NAME, gadget, settings);
+		game.settings.register(cubGetModuleName(), gadget, settings);
 	}
 
 	static getGadgetSettings(gadget) {
-		return game.settings.get(this.MODULE_NAME, gadget);
+		return game.settings.get(cubGetModuleName(), gadget);
 	}
 
 	static initGadgetSettings(gadget, settings) {
@@ -45,13 +42,13 @@ class CUBConfigSidekick  {
 		let config;
 
 		try {
-			config = getGadgetSettings(gadget);
+			config = this.constructor.getGadgetSettings(gadget);
 			console.log("config found:", config);
 		}
 		catch (e) {
 			if(e.message == "This is not a registered game setting") {
-				registerGadgetSettings(gadget, settings);
-				config = getGadgetSettings(gadget);
+				this.constructor.registerGadgetSettings(gadget, settings);
+				config = this.constructor.getGadgetSettings(gadget);
 			}
 			else {
 				throw e;
@@ -80,6 +77,9 @@ class CUBConfigSidekick  {
 class CUBRerollInitiative {
     constructor(){
         this.MODULE_NAME = cubGetModuleName();
+
+        //intialise settings
+	    this.settings = CUBConfigSidekick.initGadgetSettings(this.GADGET_NAME, this.SETTINGS_META);
     }
 
 	get GADGET_NAME() {
@@ -106,8 +106,7 @@ class CUBRerollInitiative {
         }
     }
     
-	//intialise settings
-	settings = CUBConfigSidekick.initGadgetSettings(this.GADGET_NAME, this.SETTINGS_META);
+	
 
     /**
      * Hook on update of Combat class. 
@@ -134,6 +133,8 @@ class CUBRerollInitiative {
 class CUBHideNPCNames {
     constructor(){
         this.MODULE_NAME = cubGetModuleName();
+        //intialise settings
+	    this.settings = CUBConfigSidekick.initGadgetSettings(this.GADGET_NAME, this.SETTINGS_META);
     }
 
     get GADGET_NAME() {
@@ -160,8 +161,7 @@ class CUBHideNPCNames {
         }
     }
 
-	//intialise settings
-	settings = CUBConfigSidekick.initGadgetSettings(this.GADGET_NAME, this.SETTINGS_META);
+	
 
 	//hook on combat render
     //TODO: add hook for sidebar tab first render -- need to hook on init instead of ready!
@@ -205,9 +205,16 @@ class CUBHideNPCNames {
 class CUBEnhancedConditions {
     constructor(){
         this.MODULE_NAME = cubGetModuleName();
+
+        this.settings = {
+            system: CUBConfigSidekick.initGadgetSettings(this.constructor.GADGET_NAME + "(" + this.constructor.SETTINGS_DESCRIPTORS.SystemN + ")", this.SETTINGS_META.system ),
+            conditions: CUBConfigSidekick.initGadgetSettings(this.constructor.GADGET_NAME + "(" + this.constructor.SETTINGS_DESCRIPTORS.ConditionsN + ")", this.SETTINGS_META.conditions),
+            map: CUBConfigSidekick.initGadgetSettings(this.constructor.GADGET_NAME + "(" + this.constructor.SETTINGS_DESCRIPTORS.MapN + ")", this.SETTINGS_META.map),
+            output: CUBConfigSidekick.initGadgetSettings(this.constructor.GADGET_NAME + "(" + this.constructor.SETTINGS_DESCRIPTORS.OutputChatN + ")", this.SETTINGS_META.outputChat)
+        }
     }
 
-    get GADGET_NAME() {
+    static get GADGET_NAME() {
         return "enhanced-conditions";
     }
 
@@ -224,23 +231,25 @@ class CUBEnhancedConditions {
         outputChat: true
     }
 
-    SETTINGS = {
-        EnhancedConditionsN: "Enhanced Conditions",
-        EnhancedConditionsH: "Links conditions to status icons",
-        SystemN: "Game System",
-        SystemH: "Game System to use for condition mapping",
-        OutputChatN: "Output to Chat",
-        OutputChatH: "Output matched conditions to chat",
-        ConditionsN: "Conditions",
-        ConditionsH: "List of conditions for the game system",
-        MapN: "Condition Map",
-        MapH: "Map of conditions to icons"
+    static get SETTINGS_DESCRIPTORS() {
+        return {
+            EnhancedConditionsN: "Enhanced Conditions",
+            EnhancedConditionsH: "Links conditions to status icons",
+            SystemN: "Game System",
+            SystemH: "Game System to use for condition mapping",
+            OutputChatN: "Output to Chat",
+            OutputChatH: "Output matched conditions to chat",
+            ConditionsN: "Conditions",
+            ConditionsH: "List of conditions for the game system",
+            MapN: "Condition Map",
+            MapH: "Map of conditions to icons"
+        }
     }
 
     SETTINGS_META = {
         enhancedConditions: {
-            name: this.SETTINGS.EnhancedConditionsN,
-            hint: this.SETTINGS.EnhancedConditionsH,
+            name: this.constructor.SETTINGS_DESCRIPTORS.EnhancedConditionsN,
+            hint: this.constructor.SETTINGS_DESCRIPTORS.EnhancedConditionsH,
             scope: "world",
             type: Boolean,
             default: false,
@@ -251,8 +260,8 @@ class CUBEnhancedConditions {
         },
 
         system: {
-            name: this.SETTINGS.SystemN,
-            hint: this.SETTINGS.SystemH,
+            name: this.constructor.SETTINGS_DESCRIPTORS.SystemN,
+            hint: this.constructor.SETTINGS_DESCRIPTORS.SystemH,
             scope: "world",
             type: String,
             default: this.DEFAULT_CONFIG.system,
@@ -262,8 +271,8 @@ class CUBEnhancedConditions {
         },
 
         conditions: {
-            name: this.SETTINGS.ConditionsN,
-            hint: this.SETTINGS.ConditionsH,
+            name: this.constructor.SETTINGS_DESCRIPTORS.ConditionsN,
+            hint: this.constructor.SETTINGS_DESCRIPTORS.ConditionsH,
             scope: "world",
             type: Object,
             default: this.DEFAULT_CONDITIONS_5E,
@@ -273,8 +282,8 @@ class CUBEnhancedConditions {
         },
 
         map: {
-            name: this.SETTINGS.MapN,
-            hint: this.SETTINGS.MapH,
+            name: this.constructor.SETTINGS_DESCRIPTORS.MapN,
+            hint: this.constructor.SETTINGS_DESCRIPTORS.MapH,
             scope: "world",
             type: Object,
             default: this.DEFAULT_CONDITION_MAP_5E,
@@ -284,8 +293,8 @@ class CUBEnhancedConditions {
         },
 
         outputChat: {
-            name: this.SETTINGS.OutputChatN,
-            hint: this.SETTINGS.OutputChatH,
+            name: this.constructor.SETTINGS_DESCRIPTORS.OutputChatN,
+            hint: this.constructor.SETTINGS_DESCRIPTORS.OutputChatH,
             scope: "world",
             type: Boolean,
             default: this.DEFAULT_CONFIG.outputChat,
@@ -342,12 +351,7 @@ class CUBEnhancedConditions {
         "unconscious5e":"icons/svg/sleep.svg"
     }
 
-    settings = {
-        system: CUBConfigSidekick.initGadgetSettings(this.GADGET_NAME + "(" + this.SETTINGS.SystemN + ")", this.SETTINGS_META.system ),
-        conditions: CUBConfigSidekick.initGadgetSettings(this.GADGET_NAME + "(" + this.SETTINGS.ConditionsN + ")", this.SETTINGS_META.conditions),
-        map: CUBConfigSidekick.initGadgetSettings(this.GADGET_NAME + "(" + this.SETTINGS.MapN + ")", this.SETTINGS_META.map),
-        output: CUBConfigSidekick.initGadgetSettings(this.GADGET_NAME + "(" + this.SETTINGS.OutputChatN + ")", this.SETTINGS_META.outputChat)
-    }
+    
 
 
 
@@ -504,7 +508,7 @@ class CUBEnhancedConditionsConfig extends FormApplication {
 
     getData() {
         //map = game.settings.get(cubGetModuleName(), CUBEnhancedConditions.GADGET_NAME + "(" + CUBEnhancedConditions.SETTINGS.MapN + ")");
-        const map = CUBConfigSidekick.getGadgetSettings(CUBEnhancedConditions.GADGET_NAME + "(" + CUBEnhancedConditions.SETTINGS.MapN + ")");
+        const map = CUBConfigSidekick.getGadgetSettings(CUBEnhancedConditions.GADGET_NAME + "(" + CUBEnhancedConditions.SETTINGS_DESCRIPTORS.MapN + ")");
         let data = {
             conditionmap: map
         }
@@ -525,13 +529,20 @@ class CUBEnhancedConditionsConfig extends FormApplication {
 class CUBInjuredAndDead {
     constructor(){
         this.MODULE_NAME = cubGetModuleName();
+        this.settings = {
+            injured: CUBConfigSidekick.initGadgetSettings(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.InjuredN + ")", this.SETTINGS_META.Injured),
+            threshold: CUBConfigSidekick.initGadgetSettings(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.ThresholdN + ")", this.SETTINGS_META.Threshold),
+            dead: CUBConfigSidekick.initGadgetSettings(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.DeadN + ")", this.SETTINGS_META.Dead),
+            injuredIcon: CUBConfigSidekick.initGadgetSettings(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.InjuredIconN + ")", this.SETTINGS_META.InjuredIcon),
+            deadIcon: CUBConfigSidekick.initGadgetSettings(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.DeadIconN + ")", this.SETTINGS_META.DeadIcon),
+        }
     }
     
 	get GADGET_NAME() {
         return "injured-and-dead";
     } 
 
-	SETTINGS = {
+	SETTINGS_DESCRIPTORS = {
 		InjuredN: "Mark Injured Tokens",
         InjuredH: "Sets a status marker on tokens that meet the threshold below",
         InjuredIconN: "Injured Status Marker",
@@ -554,8 +565,8 @@ class CUBInjuredAndDead {
 
 	SETTINGS_META = {
 		Injured: {
-			name: this.SETTINGS.InjuredN,
-			hint: this.SETTINGS.InjuredH,
+			name: this.SETTINGS_DESCRIPTORS.InjuredN,
+			hint: this.SETTINGS_DESCRIPTORS.InjuredH,
 			default: this.DEFAULT_CONFIG.Injured,
 			scope: "world",
 			type: Boolean,
@@ -566,8 +577,8 @@ class CUBInjuredAndDead {
 
         },
         InjuredIcon: {
-			name: this.SETTINGS.InjuredIconN,
-			hint: this.SETTINGS.InjuredIconH,
+			name: this.SETTINGS_DESCRIPTORS.InjuredIconN,
+			hint: this.SETTINGS_DESCRIPTORS.InjuredIconH,
 			default: this.DEFAULT_CONFIG.InjuredIcon,
 			scope: "world",
 			type: String,
@@ -578,8 +589,8 @@ class CUBInjuredAndDead {
 
 		},
 		Threshold: {
-			name: this.SETTINGS.ThresholdN,
-			hint: this.SETTINGS.ThresholdH,
+			name: this.SETTINGS_DESCRIPTORS.ThresholdN,
+			hint: this.SETTINGS_DESCRIPTORS.ThresholdH,
 			default: this.DEFAULT_CONFIG.Threshold,
 			scope: "world",
 			type: Number,
@@ -589,8 +600,8 @@ class CUBInjuredAndDead {
 			}
 		},
 		Dead: {
-			name: this.SETTINGS.DeadN,
-			hint: this.SETTINGS.DeadH,
+			name: this.SETTINGS_DESCRIPTORS.DeadN,
+			hint: this.SETTINGS_DESCRIPTORS.DeadH,
 			default: this.DEFAULT_CONFIG.Dead,
 			scope: "world",
 			type: Boolean,
@@ -600,8 +611,8 @@ class CUBInjuredAndDead {
 			}
         },
         DeadIcon: {
-			name: this.SETTINGS.DeadIconN,
-			hint: this.SETTINGS.DeadIconH,
+			name: this.SETTINGS_DESCRIPTORS.DeadIconN,
+			hint: this.SETTINGS_DESCRIPTORS.DeadIconH,
 			default: this.DEFAULT_CONFIG.DeadIcon,
 			scope: "world",
 			type: String,
@@ -612,12 +623,8 @@ class CUBInjuredAndDead {
 
 		}
 	}
-
-	injured = CUBConfigSidekick.initGadgetSettings(this.GADGET_NAME + "(" + this.SETTINGS.InjuredN + ")", this.SETTINGS_META.Injured);
-	threshold = CUBConfigSidekick.initGadgetSettings(this.GADGET_NAME + "(" + this.SETTINGS.ThresholdN + ")", this.SETTINGS_META.Threshold);
-    dead = CUBConfigSidekick.initGadgetSettings(this.GADGET_NAME + "(" + this.SETTINGS.DeadN + ")", this.SETTINGS_META.Dead);
-    injuredIcon = CUBConfigSidekick.initGadgetSettings(this.GADGET_NAME + "(" + this.SETTINGS.InjuredIconN + ")", this.SETTINGS_META.InjuredIcon);
-    deadIcon = CUBConfigSidekick.initGadgetSettings(this.GADGET_NAME + "(" + this.SETTINGS.DeadIconN + ")", this.SETTINGS_META.DeadIcon);
+    
+	
 
     //hook on token update
     
