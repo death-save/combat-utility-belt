@@ -229,7 +229,39 @@ class CUBEnhancedConditions {
             folderType: "journal",
             folderName: "conditions",
             system: "dnd5e",
-            outputChat: true
+            outputChat: true,
+            conditions5e: {
+                "blinded5e":"Blinded",
+                "charmed5e":"Charmed",
+                "deafened5e":"Deafened",
+                "exhaustion5e":"Exhaustion",
+                "frightened5e":"Frightened",
+                "incapacitated5e":"Incapacitated",
+                "invisible5e":"Invisible",
+                "paralyzed5e":"Paralyzed",
+                "petrified5e":"Petrified",
+                "poisoned5e":"Poisoned",
+                "prone5e":"Prone",
+                "restrained5e":"Restrained",
+                "stunned5e":"Stunned",
+                "unconscious5e":"Unconscious"
+            },
+            conditionMap5e: {
+                "blinded5e":"icons/svg/eye.svg",
+                "charmed5e":"",
+                "deafened5e":"",
+                "exhaustion5e":"",
+                "frightened5e":"icons/svg/terror.svg",
+                "incapacitated5e":"",
+                "invisible5e":"",
+                "paralyzed5e":"",
+                "petrified5e":"icons/svg/frozen.svg",
+                "poisoned5e":"",
+                "prone5e":"",
+                "restrained5e":"icons/svg/net.svg",
+                "stunned5e":"",
+                "unconscious5e":"icons/svg/sleep.svg"
+            }
         }
         
     }
@@ -257,8 +289,9 @@ class CUBEnhancedConditions {
                 scope: "world",
                 type: Boolean,
                 default: false,
+                config: true,
                 onChange: s => {
-                    this.settings.EnhancedConditions = s;
+                    this.settings.enhancedConditions = s;
                 }
     
             },
@@ -279,7 +312,7 @@ class CUBEnhancedConditions {
                 hint: this.SETTINGS_DESCRIPTORS.ConditionsH,
                 scope: "world",
                 type: Object,
-                default: this.DEFAULT_CONDITIONS_5E,
+                default: this.DEFAULT_CONFIG.conditions5e,
                 onChange: s => {
                     this.settings.conditions = s;
                 }
@@ -290,7 +323,7 @@ class CUBEnhancedConditions {
                 hint: this.SETTINGS_DESCRIPTORS.MapH,
                 scope: "world",
                 type: Object,
-                default: this.DEFAULT_CONDITION_MAP_5E,
+                default: this.DEFAULT_CONFIG.conditionMap5e,
                 onChange: s => {
                     this.settings.map = s;
                 }
@@ -301,6 +334,7 @@ class CUBEnhancedConditions {
                 hint: this.SETTINGS_DESCRIPTORS.OutputChatH,
                 scope: "world",
                 type: Boolean,
+                config: true,
                 default: this.DEFAULT_CONFIG.outputChat,
                 onChange: s => {
                     this.settings.output = s;
@@ -320,42 +354,12 @@ class CUBEnhancedConditions {
     /**
      * Define the labels for the D&D 5e conditions
      */
-    DEFAULT_CONDITIONS_5E = {
-        "blinded5e":"Blinded",
-        "charmed5e":"Charmed",
-        "deafened5e":"Deafened",
-        "exhaustion5e":"Exhaustion",
-        "frightened5e":"Frightened",
-        "incapacitated5e":"Incapacitated",
-        "invisible5e":"Invisible",
-        "paralyzed5e":"Paralyzed",
-        "petrified5e":"Petrified",
-        "poisoned5e":"Poisoned",
-        "prone5e":"Prone",
-        "restrained5e":"Restrained",
-        "stunned5e":"Stunned",
-        "unconscious5e":"Unconscious"
-    }
+    
 
     /**
      * Define a default mapping for the D&D 5e conditions
      */
-    DEFAULT_CONDITION_MAP_5E = {
-        "blinded5e":"icons/svg/eye.svg",
-        "charmed5e":"",
-        "deafened5e":"",
-        "exhaustion5e":"",
-        "frightened5e":"icons/svg/terror.svg",
-        "incapacitated5e":"",
-        "invisible5e":"",
-        "paralyzed5e":"",
-        "petrified5e":"icons/svg/frozen.svg",
-        "poisoned5e":"",
-        "prone5e":"",
-        "restrained5e":"icons/svg/net.svg",
-        "stunned5e":"",
-        "unconscious5e":"icons/svg/sleep.svg"
-    }
+    
 
     
 
@@ -510,16 +514,18 @@ class CUBEnhancedConditionsConfig extends FormApplication {
             title: "C-U-B Condition Mapper",
             template: "public/modules/combat-utility-belt/templates/cub-conditions.html",
             classes: ["sheet"],
-            width: 300
+            width: 500
         });
     }
 
     getData() {
         //map = game.settings.get(cubGetModuleName(), CUBEnhancedConditions.GADGET_NAME + "(" + CUBEnhancedConditions.SETTINGS.MapN + ")");
         const map = CUBConfigSidekick.getGadgetSettings(CUBEnhancedConditions.GADGET_NAME + "(" + CUBEnhancedConditions.SETTINGS_DESCRIPTORS.MapN + ")");
-        let data = {
+        const data = {
             conditionmap: map
         }
+
+        return data;
     }
 
     static _createSidebarButton() {

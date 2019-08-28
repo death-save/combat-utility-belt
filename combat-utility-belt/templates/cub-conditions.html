@@ -1,24 +1,23 @@
 <form autocomplete="off" onsubmit="event.preventDefault();">
-<h2>Condition Status Icon Assignment</h2>
-<table>
-    <thead>
-        <tr>
-            <th>Condition</th>
-            <th>Status Icon</th>
-        </tr>
-    </thead>
-    <tbody>
-        {{#each conditionmap}}
-        <tr>
-            <td>{{@key}}</td>
-            <td><input type="text" name="icon" title="Status Icon" value="{{this}}" placeholder="/icons/example.svg"></td>
-        </tr>
+    <h2>Condition Status Icon Assignment</h2>
+    <ol class="condition-map-list" style="list-style:none;">
+        <span>
+            <h3>Condition</h3>  <h3>Status Icon</h3>
+        </span>
+        {{#each conditionmap as |icon condition|}}
+        <li class="condition-map-item">
+            <div class="formgroup">
+                <img src="{{icon}}" style="width:10%;" />
+                <label>{{condition}}</label>
+                {{filePicker target="icon" type="image"}}
+                <input type="text" name="icon" title="Status Icon" value="{{icon}}" placeholder="/icons/example.svg">
+            </div>
+        </li>
         {{/each}}
-    </tbody>
-</table>
+    </ol>
 
-<button type="submit" name="submit">
-    <i class="far fa-save"></i> Save URL
-</button>
+    <button type="submit" name="submit">
+        <i class="far fa-save"></i> Save Mapping
+    </button>
 
 </form>
