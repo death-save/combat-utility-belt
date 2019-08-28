@@ -42,13 +42,13 @@ class CUBConfigSidekick  {
 		let config;
 
 		try {
-			config = this.constructor.getGadgetSettings(gadget);
+			config = this.getGadgetSettings(gadget);
 			console.log("config found:", config);
 		}
 		catch (e) {
 			if(e.message == "This is not a registered game setting") {
-				this.constructor.registerGadgetSettings(gadget, settings);
-				config = this.constructor.getGadgetSettings(gadget);
+				this.registerGadgetSettings(gadget, settings);
+				config = this.getGadgetSettings(gadget);
 			}
 			else {
 				throw e;
@@ -207,10 +207,10 @@ class CUBEnhancedConditions {
         this.MODULE_NAME = cubGetModuleName();
 
         this.settings = {
-            system: CUBConfigSidekick.initGadgetSettings(this.constructor.GADGET_NAME + "(" + this.constructor.SETTINGS_DESCRIPTORS.SystemN + ")", this.SETTINGS_META.system ),
-            conditions: CUBConfigSidekick.initGadgetSettings(this.constructor.GADGET_NAME + "(" + this.constructor.SETTINGS_DESCRIPTORS.ConditionsN + ")", this.SETTINGS_META.conditions),
-            map: CUBConfigSidekick.initGadgetSettings(this.constructor.GADGET_NAME + "(" + this.constructor.SETTINGS_DESCRIPTORS.MapN + ")", this.SETTINGS_META.map),
-            output: CUBConfigSidekick.initGadgetSettings(this.constructor.GADGET_NAME + "(" + this.constructor.SETTINGS_DESCRIPTORS.OutputChatN + ")", this.SETTINGS_META.outputChat)
+            system: CUBConfigSidekick.initGadgetSettings(this.constructor.GADGET_NAME + "(" + this.constructor.SETTINGS_DESCRIPTORS.SystemN + ")", this.constructor.SETTINGS_META.system ),
+            conditions: CUBConfigSidekick.initGadgetSettings(this.constructor.GADGET_NAME + "(" + this.constructor.SETTINGS_DESCRIPTORS.ConditionsN + ")", this.constructor.SETTINGS_META.enhancedConditions),
+            map: CUBConfigSidekick.initGadgetSettings(this.constructor.GADGET_NAME + "(" + this.constructor.SETTINGS_DESCRIPTORS.MapN + ")", this.constructor.SETTINGS_META.map),
+            output: CUBConfigSidekick.initGadgetSettings(this.constructor.GADGET_NAME + "(" + this.constructor.SETTINGS_DESCRIPTORS.OutputChatN + ")", this.constructor.SETTINGS_META.outputChat)
         }
     }
 
@@ -223,12 +223,15 @@ class CUBEnhancedConditions {
      * Set gadget variables
      * --------------------
      */
-    DEFAULT_CONFIG = {
-        iconPath: "/icons/",
-        folderType: "journal",
-        folderName: "conditions",
-        system: "dnd5e",
-        outputChat: true
+    static get DEFAULT_CONFIG() {
+        return{
+            iconPath: "/icons/",
+            folderType: "journal",
+            folderName: "conditions",
+            system: "dnd5e",
+            outputChat: true
+        }
+        
     }
 
     static get SETTINGS_DESCRIPTORS() {
@@ -246,62 +249,65 @@ class CUBEnhancedConditions {
         }
     }
 
-    SETTINGS_META = {
-        enhancedConditions: {
-            name: this.constructor.SETTINGS_DESCRIPTORS.EnhancedConditionsN,
-            hint: this.constructor.SETTINGS_DESCRIPTORS.EnhancedConditionsH,
-            scope: "world",
-            type: Boolean,
-            default: false,
-            onChange: s => {
-                this.settings.EnhancedConditions = s;
-            }
-
-        },
-
-        system: {
-            name: this.constructor.SETTINGS_DESCRIPTORS.SystemN,
-            hint: this.constructor.SETTINGS_DESCRIPTORS.SystemH,
-            scope: "world",
-            type: String,
-            default: this.DEFAULT_CONFIG.system,
-            onChange: s => {
-                this.settings.system = s;
-            }
-        },
-
-        conditions: {
-            name: this.constructor.SETTINGS_DESCRIPTORS.ConditionsN,
-            hint: this.constructor.SETTINGS_DESCRIPTORS.ConditionsH,
-            scope: "world",
-            type: Object,
-            default: this.DEFAULT_CONDITIONS_5E,
-            onChange: s => {
-                this.settings.conditions = s;
-            }
-        },
-
-        map: {
-            name: this.constructor.SETTINGS_DESCRIPTORS.MapN,
-            hint: this.constructor.SETTINGS_DESCRIPTORS.MapH,
-            scope: "world",
-            type: Object,
-            default: this.DEFAULT_CONDITION_MAP_5E,
-            onChange: s => {
-                this.settings.map = s;
-            }
-        },
-
-        outputChat: {
-            name: this.constructor.SETTINGS_DESCRIPTORS.OutputChatN,
-            hint: this.constructor.SETTINGS_DESCRIPTORS.OutputChatH,
-            scope: "world",
-            type: Boolean,
-            default: this.DEFAULT_CONFIG.outputChat,
-            onChange: s => {
-                this.settings.output = s;
+    static get SETTINGS_META() {
+        return {
+            enhancedConditions: {
+                name: this.SETTINGS_DESCRIPTORS.EnhancedConditionsN,
+                hint: this.SETTINGS_DESCRIPTORS.EnhancedConditionsH,
+                scope: "world",
+                type: Boolean,
+                default: false,
+                onChange: s => {
+                    this.settings.EnhancedConditions = s;
+                }
+    
+            },
+    
+            system: {
+                name: this.SETTINGS_DESCRIPTORS.SystemN,
+                hint: this.SETTINGS_DESCRIPTORS.SystemH,
+                scope: "world",
+                type: String,
+                default: this.DEFAULT_CONFIG.system,
+                onChange: s => {
+                    this.settings.system = s;
+                }
+            },
+    
+            conditions: {
+                name: this.SETTINGS_DESCRIPTORS.ConditionsN,
+                hint: this.SETTINGS_DESCRIPTORS.ConditionsH,
+                scope: "world",
+                type: Object,
+                default: this.DEFAULT_CONDITIONS_5E,
+                onChange: s => {
+                    this.settings.conditions = s;
+                }
+            },
+    
+            map: {
+                name: this.SETTINGS_DESCRIPTORS.MapN,
+                hint: this.SETTINGS_DESCRIPTORS.MapH,
+                scope: "world",
+                type: Object,
+                default: this.DEFAULT_CONDITION_MAP_5E,
+                onChange: s => {
+                    this.settings.map = s;
+                }
+            },
+    
+            outputChat: {
+                name: this.SETTINGS_DESCRIPTORS.OutputChatN,
+                hint: this.SETTINGS_DESCRIPTORS.OutputChatH,
+                scope: "world",
+                type: Boolean,
+                default: this.DEFAULT_CONFIG.outputChat,
+                onChange: s => {
+                    this.settings.output = s;
+                }
             }
         }
+        
 
 
     }
@@ -350,6 +356,8 @@ class CUBEnhancedConditions {
         "stunned5e":"",
         "unconscious5e":"icons/svg/sleep.svg"
     }
+
+    
 
     
 
