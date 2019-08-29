@@ -12,7 +12,6 @@ Hooks.on("ready",  function() {
 	const cubRerollInitiative = new CUBRerollInitiative();
     const cubInjuredAndDead = new CUBInjuredAndDead();
     const cubEnhancedConditions = new CUBEnhancedConditions();
-    CUBEnhancedConditionsConfig._createSidebarButton();
 }); 
 
 
@@ -208,27 +207,40 @@ class CUBEnhancedConditions {
 
         this.settings = {
             system: CUBConfigSidekick.initGadgetSettings(this.constructor.GADGET_NAME + "(" + this.constructor.SETTINGS_DESCRIPTORS.SystemN + ")", this.constructor.SETTINGS_META.system ),
+            folderType: CUBConfigSidekick.initGadgetSettings(this.constructor.GADGET_NAME + "(" + this.constructor.SETTINGS_DESCRIPTORS.FolderTypeN + ")", this.constructor.SETTINGS_META.folderType),
             conditions: CUBConfigSidekick.initGadgetSettings(this.constructor.GADGET_NAME + "(" + this.constructor.SETTINGS_DESCRIPTORS.ConditionsN + ")", this.constructor.SETTINGS_META.enhancedConditions),
             map: CUBConfigSidekick.initGadgetSettings(this.constructor.GADGET_NAME + "(" + this.constructor.SETTINGS_DESCRIPTORS.MapN + ")", this.constructor.SETTINGS_META.map),
             output: CUBConfigSidekick.initGadgetSettings(this.constructor.GADGET_NAME + "(" + this.constructor.SETTINGS_DESCRIPTORS.OutputChatN + ")", this.constructor.SETTINGS_META.outputChat)
         }
-    }
 
-    static get GADGET_NAME() {
-        return "enhanced-conditions";
+        this.constructor._createSidebarButton();
     }
 
     /**
      * --------------------
-     * Set gadget variables
+     * Set gadget constants
      * --------------------
      */
+    static get GADGET_NAME() {
+        return "enhanced-conditions";
+    }
+
+    
     static get DEFAULT_CONFIG() {
         return{
             iconPath: "/icons/",
-            folderType: "journal",
+            folderTypes: {
+                journal: "Journal",
+                compendium: "Compendium"
+            },
             folderName: "conditions",
-            system: "dnd5e",
+            systems: {
+                dnd5e: "D&D 5e",
+                pf1e: "Pathfinder 1e",
+                pf2e: "Pathfinder 2e",
+                wfrp: "Warhammer Fantasy Roleplaying Game",
+                custom: "Custom"
+            },
             outputChat: true,
             conditions5e: {
                 "blinded5e":"Blinded",
@@ -270,6 +282,8 @@ class CUBEnhancedConditions {
         return {
             EnhancedConditionsN: "Enhanced Conditions",
             EnhancedConditionsH: "Links conditions to status icons",
+            FolderTypeN: "Folder Type",
+            FolderTypeH: "Folder type to use when looking for Condition entries",
             SystemN: "Game System",
             SystemH: "Game System to use for condition mapping",
             OutputChatN: "Output to Chat",
@@ -301,10 +315,26 @@ class CUBEnhancedConditions {
                 hint: this.SETTINGS_DESCRIPTORS.SystemH,
                 scope: "world",
                 type: String,
-                default: this.DEFAULT_CONFIG.system,
+                default: this.DEFAULT_CONFIG.systems.dnd5e,
+                choices: this.DEFAULT_CONFIG.systems,
+                config: true,
                 onChange: s => {
                     this.settings.system = s;
                 }
+            },
+
+            folderType: {
+                name: this.SETTINGS_DESCRIPTORS.FolderTypeN,
+                hint: this.SETTINGS_DESCRIPTORS.FolderTypeH,
+                scope: "world",
+                type: String,
+                default: this.DEFAULT_CONFIG.folderTypes.journal,
+                choices: this.DEFAULT_CONFIG.folderTypes,
+                config: true,
+                onChange: s => {
+                    this.settings.folderType = s;
+                }
+
             },
     
             conditions: {
@@ -498,6 +528,15 @@ class CUBEnhancedConditions {
         console.log("found actor: ",actor)
         return actor;
     }
+
+    static _createSidebarButton() {
+        let button = $(`<button id="enhanced-conditions"><i class="fas fa-flask"></i> Condition Mapper</button>`);
+        button.click(ev => {
+            new CUBEnhancedConditionsConfig().render(true);
+        });
+        $('#manage-modules').parent().find('#enhanced-conditions').remove();
+        $('#manage-modules').after(button);
+    }
     
 }
 
@@ -526,14 +565,6 @@ class CUBEnhancedConditionsConfig extends FormApplication {
         }
 
         return data;
-    }
-
-    static _createSidebarButton() {
-        let button = $(`<button id="enhanced-conditions"><i class="fas fa-flask-poison"></i> Condition Mapper</button>`);
-        button.click(ev => {
-            new CUBEnhancedConditionsConfig().render(true);
-        });
-        $('#manage-modules').after(button);
     }
 
 
