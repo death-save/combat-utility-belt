@@ -244,28 +244,16 @@ class CUBEnhancedConditions {
             },
             outputChat: true,
 
+           
             /**
              * Define mapping for dnd5e
              * @todo: expand out to allow external jsons?
              */
-            maps:{
-                dnd5e: {
-                    "Blinded":this.DEFAULT_CONFIG.iconPath+"blinded.svg",
-                    "Charmed":this.DEFAULT_CONFIG.iconPath+"charmed.svg",
-                    "Deafened":this.DEFAULT_CONFIG.iconPath+"deafened.svg",
-                    "Exhaustion":this.DEFAULT_CONFIG.iconPath+"exhaustion1.svg",
-                    "Frightened":this.DEFAULT_CONFIG.iconPath+"frightened.svg",
-                    "Incapacitated":this.DEFAULT_CONFIG.iconPath+"incapacitated.svg",
-                    "Invisible":this.DEFAULT_CONFIG.iconPath+"invisible.svg",
-                    "Paralyzed":this.DEFAULT_CONFIG.iconPath+"paralyzed.svg",
-                    "Petrified":this.DEFAULT_CONFIG.iconPath+"petrified.svg",
-                    "Poisoned":this.DEFAULT_CONFIG.iconPath+"poisoned.svg",
-                    "Prone":this.DEFAULT_CONFIG.iconPath+"prone.svg",
-                    "Restrained":this.DEFAULT_CONFIG.iconPath+"restrained.svg",
-                    "Stunned":this.DEFAULT_CONFIG.iconPath+"stunned.svg",
-                    "Unconscious":this.DEFAULT_CONFIG.iconPath+"sleep.svg"
-                /* this is too complicated... let's just map names to icons.
+             /* this is too complicated... let's just map names to icons.
                 //keeping for posterity
+            maps:{
+                
+                
                 conditions: {
                     "blinded5e":"Blinded",
                     "charmed5e":"Charmed",
@@ -299,12 +287,32 @@ class CUBEnhancedConditions {
                     "stunned5e":"",
                     "unconscious5e":"icons/svg/sleep.svg"
                 }
-                */
-                }
-            }
+                
+            }*/
             
         }
         
+    }
+
+    static get DEFAULT_MAP() {
+        return {
+            dnd5e: {
+                "Blinded":this.DEFAULT_CONFIG.iconPath+"blinded.svg",
+                "Charmed":this.DEFAULT_CONFIG.iconPath+"charmed.svg",
+                "Deafened":this.DEFAULT_CONFIG.iconPath+"deafened.svg",
+                "Exhaustion":this.DEFAULT_CONFIG.iconPath+"exhaustion1.svg",
+                "Frightened":this.DEFAULT_CONFIG.iconPath+"frightened.svg",
+                "Incapacitated":this.DEFAULT_CONFIG.iconPath+"incapacitated.svg",
+                "Invisible":this.DEFAULT_CONFIG.iconPath+"invisible.svg",
+                "Paralyzed":this.DEFAULT_CONFIG.iconPath+"paralyzed.svg",
+                "Petrified":this.DEFAULT_CONFIG.iconPath+"petrified.svg",
+                "Poisoned":this.DEFAULT_CONFIG.iconPath+"poisoned.svg",
+                "Prone":this.DEFAULT_CONFIG.iconPath+"prone.svg",
+                "Restrained":this.DEFAULT_CONFIG.iconPath+"restrained.svg",
+                "Stunned":this.DEFAULT_CONFIG.iconPath+"stunned.svg",
+                "Unconscious":this.DEFAULT_CONFIG.iconPath+"sleep.svg"
+            }
+        }
     }
 
     static get SETTINGS_DESCRIPTORS() {
