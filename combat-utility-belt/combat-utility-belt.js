@@ -4,14 +4,15 @@ function cubGetModuleName () {
 
 Hooks.on("init", function() {
 	const cubConfigSidekick = new CUBConfigSidekick();
-	const cubHideNPCNames = new CUBHideNPCNames();
+    const cubHideNPCNames = new CUBHideNPCNames();
+    const cubEnhancedConditions = new CUBEnhancedConditions();
 })
 
 Hooks.on("ready",  function() {
 	//invoke the functions in turn
 	const cubRerollInitiative = new CUBRerollInitiative();
     const cubInjuredAndDead = new CUBInjuredAndDead();
-    const cubEnhancedConditions = new CUBEnhancedConditions();
+    
 }); 
 
 
@@ -228,7 +229,7 @@ class CUBEnhancedConditions {
     
     static get DEFAULT_CONFIG() {
         return{
-            iconPath: "/icons/",
+            iconPath: "modules/combat-utility-belt/icons/",
             folderTypes: {
                 journal: "Journal",
                 compendium: "Compendium"
@@ -242,38 +243,66 @@ class CUBEnhancedConditions {
                 custom: "Custom"
             },
             outputChat: true,
-            conditions5e: {
-                "blinded5e":"Blinded",
-                "charmed5e":"Charmed",
-                "deafened5e":"Deafened",
-                "exhaustion5e":"Exhaustion",
-                "frightened5e":"Frightened",
-                "incapacitated5e":"Incapacitated",
-                "invisible5e":"Invisible",
-                "paralyzed5e":"Paralyzed",
-                "petrified5e":"Petrified",
-                "poisoned5e":"Poisoned",
-                "prone5e":"Prone",
-                "restrained5e":"Restrained",
-                "stunned5e":"Stunned",
-                "unconscious5e":"Unconscious"
-            },
-            conditionMap5e: {
-                "blinded5e":"icons/svg/eye.svg",
-                "charmed5e":"",
-                "deafened5e":"",
-                "exhaustion5e":"",
-                "frightened5e":"icons/svg/terror.svg",
-                "incapacitated5e":"",
-                "invisible5e":"",
-                "paralyzed5e":"",
-                "petrified5e":"icons/svg/frozen.svg",
-                "poisoned5e":"",
-                "prone5e":"",
-                "restrained5e":"icons/svg/net.svg",
-                "stunned5e":"",
-                "unconscious5e":"icons/svg/sleep.svg"
+
+            /**
+             * Define mapping for dnd5e
+             * @todo: expand out to allow external jsons?
+             */
+            maps:{
+                dnd5e: {
+                    "Blinded":this.DEFAULT_CONFIG.iconPath+"blinded.svg",
+                    "Charmed":this.DEFAULT_CONFIG.iconPath+"charmed.svg",
+                    "Deafened":this.DEFAULT_CONFIG.iconPath+"deafened.svg",
+                    "Exhaustion":this.DEFAULT_CONFIG.iconPath+"exhaustion1.svg",
+                    "Frightened":this.DEFAULT_CONFIG.iconPath+"frightened.svg",
+                    "Incapacitated":this.DEFAULT_CONFIG.iconPath+"incapacitated.svg",
+                    "Invisible":this.DEFAULT_CONFIG.iconPath+"invisible.svg",
+                    "Paralyzed":this.DEFAULT_CONFIG.iconPath+"paralyzed.svg",
+                    "Petrified":this.DEFAULT_CONFIG.iconPath+"petrified.svg",
+                    "Poisoned":this.DEFAULT_CONFIG.iconPath+"poisoned.svg",
+                    "Prone":this.DEFAULT_CONFIG.iconPath+"prone.svg",
+                    "Restrained":this.DEFAULT_CONFIG.iconPath+"restrained.svg",
+                    "Stunned":this.DEFAULT_CONFIG.iconPath+"stunned.svg",
+                    "Unconscious":this.DEFAULT_CONFIG.iconPath+"sleep.svg"
+                /* this is too complicated... let's just map names to icons.
+                //keeping for posterity
+                conditions: {
+                    "blinded5e":"Blinded",
+                    "charmed5e":"Charmed",
+                    "deafened5e":"Deafened",
+                    "exhaustion5e":"Exhaustion",
+                    "frightened5e":"Frightened",
+                    "incapacitated5e":"Incapacitated",
+                    "invisible5e":"Invisible",
+                    "paralyzed5e":"Paralyzed",
+                    "petrified5e":"Petrified",
+                    "poisoned5e":"Poisoned",
+                    "prone5e":"Prone",
+                    "restrained5e":"Restrained",
+                    "stunned5e":"Stunned",
+                    "unconscious5e":"Unconscious"
+                },
+                
+                icons: {
+                    "blinded5e":"icons/svg/eye.svg",
+                    "charmed5e":"",
+                    "deafened5e":"",
+                    "exhaustion5e":"",
+                    "frightened5e":"icons/svg/terror.svg",
+                    "incapacitated5e":"",
+                    "invisible5e":"",
+                    "paralyzed5e":"",
+                    "petrified5e":"icons/svg/frozen.svg",
+                    "poisoned5e":"",
+                    "prone5e":"",
+                    "restrained5e":"icons/svg/net.svg",
+                    "stunned5e":"",
+                    "unconscious5e":"icons/svg/sleep.svg"
+                }
+                */
+                }
             }
+            
         }
         
     }
@@ -337,23 +366,12 @@ class CUBEnhancedConditions {
 
             },
     
-            conditions: {
-                name: this.SETTINGS_DESCRIPTORS.ConditionsN,
-                hint: this.SETTINGS_DESCRIPTORS.ConditionsH,
-                scope: "world",
-                type: Object,
-                default: this.DEFAULT_CONFIG.conditions5e,
-                onChange: s => {
-                    this.settings.conditions = s;
-                }
-            },
-    
             map: {
                 name: this.SETTINGS_DESCRIPTORS.MapN,
                 hint: this.SETTINGS_DESCRIPTORS.MapH,
                 scope: "world",
                 type: Object,
-                default: this.DEFAULT_CONFIG.conditionMap5e,
+                default: this.DEFAULT_CONFIG.maps.dnd5e,
                 onChange: s => {
                     this.settings.map = s;
                 }
@@ -386,11 +404,27 @@ class CUBEnhancedConditions {
      */
     
 
-    /**
-     * Define a default mapping for the D&D 5e conditions
-     */
     
+    
+    static _createSidebarButton() {
+        Hooks.on("renderSettings", (app, html) => {
+            const mapButton = $(
+                `<button id="enhanced-conditions"><i class="fas fa-flask"></i> Condition Mapper</button>`
+            );
 
+            const manageModulesButton = html.find('#manage-modules')
+            manageModulesButton.after(mapButton);
+
+            mapButton.click(ev => {
+                new CUBEnhancedConditionsConfig().render(true);
+            });
+
+        });
+        
+        
+        //$('#manage-modules').parent().find('#enhanced-conditions').remove();
+        
+    }
     
 
     
@@ -423,27 +457,31 @@ class CUBEnhancedConditions {
             return;
         });
     }
-     
+    
+    static _getKeyByValue(object, value) {
+        return Object.keys(object).find(key => object[key] === value);
+    }
 
 
     /**
     * @name lookupConditionMapping
     * @description check icon <-> condition mapping and call condition journal entry lookup against matches
     * @todo 
-    * @parameter {Object} effects
+    * @parameter {Object} icons
     */
-    async lookupConditionMapping(effects){
+    async lookupConditionMapping(icons){
         let conditions = [];
+        let conditon;
         //console.log(conditionMapping);
 
         //iterate through incoming icons and check the conditionMap for the corresponding entry
-        for (let e of effects){
-            //console.log(icon);
-            if(conditionMapping.hasOwnProperty(e)){
-                //using bracket notation due to special characters in object properties
-                let condition = conditionMapping[e];
-                //console.log(condition);
-                conditions.push(condition);
+        for (let i of icons){
+            try {
+                condition = this.constructor._getKeyByValue(this.settings.map, i);
+            } catch (e) {
+                console.log(e);
+            } finally {
+                conditions.push(i);
             }
              
         }
@@ -459,20 +497,21 @@ class CUBEnhancedConditions {
     async lookupConditionEntries(conditions){
         let conditionEntries = [];
 
-        for (var condition of conditions){
-            if(condition){
+        for (let c of conditions){
+            if(c){
                 let re = new RegExp(condition,'i');
-                let ce = await game.journal.entities.find(j => j.name.match(re));
-                console.log(ce);
-                conditionEntries.push(ce);
+                let entry = await game.journal.entities.find(j => j.name.match(re));
+                console.log(entry);
+                conditionEntries.push(entry);
             }
         }
 
         console.log(conditionEntries);
-        if(EC_CONFIG_outputChat){
+        if(this.settings.output){
             return this.outputChatMessage(conditionEntries);
-        }
-        return;        
+        } else {
+            return;
+        }       
     }
 
     /**
@@ -529,14 +568,7 @@ class CUBEnhancedConditions {
         return actor;
     }
 
-    static _createSidebarButton() {
-        let button = $(`<button id="enhanced-conditions"><i class="fas fa-flask"></i> Condition Mapper</button>`);
-        button.click(ev => {
-            new CUBEnhancedConditionsConfig().render(true);
-        });
-        $('#manage-modules').parent().find('#enhanced-conditions').remove();
-        $('#manage-modules').after(button);
-    }
+    
     
 }
 
