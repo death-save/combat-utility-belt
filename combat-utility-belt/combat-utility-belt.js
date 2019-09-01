@@ -79,7 +79,8 @@ class CUBRerollInitiative {
         this.MODULE_NAME = cubGetModuleName();
 
         //intialise settings
-	    this.settings = CUBConfigSidekick.initGadgetSettings(this.GADGET_NAME, this.SETTINGS_META);
+        this.settings = CUBConfigSidekick.initGadgetSettings(this.GADGET_NAME, this.SETTINGS_META);
+        this._hookUpdateCombat();
     }
 
 	get GADGET_NAME() {
@@ -121,7 +122,8 @@ class CUBRerollInitiative {
              *  check that the round props are numbers,
              *  finally test if the update's round is greater than the previous combat round 
              */
-            if(this.settings && (combat.previous && update) && !isNaN(combat.previous.round || update.round) && update.round > combat.previous.round){
+            if(this.settings && update.round > combat.previous.round 
+            && !isNaN(combat.previous.round || update.round)){
                 await combat.resetAll();
                 combat.rollAll();
             }
@@ -379,7 +381,7 @@ class CUBEnhancedConditions {
                 hint: this.SETTINGS_DESCRIPTORS.MapH,
                 scope: "world",
                 type: Object,
-                default: this.DEFAULT_CONFIG.maps.dnd5e,
+                default: this.DEFAULT_MAP.dnd5e,
                 onChange: s => {
                     this.settings.map = s;
                 }
