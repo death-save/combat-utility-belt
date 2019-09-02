@@ -122,8 +122,11 @@ class CUBRerollInitiative {
              *  check that the round props are numbers,
              *  finally test if the update's round is greater than the previous combat round 
              */
-            if(this.settings && update.round > combat.previous.round 
-            && !isNaN(combat.previous.round || update.round)){
+            if(this.settings 
+            && (combat.previous && update.round)
+            && !isNaN(combat.previous.round || update.round)
+            && combat.round >= 1
+            && update.round > combat.previous.round){
                 await combat.resetAll();
                 combat.rollAll();
             }
