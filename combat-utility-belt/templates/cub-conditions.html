@@ -7,7 +7,7 @@
         {{#each conditionmap as |icon condition|}}
         <li class="condition-map-item">
             <div class="formgroup">
-                <img src="{{icon}}" style="width:10%;" />
+                <img src="{{icon}}" style="width:10%;background:black" />
                 <label>{{condition}}</label>
                 {{filePicker target="icon" type="image"}}
                 <input type="text" name="icon" title="Status Icon" value="{{icon}}" placeholder="/icons/example.svg">
