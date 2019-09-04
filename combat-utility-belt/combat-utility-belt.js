@@ -115,6 +115,8 @@ class CUBRerollInitiative {
      */
     async _hookUpdateCombat() {
         Hooks.on("updateCombat",(async (combat, update) => {
+            let rerolled = false;
+
             console.log(combat,update);
             /**
              *  firstly is the specified module setting turned on (eg. is rerolling enabled), 
@@ -123,13 +125,20 @@ class CUBRerollInitiative {
              *  to avoid any hysteria at the start of combat, only reroll if the update round is gt or equal to 1
              *  finally test if the update's round is greater than the previous combat round 
              */
-            if(this.settings 
+            if(this.settings
+            && !rerolled 
             && (combat.previous && update)
             && !isNaN(combat.previous.round || update.round)
             && update.round >= 1
             && update.round > combat.previous.round){
-                await combat.resetAll();
-                combat.rollAll();
+                try {
+                    await combat.resetAll();
+                    combat.rollAll();
+                    rerolled = true;
+                } catch(e) {
+                    console.log(e);
+                }
+
             }
         }));
     }
