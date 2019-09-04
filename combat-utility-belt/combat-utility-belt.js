@@ -221,6 +221,7 @@ class CUBEnhancedConditions {
         }
 
         this.constructor._createSidebarButton();
+        this._addStatusIcons();
     }
 
     /**
@@ -411,7 +412,26 @@ class CUBEnhancedConditions {
     /**
      * Retrieve the basic statusEffect icons from the Foundry CONFIG
      */
-    baseStatusIcons = CONFIG.statusEffects;
+    
+    static get baseStatusIcons() {
+        const defaultIcons = Array.from(CONFIG.statusEffects); 
+        return defaultIcons;
+    }
+
+    /**
+     * Add the new statuseffects
+     * @todo make this an override on the token hud instead
+     */
+    _addStatusIcons(){
+        console.log(this.settings.map);
+        const icons = Object.getOwnPropertyNames(this.settings.map);
+        
+        for(let i of icons){
+            CONFIG.statusEffects.push(this.settings.map[i]);
+            console.log(i);
+        }
+        
+    }
     
     /**
      * Define the labels for the D&D 5e conditions
