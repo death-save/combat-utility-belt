@@ -113,7 +113,7 @@ class CUBRerollInitiative {
      * Hook on update of Combat class. 
      * Reroll initiative if requirements met
      */
-    _hookUpdateCombat() {
+    async _hookUpdateCombat() {
         Hooks.on("updateCombat",(async (combat, update) => {
             console.log(combat,update);
             /**
@@ -316,7 +316,7 @@ class CUBEnhancedConditions {
                 "Prone":this.DEFAULT_CONFIG.iconPath+"prone.svg",
                 "Restrained":this.DEFAULT_CONFIG.iconPath+"restrained.svg",
                 "Stunned":this.DEFAULT_CONFIG.iconPath+"stunned.svg",
-                "Unconscious":this.DEFAULT_CONFIG.iconPath+"sleep.svg"
+                "Unconscious":this.DEFAULT_CONFIG.iconPath+"unconscious.svg"
             }
         }
     }
