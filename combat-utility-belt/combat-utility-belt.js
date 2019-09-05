@@ -237,6 +237,7 @@ class CUBEnhancedConditions {
 
         this.constructor._createSidebarButton();
         this._addStatusIcons();
+        this._hookOnUpdateToken();
     }
 
     /**
@@ -529,7 +530,7 @@ class CUBEnhancedConditions {
     */
     async lookupConditionMapping(icons){
         let conditions = [];
-        let conditon;
+        let condition;
         //console.log(conditionMapping);
 
         //iterate through incoming icons and check the conditionMap for the corresponding entry
@@ -557,7 +558,7 @@ class CUBEnhancedConditions {
 
         for (let c of conditions){
             if(c){
-                let re = new RegExp(condition,'i');
+                let re = new RegExp(c,'i');
                 let entry = await game.journal.entities.find(j => j.name.match(re));
                 console.log(entry);
                 conditionEntries.push(entry);
