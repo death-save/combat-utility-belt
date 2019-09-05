@@ -468,7 +468,7 @@ class CUBEnhancedConditions {
     static _createSidebarButton() {
         Hooks.on("renderSettings", (app, html) => {
             const mapButton = $(
-                `<button id="enhanced-conditions"><i class="fas fa-flask"></i> Condition Mapper</button>`
+                `<button id="enhanced-conditions"><i class="fas fa-flask"></i> ${CUBEnhancedConditionsConfig.defaultOptions.title} </button>`
             );
 
             const manageModulesButton = html.find('#manage-modules')
@@ -648,8 +648,8 @@ class CUBEnhancedConditionsConfig extends FormApplication {
 
     static get defaultOptions() {
         return mergeObject(super.defaultOptions, {
-            id: "cub-condition",
-            title: "C-U-B Condition Mapper",
+            id: "cub-condition-lab",
+            title: "CUB Condition Lab",
             template: "public/modules/combat-utility-belt/templates/cub-conditions.html",
             classes: ["sheet"],
             width: 500
