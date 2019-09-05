@@ -540,7 +540,7 @@ class CUBEnhancedConditions {
             } catch (e) {
                 console.log(e);
             } finally {
-                conditions.push(i);
+                conditions.push(condition);
             }
              
         }
@@ -581,7 +581,8 @@ class CUBEnhancedConditions {
         let token = this.currentToken;
         let actor = await this.lookupTokenActor(token.actor.id);
         let tokenSpeaker = {};
-        let chatContent = [];
+        let chatContent;
+        let chatConditions = [];
 
         console.log("current token",token);
         console.log("current actor",actor);
@@ -595,16 +596,23 @@ class CUBEnhancedConditions {
             console.log("Speaker is a token:",token);
             tokenSpeaker = ChatMessage.getSpeaker({"token":token});
         }
+
+        //create some boiler text for prepending to the conditions array
+        if (entries.length > 0) {
+            chatContent = tokenSpeaker.alias + " is:";
+        }
         
         //iterate through the journal entries and output to chat
         for (let e of entries){
-            //let journalLink = "@JournalEntry["+e.name+"]";
-            let journalLink = e.name;
+            let journalLink = "@JournalEntry["+e.name+"]";
+            //let journalLink = e.name;
             //need to figure out best way to break out entries -- newline is being turned into space
-            chatContent.push("\n"+journalLink);
-
-               
+            chatConditions.push("\n"+journalLink);   
         }
+
+        //add the conditions to the boiler text
+        chatContent += chatConditions;
+
         await ChatMessage.create({
             speaker:tokenSpeaker,
             content:chatContent,
