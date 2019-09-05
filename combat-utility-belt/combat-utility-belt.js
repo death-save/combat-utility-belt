@@ -81,6 +81,7 @@ class CUBRerollInitiative {
         //intialise settings
         this.settings = CUBConfigSidekick.initGadgetSettings(this.GADGET_NAME, this.SETTINGS_META);
         this._hookUpdateCombat();
+        this.currentCombatRound = null;
     }
 
 	get GADGET_NAME() {
@@ -106,7 +107,6 @@ class CUBRerollInitiative {
             console.log(this.GADGET_NAME+" settings changed to", s);
         }
     }
-    
 	
 
     /**
@@ -115,7 +115,12 @@ class CUBRerollInitiative {
      */
     async _hookUpdateCombat() {
         Hooks.on("updateCombat",(async (combat, update) => {
-            let rerolled = false;
+            let rerolled;
+
+            if(this.currentCombatRound != combat.round){
+                rerolled = false;
+            }
+            
 
             console.log(combat,update);
             /**
@@ -135,6 +140,7 @@ class CUBRerollInitiative {
                     await combat.resetAll();
                     combat.rollAll();
                     rerolled = true;
+                    this.currentCombatRound = combat.round;
                 } catch(e) {
                     console.log(e);
                 }
