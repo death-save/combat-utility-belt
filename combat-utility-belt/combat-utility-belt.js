@@ -429,7 +429,9 @@ class CUBEnhancedConditions {
      */
     
     static get baseStatusIcons() {
-        const defaultIcons = Array.from(CONFIG.statusEffects); 
+        CONFIG.defaultStatusEffects = duplicate(CONFIG.statusEffects);
+        Object.freeze(CONFIG.defaultStatusEffects);
+
         return defaultIcons;
     }
 
@@ -438,6 +440,13 @@ class CUBEnhancedConditions {
      * @todo make this an override on the token hud instead
      */
     _addStatusIcons(){
+        //save the original icons
+        if(!CONFIG.defaultStatusEffects) {
+            CONFIG.defaultStatusEffects = duplicate(CONFIG.statusEffects);
+            Object.freeze(CONFIG.defaultStatusEffects);
+        }
+       
+
         console.log(this.settings.map);
         const icons = Object.getOwnPropertyNames(this.settings.map);
         
