@@ -317,24 +317,31 @@ class CUBEnhancedConditions {
         
     }
 
-    static get DEFAULT_MAP() {
+    static get DEFAULT_MAPS() {
+        const dnd5e = new Map([
+            ["Blinded",this.DEFAULT_CONFIG.iconPath+"blinded.svg"],
+            ["Charmed",this.DEFAULT_CONFIG.iconPath+"charmed.svg"],
+            ["Deafened",this.DEFAULT_CONFIG.iconPath+"deafened.svg"],
+            ["Exhaustion",this.DEFAULT_CONFIG.iconPath+"exhaustion1.svg"],
+            ["Frightened",this.DEFAULT_CONFIG.iconPath+"frightened.svg"],
+            ["Incapacitated",this.DEFAULT_CONFIG.iconPath+"incapacitated.svg"],
+            ["Invisible",this.DEFAULT_CONFIG.iconPath+"invisible.svg"],
+            ["Paralyzed",this.DEFAULT_CONFIG.iconPath+"paralyzed.svg"],
+            ["Petrified",this.DEFAULT_CONFIG.iconPath+"petrified.svg"],
+            ["Poisoned",this.DEFAULT_CONFIG.iconPath+"poisoned.svg"],
+            ["Prone",this.DEFAULT_CONFIG.iconPath+"prone.svg"],
+            ["Restrained",this.DEFAULT_CONFIG.iconPath+"restrained.svg"],
+            ["Stunned",this.DEFAULT_CONFIG.iconPath+"stunned.svg"],
+            ["Unconscious",this.DEFAULT_CONFIG.iconPath+"unconscious.svg"]
+        ]);
+
+        const pf1e = new Map([
+            ["Blinded",this.DEFAULT_CONFIG.iconPath+"blinded.svg"]
+        ]);
+
         return {
-            dnd5e: () => {new Map([
-                ["Blinded",this.DEFAULT_CONFIG.iconPath+"blinded.svg"],
-                ["Charmed",this.DEFAULT_CONFIG.iconPath+"charmed.svg"],
-                ["Deafened",this.DEFAULT_CONFIG.iconPath+"deafened.svg"],
-                ["Exhaustion",this.DEFAULT_CONFIG.iconPath+"exhaustion1.svg"],
-                ["Frightened",this.DEFAULT_CONFIG.iconPath+"frightened.svg"],
-                ["Incapacitated",this.DEFAULT_CONFIG.iconPath+"incapacitated.svg"],
-                ["Invisible",this.DEFAULT_CONFIG.iconPath+"invisible.svg"],
-                ["Paralyzed",this.DEFAULT_CONFIG.iconPath+"paralyzed.svg"],
-                ["Petrified",this.DEFAULT_CONFIG.iconPath+"petrified.svg"],
-                ["Poisoned",this.DEFAULT_CONFIG.iconPath+"poisoned.svg"],
-                ["Prone",this.DEFAULT_CONFIG.iconPath+"prone.svg"],
-                ["Restrained",this.DEFAULT_CONFIG.iconPath+"restrained.svg"],
-                ["Stunned",this.DEFAULT_CONFIG.iconPath+"stunned.svg"],
-                ["Unconscious",this.DEFAULT_CONFIG.iconPath+"unconscious.svg"]
-            ])}
+            "dnd5e": {dnd5e},
+            "pf1e": {pf1e}
         }       
     }
 
@@ -375,7 +382,7 @@ class CUBEnhancedConditions {
                 hint: this.SETTINGS_DESCRIPTORS.SystemH,
                 scope: "world",
                 type: String,
-                default: this.DEFAULT_CONFIG.systems.dnd5e,
+                default: this.DEFAULT_CONFIG.systems[game.system.name],
                 choices: this.DEFAULT_CONFIG.systems,
                 config: true,
                 onChange: s => {
@@ -397,14 +404,14 @@ class CUBEnhancedConditions {
 
             },
     
-            map: {
+            maps: {
                 name: this.SETTINGS_DESCRIPTORS.MapN,
                 hint: this.SETTINGS_DESCRIPTORS.MapH,
                 scope: "world",
-                type: Map,
-                default: this.DEFAULT_MAP.dnd5e,
+                type: Object,
+                default: this.DEFAULT_MAPS,
                 onChange: s => {
-                    this.settings.map = s;
+                    this.settings.maps = s;
                 }
             },
     
@@ -448,11 +455,11 @@ class CUBEnhancedConditions {
         }
        
 
-        console.log(this.settings.map);
-        const map = this.settings.map;
+        console.log(this.settings.maps);
+        const map = this.settings.maps[this.settings.system];
         
-        for(let [k,v] of map){
-            CONFIG.statusEffects.push(this.settings.map[v]);
+        for(let [k,v] of map.entries()){
+            CONFIG.statusEffects.push(this.settings.maps[v]);
             console.log(k,v);
         }
         
@@ -462,7 +469,9 @@ class CUBEnhancedConditions {
      * Define the labels for the D&D 5e conditions
      */
     
-
+    get map() {
+        return this.settings.maps[this.settings.system];
+    }
     
     
     static _createSidebarButton() {
@@ -536,7 +545,11 @@ class CUBEnhancedConditions {
         //iterate through incoming icons and check the conditionMap for the corresponding entry
         for (let i of icons){
             try {
-                condition = this.constructor._getKeyByValue(this.settings.map, i);
+                for (let [k,v] of this.map.entries()) {
+                    if(v == i) {
+                        condition = k;
+                    }
+                }
             } catch (e) {
                 console.log(e);
             } finally {
@@ -659,8 +672,9 @@ class CUBEnhancedConditionsConfig extends FormApplication {
     getData() {
         //map = game.settings.get(cubGetModuleName(), CUBEnhancedConditions.GADGET_NAME + "(" + CUBEnhancedConditions.SETTINGS.MapN + ")");
         const map = CUBConfigSidekick.getGadgetSettings(CUBEnhancedConditions.GADGET_NAME + "(" + CUBEnhancedConditions.SETTINGS_DESCRIPTORS.MapN + ")");
+        const system = CUBConfigSidekick.getGadgetSettings(CUBEnhancedConditions.GADGET_NAME + "(" + CUBEnhancedConditions.SETTINGS_DESCRIPTORS.SystemN + ")");
         const data = {
-            conditionmap: map
+            conditionmap: map[system]
         }
 
         return data;
