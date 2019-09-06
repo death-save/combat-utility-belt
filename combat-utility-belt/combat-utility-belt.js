@@ -319,23 +319,23 @@ class CUBEnhancedConditions {
 
     static get DEFAULT_MAP() {
         return {
-            dnd5e: {
-                "Blinded":this.DEFAULT_CONFIG.iconPath+"blinded.svg",
-                "Charmed":this.DEFAULT_CONFIG.iconPath+"charmed.svg",
-                "Deafened":this.DEFAULT_CONFIG.iconPath+"deafened.svg",
-                "Exhaustion":this.DEFAULT_CONFIG.iconPath+"exhaustion1.svg",
-                "Frightened":this.DEFAULT_CONFIG.iconPath+"frightened.svg",
-                "Incapacitated":this.DEFAULT_CONFIG.iconPath+"incapacitated.svg",
-                "Invisible":this.DEFAULT_CONFIG.iconPath+"invisible.svg",
-                "Paralyzed":this.DEFAULT_CONFIG.iconPath+"paralyzed.svg",
-                "Petrified":this.DEFAULT_CONFIG.iconPath+"petrified.svg",
-                "Poisoned":this.DEFAULT_CONFIG.iconPath+"poisoned.svg",
-                "Prone":this.DEFAULT_CONFIG.iconPath+"prone.svg",
-                "Restrained":this.DEFAULT_CONFIG.iconPath+"restrained.svg",
-                "Stunned":this.DEFAULT_CONFIG.iconPath+"stunned.svg",
-                "Unconscious":this.DEFAULT_CONFIG.iconPath+"unconscious.svg"
-            }
-        }
+            dnd5e: () => {new Map([
+                ["Blinded",this.DEFAULT_CONFIG.iconPath+"blinded.svg"],
+                ["Charmed",this.DEFAULT_CONFIG.iconPath+"charmed.svg"],
+                ["Deafened",this.DEFAULT_CONFIG.iconPath+"deafened.svg"],
+                ["Exhaustion",this.DEFAULT_CONFIG.iconPath+"exhaustion1.svg"],
+                ["Frightened",this.DEFAULT_CONFIG.iconPath+"frightened.svg"],
+                ["Incapacitated",this.DEFAULT_CONFIG.iconPath+"incapacitated.svg"],
+                ["Invisible",this.DEFAULT_CONFIG.iconPath+"invisible.svg"],
+                ["Paralyzed",this.DEFAULT_CONFIG.iconPath+"paralyzed.svg"],
+                ["Petrified",this.DEFAULT_CONFIG.iconPath+"petrified.svg"],
+                ["Poisoned",this.DEFAULT_CONFIG.iconPath+"poisoned.svg"],
+                ["Prone",this.DEFAULT_CONFIG.iconPath+"prone.svg"],
+                ["Restrained",this.DEFAULT_CONFIG.iconPath+"restrained.svg"],
+                ["Stunned",this.DEFAULT_CONFIG.iconPath+"stunned.svg"],
+                ["Unconscious",this.DEFAULT_CONFIG.iconPath+"unconscious.svg"]
+            ])}
+        }       
     }
 
     static get SETTINGS_DESCRIPTORS() {
@@ -401,7 +401,7 @@ class CUBEnhancedConditions {
                 name: this.SETTINGS_DESCRIPTORS.MapN,
                 hint: this.SETTINGS_DESCRIPTORS.MapH,
                 scope: "world",
-                type: Object,
+                type: Map,
                 default: this.DEFAULT_MAP.dnd5e,
                 onChange: s => {
                     this.settings.map = s;
@@ -449,11 +449,11 @@ class CUBEnhancedConditions {
        
 
         console.log(this.settings.map);
-        const icons = Object.getOwnPropertyNames(this.settings.map);
+        const map = this.settings.map;
         
-        for(let i of icons){
-            CONFIG.statusEffects.push(this.settings.map[i]);
-            console.log(i);
+        for(let [k,v] of map){
+            CONFIG.statusEffects.push(this.settings.map[v]);
+            console.log(k,v);
         }
         
     }
@@ -664,6 +664,12 @@ class CUBEnhancedConditionsConfig extends FormApplication {
         }
 
         return data;
+    }
+
+    _updateObject(event,formdata) {
+        console.log(event,formdata);
+
+
     }
 
 

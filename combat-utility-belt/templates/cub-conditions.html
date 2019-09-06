@@ -8,9 +8,9 @@
         <li class="condition-map-item">
             <div class="formgroup">
                 <img src="{{icon}}" style="width:10%;background:black" />
-                <input type="text" name="condition" title="Condition" value="{{condition}}" placeholder="Blinded">
+                <input type="text" name="condition-{{@index}}" title="Condition" value="{{condition}}" placeholder="Blinded" data-dtype="String">
                 {{filePicker target="icon" type="image"}}
-                <input type="text" name="icon" title="Status Icon" value="{{icon}}" placeholder="/icons/example.svg">
+                <input type="text" name="icon-{{@index}}" title="Status Icon" value="{{icon}}" placeholder="/icons/example.svg" data-dtype="String">
             </div>
         </li>
         {{/each}}
@@ -25,7 +25,7 @@
     </button>
 
     <button name="restore" title="Restore mappings back to system defaults">
-        <i class="fas fa-rewind"></i> Restore Defaults
+        <i class="fas fa-history"></i> Restore Defaults
     </button>
 
 </form>
