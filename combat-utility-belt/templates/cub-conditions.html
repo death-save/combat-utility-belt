@@ -4,14 +4,17 @@
         <span>
             <h3>Condition</h3>  <h3>Status Icon</h3>
         </span>
-        {{#each conditionmap as |icon condition|}}
+        {{#each conditionmap}}
+        {{log this}}
         <li class="condition-map-item">
+            {{#each this as |icon condition|}}
             <div class="formgroup">
                 <img src="{{icon}}" style="width:10%;background:black" />
                 <input type="text" name="condition-{{@index}}" title="Condition" value="{{condition}}" placeholder="Blinded" data-dtype="String">
                 {{filePicker target="icon" type="image"}}
                 <input type="text" name="icon-{{@index}}" title="Status Icon" value="{{icon}}" placeholder="/icons/example.svg" data-dtype="String">
             </div>
+            {{/each}}
         </li>
         {{/each}}
     </ol>

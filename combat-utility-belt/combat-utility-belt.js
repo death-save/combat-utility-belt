@@ -231,7 +231,7 @@ class CUBEnhancedConditions {
             system: CUBConfigSidekick.initGadgetSettings(this.constructor.GADGET_NAME + "(" + this.constructor.SETTINGS_DESCRIPTORS.SystemN + ")", this.constructor.SETTINGS_META.system ),
             folderType: CUBConfigSidekick.initGadgetSettings(this.constructor.GADGET_NAME + "(" + this.constructor.SETTINGS_DESCRIPTORS.FolderTypeN + ")", this.constructor.SETTINGS_META.folderType),
             conditions: CUBConfigSidekick.initGadgetSettings(this.constructor.GADGET_NAME + "(" + this.constructor.SETTINGS_DESCRIPTORS.ConditionsN + ")", this.constructor.SETTINGS_META.enhancedConditions),
-            map: CUBConfigSidekick.initGadgetSettings(this.constructor.GADGET_NAME + "(" + this.constructor.SETTINGS_DESCRIPTORS.MapN + ")", this.constructor.SETTINGS_META.map),
+            maps: CUBConfigSidekick.initGadgetSettings(this.constructor.GADGET_NAME + "(" + this.constructor.SETTINGS_DESCRIPTORS.MapN + ")", this.constructor.SETTINGS_META.maps),
             output: CUBConfigSidekick.initGadgetSettings(this.constructor.GADGET_NAME + "(" + this.constructor.SETTINGS_DESCRIPTORS.OutputChatN + ")", this.constructor.SETTINGS_META.outputChat)
         }
 
@@ -340,8 +340,8 @@ class CUBEnhancedConditions {
         ]);
 
         return {
-            "dnd5e": {dnd5e},
-            "pf1e": {pf1e}
+            "dnd5e": dnd5e,
+            "pf1e": pf1e
         }       
     }
 
@@ -459,7 +459,7 @@ class CUBEnhancedConditions {
         const map = this.settings.maps[this.settings.system];
         
         for(let [k,v] of map.entries()){
-            CONFIG.statusEffects.push(this.settings.maps[v]);
+            CONFIG.statusEffects.push(v);
             console.log(k,v);
         }
         
@@ -671,10 +671,12 @@ class CUBEnhancedConditionsConfig extends FormApplication {
 
     getData() {
         //map = game.settings.get(cubGetModuleName(), CUBEnhancedConditions.GADGET_NAME + "(" + CUBEnhancedConditions.SETTINGS.MapN + ")");
-        const map = CUBConfigSidekick.getGadgetSettings(CUBEnhancedConditions.GADGET_NAME + "(" + CUBEnhancedConditions.SETTINGS_DESCRIPTORS.MapN + ")");
+        const maps = CUBConfigSidekick.getGadgetSettings(CUBEnhancedConditions.GADGET_NAME + "(" + CUBEnhancedConditions.SETTINGS_DESCRIPTORS.MapN + ")");
         const system = CUBConfigSidekick.getGadgetSettings(CUBEnhancedConditions.GADGET_NAME + "(" + CUBEnhancedConditions.SETTINGS_DESCRIPTORS.SystemN + ")");
+        const conditionArray = Array.from(maps[system]);
+
         const data = {
-            conditionmap: map[system]
+            conditionmap: conditionArray
         }
 
         return data;
