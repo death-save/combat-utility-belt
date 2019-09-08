@@ -3,9 +3,9 @@ function cubGetModuleName () {
 }
 
 Hooks.on("init", function() {
-	const cubConfigSidekick = new CUBConfigSidekick();
+	const cubSidekick = new CUBSidekick();
     const cubHideNPCNames = new CUBHideNPCNames();
-    const cubEnhancedConditions = new CUBEnhancedConditions();
+    var cubEC = new CUBEnhancedConditions();
 })
 
 Hooks.on("ready",  function() {
@@ -17,15 +17,15 @@ Hooks.on("ready",  function() {
 
 
 /**
- * the purpose of this function is to register, get and set settings for each gadget
+ * Provides helper functions for use elsewhere in the module
  */
-class CUBConfigSidekick  {
+class CUBSidekick  {
     constructor(){
         this.MODULE_NAME = cubGetModuleName();
 
-        //CUBConfigSidekick.initGadgetSettings = initGadgetSettings;
-        //CUBConfigSidekick.getGadgetSettings = getGadgetSettings;
-        //CUBConfigSidekick.registerGadgetSettings = registerGadgetSettings;
+        //CUBSidekick.initGadgetSettings = initGadgetSettings;
+        //CUBSidekick.getGadgetSettings = getGadgetSettings;
+        //CUBSidekick.registerGadgetSettings = registerGadgetSettings;
     }
 
 	static registerGadgetSettings(gadget, settings) {
@@ -68,7 +68,11 @@ class CUBConfigSidekick  {
         settings[setting] = value;
         console.log("Updating " + GADGET_NAME + " settings:", settings);
         await game.settings.set(GADGET_NAME, SETTINGS_NAME, settings);
-	}
+    }
+    
+    static getKeyByValue(object, value) {
+        return Object.keys(object).find(key => object[key] === value);
+    }
 }
 
 /**
@@ -79,7 +83,7 @@ class CUBRerollInitiative {
         this.MODULE_NAME = cubGetModuleName();
 
         //intialise settings
-        this.settings = CUBConfigSidekick.initGadgetSettings(this.GADGET_NAME, this.SETTINGS_META);
+        this.settings = CUBSidekick.initGadgetSettings(this.GADGET_NAME, this.SETTINGS_META);
         this._hookUpdateCombat();
         this.currentCombatRound = null;
     }
@@ -150,12 +154,14 @@ class CUBRerollInitiative {
     }
 }
 
-//hide npc names
+/**
+ * Hides NPC names in the combat tracker
+ */
 class CUBHideNPCNames {
     constructor(){
         this.MODULE_NAME = cubGetModuleName();
         //intialise settings
-	    this.settings = CUBConfigSidekick.initGadgetSettings(this.GADGET_NAME, this.SETTINGS_META);
+	    this.settings = CUBSidekick.initGadgetSettings(this.GADGET_NAME, this.SETTINGS_META);
     }
 
     get GADGET_NAME() {
@@ -188,6 +194,7 @@ class CUBHideNPCNames {
     //TODO: add hook for sidebar tab first render -- need to hook on init instead of ready!
     _hookOnRenderCombatTracker() {
         Hooks.on("renderCombatTracker", (app,html) => {
+            console.log(app,html);
             // if not GM
             if(!game.user.isGM) {
                 let combatantListElement = html.find('li');
@@ -202,6 +209,9 @@ class CUBHideNPCNames {
                     if(!actor.isPC && settings) {
                         //find the flexcol elements
                         let flexcol = e.getElementsByClassName("token-name");
+
+                        
+
                         //iterate through the returned elements
                         for(let f of flexcol){
                             //find the h4 elements
@@ -216,6 +226,8 @@ class CUBHideNPCNames {
                     }
                     
                 }
+
+                
                 
             }
         });
@@ -228,11 +240,12 @@ class CUBEnhancedConditions {
         this.MODULE_NAME = cubGetModuleName();
 
         this.settings = {
-            system: CUBConfigSidekick.initGadgetSettings(this.constructor.GADGET_NAME + "(" + this.constructor.SETTINGS_DESCRIPTORS.SystemN + ")", this.constructor.SETTINGS_META.system ),
-            folderType: CUBConfigSidekick.initGadgetSettings(this.constructor.GADGET_NAME + "(" + this.constructor.SETTINGS_DESCRIPTORS.FolderTypeN + ")", this.constructor.SETTINGS_META.folderType),
-            conditions: CUBConfigSidekick.initGadgetSettings(this.constructor.GADGET_NAME + "(" + this.constructor.SETTINGS_DESCRIPTORS.ConditionsN + ")", this.constructor.SETTINGS_META.enhancedConditions),
-            maps: CUBConfigSidekick.initGadgetSettings(this.constructor.GADGET_NAME + "(" + this.constructor.SETTINGS_DESCRIPTORS.MapN + ")", this.constructor.SETTINGS_META.maps),
-            output: CUBConfigSidekick.initGadgetSettings(this.constructor.GADGET_NAME + "(" + this.constructor.SETTINGS_DESCRIPTORS.OutputChatN + ")", this.constructor.SETTINGS_META.outputChat)
+            system: CUBSidekick.initGadgetSettings(this.constructor.GADGET_NAME + "(" + this.constructor.SETTINGS_DESCRIPTORS.SystemN + ")", this.constructor.SETTINGS_META.system ),
+            folderType: CUBSidekick.initGadgetSettings(this.constructor.GADGET_NAME + "(" + this.constructor.SETTINGS_DESCRIPTORS.FolderTypeN + ")", this.constructor.SETTINGS_META.folderType),
+            conditions: CUBSidekick.initGadgetSettings(this.constructor.GADGET_NAME + "(" + this.constructor.SETTINGS_DESCRIPTORS.ConditionsN + ")", this.constructor.SETTINGS_META.enhancedConditions),
+            maps: CUBSidekick.initGadgetSettings(this.constructor.GADGET_NAME + "(" + this.constructor.SETTINGS_DESCRIPTORS.MapN + ")", this.constructor.SETTINGS_META.maps),
+            output: CUBSidekick.initGadgetSettings(this.constructor.GADGET_NAME + "(" + this.constructor.SETTINGS_DESCRIPTORS.OutputChatN + ")", this.constructor.SETTINGS_META.outputChat),
+            systemName: CUBSidekick.initGadgetSettings(this.constructor.GADGET_NAME + "(" + this.constructor.SETTINGS_META.systemName.name + ")", this.constructor.SETTINGS_META.systemName)
         }
 
         this.constructor._createSidebarButton();
@@ -342,24 +355,24 @@ class CUBEnhancedConditions {
 
     static get DEFAULT_MAPS() {
         const dnd5e = new Map([
-            ["Blinded",this.DEFAULT_CONFIG.iconPath+"blinded.svg"],
-            ["Charmed",this.DEFAULT_CONFIG.iconPath+"charmed.svg"],
-            ["Deafened",this.DEFAULT_CONFIG.iconPath+"deafened.svg"],
-            ["Exhaustion",this.DEFAULT_CONFIG.iconPath+"exhaustion1.svg"],
-            ["Frightened",this.DEFAULT_CONFIG.iconPath+"frightened.svg"],
-            ["Incapacitated",this.DEFAULT_CONFIG.iconPath+"incapacitated.svg"],
-            ["Invisible",this.DEFAULT_CONFIG.iconPath+"invisible.svg"],
-            ["Paralyzed",this.DEFAULT_CONFIG.iconPath+"paralyzed.svg"],
-            ["Petrified",this.DEFAULT_CONFIG.iconPath+"petrified.svg"],
-            ["Poisoned",this.DEFAULT_CONFIG.iconPath+"poisoned.svg"],
-            ["Prone",this.DEFAULT_CONFIG.iconPath+"prone.svg"],
-            ["Restrained",this.DEFAULT_CONFIG.iconPath+"restrained.svg"],
-            ["Stunned",this.DEFAULT_CONFIG.iconPath+"stunned.svg"],
-            ["Unconscious",this.DEFAULT_CONFIG.iconPath+"unconscious.svg"]
+            ["Blinded", this.DEFAULT_CONFIG.iconPath+"blinded.svg"],
+            ["Charmed", this.DEFAULT_CONFIG.iconPath+"charmed.svg"],
+            ["Deafened", this.DEFAULT_CONFIG.iconPath+"deafened.svg"],
+            ["Exhaustion", this.DEFAULT_CONFIG.iconPath+"exhaustion1.svg"],
+            ["Frightened", this.DEFAULT_CONFIG.iconPath+"frightened.svg"],
+            ["Incapacitated", this.DEFAULT_CONFIG.iconPath+"incapacitated.svg"],
+            ["Invisible", this.DEFAULT_CONFIG.iconPath+"invisible.svg"],
+            ["Paralyzed", this.DEFAULT_CONFIG.iconPath+"paralyzed.svg"],
+            ["Petrified", this.DEFAULT_CONFIG.iconPath+"petrified.svg"],
+            ["Poisoned", this.DEFAULT_CONFIG.iconPath+"poisoned.svg"],
+            ["Prone", this.DEFAULT_CONFIG.iconPath+"prone.svg"],
+            ["Restrained", this.DEFAULT_CONFIG.iconPath+"restrained.svg"],
+            ["Stunned", this.DEFAULT_CONFIG.iconPath+"stunned.svg"],
+            ["Unconscious", this.DEFAULT_CONFIG.iconPath+"unconscious.svg"]
         ]);
 
         const pf1e = new Map([
-            ["Blinded",this.DEFAULT_CONFIG.iconPath+"blinded.svg"]
+            ["Blinded", this.DEFAULT_CONFIG.iconPath+"blinded.svg"]
         ]);
 
         return {
@@ -376,12 +389,14 @@ class CUBEnhancedConditions {
             FolderTypeH: "Folder type to use when looking for Condition entries",
             SystemN: "Game System",
             SystemH: "Game System to use for condition mapping",
+            TemplateN: "Condition Template",
+            TemplateH: "Game system to use as a template for condition/status icon mapping",
             OutputChatN: "Output to Chat",
             OutputChatH: "Output matched conditions to chat",
             ConditionsN: "Conditions",
             ConditionsH: "List of conditions for the game system",
-            MapN: "Condition Map",
-            MapH: "Map of conditions to icons"
+            MapsN: "Condition Maps",
+            MapsH: "Maps of conditions to icons"
         }
     }
 
@@ -413,6 +428,17 @@ class CUBEnhancedConditions {
                 }
             },
 
+            systemName: {
+                name: "SystemName",
+                hint: "API name for the system",
+                scope: "world",
+                type: String,
+                default: CUBSidekick.getKeyByValue(this.DEFAULT_CONFIG.systems, this.DEFAULT_CONFIG.systems[game.system.name]),
+                onChange: s => {
+                    this.settings.systemName = s;
+                }
+            },
+
             folderType: {
                 name: this.SETTINGS_DESCRIPTORS.FolderTypeN,
                 hint: this.SETTINGS_DESCRIPTORS.FolderTypeH,
@@ -428,8 +454,8 @@ class CUBEnhancedConditions {
             },
     
             maps: {
-                name: this.SETTINGS_DESCRIPTORS.MapN,
-                hint: this.SETTINGS_DESCRIPTORS.MapH,
+                name: this.SETTINGS_DESCRIPTORS.MapsN,
+                hint: this.SETTINGS_DESCRIPTORS.MapsH,
                 scope: "world",
                 type: Object,
                 default: this.DEFAULT_MAPS,
@@ -454,6 +480,14 @@ class CUBEnhancedConditions {
 
 
     }
+    /* needs a rework
+    get system() {
+        return {
+            name: CUBSidekick.getKeyByValue(this.constructor.DEFAULT_CONFIG.systems, this.settings.system),
+            title: this.settings.system
+        }
+    }
+    */
 
     /**
      * Retrieve the basic statusEffect icons from the Foundry CONFIG
@@ -479,7 +513,7 @@ class CUBEnhancedConditions {
        
 
         console.log(this.settings.maps);
-        const map = this.settings.maps[game.system.name];
+        const map = this.settings.maps[this.settings.systemName];
         
         for(let [k,v] of map.entries()){
             CONFIG.statusEffects.push(v);
@@ -493,7 +527,7 @@ class CUBEnhancedConditions {
      */
     
     get map() {
-        return this.settings.maps[game.system.name];
+        return this.settings.maps[this.settings.systemName];
     }
     
     
@@ -547,10 +581,6 @@ class CUBEnhancedConditions {
             }
             return;
         });
-    }
-    
-    static _getKeyByValue(object, value) {
-        return Object.keys(object).find(key => object[key] === value);
     }
 
 
@@ -647,7 +677,10 @@ class CUBEnhancedConditions {
         }
 
         //add the conditions to the boiler text
-        chatContent += chatConditions;
+        if(chatConditions.length > 0) {
+            chatContent += chatConditions;
+        }
+        
 
         await ChatMessage.create({
             speaker:tokenSpeaker,
@@ -694,20 +727,61 @@ class CUBEnhancedConditionsConfig extends FormApplication {
 
     getData() {
         //map = game.settings.get(cubGetModuleName(), CUBEnhancedConditions.GADGET_NAME + "(" + CUBEnhancedConditions.SETTINGS.MapN + ")");
-        const maps = CUBConfigSidekick.getGadgetSettings(CUBEnhancedConditions.GADGET_NAME + "(" + CUBEnhancedConditions.SETTINGS_DESCRIPTORS.MapN + ")");
-        const system = CUBConfigSidekick.getGadgetSettings(CUBEnhancedConditions.GADGET_NAME + "(" + CUBEnhancedConditions.SETTINGS_DESCRIPTORS.SystemN + ")");
-        const conditionArray = Array.from(maps[system]);
+        const maps = CUBSidekick.getGadgetSettings(CUBEnhancedConditions.GADGET_NAME + "(" + CUBEnhancedConditions.SETTINGS_DESCRIPTORS.MapN + ")");
+        const system = CUBSidekick.getGadgetSettings(CUBEnhancedConditions.GADGET_NAME + "(" + CUBEnhancedConditions.SETTINGS_META.systemName.name + ")");
+        const conditionMapArray = Array.from(maps[system]);
 
         const data = {
-            conditionmap: conditionArray
+            conditionmap: conditionMapArray
         }
 
         return data;
     }
 
+    /**
+     * Take the new map and write it back to settings, overwriting existing
+     * @param {Object} event 
+     * @param {Object} formdata 
+     */
     _updateObject(event,formdata) {
         console.log(event,formdata);
+        let conditions = [];
+        let icons = [];
+        let oldMapsSetting = CUBSidekick.getGadgetSettings(CUBEnhancedConditions.GADGET_NAME + "(" + CUBEnhancedConditions.SETTINGS_DESCRIPTORS.MapsN + ")");
+        let newMap = new Map();
+        const system = CUBSidekick.getGadgetSettings(CUBEnhancedConditions.GADGET_NAME + "(" + CUBEnhancedConditions.SETTINGS_META.systemName.name + ")");
+        let oldMap = oldMapsSetting[system];
+        let mergeMapsSetting = {};
 
+        //need to tighten these up to check for the existence of digits after the word
+        const conditionRegex = new RegExp('condition',"i");
+        const iconRegex = new RegeExp('icon',"i")
+
+
+        //write it back to the relevant condition map
+        for(let e of formdata){
+            if(e.match(conditionRegex)){
+                conditions.push(e);
+            } else if (e.match(iconRegex)) {
+                icons.push(e);
+            }
+        }
+
+        for(let i;i <= conditions.length; i++){
+            newMap.set(conditions[i], icons[i]);
+        }
+
+        mergeMapsSetting = mergeObject(oldMapsSetting, {
+            [system]: newMap
+        });
+        
+
+        CUBSidekick.setGadgetSettings(CUBEnhancedConditions.GADGET_NAME + "(" + CUBEnhancedConditions.SETTINGS_DESCRIPTORS.MapsN + ")", mergeMapsSetting);
+
+        //not sure what to do about this yet, probably nothing
+        console.assert(conditions.length === icons.length, "There are unmapped conditions");
+
+        
 
     }
 
@@ -719,11 +793,11 @@ class CUBInjuredAndDead {
     constructor(){
         this.MODULE_NAME = cubGetModuleName();
         this.settings = {
-            injured: CUBConfigSidekick.initGadgetSettings(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.InjuredN + ")", this.SETTINGS_META.Injured),
-            threshold: CUBConfigSidekick.initGadgetSettings(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.ThresholdN + ")", this.SETTINGS_META.Threshold),
-            dead: CUBConfigSidekick.initGadgetSettings(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.DeadN + ")", this.SETTINGS_META.Dead),
-            injuredIcon: CUBConfigSidekick.initGadgetSettings(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.InjuredIconN + ")", this.SETTINGS_META.InjuredIcon),
-            deadIcon: CUBConfigSidekick.initGadgetSettings(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.DeadIconN + ")", this.SETTINGS_META.DeadIcon),
+            injured: CUBSidekick.initGadgetSettings(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.InjuredN + ")", this.SETTINGS_META.Injured),
+            threshold: CUBSidekick.initGadgetSettings(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.ThresholdN + ")", this.SETTINGS_META.Threshold),
+            dead: CUBSidekick.initGadgetSettings(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.DeadN + ")", this.SETTINGS_META.Dead),
+            injuredIcon: CUBSidekick.initGadgetSettings(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.InjuredIconN + ")", this.SETTINGS_META.InjuredIcon),
+            deadIcon: CUBSidekick.initGadgetSettings(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.DeadIconN + ")", this.SETTINGS_META.DeadIcon),
         }
     }
     
