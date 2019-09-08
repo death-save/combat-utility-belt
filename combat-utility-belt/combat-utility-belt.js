@@ -258,12 +258,35 @@ class CUBEnhancedConditions {
                 compendium: "Compendium"
             },
             folderName: "conditions",
+            /* as objects - tbd if this is the way to handle it
             systems: {
-                dnd5e: "D&D 5e",
-                pf1e: "Pathfinder 1e",
-                pf2e: "Pathfinder 2e",
+                dnd5e: {
+                    name: "dnd5e",
+                    title: "D&D 5e"
+                },
+                pf1e: {
+                    name: "pf1e",
+                    title: "Pathfinder 1e"
+                },
+                pf2e: {
+                    name: "pf2e",
+                    title: "Pathfinder 2e"
+                },
+                wfrp: {
+                    name: "wfrp",
+                    title: "Warhammer Fantasy Roleplaying Game"
+                },
+                custom: {
+                    name: "custom",
+                    title: "Custom/Other"
+                }
+                */
+            systems: {
+                dnd5e: "Dungeons & Dragons 5th Edition",
+                pf1e: "Pathfinder 1st Edition",
+                pf2e: "Pathfinder 2nd Edition",
                 wfrp: "Warhammer Fantasy Roleplaying Game",
-                custom: "Custom"
+                custom: "Custom/Other"
             },
             outputChat: true,
 
@@ -456,7 +479,7 @@ class CUBEnhancedConditions {
        
 
         console.log(this.settings.maps);
-        const map = this.settings.maps[this.settings.system];
+        const map = this.settings.maps[game.system.name];
         
         for(let [k,v] of map.entries()){
             CONFIG.statusEffects.push(v);
@@ -470,7 +493,7 @@ class CUBEnhancedConditions {
      */
     
     get map() {
-        return this.settings.maps[this.settings.system];
+        return this.settings.maps[game.system.name];
     }
     
     
