@@ -23,32 +23,32 @@ class CUBSidekick  {
     constructor(){
         this.MODULE_NAME = cubGetModuleName();
 
-        //CUBSidekick.initGadgetSettings = initGadgetSettings;
-        //CUBSidekick.getGadgetSettings = getGadgetSettings;
-        //CUBSidekick.registerGadgetSettings = registerGadgetSettings;
+        //CUBSidekick.initGadgetSetting = initGadgetSetting;
+        //CUBSidekick.getGadgetSetting = getGadgetSetting;
+        //CUBSidekick.registerGadgetSetting = registerGadgetSetting;
     }
 
-	static registerGadgetSettings(gadget, settings) {
-		game.settings.register(cubGetModuleName(), gadget, settings);
+	static registerGadgetSetting(gadget, setting) {
+		game.settings.register(cubGetModuleName(), gadget, setting);
 	}
 
-	static getGadgetSettings(gadget) {
-		return game.settings.get(cubGetModuleName(), gadget);
+	static getGadgetSetting(setting) {
+		return game.settings.get(cubGetModuleName(), setting);
 	}
 
-	static initGadgetSettings(gadget, settings) {
+	static initGadgetSetting(gadget, settings) {
 		console.log("inc gadget name:",gadget);
 		console.log("inc gadget metadata:",settings);
 		let config;
 
 		try {
-			config = this.getGadgetSettings(gadget);
+			config = this.getGadgetSetting(gadget);
 			console.log("config found:", config);
 		}
 		catch (e) {
 			if(e.message == "This is not a registered game setting") {
-				this.registerGadgetSettings(gadget, settings);
-				config = this.getGadgetSettings(gadget);
+				this.registerGadgetSetting(gadget, settings);
+				config = this.getGadgetSetting(gadget);
 			}
 			else {
 				throw e;
@@ -64,7 +64,20 @@ class CUBSidekick  {
      * @param {String} setting 
      * @param {*} value 
      */
-    async setGadgetSettings(gadget, setting, value) {
+    async setGadgetSetting(setting, property, value) {
+        const oldSetting = this.constructor.getGadgetSetting(setting);
+        let oldPropertyValue;
+
+        //target single property
+        try {
+            oldPropertyValue = oldSetting[property];
+        } catch (e) {
+            //catch undefined
+
+        }
+
+        
+
         settings[setting] = value;
         console.log("Updating " + GADGET_NAME + " settings:", settings);
         await game.settings.set(GADGET_NAME, SETTINGS_NAME, settings);
@@ -83,7 +96,7 @@ class CUBRerollInitiative {
         this.MODULE_NAME = cubGetModuleName();
 
         //intialise settings
-        this.settings = CUBSidekick.initGadgetSettings(this.GADGET_NAME, this.SETTINGS_META);
+        this.settings = CUBSidekick.initGadgetSetting(this.GADGET_NAME, this.SETTINGS_META);
         this._hookUpdateCombat();
         this.currentCombatRound = null;
     }
@@ -161,7 +174,7 @@ class CUBHideNPCNames {
     constructor(){
         this.MODULE_NAME = cubGetModuleName();
         //intialise settings
-	    this.settings = CUBSidekick.initGadgetSettings(this.GADGET_NAME, this.SETTINGS_META);
+	    this.settings = CUBSidekick.initGadgetSetting(this.GADGET_NAME, this.SETTINGS_META);
     }
 
     get GADGET_NAME() {
@@ -240,12 +253,12 @@ class CUBEnhancedConditions {
         this.MODULE_NAME = cubGetModuleName();
 
         this.settings = {
-            system: CUBSidekick.initGadgetSettings(this.constructor.GADGET_NAME + "(" + this.constructor.SETTINGS_DESCRIPTORS.SystemN + ")", this.constructor.SETTINGS_META.system ),
-            folderType: CUBSidekick.initGadgetSettings(this.constructor.GADGET_NAME + "(" + this.constructor.SETTINGS_DESCRIPTORS.FolderTypeN + ")", this.constructor.SETTINGS_META.folderType),
-            conditions: CUBSidekick.initGadgetSettings(this.constructor.GADGET_NAME + "(" + this.constructor.SETTINGS_DESCRIPTORS.ConditionsN + ")", this.constructor.SETTINGS_META.enhancedConditions),
-            maps: CUBSidekick.initGadgetSettings(this.constructor.GADGET_NAME + "(" + this.constructor.SETTINGS_DESCRIPTORS.MapN + ")", this.constructor.SETTINGS_META.maps),
-            output: CUBSidekick.initGadgetSettings(this.constructor.GADGET_NAME + "(" + this.constructor.SETTINGS_DESCRIPTORS.OutputChatN + ")", this.constructor.SETTINGS_META.outputChat),
-            systemName: CUBSidekick.initGadgetSettings(this.constructor.GADGET_NAME + "(" + this.constructor.SETTINGS_META.systemName.name + ")", this.constructor.SETTINGS_META.systemName)
+            system: CUBSidekick.initGadgetSetting(this.constructor.GADGET_NAME + "(" + this.constructor.SETTINGS_DESCRIPTORS.SystemN + ")", this.constructor.SETTINGS_META.system ),
+            folderType: CUBSidekick.initGadgetSetting(this.constructor.GADGET_NAME + "(" + this.constructor.SETTINGS_DESCRIPTORS.FolderTypeN + ")", this.constructor.SETTINGS_META.folderType),
+            conditions: CUBSidekick.initGadgetSetting(this.constructor.GADGET_NAME + "(" + this.constructor.SETTINGS_DESCRIPTORS.ConditionsN + ")", this.constructor.SETTINGS_META.enhancedConditions),
+            maps: CUBSidekick.initGadgetSetting(this.constructor.GADGET_NAME + "(" + this.constructor.SETTINGS_DESCRIPTORS.MapsN + ")", this.constructor.SETTINGS_META.maps),
+            output: CUBSidekick.initGadgetSetting(this.constructor.GADGET_NAME + "(" + this.constructor.SETTINGS_DESCRIPTORS.OutputChatN + ")", this.constructor.SETTINGS_META.outputChat),
+            systemName: CUBSidekick.initGadgetSetting(this.constructor.GADGET_NAME + "(" + this.constructor.SETTINGS_META.systemName.name + ")", this.constructor.SETTINGS_META.systemName)
         }
 
         this.constructor._createSidebarButton();
@@ -726,9 +739,9 @@ class CUBEnhancedConditionsConfig extends FormApplication {
     }
 
     getData() {
-        //map = game.settings.get(cubGetModuleName(), CUBEnhancedConditions.GADGET_NAME + "(" + CUBEnhancedConditions.SETTINGS.MapN + ")");
-        const maps = CUBSidekick.getGadgetSettings(CUBEnhancedConditions.GADGET_NAME + "(" + CUBEnhancedConditions.SETTINGS_DESCRIPTORS.MapN + ")");
-        const system = CUBSidekick.getGadgetSettings(CUBEnhancedConditions.GADGET_NAME + "(" + CUBEnhancedConditions.SETTINGS_META.systemName.name + ")");
+        //map = game.settings.get(cubGetModuleName(), CUBEnhancedConditions.GADGET_NAME + "(" + CUBEnhancedConditions.SETTINGS.MapsN + ")");
+        const maps = CUBSidekick.getGadgetSetting(CUBEnhancedConditions.GADGET_NAME + "(" + CUBEnhancedConditions.SETTINGS_DESCRIPTORS.MapsN + ")");
+        const system = CUBSidekick.getGadgetSetting(CUBEnhancedConditions.GADGET_NAME + "(" + CUBEnhancedConditions.SETTINGS_META.systemName.name + ")");
         const conditionMapArray = Array.from(maps[system]);
 
         const data = {
@@ -747,19 +760,19 @@ class CUBEnhancedConditionsConfig extends FormApplication {
         console.log(event,formdata);
         let conditions = [];
         let icons = [];
-        let oldMapsSetting = CUBSidekick.getGadgetSettings(CUBEnhancedConditions.GADGET_NAME + "(" + CUBEnhancedConditions.SETTINGS_DESCRIPTORS.MapsN + ")");
+        let oldMapsSetting = CUBSidekick.getGadgetSetting(CUBEnhancedConditions.GADGET_NAME + "(" + CUBEnhancedConditions.SETTINGS_DESCRIPTORS.MapsN + ")");
         let newMap = new Map();
-        const system = CUBSidekick.getGadgetSettings(CUBEnhancedConditions.GADGET_NAME + "(" + CUBEnhancedConditions.SETTINGS_META.systemName.name + ")");
+        const system = CUBSidekick.getGadgetSetting(CUBEnhancedConditions.GADGET_NAME + "(" + CUBEnhancedConditions.SETTINGS_META.systemName.name + ")");
         let oldMap = oldMapsSetting[system];
         let mergeMapsSetting = {};
 
         //need to tighten these up to check for the existence of digits after the word
         const conditionRegex = new RegExp('condition',"i");
-        const iconRegex = new RegeExp('icon',"i")
+        const iconRegex = new RegExp('icon',"i")
 
 
         //write it back to the relevant condition map
-        for(let e of formdata){
+        for(let e in formdata){
             if(e.match(conditionRegex)){
                 conditions.push(e);
             } else if (e.match(iconRegex)) {
@@ -776,7 +789,7 @@ class CUBEnhancedConditionsConfig extends FormApplication {
         });
         
 
-        CUBSidekick.setGadgetSettings(CUBEnhancedConditions.GADGET_NAME + "(" + CUBEnhancedConditions.SETTINGS_DESCRIPTORS.MapsN + ")", mergeMapsSetting);
+        CUBSidekick.setGadgetSetting(CUBEnhancedConditions.GADGET_NAME + "(" + CUBEnhancedConditions.SETTINGS_DESCRIPTORS.MapsN + ")", mergeMapsSetting);
 
         //not sure what to do about this yet, probably nothing
         console.assert(conditions.length === icons.length, "There are unmapped conditions");
@@ -793,11 +806,11 @@ class CUBInjuredAndDead {
     constructor(){
         this.MODULE_NAME = cubGetModuleName();
         this.settings = {
-            injured: CUBSidekick.initGadgetSettings(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.InjuredN + ")", this.SETTINGS_META.Injured),
-            threshold: CUBSidekick.initGadgetSettings(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.ThresholdN + ")", this.SETTINGS_META.Threshold),
-            dead: CUBSidekick.initGadgetSettings(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.DeadN + ")", this.SETTINGS_META.Dead),
-            injuredIcon: CUBSidekick.initGadgetSettings(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.InjuredIconN + ")", this.SETTINGS_META.InjuredIcon),
-            deadIcon: CUBSidekick.initGadgetSettings(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.DeadIconN + ")", this.SETTINGS_META.DeadIcon),
+            injured: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.InjuredN + ")", this.SETTINGS_META.Injured),
+            threshold: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.ThresholdN + ")", this.SETTINGS_META.Threshold),
+            dead: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.DeadN + ")", this.SETTINGS_META.Dead),
+            injuredIcon: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.InjuredIconN + ")", this.SETTINGS_META.InjuredIcon),
+            deadIcon: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.DeadIconN + ")", this.SETTINGS_META.DeadIcon),
         }
     }
     
