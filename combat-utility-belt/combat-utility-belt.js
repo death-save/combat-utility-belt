@@ -1,39 +1,46 @@
-function cubGetModuleName () {
-	return "combat-utility-belt";
+class CUBSignal {
+    constructor(){
+        this.hookOnInit();
+        this.hookOnReady();
+    }
+
+
+    hookOnInit() {
+        Hooks.on("init", () => {
+            const cubSidekick = new CUBSidekick();
+            const cubHideNPCNames = new CUBHideNPCNames();
+            const cubEnhancedConditions = new CUBEnhancedConditions(); 
+        });
+    }
+
+    hookOnReady() {
+        Hooks.on("ready", () => {
+            const cubRerollInitiative = new CUBRerollInitiative();
+            const cubInjuredAndDead = new CUBInjuredAndDead();
+        });
+    }
+
+    
 }
 
-Hooks.on("init", function() {
-	const cubSidekick = new CUBSidekick();
-    const cubHideNPCNames = new CUBHideNPCNames();
-    var cubEC = new CUBEnhancedConditions();
-})
-
-Hooks.on("ready",  function() {
-	//invoke the functions in turn
-	const cubRerollInitiative = new CUBRerollInitiative();
-    const cubInjuredAndDead = new CUBInjuredAndDead();
-    
-}); 
-
-
 /**
- * Provides helper functions for use elsewhere in the module
+ * Provides helper methods for use elsewhere in the module
  */
 class CUBSidekick  {
     constructor(){
-        this.MODULE_NAME = cubGetModuleName();
+        this.MODULE_NAME = this.getModuleName();
+    }
 
-        //CUBSidekick.initGadgetSetting = initGadgetSetting;
-        //CUBSidekick.getGadgetSetting = getGadgetSetting;
-        //CUBSidekick.registerGadgetSetting = registerGadgetSetting;
+    static getModuleName() {
+        return "combat-utility-belt"
     }
 
 	static registerGadgetSetting(gadget, setting) {
-		game.settings.register(cubGetModuleName(), gadget, setting);
+		game.settings.register(this.MODULE_NAME, gadget, setting);
 	}
 
 	static getGadgetSetting(setting) {
-		return game.settings.get(cubGetModuleName(), setting);
+		return game.settings.get(this.MODULE_NAME, setting);
 	}
 
 	static initGadgetSetting(gadget, settings) {
@@ -60,27 +67,33 @@ class CUBSidekick  {
 	}
 
 	/**
-     * (NB: probably deprecated now.) Update module settings and save to the game
+     * Change a setting for a module, if a value for 
      * @param {String} setting 
      * @param {*} value 
      */
-    async setGadgetSetting(setting, property, value) {
-        const oldSetting = this.constructor.getGadgetSetting(setting);
-        let oldPropertyValue;
+    static async setGadgetSetting(setting, value) {
+        const oldSettingValue = await game.settings.get(this.MODULE_NAME, setting);
+        let newSetting;
+        const objNotation = [".","[","]"];
 
-        //target single property
+        if(typeOf(oldSettingValue) === typeOf(value)) {
+            newSetting = await game.settings.set(this.MODULE_NAME, setting, value);
+            return newSetting;
+        } else if (typeOf(oldSettingValue) === "Object" && (setting.some(objNotation))) {
+            let o = setting.split(".");
+
+            oldSettingValue[] = value;
+            try {
+                newSetting = await game.settings.set(this.MODULE_NAME, o[0], value);
+            }
+        } 
+
         try {
-            oldPropertyValue = oldSetting[property];
+            newSetting = await game.settings.set(this.MODULE_NAME, setting, value);
+            return newSetting;
         } catch (e) {
-            //catch undefined
-
+            throw e;
         }
-
-        
-
-        settings[setting] = value;
-        console.log("Updating " + GADGET_NAME + " settings:", settings);
-        await game.settings.set(GADGET_NAME, SETTINGS_NAME, settings);
     }
     
     static getKeyByValue(object, value) {
@@ -222,6 +235,9 @@ class CUBHideNPCNames {
                     if(!actor.isPC && settings) {
                         //find the flexcol elements
                         let flexcol = e.getElementsByClassName("token-name");
+
+                        //todo: find the tokens
+                        //replace the hover event
 
                         
 
@@ -989,3 +1005,5 @@ class CUBInjuredAndDead {
     }
 	
 }
+
+var cubSignal = new CUBSignal;
