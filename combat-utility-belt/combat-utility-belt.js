@@ -782,11 +782,11 @@ class CUBEnhancedConditionsConfig extends FormApplication {
         console.log(event,formdata);
         let conditions = [];
         let icons = [];
-        let oldMapsSetting = CUBSidekick.getGadgetSetting(CUBEnhancedConditions.GADGET_NAME + "(" + CUBEnhancedConditions.SETTINGS_DESCRIPTORS.MapsN + ")");
+        //let oldMapsSetting = CUBSidekick.getGadgetSetting(CUBEnhancedConditions.GADGET_NAME + "(" + CUBEnhancedConditions.SETTINGS_DESCRIPTORS.MapsN + ")");
         let newMap = new Map();
         const system = CUBSidekick.getGadgetSetting(CUBEnhancedConditions.GADGET_NAME + "(" + CUBEnhancedConditions.SETTINGS_META.systemName.name + ")");
-        let oldMap = oldMapsSetting[system];
-        let mergeMapsSetting = {};
+        //let oldMap = oldMapsSetting[system];
+        //let mergeMapsSetting = {};
 
         //need to tighten these up to check for the existence of digits after the word
         const conditionRegex = new RegExp('condition',"i");
@@ -802,16 +802,16 @@ class CUBEnhancedConditionsConfig extends FormApplication {
             }
         }
 
-        for(let i;i <= conditions.length; i++){
+        for(let i;i <= conditions.length - 1; i++){
             newMap.set(conditions[i], icons[i]);
         }
-
+/*
         mergeMapsSetting = mergeObject(oldMapsSetting, {
             [system]: newMap
         });
-        
+*/       
 
-        CUBSidekick.setGadgetSetting(CUBEnhancedConditions.GADGET_NAME + "(" + CUBEnhancedConditions.SETTINGS_DESCRIPTORS.MapsN + ")", mergeMapsSetting);
+        CUBSidekick.setGadgetSetting(CUBEnhancedConditions.GADGET_NAME + "(" + CUBEnhancedConditions.SETTINGS_DESCRIPTORS.MapsN + ")" + "." + systemName, newMap);
 
         //not sure what to do about this yet, probably nothing
         console.assert(conditions.length === icons.length, "There are unmapped conditions");
