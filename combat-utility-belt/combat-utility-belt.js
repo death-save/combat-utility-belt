@@ -67,33 +67,39 @@ class CUBSidekick  {
 	}
 
 	/**
-     * Change a setting for a module, if a value for 
+     * Change a setting for a gadget
+     * if the setting is an object, then dot notation must be used for properties
+     * Examples:
+     * setGadgetSetting("hide-npc-names", true);
+     * setGadgetSetting("enhanced-conditions(Condition Map).dnd5e",["Blinded","path-to-icon/icon.svg"])
      * @param {String} setting 
      * @param {*} value 
      */
     static async setGadgetSetting(setting, value) {
-        const oldSettingValue = await game.settings.get(this.MODULE_NAME, setting);
-        let newSetting;
-        const objNotation = [".","[","]"];
+        const oldSettingValue = this.getGadgetSetting(setting);
+        Object.freeze(oldSettingValue);
+
+        let newSettingValue;
 
         if(typeOf(oldSettingValue) === typeOf(value)) {
-            newSetting = await game.settings.set(this.MODULE_NAME, setting, value);
-            return newSetting;
-        } else if (typeOf(oldSettingValue) === "Object" && (setting.some(objNotation))) {
-            let o = setting.split(".");
+            newSettingValue = await game.settings.set(this.MODULE_NAME, setting, value);
+            return newSettingValue;
+        } else if(typeOf(oldSettingValue) === "Object" && (setting.includes("."))) {
 
-            oldSettingValue[] = value;
-            try {
-                newSetting = await game.settings.set(this.MODULE_NAME, o[0], value);
+            //call the duplicate helper function from foundry.js
+            let tempSettingObject = duplicate(oldSettingValue);
+
+            let updated = setProperty(tempSettingObject, setting, value);
+
+            if(update) {
+                newSettingValue = await game.settings.set(this.MODULE_NAME, tempSettingObject, value);
+            } else {
+                throw("Failed to update nested property of " + setting + " check syntax");
             }
-        } 
-
-        try {
-            newSetting = await game.settings.set(this.MODULE_NAME, setting, value);
-            return newSetting;
-        } catch (e) {
-            throw e;
         }
+        
+        return newSettingValue;
+
     }
     
     static getKeyByValue(object, value) {
