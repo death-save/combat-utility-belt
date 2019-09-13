@@ -28,10 +28,10 @@ class CUBSignal {
  */
 class CUBSidekick  {
     constructor(){
-        this.MODULE_NAME = this.getModuleName();
+        
     }
 
-    static getModuleName() {
+    static get MODULE_NAME() {
         return "combat-utility-belt"
     }
 
@@ -92,7 +92,7 @@ class CUBSidekick  {
             let updated = setProperty(tempSettingObject, setting, value);
 
             if(update) {
-                newSettingValue = await game.settings.set(this.MODULE_NAME, tempSettingObject, value);
+                newSettingValue = await game.settings.set(this.contructor.MODULE_NAME, tempSettingObject, value);
             } else {
                 throw("Failed to update nested property of " + setting + " check syntax");
             }
@@ -112,8 +112,6 @@ class CUBSidekick  {
  */
 class CUBRerollInitiative {
     constructor(){
-        this.MODULE_NAME = cubGetModuleName();
-
         //intialise settings
         this.settings = CUBSidekick.initGadgetSetting(this.GADGET_NAME, this.SETTINGS_META);
         this._hookUpdateCombat();
@@ -191,7 +189,6 @@ class CUBRerollInitiative {
  */
 class CUBHideNPCNames {
     constructor(){
-        this.MODULE_NAME = cubGetModuleName();
         //intialise settings
 	    this.settings = CUBSidekick.initGadgetSetting(this.GADGET_NAME, this.SETTINGS_META);
     }
@@ -272,8 +269,6 @@ class CUBHideNPCNames {
 //enhanced conditions
 class CUBEnhancedConditions {
     constructor(){
-        this.MODULE_NAME = cubGetModuleName();
-
         this.settings = {
             system: CUBSidekick.initGadgetSetting(this.constructor.GADGET_NAME + "(" + this.constructor.SETTINGS_DESCRIPTORS.SystemN + ")", this.constructor.SETTINGS_META.system ),
             folderType: CUBSidekick.initGadgetSetting(this.constructor.GADGET_NAME + "(" + this.constructor.SETTINGS_DESCRIPTORS.FolderTypeN + ")", this.constructor.SETTINGS_META.folderType),
@@ -455,7 +450,7 @@ class CUBEnhancedConditions {
                 hint: this.SETTINGS_DESCRIPTORS.SystemH,
                 scope: "world",
                 type: String,
-                default: this.DEFAULT_CONFIG.systems[game.system.name],
+                default: this.DEFAULT_CONFIG.systems[game.system.data.name],
                 choices: this.DEFAULT_CONFIG.systems,
                 config: true,
                 onChange: s => {
@@ -468,7 +463,7 @@ class CUBEnhancedConditions {
                 hint: "API name for the system",
                 scope: "world",
                 type: String,
-                default: CUBSidekick.getKeyByValue(this.DEFAULT_CONFIG.systems, this.DEFAULT_CONFIG.systems[game.system.name]),
+                default: CUBSidekick.getKeyByValue(this.DEFAULT_CONFIG.systems, this.DEFAULT_CONFIG.systems[game.system.data.name]),
                 onChange: s => {
                     this.settings.systemName = s;
                 }
@@ -747,7 +742,6 @@ class CUBEnhancedConditions {
 class CUBEnhancedConditionsConfig extends FormApplication {
     constructor(){
         super();
-        this.MODULE_NAME = cubGetModuleName();
     }
 
     static get defaultOptions() {
@@ -826,7 +820,6 @@ class CUBEnhancedConditionsConfig extends FormApplication {
 //auto bloodied and dead
 class CUBInjuredAndDead {
     constructor(){
-        this.MODULE_NAME = cubGetModuleName();
         this.settings = {
             injured: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.InjuredN + ")", this.SETTINGS_META.Injured),
             threshold: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.ThresholdN + ")", this.SETTINGS_META.Threshold),
