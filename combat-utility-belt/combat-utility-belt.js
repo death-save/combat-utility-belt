@@ -269,20 +269,23 @@ class CUBHideNPCNames {
 //enhanced conditions
 class CUBEnhancedConditions {
     constructor(){
-        this.settings = {
-            system: CUBSidekick.initGadgetSetting(this.constructor.GADGET_NAME + "(" + this.constructor.SETTINGS_DESCRIPTORS.SystemN + ")", this.constructor.SETTINGS_META.system ),
-            folderType: CUBSidekick.initGadgetSetting(this.constructor.GADGET_NAME + "(" + this.constructor.SETTINGS_DESCRIPTORS.FolderTypeN + ")", this.constructor.SETTINGS_META.folderType),
-            conditions: CUBSidekick.initGadgetSetting(this.constructor.GADGET_NAME + "(" + this.constructor.SETTINGS_DESCRIPTORS.ConditionsN + ")", this.constructor.SETTINGS_META.enhancedConditions),
-            maps: CUBSidekick.initGadgetSetting(this.constructor.GADGET_NAME + "(" + this.constructor.SETTINGS_DESCRIPTORS.MapsN + ")", this.constructor.SETTINGS_META.maps),
-            output: CUBSidekick.initGadgetSetting(this.constructor.GADGET_NAME + "(" + this.constructor.SETTINGS_DESCRIPTORS.OutputChatN + ")", this.constructor.SETTINGS_META.outputChat),
-            systemName: CUBSidekick.initGadgetSetting(this.constructor.GADGET_NAME + "(" + this.constructor.SETTINGS_META.systemName.name + ")", this.constructor.SETTINGS_META.systemName)
-        }
+        this.settings = {}
 
         this.constructor._createSidebarButton();
+        this._initSettings();
         this._addStatusIcons();
         this._hookOnUpdateToken();
     }
 
+    _initSettings() {
+        this.settings.system = CUBSidekick.initGadgetSetting(this.constructor.GADGET_NAME + "(" + this.constructor.SETTINGS_DESCRIPTORS.SystemN + ")", this.constructor.SETTINGS_META.system );
+        this.settings.folderType = CUBSidekick.initGadgetSetting(this.constructor.GADGET_NAME + "(" + this.constructor.SETTINGS_DESCRIPTORS.FolderTypeN + ")", this.constructor.SETTINGS_META.folderType);
+        this.settings.conditions = CUBSidekick.initGadgetSetting(this.constructor.GADGET_NAME + "(" + this.constructor.SETTINGS_DESCRIPTORS.ConditionsN + ")", this.constructor.SETTINGS_META.enhancedConditions);
+        this.settings.maps = CUBSidekick.initGadgetSetting(this.constructor.GADGET_NAME + "(" + this.constructor.SETTINGS_DESCRIPTORS.MapsN + ")", this.constructor.SETTINGS_META.maps);
+        this.output = CUBSidekick.initGadgetSetting(this.constructor.GADGET_NAME + "(" + this.constructor.SETTINGS_DESCRIPTORS.OutputChatN + ")", this.constructor.SETTINGS_META.outputChat);
+        this.systemName = CUBSidekick.initGadgetSetting(this.constructor.GADGET_NAME + "(" + this.constructor.SETTINGS_META.systemName.name + ")", this.constructor.SETTINGS_META.systemName)
+
+    }
     /**
      * --------------------
      * Set gadget constants
