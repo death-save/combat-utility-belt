@@ -269,7 +269,15 @@ class CUBHideNPCNames {
 //enhanced conditions
 class CUBEnhancedConditions {
     constructor(){
-        this.settings = {}
+        this.settings = {
+            enhancedConditions : CUBSidekick.initGadgetSetting(this.constructor.GADGET_NAME + "(" + this.constructor.SETTINGS_DESCRIPTORS.ConditionsN + ")", this.SETTINGS_META.enhancedConditions),
+            system : CUBSidekick.initGadgetSetting(this.constructor.GADGET_NAME + "(" + this.constructor.SETTINGS_DESCRIPTORS.SystemN + ")", this.SETTINGS_META.system ),
+            folderType : CUBSidekick.initGadgetSetting(this.constructor.GADGET_NAME + "(" + this.constructor.SETTINGS_DESCRIPTORS.FolderTypeN + ")", this.SETTINGS_META.folderType),
+            maps : CUBSidekick.initGadgetSetting(this.constructor.GADGET_NAME + "(" + this.constructor.SETTINGS_DESCRIPTORS.MapsN + ")", this.SETTINGS_META.maps),
+            output : CUBSidekick.initGadgetSetting(this.constructor.GADGET_NAME + "(" + this.constructor.SETTINGS_DESCRIPTORS.OutputChatN + ")", this.SETTINGS_META.outputChat),
+            systemName : CUBSidekick.initGadgetSetting(this.constructor.GADGET_NAME + "(" + this.constructor.SETTINGS_META.systemName.name + ")", this.SETTINGS_META.systemName)
+
+        }
 
         this.constructor._createSidebarButton();
         this._initSettings();
@@ -278,12 +286,6 @@ class CUBEnhancedConditions {
     }
 
     _initSettings() {
-        this.settings.system = CUBSidekick.initGadgetSetting(this.constructor.GADGET_NAME + "(" + this.constructor.SETTINGS_DESCRIPTORS.SystemN + ")", this.constructor.SETTINGS_META.system );
-        this.settings.folderType = CUBSidekick.initGadgetSetting(this.constructor.GADGET_NAME + "(" + this.constructor.SETTINGS_DESCRIPTORS.FolderTypeN + ")", this.constructor.SETTINGS_META.folderType);
-        this.settings.conditions = CUBSidekick.initGadgetSetting(this.constructor.GADGET_NAME + "(" + this.constructor.SETTINGS_DESCRIPTORS.ConditionsN + ")", this.constructor.SETTINGS_META.enhancedConditions);
-        this.settings.maps = CUBSidekick.initGadgetSetting(this.constructor.GADGET_NAME + "(" + this.constructor.SETTINGS_DESCRIPTORS.MapsN + ")", this.constructor.SETTINGS_META.maps);
-        this.output = CUBSidekick.initGadgetSetting(this.constructor.GADGET_NAME + "(" + this.constructor.SETTINGS_DESCRIPTORS.OutputChatN + ")", this.constructor.SETTINGS_META.outputChat);
-        this.systemName = CUBSidekick.initGadgetSetting(this.constructor.GADGET_NAME + "(" + this.constructor.SETTINGS_META.systemName.name + ")", this.constructor.SETTINGS_META.systemName)
 
     }
     /**
@@ -304,29 +306,6 @@ class CUBEnhancedConditions {
                 compendium: "Compendium"
             },
             folderName: "conditions",
-            /* as objects - tbd if this is the way to handle it
-            systems: {
-                dnd5e: {
-                    name: "dnd5e",
-                    title: "D&D 5e"
-                },
-                pf1e: {
-                    name: "pf1e",
-                    title: "Pathfinder 1e"
-                },
-                pf2e: {
-                    name: "pf2e",
-                    title: "Pathfinder 2e"
-                },
-                wfrp: {
-                    name: "wfrp",
-                    title: "Warhammer Fantasy Roleplaying Game"
-                },
-                custom: {
-                    name: "custom",
-                    title: "Custom/Other"
-                }
-                */
             systems: {
                 dnd5e: "Dungeons & Dragons 5th Edition",
                 pf1e: "Pathfinder 1st Edition",
@@ -334,54 +313,7 @@ class CUBEnhancedConditions {
                 wfrp: "Warhammer Fantasy Roleplaying Game",
                 custom: "Custom/Other"
             },
-            outputChat: true,
-
-           
-            /**
-             * Define mapping for dnd5e
-             * @todo: expand out to allow external jsons?
-             */
-             /* this is too complicated... let's just map names to icons.
-                //keeping for posterity
-            maps:{
-                
-                
-                conditions: {
-                    "blinded5e":"Blinded",
-                    "charmed5e":"Charmed",
-                    "deafened5e":"Deafened",
-                    "exhaustion5e":"Exhaustion",
-                    "frightened5e":"Frightened",
-                    "incapacitated5e":"Incapacitated",
-                    "invisible5e":"Invisible",
-                    "paralyzed5e":"Paralyzed",
-                    "petrified5e":"Petrified",
-                    "poisoned5e":"Poisoned",
-                    "prone5e":"Prone",
-                    "restrained5e":"Restrained",
-                    "stunned5e":"Stunned",
-                    "unconscious5e":"Unconscious"
-                },
-                
-                icons: {
-                    "blinded5e":"icons/svg/eye.svg",
-                    "charmed5e":"",
-                    "deafened5e":"",
-                    "exhaustion5e":"",
-                    "frightened5e":"icons/svg/terror.svg",
-                    "incapacitated5e":"",
-                    "invisible5e":"",
-                    "paralyzed5e":"",
-                    "petrified5e":"icons/svg/frozen.svg",
-                    "poisoned5e":"",
-                    "prone5e":"",
-                    "restrained5e":"icons/svg/net.svg",
-                    "stunned5e":"",
-                    "unconscious5e":"icons/svg/sleep.svg"
-                }
-                
-            }*/
-            
+            outputChat: true, 
         }
         
     }
@@ -433,7 +365,7 @@ class CUBEnhancedConditions {
         }
     }
 
-    static get SETTINGS_META() {
+    get SETTINGS_META() {
         return {
             enhancedConditions: {
                 name: this.SETTINGS_DESCRIPTORS.EnhancedConditionsN,
