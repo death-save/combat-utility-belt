@@ -1,3 +1,6 @@
+/**
+ * Initiates module classes
+ */
 class CUBSignal {
     constructor(){
         this.hookOnInit();
@@ -18,44 +21,54 @@ class CUBSignal {
             const cubRerollInitiative = new CUBRerollInitiative();
             const cubInjuredAndDead = new CUBInjuredAndDead();
         });
-    }
-
-    
+    }  
 }
 
 /**
  * Provides helper methods for use elsewhere in the module
  */
 class CUBSidekick  {
-    constructor(){
-        
-    }
 
     static get MODULE_NAME() {
         return "combat-utility-belt"
     }
 
-	static registerGadgetSetting(gadget, setting) {
-		game.settings.register(this.MODULE_NAME, gadget, setting);
+    /**
+     * Registers game settings for the specified gadget / gadget function
+     * @param {String} key -- the key to refer to the setting 
+     * @param {Object} setting -- a setting object
+     */
+	static registerGadgetSetting(key, setting) {
+		game.settings.register(this.MODULE_NAME, name, setting);
 	}
 
-	static getGadgetSetting(setting) {
-		return game.settings.get(this.MODULE_NAME, setting);
+    /**
+     * Retrieves a game setting for the specified gadget / gadget function
+     * @param {String} key -- the key to lookup 
+     */
+	static getGadgetSetting(key) {
+		return game.settings.get(this.MODULE_NAME, key);
 	}
 
-	static initGadgetSetting(gadget, settings) {
-		console.log("inc gadget name:",gadget);
-		console.log("inc gadget metadata:",settings);
+    /**
+     * Retrieves a game setting for the specified gadget if it exists 
+     * or registers the setting if it does not 
+     * @param {String} key 
+     * @param {Object} setting 
+     */
+	static initGadgetSetting(key, setting) {
+		//console.log("inc gadget name:",gadget);
+		//console.log("inc gadget metadata:",settings);
 		let config;
 
 		try {
-			config = this.getGadgetSetting(gadget);
-			console.log("config found:", config);
+			config = this.getGadgetSetting(key);
+			//console.log("config found:", config);
 		}
 		catch (e) {
 			if(e.message == "This is not a registered game setting") {
-				this.registerGadgetSetting(gadget, settings);
-				config = this.getGadgetSetting(gadget);
+				this.registerGadgetSetting(key, setting);
+				config = this.getGadgetSetting(key);
 			}
 			else {
 				throw e;
@@ -72,11 +85,11 @@ class CUBSidekick  {
      * Examples:
      * setGadgetSetting("hide-npc-names", true);
      * setGadgetSetting("enhanced-conditions(Condition Map).dnd5e",["Blinded","path-to-icon/icon.svg"])
-     * @param {String} setting 
-     * @param {*} value 
+     * @param {String} key -- the setting key
+     * @param {*} value -- the new value
      */
-    static async setGadgetSetting(setting, value) {
-        const oldSettingValue = this.getGadgetSetting(setting);
+    static async setGadgetSetting(key, value) {
+        const oldSettingValue = this.getGadgetSetting(key);
         Object.freeze(oldSettingValue);
 
         let newSettingValue;
@@ -89,12 +102,12 @@ class CUBSidekick  {
             //call the duplicate helper function from foundry.js
             let tempSettingObject = duplicate(oldSettingValue);
 
-            let updated = setProperty(tempSettingObject, setting, value);
+            let updated = setProperty(tempSettingObject, key, value);
 
-            if(update) {
-                newSettingValue = await game.settings.set(this.contructor.MODULE_NAME, tempSettingObject, value);
+            if(updated) {
+                newSettingValue = await game.settings.set(this.MODULE_NAME, tempSettingObject, value);
             } else {
-                throw("Failed to update nested property of " + setting + " check syntax");
+                throw("Failed to update nested property of " + key + " check syntax");
             }
         }
         
@@ -102,17 +115,22 @@ class CUBSidekick  {
 
     }
     
+    /**
+     * Retrieves a key using the given value
+     * @param {Object} object -- the object that contains the key/value
+     * @param {*} value 
+     */
     static getKeyByValue(object, value) {
         return Object.keys(object).find(key => object[key] === value);
     }
 }
 
 /**
+ * @class CUBRerollInitiative
  * Rerolls initiative for all combatants
  */
 class CUBRerollInitiative {
     constructor(){
-        //intialise settings
         this.settings = CUBSidekick.initGadgetSetting(this.GADGET_NAME, this.SETTINGS_META);
         this._hookUpdateCombat();
         this.currentCombatRound = null;
