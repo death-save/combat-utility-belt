@@ -39,7 +39,7 @@ class CUBSidekick  {
      * @param {Object} setting -- a setting object
      */
 	static registerGadgetSetting(key, setting) {
-		game.settings.register(this.MODULE_NAME, name, setting);
+		game.settings.register(this.MODULE_NAME, key, setting);
 	}
 
     /**
@@ -207,8 +207,8 @@ class CUBRerollInitiative {
  */
 class CUBHideNPCNames {
     constructor(){
-        //intialise settings
-	    this.settings = CUBSidekick.initGadgetSetting(this.GADGET_NAME, this.SETTINGS_META);
+        this.settings = CUBSidekick.initGadgetSetting(this.GADGET_NAME, this.SETTINGS_META);
+        this._hookOnRenderCombatTracker();
     }
 
     get GADGET_NAME() {
@@ -237,8 +237,9 @@ class CUBHideNPCNames {
 
 	
 
-	//hook on combat render
-    //TODO: add hook for sidebar tab first render -- need to hook on init instead of ready!
+	/**
+     * Hooks on the Combat Tracker render to replace the NPC names
+     */
     _hookOnRenderCombatTracker() {
         Hooks.on("renderCombatTracker", (app,html) => {
             console.log(app,html);
@@ -253,17 +254,18 @@ class CUBHideNPCNames {
                     let actor = game.actors.entities.find(a => a.id === token.actorId);
 
                     //if not PC, module is enabled
-                    if(!actor.isPC && settings) {
+                    if(!actor.isPC && this.settings) {
                         //find the flexcol elements
-                        let flexcol = e.getElementsByClassName("token-name");
+                        let tokenNames = e.getElementsByClassName("token-name");
 
                         //todo: find the tokens
-                        //replace the hover event
+                        //replace the title
+                        let tokenImages = e.getElementsByClassName("token-image");
 
                         
 
                         //iterate through the returned elements
-                        for(let f of flexcol){
+                        for(let f of tokenNames){
                             //find the h4 elements
                             let header = f.getElementsByTagName("H4");
                             //iterate through
@@ -271,6 +273,10 @@ class CUBHideNPCNames {
                                 //blank out the name
                                 h.textContent = "";
                             }
+                        }
+
+                        for(let i of tokenImages){
+                            i.removeAttribute("title");
                         }
 
                     }
