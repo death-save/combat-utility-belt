@@ -520,6 +520,18 @@ class CUBEnhancedConditions {
     get map() {
         return this.settings.maps[this.settings.systemName];
     }
+
+    get inverseMap() {
+        let newMap = new Map();
+        for (let [k,v] of this.map) {
+            newMap.set(v,k);
+        }
+        return newMap;
+    }
+
+    get icons() {
+        return Array.from((this.settings.maps[this.settings.systemName]).values());
+    }
     
     
     static _createSidebarButton() {
@@ -573,16 +585,20 @@ class CUBEnhancedConditions {
      */
     _hookOnRenderTokenHUD() {
         Hooks.on("renderTokenHUD", (app, html) => {
+            const conditionIcons = this.icons;
+
             console.log(app,html);
-            let statusIcons = html.find(".effects control");
+            let statusIcons = html.find(".effect-control");
 
             for(let i of statusIcons) {
-                i.hover(ev => {
-                    ev.preventDefault();
-                    i.title = `"${condition}"`
-                })
+                const src = i.attributes.src.value;
+
+                if(conditionIcons.includes(src)){
+                    i.setAttribute("title", this.inverseMap.get(src));
+                }
+                
             }
-        })
+        });
     }
 
 
