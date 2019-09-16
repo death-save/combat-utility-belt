@@ -310,11 +310,6 @@ class CUBEnhancedConditions {
         this._hookOnRenderTokenHUD();
     }
 
-    /**
-     * --------------------
-     * Set gadget constants
-     * --------------------
-     */
     get GADGET_NAME() {
         return "enhanced-conditions";
     }
@@ -482,19 +477,10 @@ class CUBEnhancedConditions {
 
 
     }
-    /* needs a rework
-    get system() {
-        return {
-            name: CUBSidekick.getKeyByValue(this.DEFAULT_CONFIG.systems, this.settings.system),
-            title: this.settings.system
-        }
-    }
-    */
 
     /**
-     * Retrieve the basic statusEffect icons from the Foundry CONFIG
+     * Retrieve the statusEffect icons from the Foundry CONFIG
      */
-    
     get baseStatusIcons() {
         CONFIG.defaultStatusEffects = duplicate(CONFIG.statusEffects);
         Object.freeze(CONFIG.defaultStatusEffects);
@@ -506,7 +492,7 @@ class CUBEnhancedConditions {
         let entry;
 
         try {
-            entry = await JournalEntry.create({name: condition},{displaySheet: false});
+            entry = await JournalEntry.create({name: condition, permission: {default: ENTITY_PERMISSIONS.LIMITED}},{displaySheet: false});
         } catch (e) {
             console.log(e);
         } finally {
@@ -665,11 +651,12 @@ class CUBEnhancedConditions {
         let conditionEntries = [];
         let missingEntries = [];
 
-        for (let c of conditions){
+        for(let c of conditions){
             if(c){
                 let re = new RegExp(c,'i');
                 let entry = await game.journal.entities.find(j => j.name.match(re));
-                if (!entry && this.settings.createEntries) {
+             
+                if(!entry && this.settings.createEntries && game.user.isGM) {
                     missingEntries.push(c);
                     entry = await this.constructor._createJournalEntry(c);
                 }
