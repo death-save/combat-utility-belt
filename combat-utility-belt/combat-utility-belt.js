@@ -209,6 +209,7 @@ class CUBHideNPCNames {
     constructor(){
         this.settings = CUBSidekick.initGadgetSetting(this.GADGET_NAME, this.SETTINGS_META);
         this._hookOnRenderCombatTracker();
+        this._hookOnRenderChatMessage();
     }
 
     get GADGET_NAME() {
@@ -257,12 +258,7 @@ class CUBHideNPCNames {
                     if(!actor.isPC && this.settings) {
                         //find the flexcol elements
                         let tokenNames = e.getElementsByClassName("token-name");
-
-                        //todo: find the tokens
-                        //replace the title
                         let tokenImages = e.getElementsByClassName("token-image");
-
-                        
 
                         //iterate through the returned elements
                         for(let f of tokenNames){
@@ -281,16 +277,25 @@ class CUBHideNPCNames {
 
                     }
                     
-                }
-
-                
-                
+                } 
             }
+        });
+    }
+
+    _hookOnRenderChatMessage(){
+        Hooks.on("renderChatMessage", (message, data, html) => {
+            html.find(":contains('" + data.alias + "')").text( function () {
+                return $(this).text().replace(data.alias, "Unknown")
+            });
+            console.log(message,data,html);
         });
     }
 }
 
-//enhanced conditions
+/**
+ * Builds a mapping between status icons 
+ * and journal entries that represent conditions
+ */
 class CUBEnhancedConditions {
     constructor(){
         this.settings = {
