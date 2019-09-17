@@ -210,6 +210,7 @@ class CUBHideNPCNames {
         this.settings = CUBSidekick.initGadgetSetting(this.GADGET_NAME, this.SETTINGS_META);
         this._hookOnRenderCombatTracker();
         this._hookOnRenderChatMessage();
+        this._hookOnRenderRoll();
     }
 
     get GADGET_NAME() {
@@ -284,9 +285,10 @@ class CUBHideNPCNames {
 
     _hookOnRenderChatMessage(){
         Hooks.on("renderChatMessage", (message, data, html) => {
-            html.find(":contains('" + data.alias + "')").text( function () {
-                return $(this).text().replace(data.alias, "Unknown")
+            html.find(":contains('" + data.alias + "')").html( function () {
+                return $(this).html().replace(data.alias, "Unknown");
             });
+
             console.log(message,data,html);
         });
     }
