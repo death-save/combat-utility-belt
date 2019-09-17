@@ -210,7 +210,6 @@ class CUBHideNPCNames {
         this.settings = CUBSidekick.initGadgetSetting(this.GADGET_NAME, this.SETTINGS_META);
         this._hookOnRenderCombatTracker();
         this._hookOnRenderChatMessage();
-        this._hookOnRenderRoll();
     }
 
     get GADGET_NAME() {
@@ -557,7 +556,7 @@ class CUBEnhancedConditions {
                 `<button id="enhanced-conditions"><i class="fas fa-flask"></i> ${CUBEnhancedConditionsConfig.defaultOptions.title} </button>`
             );
 
-            const manageModulesButton = html.find('#manage-modules')
+            const manageModulesButton = html.find("button:contains('Manage Modules')");
             manageModulesButton.after(mapButton);
 
             mapButton.click(ev => {
@@ -769,8 +768,8 @@ class CUBEnhancedConditionsConfig extends FormApplication {
 
     getData() {
         //map = game.settings.get(cubGetModuleName(), CUBEnhancedConditions.GADGET_NAME + "(" + CUBEnhancedConditions.SETTINGS.MapsN + ")");
-        const maps = CUBSidekick.getGadgetSetting(CUBEnhancedConditions.GADGET_NAME + "(" + CUBEnhancedConditions.SETTINGS_DESCRIPTORS.MapsN + ")");
-        const system = CUBSidekick.getGadgetSetting(CUBEnhancedConditions.GADGET_NAME + "(" + CUBEnhancedConditions.SETTINGS_META.systemName.name + ")");
+        const maps = CUBSidekick.getGadgetSetting(cubEnhancedConditions.GADGET_NAME + "(" + cubEnhancedConditions.SETTINGS_DESCRIPTORS.MapsN + ")");
+        const system = CUBSidekick.getGadgetSetting(cubEnhancedConditions.GADGET_NAME + "(" + cubEnhancedConditions.SETTINGS_META.systemName.name + ")");
         const conditionMapArray = Array.from(maps[system]);
 
         const data = {
@@ -791,7 +790,7 @@ class CUBEnhancedConditionsConfig extends FormApplication {
         let icons = [];
         //let oldMapsSetting = CUBSidekick.getGadgetSetting(CUBEnhancedConditions.GADGET_NAME + "(" + CUBEnhancedConditions.SETTINGS_DESCRIPTORS.MapsN + ")");
         let newMap = new Map();
-        const system = CUBSidekick.getGadgetSetting(CUBEnhancedConditions.GADGET_NAME + "(" + CUBEnhancedConditions.SETTINGS_META.systemName.name + ")");
+        const system = CUBSidekick.getGadgetSetting(cubEnhancedConditions.GADGET_NAME + "(" + cubEnhancedConditions.SETTINGS_META.systemName.name + ")");
         //let oldMap = oldMapsSetting[system];
         //let mergeMapsSetting = {};
 
@@ -818,7 +817,7 @@ class CUBEnhancedConditionsConfig extends FormApplication {
         });
 */       
 
-        CUBSidekick.setGadgetSetting(CUBEnhancedConditions.GADGET_NAME + "(" + CUBEnhancedConditions.SETTINGS_DESCRIPTORS.MapsN + ")" + "." + systemName, newMap);
+        CUBSidekick.setGadgetSetting(cubEnhancedConditions.GADGET_NAME + "(" + cubEnhancedConditions.SETTINGS_DESCRIPTORS.MapsN + ")" + "." + system, newMap);
 
         //not sure what to do about this yet, probably nothing
         console.assert(conditions.length === icons.length, "There are unmapped conditions");
