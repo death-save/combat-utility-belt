@@ -1,4 +1,9 @@
 /**
+ * Assign the namespace Object if it already exists or instantiate it as an object if not.
+ */
+const CUB = this.CUB || {};
+
+/**
  * Initiates module classes
  */
 class CUBSignal {
@@ -10,16 +15,16 @@ class CUBSignal {
 
     hookOnInit() {
         Hooks.on("init", () => {
-            const cubSidekick = new CUBSidekick();
-            const cubHideNPCNames = new CUBHideNPCNames();
-            const cubEnhancedConditions = new CUBEnhancedConditions();
+            CUB.sidekick = new CUBSidekick();
+            CUB.hideNPCNames = new CUBHideNPCNames();
+            CUB.enhancedConditions = new CUBEnhancedConditions();
         });
     }
 
     hookOnReady() {
         Hooks.on("ready", () => {
-            const cubRerollInitiative = new CUBRerollInitiative();
-            const cubInjuredAndDead = new CUBInjuredAndDead();
+            CUB.rerollInitiative = new CUBRerollInitiative();
+            CUB.injuredAndDead = new CUBInjuredAndDead();
         });
     }  
 }
@@ -89,15 +94,20 @@ class CUBSidekick  {
      * @param {*} value -- the new value
      */
     static async setGadgetSetting(key, value) {
-        const oldSettingValue = this.getGadgetSetting(key);
+        let oldSettingValue;
+        let settingKey
+
+        if(key.includes(".")) {
+            settingKey = key.split(".",1);
+            oldSettingValue = this.getGadgetSetting(settingKey);
+        } else {
+            oldSettingValue = this.getGadgetSetting(key);
+        }
         Object.freeze(oldSettingValue);
 
         let newSettingValue;
 
-        if(typeOf(oldSettingValue) === typeOf(value)) {
-            newSettingValue = await game.settings.set(this.MODULE_NAME, setting, value);
-            return newSettingValue;
-        } else if(typeOf(oldSettingValue) === "Object" && (setting.includes("."))) {
+       if(typeof oldSettingValue === "object" && (key.includes("."))) {
 
             //call the duplicate helper function from foundry.js
             let tempSettingObject = duplicate(oldSettingValue);
@@ -105,10 +115,13 @@ class CUBSidekick  {
             let updated = setProperty(tempSettingObject, key, value);
 
             if(updated) {
-                newSettingValue = await game.settings.set(this.MODULE_NAME, tempSettingObject, value);
+                newSettingValue = await game.settings.set(this.MODULE_NAME, settingKey, tempSettingObject);
             } else {
                 throw("Failed to update nested property of " + key + " check syntax");
             }
+            
+        } else if(typeof oldSettingValue === typeof value) {
+            newSettingValue = await game.settings.set(this.MODULE_NAME, key, value);
         }
         
         return newSettingValue;
@@ -767,9 +780,9 @@ class CUBEnhancedConditions {
 
 //enhanced conditions config
 class CUBEnhancedConditionsConfig extends FormApplication {
-    constructor(data){
-        this.data = data;
+    constructor(){
         super();
+        this.data = CUB.enhancedConditions;
     }
 
     static get defaultOptions() {
@@ -784,8 +797,8 @@ class CUBEnhancedConditionsConfig extends FormApplication {
 
     getData() {
         //map = game.settings.get(cubGetModuleName(), CUBEnhancedConditions.GADGET_NAME + "(" + CUBEnhancedConditions.SETTINGS.MapsN + ")");
-        const maps = CUBSidekick.getGadgetSetting(this.data.name + "(" + this.data.settingsDescriptors.MapsN + ")");
-        const system = CUBSidekick.getGadgetSetting(this.data.name + "(" + this.data.settingsDescriptors.SystemNameN + ")");
+        const maps = CUBSidekick.getGadgetSetting(this.data.GADGET_NAME + "(" + this.data.SETTINGS_DESCRIPTORS.MapsN + ")");
+        const system = CUBSidekick.getGadgetSetting(this.data.GADGET_NAME + "(" + this.data.SETTINGS_DESCRIPTORS.SystemNameN + ")");
         const conditionMapArray = Array.from(maps[system]);
 
         const data = {
@@ -806,25 +819,26 @@ class CUBEnhancedConditionsConfig extends FormApplication {
         let icons = [];
         //let oldMapsSetting = CUBSidekick.getGadgetSetting(CUBEnhancedConditions.GADGET_NAME + "(" + CUBEnhancedConditions.SETTINGS_DESCRIPTORS.MapsN + ")");
         let newMap = new Map();
-        const system = CUBSidekick.getGadgetSetting(this.data.GADGET_NAME + "(" + this.data.settingsDescriptors.SystemNameN + ")");
+        const system = CUBSidekick.getGadgetSetting(this.data.GADGET_NAME + "(" + this.data.SETTINGS_DESCRIPTORS.SystemNameN + ")");
         //let oldMap = oldMapsSetting[system];
         //let mergeMapsSetting = {};
 
         //need to tighten these up to check for the existence of digits after the word
-        const conditionRegex = new RegExp('condition',"i");
+        const conditionRegex = new RegExp('condition.',"i");
         const iconRegex = new RegExp('icon',"i")
 
 
         //write it back to the relevant condition map
+        //todo: maybe switch to a switch
         for(let e in formdata){
             if(e.match(conditionRegex)){
-                conditions.push(e);
+                conditions.push(formdata[e]);
             } else if (e.match(iconRegex)) {
-                icons.push(e);
+                icons.push(formdata[e]);
             }
         }
 
-        for(let i;i <= conditions.length - 1; i++){
+        for(let i = 0;i <= conditions.length - 1; i++){
             newMap.set(conditions[i], icons[i]);
         }
 /*
@@ -833,7 +847,7 @@ class CUBEnhancedConditionsConfig extends FormApplication {
         });
 */       
 
-        CUBSidekick.setGadgetSetting(this.data.GADGET_NAME + "(" + this.data.settingsDescriptors.MapsN + ")" + "." + system, newMap);
+        CUBSidekick.setGadgetSetting(this.data.GADGET_NAME + "(" + this.data.SETTINGS_DESCRIPTORS.MapsN + ")" + "." + system, newMap);
 
         //not sure what to do about this yet, probably nothing
         console.assert(conditions.length === icons.length, "There are unmapped conditions");
