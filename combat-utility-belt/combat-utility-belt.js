@@ -12,7 +12,7 @@ class CUBSignal {
         Hooks.on("init", () => {
             const cubSidekick = new CUBSidekick();
             const cubHideNPCNames = new CUBHideNPCNames();
-            const cubEnhancedConditions = new CUBEnhancedConditions(); 
+            const cubEnhancedConditions = new CUBEnhancedConditions();
         });
     }
 
@@ -387,7 +387,9 @@ class CUBEnhancedConditions {
             MapsN: "Condition Maps",
             MapsH: "Maps of conditions to icons",
             CreateEntriesN: "Create Entries",
-            CreateEntriesH: "Create journal entries if none exist"
+            CreateEntriesH: "Create journal entries if none exist",
+            SystemNameN: "Game System Name",
+            SystemNameH: "The short-hand version of the game system name"
         }
     }
 
@@ -420,8 +422,8 @@ class CUBEnhancedConditions {
             },
 
             systemName: {
-                name: "SystemName",
-                hint: "API name for the system",
+                name: this.SETTINGS_DESCRIPTORS.SystemNameN,
+                hint: this.SETTINGS_DESCRIPTORS.SystemNameH,
                 scope: "world",
                 type: String,
                 default: CUBSidekick.getKeyByValue(this.DEFAULT_CONFIG.systems, this.DEFAULT_CONFIG.systems[game.system.data.name]),
@@ -487,11 +489,11 @@ class CUBEnhancedConditions {
     /**
      * Retrieve the statusEffect icons from the Foundry CONFIG
      */
-    get baseStatusIcons() {
+    get coreStatusIcons() {
         CONFIG.defaultStatusEffects = duplicate(CONFIG.statusEffects);
         Object.freeze(CONFIG.defaultStatusEffects);
 
-        return defaultIcons;
+        return CONFIG.defaultStatusEffects;
     }
 
     static async _createJournalEntry(condition) {
@@ -553,7 +555,9 @@ class CUBEnhancedConditions {
     static _createSidebarButton() {
         Hooks.on("renderSettings", (app, html) => {
             const mapButton = $(
-                `<button id="enhanced-conditions"><i class="fas fa-flask"></i> ${CUBEnhancedConditionsConfig.defaultOptions.title} </button>`
+                `<button id="enhanced-conditions">
+                    <i class="fas fa-flask"></i> ${CUBEnhancedConditionsConfig.defaultOptions.title}
+                </button>`
             );
 
             const manageModulesButton = html.find("button:contains('Manage Modules')");
@@ -563,11 +567,7 @@ class CUBEnhancedConditions {
                 new CUBEnhancedConditionsConfig().render(true);
             });
 
-        });
-        
-        
-        //$('#manage-modules').parent().find('#enhanced-conditions').remove();
-        
+        });        
     }
     
     /**
@@ -746,13 +746,29 @@ class CUBEnhancedConditions {
         return actor;
     }
 
+    /**
+     * Create a single object containing the data elements from this class
+     */
+    _prepareData() {
+        return {
+            name: this.GADGET_NAME,
+            settingsDescriptors: this.SETTINGS_DESCRIPTORS,
+            settings: this.settings,
+            map: this.map,
+            icons: this.icons,
+            coreStatusIcons: this.coreStatusIcons
+
+        }
+    }
+
     
     
 }
 
 //enhanced conditions config
 class CUBEnhancedConditionsConfig extends FormApplication {
-    constructor(){
+    constructor(data){
+        this.data = data;
         super();
     }
 
@@ -768,8 +784,8 @@ class CUBEnhancedConditionsConfig extends FormApplication {
 
     getData() {
         //map = game.settings.get(cubGetModuleName(), CUBEnhancedConditions.GADGET_NAME + "(" + CUBEnhancedConditions.SETTINGS.MapsN + ")");
-        const maps = CUBSidekick.getGadgetSetting(cubEnhancedConditions.GADGET_NAME + "(" + cubEnhancedConditions.SETTINGS_DESCRIPTORS.MapsN + ")");
-        const system = CUBSidekick.getGadgetSetting(cubEnhancedConditions.GADGET_NAME + "(" + cubEnhancedConditions.SETTINGS_META.systemName.name + ")");
+        const maps = CUBSidekick.getGadgetSetting(this.data.name + "(" + this.data.settingsDescriptors.MapsN + ")");
+        const system = CUBSidekick.getGadgetSetting(this.data.name + "(" + this.data.settingsDescriptors.SystemNameN + ")");
         const conditionMapArray = Array.from(maps[system]);
 
         const data = {
@@ -790,7 +806,7 @@ class CUBEnhancedConditionsConfig extends FormApplication {
         let icons = [];
         //let oldMapsSetting = CUBSidekick.getGadgetSetting(CUBEnhancedConditions.GADGET_NAME + "(" + CUBEnhancedConditions.SETTINGS_DESCRIPTORS.MapsN + ")");
         let newMap = new Map();
-        const system = CUBSidekick.getGadgetSetting(cubEnhancedConditions.GADGET_NAME + "(" + cubEnhancedConditions.SETTINGS_META.systemName.name + ")");
+        const system = CUBSidekick.getGadgetSetting(this.data.GADGET_NAME + "(" + this.data.settingsDescriptors.SystemNameN + ")");
         //let oldMap = oldMapsSetting[system];
         //let mergeMapsSetting = {};
 
@@ -817,7 +833,7 @@ class CUBEnhancedConditionsConfig extends FormApplication {
         });
 */       
 
-        CUBSidekick.setGadgetSetting(cubEnhancedConditions.GADGET_NAME + "(" + cubEnhancedConditions.SETTINGS_DESCRIPTORS.MapsN + ")" + "." + system, newMap);
+        CUBSidekick.setGadgetSetting(this.data.GADGET_NAME + "(" + this.data.settingsDescriptors.MapsN + ")" + "." + system, newMap);
 
         //not sure what to do about this yet, probably nothing
         console.assert(conditions.length === icons.length, "There are unmapped conditions");
