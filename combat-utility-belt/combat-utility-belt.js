@@ -1,3 +1,5 @@
+// @ts-check
+
 /**
  * Assign the namespace Object if it already exists or instantiate it as an object if not.
  */
@@ -36,6 +38,23 @@ class CUBSidekick  {
 
     static get MODULE_NAME() {
         return "combat-utility-belt"
+    }
+
+    /**
+     * Validate that an object is actually an object
+     * @param {Object} object 
+     * @returns {Boolean}
+     */
+    static validateObject(object){
+        return object instanceof Object ? true : false;
+    }
+
+    /**
+     * Convert any ES6 Maps/Sets to objects for settings use
+     * @param {Map} map 
+     */
+    static convertMapToArray(map){
+        return map instanceof Map ? Array.from(map.entries) : null;
     }
 
     /**
@@ -539,7 +558,9 @@ class CUBEnhancedConditions {
         console.log(this.settings.maps);
         const map = this.settings.maps[this.settings.systemName];
         
-        for(let [k,v] of map.entries()){
+        const entries = map.entries();
+        
+        for(let [k,v] of entries){
             CONFIG.statusEffects.push(v);
             console.log(k,v);
         }
@@ -563,7 +584,7 @@ class CUBEnhancedConditions {
     }
 
     get icons() {
-        return Array.from((this.settings.maps[this.settings.systemName]).values());
+        return this.map instanceof Map ? Array.from((this.settings.maps[this.settings.systemName]).values()) : [];
     }
     
     
