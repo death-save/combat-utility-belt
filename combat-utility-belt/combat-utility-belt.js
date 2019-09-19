@@ -115,13 +115,15 @@ class CUBSidekick  {
             let updated = setProperty(tempSettingObject, key, value);
 
             if(updated) {
-                newSettingValue = await game.settings.set(this.MODULE_NAME, settingKey, tempSettingObject);
+                console.log(this.MODULE_NAME, settingKey, tempSettingObject);
+               // newSettingValue = await game.settings.set(this.MODULE_NAME, settingKey, tempSettingObject);
             } else {
                 throw("Failed to update nested property of " + key + " check syntax");
             }
             
         } else if(typeof oldSettingValue === typeof value) {
-            newSettingValue = await game.settings.set(this.MODULE_NAME, key, value);
+            console.log(this.MODULE_NAME, key, value);
+            //newSettingValue = await game.settings.set(this.MODULE_NAME, key, value);
         }
         
         return newSettingValue;
