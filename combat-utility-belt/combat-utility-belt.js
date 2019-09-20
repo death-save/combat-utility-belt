@@ -114,10 +114,10 @@ class CUBSidekick  {
      */
     static async setGadgetSetting(key, value) {
         let oldSettingValue;
-        let settingKey
+        let settingKey;
 
         if(key.includes(".")) {
-            settingKey = key.split(".",1);
+            settingKey = key.split(".",1)[0];
             oldSettingValue = this.getGadgetSetting(settingKey);
         } else {
             oldSettingValue = this.getGadgetSetting(key);
@@ -126,7 +126,7 @@ class CUBSidekick  {
 
         let newSettingValue;
 
-       if(typeof oldSettingValue === "object" && (key.includes("."))) {
+        if(typeof oldSettingValue === "object" && (key.includes("."))) {
 
             //call the duplicate helper function from foundry.js
             let tempSettingObject = duplicate(oldSettingValue);
@@ -339,11 +339,11 @@ class CUBEnhancedConditions {
             folderType : CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.FolderTypeN + ")", this.SETTINGS_META.folderType),
             maps : CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.MapsN + ")", this.SETTINGS_META.maps),
             output : CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.OutputChatN + ")", this.SETTINGS_META.outputChat),
-            systemName : CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_META.systemName.name + ")", this.SETTINGS_META.systemName),
+            systemName : CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.SystemNameN + ")", this.SETTINGS_META.systemName),
             createEntries : CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_META.CreateEntriesN + ")", this.SETTINGS_META.createEntries)
-
         }
 
+        //move this to signal class?
         this.constructor._createSidebarButton();
         this._addStatusIcons();
         this._hookOnUpdateToken();
@@ -402,6 +402,15 @@ class CUBEnhancedConditions {
             "dnd5e": dnd5e,
             "pf1e": pf1e
         }       
+    }
+
+    get DEFAULT_MAP_ARRAYS(){
+        let arrayedMaps = {}
+        for(let m in this.DEFAULT_MAPS){
+            arrayedMaps[CUBSidekick.getKeyByValue(this.DEFAULT_MAPS, m)] = CUBSidekick.convertMapToArray(m);
+        }
+
+        return arrayedMaps;
     }
 
     get SETTINGS_DESCRIPTORS() {
@@ -633,7 +642,7 @@ class CUBEnhancedConditions {
 
     /**
      * 
-     * @param {*} icons 
+     * 
      */
     _hookOnRenderTokenHUD() {
         Hooks.on("renderTokenHUD", (app, html) => {
@@ -1010,7 +1019,7 @@ class CUBInjuredAndDead {
                 }
 
             //if injured tracking is enabled and the current hp is greater than the maxHP * the decimal version of the threshold
-            } else if(!linked && this.injured && update.actorData && update.actorData.data.attributes.hp.value > (maxHP*(threshold/100))) {
+            } else if(!linked && this.injured && update.actorData && update.actorData.data.attributes.hp.value > (maxHP*(this.threshold/100))) {
                 //if the token has the injured icon, remove it
                 if(this.injured && token.data.effects && token.data.effects.length > 0 && token.data.effects.find(e => e = this.injuredIcon)) {
                     token.toggleEffect(this.injuredIcon);
@@ -1049,12 +1058,12 @@ class CUBInjuredAndDead {
                 //set status effect on token
                 await token.toggleEffect(this.injuredIcon);
                 //if the dead tracking is enabled and the token has an overlay, remove the dead overlay
-                if(dead && token.data.overlayEffect && token.data.overlayEffect == deadIcon) {
-                    await token.toggleOverlay(deadIcon);
+                if(this.dead && token.data.overlayEffect && token.data.overlayEffect == this.deadIcon) {
+                    await token.toggleOverlay(this.deadIcon);
                 }
 
             //if injured tracking is enabled and the current hp is greater than the maxHP * the decimal version of the threshold
-            } else if(this.injured && update["data.attributes.hp.value"] > (maxHP*(threshold/100))) {
+            } else if(this.injured && update["data.attributes.hp.value"] > (maxHP*(this.threshold/100))) {
                 //if the token has the injured icon, remove it
                 if(this.injured && token.data.effects && token.data.effects.length > 0 && token.data.effects.find(e => e = this.injuredIcon)) {
                     await token.toggleEffect(this.injuredIcon);
