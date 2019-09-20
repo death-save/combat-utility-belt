@@ -54,7 +54,7 @@ class CUBSidekick  {
      * @param {Map} map 
      */
     static convertMapToArray(map){
-        return map instanceof Map ? Array.from(map.entries) : null;
+        return map instanceof Map ? Array.from(map.entries()) : null;
     }
 
     /**
@@ -114,10 +114,16 @@ class CUBSidekick  {
      */
     static async setGadgetSetting(key, value) {
         let oldSettingValue;
+        let keyParts = [];
         let settingKey;
+        let settingSubkeys;
+        let joinedSubkeys;
 
         if(key.includes(".")) {
-            settingKey = key.split(".",1)[0];
+            keyParts = key.split(".");
+            settingKey = keyParts[0];
+            settingSubkeys = keyParts.slice(1,keyParts.length);
+            joinedSubkeys = settingSubkeys.join(".");
             oldSettingValue = this.getGadgetSetting(settingKey);
         } else {
             oldSettingValue = this.getGadgetSetting(key);
@@ -127,22 +133,23 @@ class CUBSidekick  {
         let newSettingValue;
 
         if(typeof oldSettingValue === "object" && (key.includes("."))) {
+            
 
             //call the duplicate helper function from foundry.js
             let tempSettingObject = duplicate(oldSettingValue);
-
-            let updated = setProperty(tempSettingObject, key, value);
+            
+            let updated = setProperty(tempSettingObject, joinedSubkeys, value);
 
             if(updated) {
                 console.log(this.MODULE_NAME, settingKey, tempSettingObject);
-               // newSettingValue = await game.settings.set(this.MODULE_NAME, settingKey, tempSettingObject);
+                newSettingValue = await game.settings.set(this.MODULE_NAME, settingKey, tempSettingObject);
             } else {
                 throw("Failed to update nested property of " + key + " check syntax");
             }
             
         } else if(typeof oldSettingValue === typeof value) {
             console.log(this.MODULE_NAME, key, value);
-            //newSettingValue = await game.settings.set(this.MODULE_NAME, key, value);
+            newSettingValue = await game.settings.set(this.MODULE_NAME, key, value);
         }
         
         return newSettingValue;
@@ -407,7 +414,8 @@ class CUBEnhancedConditions {
     get DEFAULT_MAP_ARRAYS(){
         let arrayedMaps = {}
         for(let m in this.DEFAULT_MAPS){
-            arrayedMaps[CUBSidekick.getKeyByValue(this.DEFAULT_MAPS, m)] = CUBSidekick.convertMapToArray(m);
+
+            arrayedMaps[m] = CUBSidekick.convertMapToArray(this.DEFAULT_MAPS[m]);
         }
 
         return arrayedMaps;
@@ -494,7 +502,8 @@ class CUBEnhancedConditions {
                 hint: this.SETTINGS_DESCRIPTORS.MapsH,
                 scope: "world",
                 type: Object,
-                default: this.DEFAULT_MAPS,
+                //default: this.DEFAULT_MAPS,
+                default: this.DEFAULT_MAP_ARRAYS,
                 onChange: s => {
                     this.settings.maps = s;
                 }
@@ -557,6 +566,7 @@ class CUBEnhancedConditions {
      * @todo make this an override on the token hud instead
      */
     _addStatusIcons(){
+        let entries;
         //save the original icons
         if(!CONFIG.defaultStatusEffects) {
             CONFIG.defaultStatusEffects = duplicate(CONFIG.statusEffects);
@@ -567,7 +577,13 @@ class CUBEnhancedConditions {
         console.log(this.settings.maps);
         const map = this.settings.maps[this.settings.systemName];
         
-        const entries = map.entries();
+        if(map instanceof Map){
+            entries = map.entries();
+        } else if(map instanceof Array) {
+            entries = map;
+        } else {
+            entries = [];
+        }
         
         for(let [k,v] of entries){
             CONFIG.statusEffects.push(v);
@@ -622,6 +638,10 @@ class CUBEnhancedConditions {
      */
     currentToken = {};
 
+    get system() {
+        return this.settings.systemName;
+    }
+
     /**
     * @name postTokenUpdateHook
     * @description hooks on token updates. If the update includes effects, calls the lookups
@@ -672,12 +692,20 @@ class CUBEnhancedConditions {
     async lookupConditionMapping(icons){
         let conditions = [];
         let condition;
+        let entries;
         //console.log(conditionMapping);
 
+        if(this.map instanceof Map) {
+            entries = this.map.entries();
+        } else if(this.map instanceof Array) {
+            entries = this.map;
+        } else {
+            throw "condition map is not iterable";
+        }
         //iterate through incoming icons and check the conditionMap for the corresponding entry
         for (let i of icons){
             try {
-                for (let [k,v] of this.map.entries()) {
+                for (let [k,v] of entries) {
                     if(v == i) {
                         condition = k;
                     }
@@ -829,15 +857,17 @@ class CUBEnhancedConditionsConfig extends FormApplication {
 
     getData() {
         //map = game.settings.get(cubGetModuleName(), CUBEnhancedConditions.GADGET_NAME + "(" + CUBEnhancedConditions.SETTINGS.MapsN + ")");
-        const maps = CUBSidekick.getGadgetSetting(this.data.GADGET_NAME + "(" + this.data.SETTINGS_DESCRIPTORS.MapsN + ")");
-        const system = CUBSidekick.getGadgetSetting(this.data.GADGET_NAME + "(" + this.data.SETTINGS_DESCRIPTORS.SystemNameN + ")");
-        const conditionMapArray = Array.from(maps[system]);
+        //const maps = CUBSidekick.getGadgetSetting(this.data.GADGET_NAME + "(" + this.data.SETTINGS_DESCRIPTORS.MapsN + ")");
+        //const system = CUBSidekick.getGadgetSetting(this.data.GADGET_NAME + "(" + this.data.SETTINGS_DESCRIPTORS.SystemNameN + ")");
+        //const conditionMapArray = Array.from(maps[system]);
 
-        const data = {
-            conditionmap: conditionMapArray
+        const conditionMap = this.data.map;
+
+        const formData = {
+            conditionmap: conditionMap
         }
 
-        return data;
+        return formData;
     }
 
     /**
@@ -850,8 +880,8 @@ class CUBEnhancedConditionsConfig extends FormApplication {
         let conditions = [];
         let icons = [];
         //let oldMapsSetting = CUBSidekick.getGadgetSetting(CUBEnhancedConditions.GADGET_NAME + "(" + CUBEnhancedConditions.SETTINGS_DESCRIPTORS.MapsN + ")");
-        let newMap = new Map();
-        const system = CUBSidekick.getGadgetSetting(this.data.GADGET_NAME + "(" + this.data.SETTINGS_DESCRIPTORS.SystemNameN + ")");
+        let newMap = [];
+        //const system = CUBSidekick.getGadgetSetting(this.data.GADGET_NAME + "(" + this.data.SETTINGS_DESCRIPTORS.SystemNameN + ")");
         //let oldMap = oldMapsSetting[system];
         //let mergeMapsSetting = {};
 
@@ -871,7 +901,7 @@ class CUBEnhancedConditionsConfig extends FormApplication {
         }
 
         for(let i = 0;i <= conditions.length - 1; i++){
-            newMap.set(conditions[i], icons[i]);
+            newMap.push([conditions[i], icons[i]]);
         }
 /*
         mergeMapsSetting = mergeObject(oldMapsSetting, {
@@ -879,7 +909,7 @@ class CUBEnhancedConditionsConfig extends FormApplication {
         });
 */       
 
-        CUBSidekick.setGadgetSetting(this.data.GADGET_NAME + "(" + this.data.SETTINGS_DESCRIPTORS.MapsN + ")" + "." + system, newMap);
+        CUBSidekick.setGadgetSetting(this.data.GADGET_NAME + "(" + this.data.SETTINGS_DESCRIPTORS.MapsN + ")" + "." + this.data.system, newMap);
 
         //not sure what to do about this yet, probably nothing
         console.assert(conditions.length === icons.length, "There are unmapped conditions");
