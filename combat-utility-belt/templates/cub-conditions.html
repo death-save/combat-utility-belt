@@ -1,32 +1,43 @@
 <form autocomplete="off" onsubmit="event.preventDefault();">
     <h2>Condition Lab</h2>
     <ol class="condition-map-list" style="list-style:none;">
-        <span>
-            <h3>Condition</h3>  <h3>Status Icon</h3>
+        <span style="display:flex;justify-content:space-around">
+            <h3>Status Icon</h3>
+            <h3>Condition</h3>  
         </span>
         {{#each conditionmap as |item|}}
         {{log this}}
         <li class="condition-map-item">
-            <div class="formgroup">
-                <img name="icon" src="{{item.[1]}}" title="Status Icon" style="width:10%;background:black" />
-                <input type="text" name="icon-{{@index}}" title="Status Icon Path" value="{{item.[1]}}" placeholder="/icons/example.svg" data-dtype="String">
+            <div class="formgroup" style="display:flex;flex-flow:row wrap" >
+                <img name="icon" src="{{item.[1]}}" title="Status Icon" style="width:15%;background:black" />
+                <input type="text" name="condition-{{@index}}" title="Condition" value="{{item.[0]}}" placeholder="Blinded" data-dtype="String" style="flex:0 0 calc(33% - 32px)">
+                <input type="text" name="icon-{{@index}}" title="Status Icon Path" value="{{item.[1]}}" placeholder="/icons/example.svg" data-dtype="String" style="flex:0 0 calc(33% - 32px)">
                 {{filePicker target="icon-(@index)" type="image"}}
-                <input type="text" name="condition-{{@index}}" title="Condition" value="{{item.[0]}}" placeholder="Blinded" data-dtype="String">
+                <button type="remove-row" name="remove-row" title="Remove the condition mapping row" style="flex:0 0 24px">
+                    <i class="fas fa-trash"></i>
+                </button>
             </div>
+            
+            
         </li>
         {{/each}}
+        <button type="new-row" name="new-row" title="Create a new condition mapping row">
+            <i class="fas fa-plus"></i> Add Row
+        </button>
     </ol>
-
-    <button type="submit" name="submit" title="Save mapping form values">
-        <i class="far fa-save"></i> Save Mapping
-    </button>
-
-    <button type="reset" name="reset" title="Reset mapping form values">
-        <i class="fas fa-undo"></i> Reset Mapping
-    </button>
-
-    <button name="restore" title="Restore mappings back to system defaults">
-        <i class="fas fa-history"></i> Restore Defaults
-    </button>
+    <div class="flexrow">
+        <button type="submit" name="submit" title="Save mapping form values">
+            <i class="far fa-save"></i> Save Mapping
+        </button>
+    
+        <button type="reset" name="reset" title="Reset mapping form values">
+            <i class="fas fa-undo"></i> Reset Mapping
+        </button>
+    
+        <button name="restore" title="Restore mappings back to system defaults">
+            <i class="fas fa-history"></i> Restore Defaults
+        </button>
+    </div>
+    
 
 </form>

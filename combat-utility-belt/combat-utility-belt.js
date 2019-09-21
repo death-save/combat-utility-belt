@@ -851,7 +851,8 @@ class CUBEnhancedConditionsConfig extends FormApplication {
             title: "CUB Condition Lab",
             template: "public/modules/combat-utility-belt/templates/cub-conditions.html",
             classes: ["sheet"],
-            width: 500
+            width: 500,
+            resizable: true
         });
     }
 
