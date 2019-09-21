@@ -469,6 +469,7 @@ class CUBEnhancedConditions {
                 config: true,
                 onChange: s => {
                     this.settings.system = s;
+                    //this.settings.systemName = CUBSidekick.getKeyByValue(this.DEFAULT_CONFIG.systems, this.DEFAULT_CONFIG.systems[s]);
                 }
             },
 
@@ -575,7 +576,7 @@ class CUBEnhancedConditions {
        
 
         console.log(this.settings.maps);
-        const map = this.settings.maps[this.settings.systemName];
+        const map = this.settings.maps[this.settings.system];
         
         if(map instanceof Map){
             entries = map.entries();
@@ -597,7 +598,7 @@ class CUBEnhancedConditions {
      */
     
     get map() {
-        return this.settings.maps[this.settings.systemName];
+        return this.settings.maps[this.settings.system];
     }
 
     get inverseMap() {
@@ -610,7 +611,7 @@ class CUBEnhancedConditions {
 
     get icons() {
         if(this.map instanceof Map) {
-            return Array.from((this.settings.maps[this.settings.systemName]).values())
+            return Array.from((this.settings.maps[this.settings.system]).values())
         } else if(this.map instanceof Array && this.map[0] instanceof Array) {
             let iconArray = [];
             this.map.forEach((value, index, array) => {
@@ -652,7 +653,7 @@ class CUBEnhancedConditions {
     currentToken = {};
 
     get system() {
-        return this.settings.systemName;
+        return this.settings.system;
     }
 
     /**
@@ -875,12 +876,10 @@ class CUBEnhancedConditionsConfig extends FormApplication {
         //const system = CUBSidekick.getGadgetSetting(this.data.GADGET_NAME + "(" + this.data.SETTINGS_DESCRIPTORS.SystemNameN + ")");
         //const conditionMapArray = Array.from(maps[system]);
 
-        const conditionMap = this.data.map;
-
         const formData = {
-            conditionmap: conditionMap,
+            conditionmap: this.data.map,
             systems: this.data.DEFAULT_CONFIG.systems,
-            system: this.data.settings.system
+            system: this.data.system,
         }
 
         return formData;
@@ -935,15 +934,44 @@ class CUBEnhancedConditionsConfig extends FormApplication {
     }
 
     activateListeners(html) {
+        super.activateListeners(html);
         let newSystem;
-        const systemSelector = html.find("select[name='system']")
+        const systemSelector = html.find("select[name='system']");
+        const addRowButton = html.find("button[name='add-row']");
         
-        systemSelector.change(ev => {
-            console.log(ev);
-            ev.preventDefault();
-            const selection = systemSelector.val();
-            newSystem = CUBSidekick.getKeyByValue(this.data.DEFAULT_CONFIG.systems, selection);
+        systemSelector.change(async ev => {
+            //ev.preventDefault();
+            //find the selected option
+            const selection = $(ev.target).find("option:selected");
+
+            //capture the value of the selected option
+            newSystem = selection.val();
+
+            //set the enhanced conditions system to the new value
+            await CUBSidekick.setGadgetSetting(this.data.GADGET_NAME + "(" + this.data.SETTINGS_DESCRIPTORS.SystemN + ")", newSystem);
+
+            //if there's no mapping for the newsystem, create one
+            if(!this.data.settings.maps[newSystem]) {
+                const newMap = [];
+
+                await CUBSidekick.setGadgetSetting(this.data.GADGET_NAME + "(" + this.data.SETTINGS_DESCRIPTORS.MapsN + ")" + "." + newSystem, newMap);
+            }
+
+            //rerender the form to get the correct condition mapping template
+            this.render(true);
         });
+
+        addRowButton.click(async ev => {
+            ev.preventDefault();
+            CUB.enhancedConditions.settings.maps[this.data.system].push(["",""]);
+            this.render(true);
+        });
+
+        removeRowButton.click(async ev => {
+            //const index; get the index from the row the button is on
+            ev.preventDefault();
+            CUB.enhancedConditions.settings.maps[this.data.system].splice(index,1)
+        })
     }
 
 
