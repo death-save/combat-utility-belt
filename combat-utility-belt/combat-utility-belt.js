@@ -609,7 +609,20 @@ class CUBEnhancedConditions {
     }
 
     get icons() {
-        return this.map instanceof Map ? Array.from((this.settings.maps[this.settings.systemName]).values()) : [];
+        if(this.map instanceof Map) {
+            return Array.from((this.settings.maps[this.settings.systemName]).values())
+        } else if(this.map instanceof Array && this.map[0] instanceof Array) {
+            let iconArray = [];
+            this.map.forEach((value, index, array) => {
+                iconArray.push(value[1]); 
+            });
+
+            return iconArray;
+        } else if(this.map instanceof Array) {
+            return this.map;
+        } else {
+            return [];
+        }
     }
     
     
@@ -865,7 +878,9 @@ class CUBEnhancedConditionsConfig extends FormApplication {
         const conditionMap = this.data.map;
 
         const formData = {
-            conditionmap: conditionMap
+            conditionmap: conditionMap,
+            systems: this.data.DEFAULT_CONFIG.systems,
+            system: this.data.settings.system
         }
 
         return formData;
@@ -917,6 +932,18 @@ class CUBEnhancedConditionsConfig extends FormApplication {
 
         
 
+    }
+
+    activateListeners(html) {
+        let newSystem;
+        const systemSelector = html.find("select[name='system']")
+        
+        systemSelector.change(ev => {
+            console.log(ev);
+            ev.preventDefault();
+            const selection = systemSelector.val();
+            newSystem = CUBSidekick.getKeyByValue(this.data.DEFAULT_CONFIG.systems, selection);
+        });
     }
 
 

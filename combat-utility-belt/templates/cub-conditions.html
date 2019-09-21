@@ -1,5 +1,12 @@
 <form autocomplete="off" onsubmit="event.preventDefault();">
     <h2>Condition Lab</h2>
+    <select name="system">
+        {{#select system}}
+        {{#each systems as |label name|}}
+            <option name="{{name}}">{{label}}</option>
+        {{/each}}
+        {{/select}}
+        </select>
     <ol class="condition-map-list" style="list-style:none;">
         <span style="display:flex;justify-content:space-around">
             <h3>Status Icon</h3>
