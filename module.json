@@ -2,7 +2,7 @@
   "name": "combat-utility-belt",
   "title": "Combat Utility Belt (Beta)",
   "description": "Adds some additional functionality in combat",
-  "version": "0.1",
+  "version": "0.2",
   "author": "Evan Clarke [errational]",
   "url": "https://github.com/death-save/combat-utility-belt",
   "manifest": "https://raw.githubusercontent.com/death-save/combat-utility-belt/develop/module.json",
