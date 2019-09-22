@@ -1,17 +1,17 @@
-img icon {
-    width: 0.1*100vw;
+img.icon {
+    width: 35px;
     background:black;
 }
 
-input icon {
+input.icon {
     flex: 0 0 calc(33% - 32px);
 }
 
-input condition {
+input.condition {
     flex: 0 0 calc(33% - 32px);
 }
 
-button remove-row {
+.remove-row {
     flex: 0 0 24px;
 }
 
