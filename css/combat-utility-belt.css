@@ -1,0 +1,18 @@
+img icon {
+    width: 0.1*100vw;
+    background:black;
+}
+
+input icon {
+    flex: 0 0 calc(33% - 32px);
+}
+
+input condition {
+    flex: 0 0 calc(33% - 32px);
+}
+
+button remove-row {
+    flex: 0 0 24px;
+}
+
+
