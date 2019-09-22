@@ -20,6 +20,7 @@ class CUBSignal {
             CUB.sidekick = new CUBSidekick();
             CUB.hideNPCNames = new CUBHideNPCNames();
             CUB.enhancedConditions = new CUBEnhancedConditions();
+            CUBSidekick.handlebarsHelpers();
         });
     }
 
@@ -165,9 +166,15 @@ class CUBSidekick  {
         return Object.keys(object).find(key => object[key] === value);
     }
 
-    static handlebarsNestedIndex() {
-        Handlebars.registerHelper("nestedIndex", (textBefore, textAfter) => {
-            return Handlebars.SafeString(textBefore + "{{@index}}" + textAfter);
+    static handlebarsHelpers() {
+        Handlebars.registerHelper("concat", () => {
+            let result;
+
+            for(let a in arguments){
+                result += (typeof arguments[a] === "string" ? arguments[a] : "");
+                }
+            
+            return result;
         });
     }
 }
@@ -942,9 +949,11 @@ class CUBEnhancedConditionsConfig extends FormApplication {
     activateListeners(html) {
         super.activateListeners(html);
         let newSystem;
-        const systemSelector = html.find("select[name='system']");
-        const addRowButton = html.find("button[name='add-row']");
-        const removeRowButton = html.find("button[name='remove-row-*']");
+        const systemSelector = html.find("select[class='system']");
+        const addRowButton = html.find("button[class='add-row']");
+        const removeRowButton = html.find("button[class='remove-row']");
+        const iconPath = html.find("button[class='icon-path']");
+        const restoreDefaultsButton = html.find("button[class='restore-defaults']");
         
         systemSelector.change(async ev => {
             //ev.preventDefault();
@@ -976,8 +985,24 @@ class CUBEnhancedConditionsConfig extends FormApplication {
 
         removeRowButton.click(async ev => {
             console.log(ev);
+            const splitName = ev.currentTarget.name.split("-");
+            const row = splitName[splitName.length -1];
+
+            console.log("row", row);
             ev.preventDefault();
-            //CUB.enhancedConditions.settings.maps[this.data.system].splice(index,1)
+            CUB.enhancedConditions.settings.maps[this.data.system].splice(row,1);
+            this.render(true);
+        });
+
+        iconPath.blur(ev => {
+            console.log("blur", ev);
+        });
+
+        restoreDefaultsButton.click(async ev => {
+            ev.preventDefault();
+            console.log("restore defaults clicked", ev);
+            CUB.enhancedConditions.settings.maps[this.data.system] = CUB.enhancedConditions.DEFAULT_MAP_ARRAYS[this.data.system] ? CUB.enhancedConditions.DEFAULT_MAP_ARRAYS[this.data.system] : [];
+            this.render(true);
         });
     }
 
