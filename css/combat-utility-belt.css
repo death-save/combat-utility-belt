@@ -1,21 +1,20 @@
 img.icon {
-    width: 35px;
+    width: 50px;
     background:black;
-}
-
-input.icon {
-    flex: 0 0 calc(33% - 32px);
-}
-
-input.condition {
-    flex: 0 0 calc(33% - 32px);
-}
-
-.remove-row {
-    flex: 0 0 24px;
 }
 
 .condition-map-list {
     list-style:none;
 }
 
+.flexcol.condition-lab {
+    margin: 3px 0px;
+}
+
+.flexcol.condition-lab.text-entry {
+    flex: 7;
+}
+
+.flexrow.condition-lab {
+    justify-content: space-around;
+}

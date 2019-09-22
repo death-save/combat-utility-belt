@@ -952,7 +952,7 @@ class CUBEnhancedConditionsConfig extends FormApplication {
         const systemSelector = html.find("select[class='system']");
         const addRowButton = html.find("button[class='add-row']");
         const removeRowButton = html.find("button[class='remove-row']");
-        const iconPath = html.find("button[class='icon-path']");
+        const iconPath = html.find("input[class='icon-path']");
         const restoreDefaultsButton = html.find("button[class='restore-defaults']");
         
         systemSelector.change(async ev => {
@@ -994,8 +994,18 @@ class CUBEnhancedConditionsConfig extends FormApplication {
             this.render(true);
         });
 
-        iconPath.blur(ev => {
-            console.log("blur", ev);
+        iconPath.change(async ev => {
+            ev.preventDefault();
+            console.log("change", ev, this);
+            const splitName = ev.target.name.split("-");
+            const row = splitName[splitName.length -1];
+
+            //CUB.enhancedConditions.settings.maps[this.data.system][row][1] = ev.target.val();
+            //this.render(true);
+
+            //target the icon
+            let icon = $(this.form).find("img[name='icon-" + row);
+            icon.attr("src", ev.target.value);
         });
 
         restoreDefaultsButton.click(async ev => {
