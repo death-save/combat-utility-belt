@@ -938,6 +938,7 @@ class CUBEnhancedConditionsConfig extends FormApplication {
         let newSystem;
         const systemSelector = html.find("select[name='system']");
         const addRowButton = html.find("button[name='add-row']");
+        const removeRowButton = html.find("button[name='remove-row-*']");
         
         systemSelector.change(async ev => {
             //ev.preventDefault();
@@ -968,10 +969,10 @@ class CUBEnhancedConditionsConfig extends FormApplication {
         });
 
         removeRowButton.click(async ev => {
-            //const index; get the index from the row the button is on
+            console.log(ev);
             ev.preventDefault();
-            CUB.enhancedConditions.settings.maps[this.data.system].splice(index,1)
-        })
+            //CUB.enhancedConditions.settings.maps[this.data.system].splice(index,1)
+        });
     }
 
 
