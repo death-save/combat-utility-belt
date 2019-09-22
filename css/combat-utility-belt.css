@@ -15,4 +15,7 @@ button remove-row {
     flex: 0 0 24px;
 }
 
+.condition-map-list {
+    list-style:none;
+}
 

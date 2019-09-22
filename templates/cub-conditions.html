@@ -10,7 +10,7 @@
             {{/select}}
         </select>
     </div>
-    <ol class="condition-map-list" style="list-style:none;">
+    <ol class="condition-map-list">
         <span style="display:flex;justify-content: flex-start;">
             <h3>Icon</h3>
             <h3>Condition</h3>  
@@ -19,13 +19,13 @@
         {{log this}}
         <li class="condition-map-item">
             <div class="form-group">
-                <img name="icon" src="{{item.[1]}}" title="Status Icon" style="width:15%;background:black" class="icon" />
-                <input type="text" name="condition-{{@index}}" title="Condition" value="{{item.[0]}}" class="condition" placeholder="Blinded" data-dtype="String" style="flex:0 0 calc(33% - 32px)">
-                <input type="text" name="icon-{{@index}}" title="Status Icon Path" class="icon-path" value="{{item.[1]}}" placeholder="/icons/example.svg" data-dtype="String" style="flex:0 0 calc(33% - 32px)">
+                <img name="icon" src="{{item.[1]}}" title="Status Icon" class="icon" />
+                <input type="text" name="condition-{{@index}}" title="Condition" value="{{item.[0]}}" class="condition" placeholder="Blinded" data-dtype="String">
+                <input type="text" name="icon-{{@index}}" title="Status Icon Path" class="icon-path" value="{{item.[1]}}" placeholder="/icons/example.svg" data-dtype="String">
                 <button type="button" name="file-picker-{{@index}}" class="file-picker" data-type="image" data-target="icon-{{@index}}" title="Browse Files" tabindex="-1">
                         <i class="fas fa-file-import fa-fw"></i>
                 </button>
-                <button type="button" name="remove-row-{{@index}}" class="remove-row" title="Remove the condition mapping row" style="flex:0 0 24px">
+                <button type="button" name="remove-row-{{@index}}" class="remove-row" title="Remove the condition mapping row">
                     <i class="fas fa-trash"></i>
                 </button>
             </div>
