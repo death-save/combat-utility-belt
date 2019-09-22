@@ -22,7 +22,7 @@
                 <img name="icon" src="{{item.[1]}}" title="Status Icon" style="width:15%;background:black" />
                 <input type="text" name="condition-{{@index}}" title="Condition" value="{{item.[0]}}" placeholder="Blinded" data-dtype="String" style="flex:0 0 calc(33% - 32px)">
                 <input type="text" name="icon-{{@index}}" title="Status Icon Path" value="{{item.[1]}}" placeholder="/icons/example.svg" data-dtype="String" style="flex:0 0 calc(33% - 32px)">
-                {{filePicker target="icon-{{{@index}}}" type="image"}}
+                {{filePicker target="icon-@index" type="image"}}
                 <button type="button" name="remove-row-{{@index}}" title="Remove the condition mapping row" style="flex:0 0 24px">
                     <i class="fas fa-trash"></i>
                 </button>

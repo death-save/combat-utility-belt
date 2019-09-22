@@ -164,6 +164,12 @@ class CUBSidekick  {
     static getKeyByValue(object, value) {
         return Object.keys(object).find(key => object[key] === value);
     }
+
+    static handlebarsNestedIndex() {
+        Handlebars.registerHelper("nestedIndex", (textBefore, textAfter) => {
+            return Handlebars.SafeString(textBefore + "{{@index}}" + textAfter);
+        });
+    }
 }
 
 /**
