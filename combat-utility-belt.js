@@ -361,7 +361,7 @@ class CUBEnhancedConditions {
             output : CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.OutputChatN + ")", this.SETTINGS_META.outputChat),
             systemName : CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.SystemNameN + ")", this.SETTINGS_META.systemName),
             createEntries : CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_META.CreateEntriesN + ")", this.SETTINGS_META.createEntries),
-            purgeDefaultEffects: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.PurgeDefaultEffectsN + ")", this.SETTINGS_META.purgeDefaultEffects)
+            removeDefaultEffects: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.RemoveDefaultEffectsN + ")", this.SETTINGS_META.removeDefaultEffects)
         }
 
         //move this to signal class?
@@ -455,8 +455,8 @@ class CUBEnhancedConditions {
             CreateEntriesH: "Create journal entries if none exist",
             SystemNameN: "Game System Name",
             SystemNameH: "The short-hand version of the game system name",
-            PurgeDefaultEffectsN: "Purge Default Status Effects",
-            PurgeDefaultEffectsH: "Remove existing status effect icons from token HUD"
+            RemoveDefaultEffectsN: "Remove Default Status Effects",
+            RemoveDefaultEffectsH: "Remove existing status effect icons from token HUD"
         }
     }
 
@@ -551,17 +551,17 @@ class CUBEnhancedConditions {
                 }
             },
 
-            purgeDefaultEffects: {
-                name: this.SETTINGS_DESCRIPTORS.PurgeDefaultEffectsN,
-                hint: this.SETTINGS_DESCRIPTORS.PurgeDefaultEffectsH,
+            removeDefaultEffects: {
+                name: this.SETTINGS_DESCRIPTORS.RemoveDefaultEffectsN,
+                hint: this.SETTINGS_DESCRIPTORS.RemoveDefaultEffectsH,
                 scope: "world",
                 type: Boolean,
                 config: true,
                 default: false,
                 onChange: s => {
-                    this.settings.purgeDefaultEffects = s;
+                    this.settings.removeDefaultEffects = s;
                     if(!s) {
-                        this._addStatusIcons(CONFIG.defaultStatusEffects);
+                        this._addStatusIcons();
                     }
                 }
             }
@@ -611,11 +611,16 @@ class CUBEnhancedConditions {
 
         console.log(this.settings.maps);
         
-        //purge default statusEffects
-        if(this.settings.purgeDefaultEffects) {
+        //remove default statusEffects
+        if(this.settings.removeDefaultEffects) {
             CONFIG.statusEffects = [];
         } else {
-            CONFIG.statusEffects = CONFIG.defaultStatusEffects;
+            for(let e of CONFIG.defaultStatusEffects) {
+                if(!CONFIG.statusEffects.find(se => se == e)){
+                    CONFIG.statusEffects.push(e);
+                }
+            }
+            //CONFIG.statusEffects = CONFIG.defaultStatusEffects;
         }
         
         
