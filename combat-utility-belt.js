@@ -360,7 +360,8 @@ class CUBEnhancedConditions {
             maps : CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.MapsN + ")", this.SETTINGS_META.maps),
             output : CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.OutputChatN + ")", this.SETTINGS_META.outputChat),
             systemName : CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.SystemNameN + ")", this.SETTINGS_META.systemName),
-            createEntries : CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_META.CreateEntriesN + ")", this.SETTINGS_META.createEntries)
+            createEntries : CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_META.CreateEntriesN + ")", this.SETTINGS_META.createEntries),
+            purgeDefaultEffects: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.PurgeDefaultEffectsN + ")", this.SETTINGS_META.purgeDefaultEffects)
         }
 
         //move this to signal class?
@@ -453,7 +454,9 @@ class CUBEnhancedConditions {
             CreateEntriesN: "Create Entries",
             CreateEntriesH: "Create journal entries if none exist",
             SystemNameN: "Game System Name",
-            SystemNameH: "The short-hand version of the game system name"
+            SystemNameH: "The short-hand version of the game system name",
+            PurgeDefaultEffectsN: "Purge Default Status Effects",
+            PurgeDefaultEffectsH: "Remove existing status effect icons from token HUD"
         }
     }
 
@@ -520,6 +523,7 @@ class CUBEnhancedConditions {
                 default: this.DEFAULT_MAP_ARRAYS,
                 onChange: s => {
                     this.settings.maps = s;
+                    this._addStatusIcons(s[this.settings.system]);
                 }
             },
 
@@ -544,6 +548,21 @@ class CUBEnhancedConditions {
                 default: this.DEFAULT_CONFIG.outputChat,
                 onChange: s => {
                     this.settings.output = s;
+                }
+            },
+
+            purgeDefaultEffects: {
+                name: this.SETTINGS_DESCRIPTORS.PurgeDefaultEffectsN,
+                hint: this.SETTINGS_DESCRIPTORS.PurgeDefaultEffectsH,
+                scope: "world",
+                type: Boolean,
+                config: true,
+                default: false,
+                onChange: s => {
+                    this.settings.purgeDefaultEffects = s;
+                    if(!s) {
+                        this._addStatusIcons(CONFIG.defaultStatusEffects);
+                    }
                 }
             }
         }
@@ -579,8 +598,10 @@ class CUBEnhancedConditions {
      * Add the new statuseffects
      * @todo make this an override on the token hud instead
      */
-    _addStatusIcons(){
+    _addStatusIcons(conditionMap){
+        const map = conditionMap || this.settings.maps[this.settings.system];
         let entries;
+
         //save the original icons
         if(!CONFIG.defaultStatusEffects) {
             CONFIG.defaultStatusEffects = duplicate(CONFIG.statusEffects);
@@ -589,7 +610,14 @@ class CUBEnhancedConditions {
        
 
         console.log(this.settings.maps);
-        const map = this.settings.maps[this.settings.system];
+        
+        //purge default statusEffects
+        if(this.settings.purgeDefaultEffects) {
+            CONFIG.statusEffects = [];
+        } else {
+            CONFIG.statusEffects = CONFIG.defaultStatusEffects;
+        }
+        
         
         if(map instanceof Map){
             entries = map.entries();
