@@ -371,6 +371,9 @@ class CUBEnhancedConditions {
         this._hookOnRenderTokenHUD();
     }
 
+    /**
+     * Returns the name of the gadget
+     */
     get GADGET_NAME() {
         return "enhanced-conditions";
     }
@@ -397,6 +400,9 @@ class CUBEnhancedConditions {
         
     }
 
+    /**
+     * Defines the maps used in the gadget
+     */
     get DEFAULT_MAPS() {
         const dnd5e = new Map([
             ["Blinded", this.DEFAULT_CONFIG.iconPath+"blinded.svg"],
@@ -415,16 +421,14 @@ class CUBEnhancedConditions {
             ["Unconscious", this.DEFAULT_CONFIG.iconPath+"unconscious.svg"]
         ]);
 
-        const pf1e = new Map([
-            ["Blinded", this.DEFAULT_CONFIG.iconPath+"blinded.svg"]
-        ]);
-
         return {
-            "dnd5e": dnd5e,
-            "pf1e": pf1e
+            "dnd5e": dnd5e
         }       
     }
 
+    /**
+     * Converts the condition maps into arrays
+     */
     get DEFAULT_MAP_ARRAYS(){
         let arrayedMaps = {}
         for(let m in this.DEFAULT_MAPS){
@@ -435,6 +439,9 @@ class CUBEnhancedConditions {
         return arrayedMaps;
     }
 
+    /**
+     * Contains the names and hints for the settings
+     */
     get SETTINGS_DESCRIPTORS() {
         return {
             EnhancedConditionsN: "Enhanced Conditions",
@@ -460,6 +467,9 @@ class CUBEnhancedConditions {
         }
     }
 
+    /**
+     * Defines the metadata for the gadget's settings
+     */
     get SETTINGS_META() {
         return {
             enhancedConditions: {
@@ -581,6 +591,10 @@ class CUBEnhancedConditions {
         return CONFIG.defaultStatusEffects;
     }
 
+    /**
+     * Creates journal entries for any conditions that don't have one
+     * @param {String} condition - the condition being evaluated
+     */
     static async _createJournalEntry(condition) {
         let entry;
 
@@ -613,7 +627,7 @@ class CUBEnhancedConditions {
         
         //remove default statusEffects
         if(this.settings.removeDefaultEffects) {
-            CONFIG.statusEffects = [];
+            CONFIG.statusEffects = this.settings.maps[this.settings.system] ? this.icons : [];
         } else {
             for(let e of CONFIG.defaultStatusEffects) {
                 if(!CONFIG.statusEffects.find(se => se == e)){
@@ -640,13 +654,15 @@ class CUBEnhancedConditions {
     }
     
     /**
-     * Define the labels for the D&D 5e conditions
-     */
-    
+     * Displays the current system's map
+     */    
     get map() {
         return this.settings.maps[this.settings.system];
     }
 
+    /**
+     * Inverts the key and value in the map
+     */
     get inverseMap() {
         let newMap = new Map();
         for (let [k,v] of this.map) {
@@ -655,6 +671,9 @@ class CUBEnhancedConditions {
         return newMap;
     }
 
+    /**
+     * Returns just the icon side of the map
+     */
     get icons() {
         if(this.map instanceof Map) {
             return Array.from((this.settings.maps[this.settings.system]).values())
@@ -672,7 +691,9 @@ class CUBEnhancedConditions {
         }
     }
     
-    
+    /**
+     * 
+     */
     static _createSidebarButton() {
         Hooks.on("renderSettings", (app, html) => {
             const mapButton = $(
