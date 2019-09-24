@@ -197,7 +197,7 @@ class CUBRerollInitiative {
 
 	DEFAULT_CONFIG = true;
 
-    SETTINGS_NAME = "Reroll Initiative";
+    SETTINGS_NAME = "--Reroll Initiative--";
 
     SETTINGS_HINT = "Reroll initiative for each combatant every round"
 
@@ -274,7 +274,7 @@ class CUBHideNPCNames {
     }
 
     SETTINGS_DESCRIPTORS = {
-        HideNamesN: "Hide NPC Names",
+        HideNamesN: "--Hide NPC Names--",
         HideNamesH: "Hides NPC names in the Combat Tracker",
         UnknownCreatureN: "Unknown Creature Name",
         UnknownCreatureH: "Text to display for hidden NPC names"
@@ -362,8 +362,13 @@ class CUBHideNPCNames {
 
     _hookOnRenderChatMessage(){
         Hooks.on("renderChatMessage", (message, data, html) => {
-            html.find(":contains('" + data.alias + "')").html( function () {
-                return $(this).html().replace(data.alias, this.DEFAULT_CONFIG.unknownCreatureString);
+            const npcChatMessages = html.find(":contains('" + data.alias + "')");
+            
+            $(html).content().each(element => {
+                let e = $(element);
+                if(e.nodeType==3){
+                    e.nodeValue = e.nodeValue.replace(/data.alias/g, this.settings.unknownCreatureString);
+                }
             });
 
             console.log(message,data,html);
@@ -468,7 +473,7 @@ class CUBEnhancedConditions {
      */
     get SETTINGS_DESCRIPTORS() {
         return {
-            EnhancedConditionsN: "Enhanced Conditions",
+            EnhancedConditionsN: "--Enhanced Conditions--",
             EnhancedConditionsH: "Links conditions to status icons",
             FolderTypeN: "Folder Type",
             FolderTypeH: "Folder type to use when looking for Condition entries",
@@ -1101,13 +1106,13 @@ class CUBInjuredAndDead {
     } 
 
 	SETTINGS_DESCRIPTORS = {
-		InjuredN: "Mark Injured Tokens",
+		InjuredN: "--Mark Injured Tokens--",
         InjuredH: "Sets a status marker on tokens that meet the threshold below",
         InjuredIconN: "Injured Status Marker",
         InjuredIconH: "Path to the status marker to display for Injured Tokens",
 		ThresholdN: "Injured Token Threshold",
 		ThresholdH: "Enter the percentage of HP lost when a token should be considered injured",
-		DeadN: "Mark Dead Tokens",
+		DeadN: "--Mark Dead Tokens--",
         DeadH: "Sets a status marker on tokens that reach 0 hp",
         DeadIconN: "Dead Status Marker",
         DeadIconH: "Path to the status marker to display for Dead Tokens"   
