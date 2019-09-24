@@ -640,15 +640,14 @@ class CUBEnhancedConditions {
         
         if(map instanceof Map){
             entries = map.entries();
+            for(let [k,v] of entries){
+                CONFIG.statusEffects.push(v);
+                console.log(k,v);
+            }
         } else if(map instanceof Array) {
             entries = map;
         } else {
             entries = [];
-        }
-        
-        for(let [k,v] of entries){
-            CONFIG.statusEffects.push(v);
-            console.log(k,v);
         }
         
     }
@@ -929,10 +928,11 @@ class CUBEnhancedConditionsConfig extends FormApplication {
     static get defaultOptions() {
         return mergeObject(super.defaultOptions, {
             id: "cub-condition-lab",
-            title: "CUB Condition Lab",
+            title: "Condition Lab",
             template: "public/modules/combat-utility-belt/templates/cub-conditions.html",
             classes: ["sheet"],
             width: 500,
+            height: "auto",
             resizable: true
         });
     }
