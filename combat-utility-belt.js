@@ -261,7 +261,10 @@ class CUBRerollInitiative {
  */
 class CUBHideNPCNames {
     constructor(){
-        this.settings = CUBSidekick.initGadgetSetting(this.GADGET_NAME, this.SETTINGS_META);
+        this.settings = {
+            hideNames: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.HideNamesN + ")", this.SETTINGS_META.hideNames),
+            unknownCreatureString: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.UnknownCreatureN + ")", this.SETTINGS_META.unknownCreatureString)
+        }
         this._hookOnRenderCombatTracker();
         this._hookOnRenderChatMessage();
     }
@@ -270,24 +273,45 @@ class CUBHideNPCNames {
         return "hide-npc-names";
     }
 
-    SETTINGS_NAME = "Hide NPC Names";
+    SETTINGS_DESCRIPTORS = {
+        HideNamesN: "Hide NPC Names",
+        HideNamesH: "Hides NPC names in the Combat Tracker",
+        UnknownCreatureN: "Unknown Creature Name",
+        UnknownCreatureH: "Text to display for hidden NPC names"
+    }
+    
 
-    SETTINGS_HINT = "Hides NPC names in the Combat Tracker."
-
-    DEFAULT_CONFIG = false;
+    DEFAULT_CONFIG = {
+        hideNames: false,
+        unknownCreatureString: "Unknown Creature"
+    }
 
     SETTINGS_META = {
-        name: this.SETTINGS_NAME,
-        hint: this.SETTINGS_HINT,
-        scope: "world",
-        type: Boolean,
-		default: this.DEFAULT_CONFIG,
-		config: true,
-        onChange: s => {
-            console.log(this.GADGET_NAME+" settings changed. New settings:", s);
-            this.settings = s;
-            ui.combat.render();
+        hideNames: {
+            name: this.SETTINGS_DESCRIPTORS.HideNamesN,
+            hint: this.SETTINGS_DESCRIPTORS.HideNamesH,
+            scope: "world",
+            type: Boolean,
+            default: this.DEFAULT_CONFIG.hideNames,
+            config: true,
+            onChange: s => {
+                this.settings.hideNames = s;
+                ui.combat.render();
+            }
+        },
+        unknownCreatureString: {
+            name: this.SETTINGS_DESCRIPTORS.UnknownCreatureN,
+            hint: this.SETTINGS_DESCRIPTORS.UnknownCreatureH,
+            scope: "world",
+            type: String,
+            default: this.DEFAULT_CONFIG.unknownCreatureString,
+            config: true,
+            onChange: s => {
+                this.settings.unknownCreatureString = s;
+                ui.render();
+            }
         }
+        
     }
 
 	
@@ -339,7 +363,7 @@ class CUBHideNPCNames {
     _hookOnRenderChatMessage(){
         Hooks.on("renderChatMessage", (message, data, html) => {
             html.find(":contains('" + data.alias + "')").html( function () {
-                return $(this).html().replace(data.alias, "Unknown");
+                return $(this).html().replace(data.alias, this.DEFAULT_CONFIG.unknownCreatureString);
             });
 
             console.log(message,data,html);
@@ -366,7 +390,7 @@ class CUBEnhancedConditions {
 
         //move this to signal class?
         this.constructor._createSidebarButton();
-        this._addStatusIcons();
+        this._updateStatusIcons();
         this._hookOnUpdateToken();
         this._hookOnRenderTokenHUD();
     }
@@ -384,7 +408,7 @@ class CUBEnhancedConditions {
             iconPath: "modules/combat-utility-belt/icons/",
             folderTypes: {
                 journal: "Journal",
-                compendium: "Compendium"
+                //compendium: "Compendium"
             },
             folderName: "conditions",
             systems: {
@@ -405,20 +429,20 @@ class CUBEnhancedConditions {
      */
     get DEFAULT_MAPS() {
         const dnd5e = new Map([
-            ["Blinded", this.DEFAULT_CONFIG.iconPath+"blinded.svg"],
-            ["Charmed", this.DEFAULT_CONFIG.iconPath+"charmed.svg"],
-            ["Deafened", this.DEFAULT_CONFIG.iconPath+"deafened.svg"],
-            ["Exhaustion", this.DEFAULT_CONFIG.iconPath+"exhaustion1.svg"],
-            ["Frightened", this.DEFAULT_CONFIG.iconPath+"frightened.svg"],
-            ["Incapacitated", this.DEFAULT_CONFIG.iconPath+"incapacitated.svg"],
-            ["Invisible", this.DEFAULT_CONFIG.iconPath+"invisible.svg"],
-            ["Paralyzed", this.DEFAULT_CONFIG.iconPath+"paralyzed.svg"],
-            ["Petrified", this.DEFAULT_CONFIG.iconPath+"petrified.svg"],
-            ["Poisoned", this.DEFAULT_CONFIG.iconPath+"poisoned.svg"],
-            ["Prone", this.DEFAULT_CONFIG.iconPath+"prone.svg"],
-            ["Restrained", this.DEFAULT_CONFIG.iconPath+"restrained.svg"],
-            ["Stunned", this.DEFAULT_CONFIG.iconPath+"stunned.svg"],
-            ["Unconscious", this.DEFAULT_CONFIG.iconPath+"unconscious.svg"]
+            ["Blinded", this.DEFAULT_CONFIG.iconPath + "blinded.svg"],
+            ["Charmed", this.DEFAULT_CONFIG.iconPath + "charmed.svg"],
+            ["Deafened", this.DEFAULT_CONFIG.iconPath + "deafened.svg"],
+            ["Exhaustion", this.DEFAULT_CONFIG.iconPath + "exhaustion1.svg"],
+            ["Frightened", this.DEFAULT_CONFIG.iconPath + "frightened.svg"],
+            ["Incapacitated", this.DEFAULT_CONFIG.iconPath + "incapacitated.svg"],
+            ["Invisible", this.DEFAULT_CONFIG.iconPath + "invisible.svg"],
+            ["Paralyzed", this.DEFAULT_CONFIG.iconPath + "paralyzed.svg"],
+            ["Petrified", this.DEFAULT_CONFIG.iconPath + "petrified.svg"],
+            ["Poisoned", this.DEFAULT_CONFIG.iconPath + "poisoned.svg"],
+            ["Prone", this.DEFAULT_CONFIG.iconPath + "prone.svg"],
+            ["Restrained", this.DEFAULT_CONFIG.iconPath + "restrained.svg"],
+            ["Stunned", this.DEFAULT_CONFIG.iconPath + "stunned.svg"],
+            ["Unconscious", this.DEFAULT_CONFIG.iconPath + "unconscious.svg"]
         ]);
 
         return {
@@ -499,17 +523,6 @@ class CUBEnhancedConditions {
                 }
             },
 
-            systemName: {
-                name: this.SETTINGS_DESCRIPTORS.SystemNameN,
-                hint: this.SETTINGS_DESCRIPTORS.SystemNameH,
-                scope: "world",
-                type: String,
-                default: CUBSidekick.getKeyByValue(this.DEFAULT_CONFIG.systems, this.DEFAULT_CONFIG.systems[game.system.data.name]),
-                onChange: s => {
-                    this.settings.systemName = s;
-                }
-            },
-
             folderType: {
                 name: this.SETTINGS_DESCRIPTORS.FolderTypeN,
                 hint: this.SETTINGS_DESCRIPTORS.FolderTypeH,
@@ -533,7 +546,7 @@ class CUBEnhancedConditions {
                 default: this.DEFAULT_MAP_ARRAYS,
                 onChange: s => {
                     this.settings.maps = s;
-                    this._addStatusIcons(s[this.settings.system]);
+                    this._updateStatusIcons(s[this.settings.system]);
                 }
             },
 
@@ -570,9 +583,7 @@ class CUBEnhancedConditions {
                 default: false,
                 onChange: s => {
                     this.settings.removeDefaultEffects = s;
-                    if(!s) {
-                        this._addStatusIcons();
-                    }
+                    this._updateStatusIcons();
                 }
             }
         }
@@ -585,9 +596,10 @@ class CUBEnhancedConditions {
      * Retrieve the statusEffect icons from the Foundry CONFIG
      */
     get coreStatusIcons() {
-        CONFIG.defaultStatusEffects = duplicate(CONFIG.statusEffects);
-        Object.freeze(CONFIG.defaultStatusEffects);
-
+        CONFIG.defaultStatusEffects = CONFIG.defaultStatusEffects || duplicate(CONFIG.statusEffects);
+        if(!Object.isFrozen(CONFIG.defaultStatusEffects)) {
+            Object.freeze(CONFIG.defaultStatusEffects);
+        }
         return CONFIG.defaultStatusEffects;
     }
 
@@ -609,10 +621,9 @@ class CUBEnhancedConditions {
     }
 
     /**
-     * Add the new statuseffects
-     * @todo make this an override on the token hud instead
+     * Updates the core CONFIG.statusEffects with the new icons
      */
-    _addStatusIcons(conditionMap){
+    _updateStatusIcons(conditionMap){
         const map = conditionMap || this.settings.maps[this.settings.system];
         let entries;
 
@@ -625,35 +636,27 @@ class CUBEnhancedConditions {
 
         console.log(this.settings.maps);
         
-        //remove default statusEffects
+        
         if(this.settings.removeDefaultEffects) {
             CONFIG.statusEffects = this.settings.maps[this.settings.system] ? this.icons : [];
         } else {
-            for(let e of CONFIG.defaultStatusEffects) {
-                if(!CONFIG.statusEffects.find(se => se == e)){
-                    CONFIG.statusEffects.push(e);
+            if(map instanceof Map){
+                entries = map.entries();
+                for(let [k,v] of entries){
+                    CONFIG.statusEffects.push(v);
+                    console.log(k,v);
                 }
+            } else if(map instanceof Array) {
+                //add the icons from the condition map to the status effects array
+                CONFIG.statusEffects = CONFIG.defaultStatusEffects.concat(this.icons)
+            } else {
+                entries = [];
             }
-            //CONFIG.statusEffects = CONFIG.defaultStatusEffects;
-        }
-        
-        
-        if(map instanceof Map){
-            entries = map.entries();
-            for(let [k,v] of entries){
-                CONFIG.statusEffects.push(v);
-                console.log(k,v);
-            }
-        } else if(map instanceof Array) {
-            entries = map;
-        } else {
-            entries = [];
-        }
-        
+        }   
     }
     
     /**
-     * Displays the current system's map
+     * Displays the condition map for the selected system
      */    
     get map() {
         return this.settings.maps[this.settings.system];
@@ -695,16 +698,24 @@ class CUBEnhancedConditions {
      */
     static _createSidebarButton() {
         Hooks.on("renderSettings", (app, html) => {
-            const mapButton = $(
-                `<button id="enhanced-conditions">
+            const cubDiv = $(
+                `<div class="combat-utility-belt">
+                    <h4>Combat Utility Belt</h4>
+                </div>`
+            );
+
+            const labButton = $(
+                `<button data-action="condition-lab">
                     <i class="fas fa-flask"></i> ${CUBEnhancedConditionsConfig.defaultOptions.title}
                 </button>`
             );
 
-            const manageModulesButton = html.find("button:contains('Manage Modules')");
-            manageModulesButton.after(mapButton);
+            cubDiv.append(labButton);
 
-            mapButton.click(ev => {
+            const setupButton = html.find("button[data-action='setup']");
+            setupButton.after(cubDiv);
+
+            labButton.click(ev => {
                 new CUBEnhancedConditionsConfig().render(true);
             });
 
