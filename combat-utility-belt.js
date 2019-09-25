@@ -12,6 +12,7 @@ class CUBSignal {
     constructor(){
         this.hookOnInit();
         this.hookOnReady();
+        this.hookOnRenderSettings();
     }
 
 
@@ -19,17 +20,25 @@ class CUBSignal {
         Hooks.on("init", () => {
             CUB.sidekick = new CUBSidekick();
             CUB.hideNPCNames = new CUBHideNPCNames();
-            CUB.enhancedConditions = new CUBEnhancedConditions();
+            //CUBEnhancedConditions._createSidebarButton();
             CUBSidekick.handlebarsHelpers();
         });
     }
 
     hookOnReady() {
         Hooks.on("ready", () => {
+            CUB.enhancedConditions = new CUBEnhancedConditions();
             CUB.rerollInitiative = new CUBRerollInitiative();
             CUB.injuredAndDead = new CUBInjuredAndDead();
         });
-    }  
+    }
+
+    hookOnRenderSettings() {
+        Hooks.on("renderSettings", (app, html) => {
+            CUBEnhancedConditions._createSidebarButton(html);
+            CUB.enhancedConditions._toggleSidebarButtonDisplay(CUB.enhancedConditions.settings.enhancedConditions);
+        });
+    }
 }
 
 /**
@@ -37,8 +46,18 @@ class CUBSignal {
  */
 class CUBSidekick  {
 
+    /**
+     * Return the module name for use in settings registration etc
+     */
     static get MODULE_NAME() {
         return "combat-utility-belt"
+    }
+
+    /**
+     * Returns the human friendly module name
+     */
+    static get MODULE_TITLE() {
+        return "Combat Utility Belt"
     }
 
     /**
@@ -185,7 +204,9 @@ class CUBSidekick  {
  */
 class CUBRerollInitiative {
     constructor(){
-        this.settings = CUBSidekick.initGadgetSetting(this.GADGET_NAME, this.SETTINGS_META);
+        this.settings = {
+            reroll: CUBSidekick.initGadgetSetting(this.GADGET_NAME, this.SETTINGS_META)
+        }
         this._hookUpdateCombat();
         this.currentCombatRound = null;
     }
@@ -195,23 +216,33 @@ class CUBRerollInitiative {
     }
 
 
-	DEFAULT_CONFIG = true;
-
-    SETTINGS_NAME = "--Reroll Initiative--";
-
-    SETTINGS_HINT = "Reroll initiative for each combatant every round"
-
-    SETTINGS_META = {
-        name: this.SETTINGS_NAME,
-        hint: this.SETTINGS_HINT,
-        scope: "world",
-        type: Boolean,
-        default: this.DEFAULT_CONFIG,
-        config: true,
-        onChange: s => {
-            this.settings = s;
-            console.log(this.GADGET_NAME+" settings changed to", s);
+	get DEFAULT_CONFIG() {
+        return {
+            reroll: false
         }
+    }
+
+    get SETTINGS_DESCRIPTORS() {
+        return {
+            RerollN: "--Reroll Initiative--",
+            RerollH: "Reroll initiative for each combatant every round"
+        }
+        
+    }
+    
+    get SETTINGS_META() {
+        return {
+            name: this.SETTINGS_DESCRIPTORS.RerollN,
+            hint: this.SETTINGS_DESCRIPTORS.RerollH,
+            scope: "world",
+            type: Boolean,
+            default: this.DEFAULT_CONFIG.reroll,
+            config: true,
+            onChange: s => {
+                this.settings.reroll = s;
+            }
+        }
+        
     }
 	
 
@@ -223,12 +254,11 @@ class CUBRerollInitiative {
         Hooks.on("updateCombat",(async (combat, update) => {
             let rerolled;
 
+            //quick sanity check to see if this function has already executed this round
             if(this.currentCombatRound != combat.round){
                 rerolled = false;
             }
             
-
-            console.log(combat,update);
             /**
              *  firstly is the specified module setting turned on (eg. is rerolling enabled), 
              *  then test for the presence of the combat object's previous values and an update object,
@@ -236,12 +266,13 @@ class CUBRerollInitiative {
              *  to avoid any hysteria at the start of combat, only reroll if the update round is gt or equal to 1
              *  finally test if the update's round is greater than the previous combat round 
              */
-            if(this.settings
-            && !rerolled 
-            && (combat.previous && update)
-            && !isNaN(combat.previous.round || update.round)
-            && update.round >= 1
-            && update.round > combat.previous.round){
+            if(game.user.isGM
+                && this.settings.reroll
+                && !rerolled 
+                && (combat.previous && update)
+                && !isNaN(combat.previous.round || update.round)
+                && update.round >= 1
+                && update.round > combat.previous.round){
                 try {
                     await combat.resetAll();
                     combat.rollAll();
@@ -392,8 +423,6 @@ class CUBEnhancedConditions {
             removeDefaultEffects: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.RemoveDefaultEffectsN + ")", this.SETTINGS_META.removeDefaultEffects)
         }
 
-        //move this to signal class?
-        this.constructor._createSidebarButton();
         this._updateStatusIcons();
         this._hookOnUpdateToken();
         this._hookOnRenderTokenHUD();
@@ -519,6 +548,7 @@ class CUBEnhancedConditions {
                 config: true,
                 onChange: s => {
                     this.settings.enhancedConditions = s;
+                    this._toggleSidebarButtonDisplay(s);
                 }
     
             },
@@ -528,7 +558,7 @@ class CUBEnhancedConditions {
                 hint: this.SETTINGS_DESCRIPTORS.SystemH,
                 scope: "world",
                 type: String,
-                default: (this.DEFAULT_CONFIG.systems[game.system.data.id] != null) ? this.DEFAULT_CONFIG.systems[game.system.data.id] : this.DEFAULT_CONFIG.systems.other,
+                default: (this.DEFAULT_CONFIG.systems[game.system.data.id] != null) ? this.DEFAULT_CONFIG.systems[game.system.data.id] : CUBSidekick.getKeyByValue(this.DEFAULT_CONFIG.systems, this.DEFAULT_CONFIG.systems.other),
                 choices: this.DEFAULT_CONFIG.systems,
                 config: true,
                 onChange: s => {
@@ -557,7 +587,7 @@ class CUBEnhancedConditions {
                 scope: "world",
                 type: Object,
                 //default: this.DEFAULT_MAPS,
-                default: (this.DEFAULT_MAP_ARRAYS[game.system.data.id] != null) ? this.DEFAULT_MAP_ARRAYS[game.system.data.id] : this.DEFAULT_MAP_ARRAYS.other,
+                default: (this.DEFAULT_MAP_ARRAYS[game.system.data.id] != null) ? this.DEFAULT_MAP_ARRAYS[game.system.data.id] : CUBSidekick.getKeyByValue(this.DEFAULT_MAP_ARRAYS, this.DEFAULT_MAP_ARRAYS.other),
                 onChange: s => {
                     this.settings.maps = s;
                     this._updateStatusIcons(s[this.settings.system]);
@@ -708,32 +738,40 @@ class CUBEnhancedConditions {
     }
     
     /**
-     * 
+     * Creates a sidebar button for the Condition Lab
      */
-    static _createSidebarButton() {
-        Hooks.on("renderSettings", (app, html) => {
-            const cubDiv = $(
-                `<div class="combat-utility-belt">
+    static _createSidebarButton(html) {
+        const cubDiv = $(
+                `<div id="combat-utility-belt">
                     <h4>Combat Utility Belt</h4>
                 </div>`
-            );
+        );
 
-            const labButton = $(
-                `<button data-action="condition-lab">
+        const labButton = $(
+                `<button id="condition-lab" data-action="condition-lab">
                     <i class="fas fa-flask"></i> ${CUBEnhancedConditionsConfig.defaultOptions.title}
                 </button>`
-            );
+        );
 
-            cubDiv.append(labButton);
+        cubDiv.append(labButton);
 
-            const setupButton = html.find("button[data-action='setup']");
-            setupButton.after(cubDiv);
+        const setupButton = html.find("button[data-action='setup']");
+        setupButton.after(cubDiv);
 
-            labButton.click(ev => {
-                new CUBEnhancedConditionsConfig().render(true);
-            });
+        labButton.click(ev => {
+            new CUBEnhancedConditionsConfig().render(true);
+        });
 
-        });        
+    }
+
+    _toggleSidebarButtonDisplay(display) {
+        let sidebarButton = document.getElementById("combat-utility-belt");
+
+        if(game.user.isGM && display && sidebarButton) {
+            sidebarButton.style.display = "block";
+        } else {
+            sidebarButton.style.display = "none";
+        }
     }
     
     /**
@@ -911,8 +949,7 @@ class CUBEnhancedConditions {
         
 
     /**
-     * @name lookupTokenActor
-     * @description looks up the corresponding actor entity for the token
+     * looks up the corresponding actor entity for the token
      * @param {String} id 
      * @returns {Actor} actor
      */
@@ -928,6 +965,7 @@ class CUBEnhancedConditions {
 
     /**
      * Create a single object containing the data elements from this class
+     * @todo remove? never used this
      */
     _prepareData() {
         return {
