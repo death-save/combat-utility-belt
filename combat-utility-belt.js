@@ -6,7 +6,52 @@
 const CUB = this.CUB || {};
 
 /**
- * Initiates module classes
+ * Provide constants for use throughout the module (and bandages your wounds)
+ */
+class CUBButler {
+    static get MODULE_NAME() {
+        return "combat-utility-belt";
+    }
+
+    static get MODULE_TITLE() {
+        return "Combat Utility Belt";
+    }
+
+    /**
+     * Stores information about well known game systems. All other systems will resolve to "other"
+     */
+    static get DEFAULT_GAME_SYSTEMS() {
+        return {
+            dnd5e: {
+                id: "dnd5e",
+                name: "Dungeons & Dragons 5th Edition",
+                healthAttribute: "attributes.hp",
+                initiative: "attributes.initiative"
+            },
+            pf2e: {
+                id: "pf2e",
+                name: "Pathfinder 2nd Edition",
+                healthAttribute: "attributes.hp",
+                initiative: "attributes.perception"
+            },
+            wfrp4e: {
+                id: "wfrp4e",
+                name: "Warhammer Fantasy Roleplaying Game 4th Edition",
+                healthAttribute: "status.wounds",
+                initiative: "characteristics.i"
+            },
+            other: {
+                id: "other",
+                name: "Custom/Other",
+                healthAttribute: "health",
+                initiative: "initiative"
+            }
+        }
+    }
+}
+
+/**
+ * Initiates module classes (and shines a light on the dark night sky)
  */
 class CUBSignal {
     constructor(){
@@ -18,7 +63,7 @@ class CUBSignal {
 
     hookOnInit() {
         Hooks.on("init", () => {
-            CUB.sidekick = new CUBSidekick();
+            //CUB.sidekick = new CUBSidekick();
             CUB.hideNPCNames = new CUBHideNPCNames();
             //CUBEnhancedConditions._createSidebarButton();
             CUBSidekick.handlebarsHelpers();
@@ -42,23 +87,9 @@ class CUBSignal {
 }
 
 /**
- * Provides helper methods for use elsewhere in the module
+ * Provides helper methods for use elsewhere in the module (and has your back in a melee)
  */
 class CUBSidekick  {
-
-    /**
-     * Return the module name for use in settings registration etc
-     */
-    static get MODULE_NAME() {
-        return "combat-utility-belt"
-    }
-
-    /**
-     * Returns the human friendly module name
-     */
-    static get MODULE_TITLE() {
-        return "Combat Utility Belt"
-    }
 
     /**
      * Validate that an object is actually an object
@@ -83,7 +114,7 @@ class CUBSidekick  {
      * @param {Object} setting -- a setting object
      */
 	static registerGadgetSetting(key, setting) {
-		game.settings.register(this.MODULE_NAME, key, setting);
+		game.settings.register(CUBButler.MODULE_NAME, key, setting);
 	}
 
     /**
@@ -91,7 +122,7 @@ class CUBSidekick  {
      * @param {String} key -- the key to lookup 
      */
 	static getGadgetSetting(key) {
-		return game.settings.get(this.MODULE_NAME, key);
+		return game.settings.get(CUBButler.MODULE_NAME, key);
 	}
 
     /**
@@ -161,15 +192,15 @@ class CUBSidekick  {
             let updated = setProperty(tempSettingObject, joinedSubkeys, value);
 
             if(updated) {
-                console.log(this.MODULE_NAME, settingKey, tempSettingObject);
-                newSettingValue = await game.settings.set(this.MODULE_NAME, settingKey, tempSettingObject);
+                console.log(CUBButler.MODULE_NAME, settingKey, tempSettingObject);
+                newSettingValue = await game.settings.set(CUBButler.MODULE_NAME, settingKey, tempSettingObject);
             } else {
                 throw("Failed to update nested property of " + key + " check syntax");
             }
             
         } else if(typeof oldSettingValue === typeof value) {
-            console.log(this.MODULE_NAME, key, value);
-            newSettingValue = await game.settings.set(this.MODULE_NAME, key, value);
+            console.log(CUBButler.MODULE_NAME, key, value);
+            newSettingValue = await game.settings.set(CUBButler.MODULE_NAME, key, value);
         }
         
         return newSettingValue;
@@ -304,51 +335,54 @@ class CUBHideNPCNames {
         return "hide-npc-names";
     }
 
-    SETTINGS_DESCRIPTORS = {
-        HideNamesN: "--Hide NPC Names--",
-        HideNamesH: "Hides NPC names in the Combat Tracker",
-        UnknownCreatureN: "Unknown Creature Name",
-        UnknownCreatureH: "Text to display for hidden NPC names"
+    get SETTINGS_DESCRIPTORS() {
+        return {
+            HideNamesN: "--Hide NPC Names--",
+            HideNamesH: "Hides NPC names in the Combat Tracker",
+            UnknownCreatureN: "Unknown Creature Name",
+            UnknownCreatureH: "Text to display for hidden NPC names"
+        }
     }
     
-
-    DEFAULT_CONFIG = {
-        hideNames: false,
-        unknownCreatureString: "Unknown Creature"
+    get DEFAULT_CONFIG() {
+        return {
+            hideNames: false,
+            unknownCreatureString: "Unknown Creature"
+        }
     }
 
-    SETTINGS_META = {
-        hideNames: {
-            name: this.SETTINGS_DESCRIPTORS.HideNamesN,
-            hint: this.SETTINGS_DESCRIPTORS.HideNamesH,
-            scope: "world",
-            type: Boolean,
-            default: this.DEFAULT_CONFIG.hideNames,
-            config: true,
-            onChange: s => {
-                this.settings.hideNames = s;
-                ui.combat.render();
-            }
-        },
-        unknownCreatureString: {
-            name: this.SETTINGS_DESCRIPTORS.UnknownCreatureN,
-            hint: this.SETTINGS_DESCRIPTORS.UnknownCreatureH,
-            scope: "world",
-            type: String,
-            default: this.DEFAULT_CONFIG.unknownCreatureString,
-            config: true,
-            onChange: s => {
-                this.settings.unknownCreatureString = s;
-                ui.render();
+    get SETTINGS_META() {
+        return {
+            hideNames: {
+                name: this.SETTINGS_DESCRIPTORS.HideNamesN,
+                hint: this.SETTINGS_DESCRIPTORS.HideNamesH,
+                scope: "world",
+                type: Boolean,
+                default: this.DEFAULT_CONFIG.hideNames,
+                config: true,
+                onChange: s => {
+                    this.settings.hideNames = s;
+                    ui.combat.render();
+                }
+            },
+            unknownCreatureString: {
+                name: this.SETTINGS_DESCRIPTORS.UnknownCreatureN,
+                hint: this.SETTINGS_DESCRIPTORS.UnknownCreatureH,
+                scope: "world",
+                type: String,
+                default: this.DEFAULT_CONFIG.unknownCreatureString,
+                config: true,
+                onChange: s => {
+                    this.settings.unknownCreatureString = s;
+                    ui.render();
+                }
             }
         }
-        
     }
-
-	
 
 	/**
      * Hooks on the Combat Tracker render to replace the NPC names
+     * @todo move hooks to signal class
      */
     _hookOnRenderCombatTracker() {
         Hooks.on("renderCombatTracker", (app,html) => {
@@ -391,6 +425,9 @@ class CUBHideNPCNames {
         });
     }
 
+    /**
+     * Replaces instances of hidden NPC name in chat
+     */
     _hookOnRenderChatMessage(){
         Hooks.on("renderChatMessage", (message, data, html) => {
             const pcActor = game.actors.entities.find(a => a.id === data.message.speaker.actor).isPC;
@@ -407,8 +444,7 @@ class CUBHideNPCNames {
 }
 
 /**
- * Builds a mapping between status icons 
- * and journal entries that represent conditions
+ * Builds a mapping between status icons and journal entries that represent conditions
  */
 class CUBEnhancedConditions {
     constructor(){
@@ -558,8 +594,16 @@ class CUBEnhancedConditions {
                 hint: this.SETTINGS_DESCRIPTORS.SystemH,
                 scope: "world",
                 type: String,
-                default: (this.DEFAULT_CONFIG.systems[game.system.id] != null) ? this.DEFAULT_CONFIG.systems[game.system.id] : CUBSidekick.getKeyByValue(this.DEFAULT_CONFIG.systems, this.DEFAULT_CONFIG.systems.other),
-                choices: this.DEFAULT_CONFIG.systems,
+                default: (CUBButler.DEFAULT_GAME_SYSTEMS[game.system.id] != null) ? CUBButler.DEFAULT_GAME_SYSTEMS[game.system.id].id : CUBSidekick.getKeyByValue(CUBButler.DEFAULT_GAME_SYSTEMS, CUBButler.DEFAULT_GAME_SYSTEMS.other.id),
+                choices:  () => {
+                    const systemIds = Object.getOwnPropertyNames(CUBButler.DEFAULT_GAME_SYSTEMS);
+                    let result = [];
+
+                    for(let i in systemIds) {
+                        result.push([i, CUBButler.DEFAULT_GAME_SYSTEMS[i]]);
+                    }
+                    return result
+                },
                 config: true,
                 onChange: s => {
                     this.settings.system = s;
