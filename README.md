@@ -13,6 +13,14 @@
 
  Glorious chaos!
 
+ ### Compatible Systems
+
+ - [X] D&D5e
+ - [ ] PF1E
+ - [ ] PF2E
+ - [ ] WFRP
+ - [ ] Simple/Other
+
  ## Hide NPC Names
 
  [hide npc names animation]
@@ -20,6 +28,14 @@
  Maybe you forgot that your NPC's name reveals a dark secret about their past, or maybe you forgot to give them a name.
 
  Fret no more, for this gadget replaces NPC names with a replacement of your choice. Personally, I'm a fan of Melvin.
+
+ ### Compatible Systems
+
+ - [X] D&D5e
+ - [ ] PF1E
+ - [ ] PF2E
+ - [ ] WFRP
+ - [ ] Simple/Other
 
  ## Enhanced Conditions
 
@@ -37,6 +53,14 @@
 
  I like the Deadly STD one!
 
+ ### Compatible Systems
+
+ - [X] D&D5e
+ - [ ] PF1E
+ - [ ] PF2E
+ - [ ] WFRP
+ - [ ] Simple/Other
+
  ## Mark Injured/Dead Tokens
 
  [mark injured dead tokens animation]
@@ -44,6 +68,14 @@
  Ack! Gasp! I'm bloodied! What does that even mean? Who knows?!
 
  Well, now *you* do! With this gadget you can define a threshold (% of hp) that marks a token as injured. This gadget can also mark tokens as dead when their hp reaches 0. Outstanding! Now my players will have no doubt that I am the most ~~evil~~ heroic GM there was!
+
+ ### Compatible Systems
+
+ - [X] D&D5e
+ - [ ] PF1E
+ - [ ] PF2E
+ - [ ] WFRP
+ - [ ] Simple/Other
 
  ---
 
