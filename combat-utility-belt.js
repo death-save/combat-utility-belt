@@ -333,7 +333,7 @@ class CUBHideNPCNames {
                     let actor = game.actors.entities.find(a => a.id === token.actorId);
 
                     //if not PC, module is enabled
-                    if(!actor.isPC && this.settings) {
+                    if(!actor.isPC && this.settings.hideNames) {
                         //find the flexcol elements
                         let tokenNames = e.getElementsByClassName("token-name");
                         let tokenImages = e.getElementsByClassName("token-image");
@@ -344,13 +344,13 @@ class CUBHideNPCNames {
                             let header = f.getElementsByTagName("H4");
                             //iterate through
                             for(let h of header){
-                                //blank out the name
-                                h.textContent = "";
+                                //replace the name
+                                h.textContent = this.settings.unknownCreatureString;
                             }
                         }
 
                         for(let i of tokenImages){
-                            i.removeAttribute("title");
+                            i.setAttribute("title", this.settings.unknownCreatureString);
                         }
 
                     }
@@ -362,15 +362,14 @@ class CUBHideNPCNames {
 
     _hookOnRenderChatMessage(){
         Hooks.on("renderChatMessage", (message, data, html) => {
-            const npcChatMessages = html.find(":contains('" + data.alias + "')");
-            
-            $(html).content().each(element => {
-                let e = $(element);
-                if(e.nodeType==3){
-                    e.nodeValue = e.nodeValue.replace(/data.alias/g, this.settings.unknownCreatureString);
-                }
-            });
+            const pcActor = game.actors.entities.find(a => a.id === data.message.speaker.actor).isPC;
 
+            if(!game.user.isGM && !pcActor && this.settings.hideNames) {
+                const replacement = this.settings.unknownCreatureString || " ";
+                html.find(`:contains('${data.alias}')`).each((i, el) => {
+                    el.innerHTML = el.innerHTML.replace(new RegExp(data.alias, 'g'), replacement);
+                });
+            }
             console.log(message,data,html);
         });
     }
@@ -421,7 +420,7 @@ class CUBEnhancedConditions {
                 pf1e: "Pathfinder 1st Edition",
                 pf2e: "Pathfinder 2nd Edition",
                 wfrp: "Warhammer Fantasy Roleplaying Game",
-                custom: "Custom/Other"
+                other: "Custom/Other"
             },
             outputChat: true, 
             createEntries: false
@@ -431,9 +430,10 @@ class CUBEnhancedConditions {
 
     /**
      * Defines the maps used in the gadget
+     * @todo: needs a redesign -- programmatic matching to systems?
      */
     get DEFAULT_MAPS() {
-        const dnd5e = new Map([
+        const dnd5eMap = new Map([
             ["Blinded", this.DEFAULT_CONFIG.iconPath + "blinded.svg"],
             ["Charmed", this.DEFAULT_CONFIG.iconPath + "charmed.svg"],
             ["Deafened", this.DEFAULT_CONFIG.iconPath + "deafened.svg"],
@@ -450,8 +450,17 @@ class CUBEnhancedConditions {
             ["Unconscious", this.DEFAULT_CONFIG.iconPath + "unconscious.svg"]
         ]);
 
+        const pf1eMap = new Map([]);
+        const pf2eMap = new Map([]);
+        const wfrpMap = new Map([]);
+        const otherMap = new Map([]);
+
         return {
-            "dnd5e": dnd5e
+            "dnd5e": dnd5eMap,
+            "pf1e": pf1eMap,
+            "pf2e": pf2eMap,
+            "wfrp": wfrpMap,
+            "other": otherMap,
         }       
     }
 
@@ -519,7 +528,7 @@ class CUBEnhancedConditions {
                 hint: this.SETTINGS_DESCRIPTORS.SystemH,
                 scope: "world",
                 type: String,
-                default: this.DEFAULT_CONFIG.systems[game.system.data.name],
+                default: (this.DEFAULT_CONFIG.systems[game.system.data.id] != null) ? this.DEFAULT_CONFIG.systems[game.system.data.id] : this.DEFAULT_CONFIG.systems.other,
                 choices: this.DEFAULT_CONFIG.systems,
                 config: true,
                 onChange: s => {
@@ -548,7 +557,7 @@ class CUBEnhancedConditions {
                 scope: "world",
                 type: Object,
                 //default: this.DEFAULT_MAPS,
-                default: this.DEFAULT_MAP_ARRAYS,
+                default: (this.DEFAULT_MAP_ARRAYS[game.system.data.id] != null) ? this.DEFAULT_MAP_ARRAYS[game.system.data.id] : this.DEFAULT_MAP_ARRAYS.other,
                 onChange: s => {
                     this.settings.maps = s;
                     this._updateStatusIcons(s[this.settings.system]);
@@ -841,7 +850,7 @@ class CUBEnhancedConditions {
         }
 
         console.log(conditionEntries);
-        if(this.settings.output){
+        if(this.settings.output && conditionEntries.length > 0){
             return this.outputChatMessage(conditionEntries);
         } else {
             return;
@@ -889,15 +898,17 @@ class CUBEnhancedConditions {
         //add the conditions to the boiler text
         if(chatConditions.length > 0) {
             chatContent += chatConditions;
+
+            await ChatMessage.create({
+                speaker:tokenSpeaker,
+                content:chatContent,
+                type: chatType,
+                user:chatUser});
+            }
         }
         
 
-        await ChatMessage.create({
-            speaker:tokenSpeaker,
-            content:chatContent,
-            type: chatType,
-            user:chatUser});
-        }
+        
 
     /**
      * @name lookupTokenActor
@@ -1099,6 +1110,9 @@ class CUBInjuredAndDead {
             injuredIcon: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.InjuredIconN + ")", this.SETTINGS_META.InjuredIcon),
             deadIcon: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.DeadIconN + ")", this.SETTINGS_META.DeadIcon),
         }
+
+        this._hookOnTokenUpdate();
+        this._hookOnUpdateActor();
     }
     
 	get GADGET_NAME() {
@@ -1135,7 +1149,7 @@ class CUBInjuredAndDead {
 			type: Boolean,
 			config: true,
 			onChange: s => {
-				this.injured = s;
+				this.settings.injured = s;
 			}
 
         },
@@ -1147,7 +1161,7 @@ class CUBInjuredAndDead {
 			type: String,
 			config: true,
 			onChange: s => {
-				this.injuredIcon = s;
+				this.settings.injuredIcon = s;
 			}
 
 		},
@@ -1159,7 +1173,7 @@ class CUBInjuredAndDead {
 			type: Number,
 			config: true,
 			onChange: s => {
-				this.threshold = s;
+				this.settings.threshold = s;
 			}
 		},
 		Dead: {
@@ -1170,7 +1184,7 @@ class CUBInjuredAndDead {
 			type: Boolean,
 			config: true,
 			onChange: s => {
-				this.dead = s;
+				this.settings.dead = s;
 			}
         },
         DeadIcon: {
@@ -1181,7 +1195,7 @@ class CUBInjuredAndDead {
 			type: String,
 			config: true,
 			onChange: s => {
-				this.deadIcon = s;
+				this.settings.deadIcon = s;
 			}
 
 		}
@@ -1198,9 +1212,9 @@ class CUBInjuredAndDead {
             const linked = token.data.actorLink;
             
             //if hp = 0 mark as dead
-            if(!linked && this.dead && update.actorData && update.actorData.data.attributes.hp.value == 0){
+            if(!linked && this.settings.dead && update.actorData && update.actorData.data.attributes.hp.value == 0){
                 //set death overlay on token
-                token.toggleOverlay(this.deadIcon);
+                token.toggleOverlay(this.settings.deadIcon);
                 //if the token has effects, remove them
                 if(token.data.effects.length > 0) {
                     for(let e of token.data.effects) {
@@ -1208,24 +1222,24 @@ class CUBInjuredAndDead {
                     }
                 }
             //if injured tracking is enabled and the current hp is less than the maxHP * the decimal version of the threshold
-            } else if(!linked && this.injured && update.actorData && update.actorData.data.attributes.hp.value < (maxHP*(this.threshold/100)) && !token.data.effects.find(e => e = this.injuredIcon)) {
+            } else if(!linked && this.settings.injured && update.actorData && update.actorData.data.attributes.hp.value < (maxHP*(this.settings.threshold/100)) && !token.data.effects.find(e => e = this.settings.injuredIcon)) {
                 //set status effect on token
-                token.toggleEffect(this.injuredIcon);
+                token.toggleEffect(this.settings.injuredIcon);
                 //if the dead tracking is enabled and the token has an overlay, remove the dead overlay
-                if(this.dead && token.data.overlayEffect && token.data.overlayEffect == this.deadIcon) {
-                    token.toggleOverlay(this.deadIcon);
+                if(this.settings.dead && token.data.overlayEffect && token.data.overlayEffect == this.settings.deadIcon) {
+                    token.toggleOverlay(this.settings.deadIcon);
                 }
 
             //if injured tracking is enabled and the current hp is greater than the maxHP * the decimal version of the threshold
-            } else if(!linked && this.injured && update.actorData && update.actorData.data.attributes.hp.value > (maxHP*(this.threshold/100))) {
+            } else if(!linked && this.settings.injured && update.actorData && update.actorData.data.attributes.hp.value > (maxHP*(this.settings.threshold/100))) {
                 //if the token has the injured icon, remove it
-                if(this.injured && token.data.effects && token.data.effects.length > 0 && token.data.effects.find(e => e = this.injuredIcon)) {
-                    token.toggleEffect(this.injuredIcon);
+                if(this.settings.injured && token.data.effects && token.data.effects.length > 0 && token.data.effects.find(e => e = this.settings.injuredIcon)) {
+                    token.toggleEffect(this.settings.injuredIcon);
                 }
 
                 //if the token has the dead icon, remove it
-                if(this.dead && token.data.overlayEffect && token.data.overlayEffect == this.deadIcon) {
-                    token.toggleOverlay(this.deadIcon);
+                if(this.settings.dead && token.data.overlayEffect && token.data.overlayEffect == this.settings.deadIcon) {
+                    token.toggleOverlay(this.settings.deadIcon);
                 }
             }
         
@@ -1233,7 +1247,6 @@ class CUBInjuredAndDead {
     }
     
     _hookOnUpdateActor() {
-        _
         Hooks.on("updateActor", async (actor,update) => {
             console.log(actor, update);
             const maxHP = actor.data.data.attributes.hp.max;
@@ -1242,9 +1255,9 @@ class CUBInjuredAndDead {
             console.log(token);
 
             //if hp = 0 mark as dead
-            if(this.dead && update["data.attributes.hp.value"] == 0){
+            if(this.settings.dead && update["data.attributes.hp.value"] == 0){
                 //set death overlay on token
-                await token.toggleOverlay(this.deadIcon);
+                await token.toggleOverlay(this.settings.deadIcon);
                 //if the token has effects, remove them
                 if(token.data.effects.length > 0) {
                     for(let e of token.data.effects) {
@@ -1252,24 +1265,24 @@ class CUBInjuredAndDead {
                     }
                 }
             //if injured tracking is enabled and the current hp is less than the maxHP * the decimal version of the threshold
-            } else if(this.injured && update["data.attributes.hp.value"] <= (maxHP*(this.threshold/100)) && !token.data.effects.find(e => e = this.injuredIcon)) {
+            } else if(this.settings.injured && update["data.attributes.hp.value"] <= (maxHP*(this.settings.threshold/100)) && !token.data.effects.find(e => e = this.settings.injuredIcon)) {
                 //set status effect on token
-                await token.toggleEffect(this.injuredIcon);
+                await token.toggleEffect(this.settings.injuredIcon);
                 //if the dead tracking is enabled and the token has an overlay, remove the dead overlay
-                if(this.dead && token.data.overlayEffect && token.data.overlayEffect == this.deadIcon) {
-                    await token.toggleOverlay(this.deadIcon);
+                if(this.settings.dead && token.data.overlayEffect && token.data.overlayEffect == this.settings.deadIcon) {
+                    await token.toggleOverlay(this.settings.deadIcon);
                 }
 
             //if injured tracking is enabled and the current hp is greater than the maxHP * the decimal version of the threshold
-            } else if(this.injured && update["data.attributes.hp.value"] > (maxHP*(this.threshold/100))) {
+            } else if(this.settings.injured && update["data.attributes.hp.value"] > (maxHP*(this.settings.threshold/100))) {
                 //if the token has the injured icon, remove it
-                if(this.injured && token.data.effects && token.data.effects.length > 0 && token.data.effects.find(e => e = this.injuredIcon)) {
-                    await token.toggleEffect(this.injuredIcon);
+                if(this.settings.injured && token.data.effects && token.data.effects.length > 0 && token.data.effects.find(e => e = this.settings.injuredIcon)) {
+                    await token.toggleEffect(this.settings.injuredIcon);
                 }
 
                 //if the token has the dead icon, remove it
-                if(this.dead && token.data.overlayEffect && token.data.overlayEffect == this.deadIcon) {
-                    await token.toggleOverlay(this.deadIcon);
+                if(this.settings.dead && token.data.overlayEffect && token.data.overlayEffect == this.settings.deadIcon) {
+                    await token.toggleOverlay(this.settings.deadIcon);
                 }
             }
         });
