@@ -558,7 +558,7 @@ class CUBEnhancedConditions {
                 hint: this.SETTINGS_DESCRIPTORS.SystemH,
                 scope: "world",
                 type: String,
-                default: (this.DEFAULT_CONFIG.systems[game.system.data.id] != null) ? this.DEFAULT_CONFIG.systems[game.system.data.id] : CUBSidekick.getKeyByValue(this.DEFAULT_CONFIG.systems, this.DEFAULT_CONFIG.systems.other),
+                default: (this.DEFAULT_CONFIG.systems[game.system.id] != null) ? this.DEFAULT_CONFIG.systems[game.system.id] : CUBSidekick.getKeyByValue(this.DEFAULT_CONFIG.systems, this.DEFAULT_CONFIG.systems.other),
                 choices: this.DEFAULT_CONFIG.systems,
                 config: true,
                 onChange: s => {
@@ -587,7 +587,7 @@ class CUBEnhancedConditions {
                 scope: "world",
                 type: Object,
                 //default: this.DEFAULT_MAPS,
-                default: (this.DEFAULT_MAP_ARRAYS[game.system.data.id] != null) ? this.DEFAULT_MAP_ARRAYS[game.system.data.id] : CUBSidekick.getKeyByValue(this.DEFAULT_MAP_ARRAYS, this.DEFAULT_MAP_ARRAYS.other),
+                default: this.DEFAULT_MAP_ARRAYS,
                 onChange: s => {
                     this.settings.maps = s;
                     this._updateStatusIcons(s[this.settings.system]);
