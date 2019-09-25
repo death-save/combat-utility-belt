@@ -600,11 +600,7 @@ class CUBEnhancedConditions {
                     let result = [];
 
                     for(let i in systemIds) {
-<<<<<<< HEAD
                         result.push([i, CUBButler.DEFAULT_GAME_SYSTEMS[i].title]);
-=======
-                        result.push([i, CUBButler.DEFAULT_GAME_SYSTEMS[i]]);
->>>>>>> ee74b57d18f8dbc2d27f3a6010b58e08383ac248
                     }
                     return result
                 },
