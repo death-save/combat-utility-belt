@@ -1314,8 +1314,18 @@ class CUBInjuredAndDead {
      */
 	_hookOnTokenUpdate() {
         Hooks.on("updateToken", (token,sceneid,update) => {
+            //A boolean to capture whether token health changed in this update
+            let healthChanged;
+            try {
+                healthChanged = (getProperty(update.actorData.data, this.settings.healthAttribute) != null) ? true : false;
+            } catch (e) {
+                if(e.message.includes("Cannot read property of undefined")) {
+                    healthChanged = false;
+                }
+            }
+
             //killswitch for function execution -- does the update have a health attribute -- maybe change to try catch
-            if(this.currentActor != token.actor.id && update.actorData != null && update.actorData.data != null && getProperty(update.actorData.data, this.settings.healthAttribute)) {
+            if(this.currentActor != token.actor.id && healthChanged) {
                 console.log(token,sceneid,update);
                 const currentHealth = getProperty(token.actor.data.data, this.settings.healthAttribute).value;
                 const updateHealth = getProperty(update.actorData.data, this.settings.healthAttribute).value;
