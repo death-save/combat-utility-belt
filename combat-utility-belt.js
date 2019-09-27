@@ -58,6 +58,7 @@ class CUBSignal {
         this.hookOnInit();
         this.hookOnReady();
         this.hookOnRenderSettings();
+        this.hookOnPreUpdateCombat();
     }
 
 
@@ -83,6 +84,12 @@ class CUBSignal {
             CUBEnhancedConditions._createSidebarButton(html);
             CUB.enhancedConditions._toggleSidebarButtonDisplay(CUB.enhancedConditions.settings.enhancedConditions);
         });
+    }
+
+    hookOnPreUpdateCombat() {
+        //Hooks.on("preUpdateCombat", (combat, update) => {
+            //CUB.rerollInitiative.resetAndReroll(combat, update);
+        //});
     }
 }
 
@@ -275,7 +282,30 @@ class CUBRerollInitiative {
         }
         
     }
-	
+
+    resetAndReroll(combat, update) {
+        const roundChanged = Boolean(getProperty(update, "round"));
+        if(roundChanged) {
+            console.log(combat, update);
+            for(let c of combat.turns) {
+                
+            }
+        }
+        //for each combatant in the combat instance
+        //reset initiative
+        //roll initiative
+
+        //if successful
+        //write the new initiative into the update
+    }
+    
+    _resetInitiative(combatant) {
+        //if the combatant has an initiative value, clear it
+    }
+
+    _rollInitiative(combatant) {
+        //call an initiative die roll for the combatant
+    }
 
     /**
      * Hook on update of Combat class. 
@@ -303,7 +333,7 @@ class CUBRerollInitiative {
                     && update.round > combat.previous.round){
                     try {
                         await combat.resetAll();
-                        combat.rollAll();
+                        await combat.rollAll();
                         this.currentCombatRound = combat.round;
                     } catch(e) {
                         console.log(e);
@@ -482,7 +512,7 @@ class CUBEnhancedConditions {
                 dnd5e: "Dungeons & Dragons 5th Edition",
                 pf1e: "Pathfinder 1st Edition",
                 pf2e: "Pathfinder 2nd Edition",
-                wfrp: "Warhammer Fantasy Roleplaying Game",
+                wfrp4e: "Warhammer Fantasy Roleplaying Game",
                 other: "Custom/Other"
             },
             outputChat: true, 
@@ -515,14 +545,14 @@ class CUBEnhancedConditions {
 
         const pf1eMap = new Map([]);
         const pf2eMap = new Map([]);
-        const wfrpMap = new Map([]);
+        const wfrp4eMap = new Map([]);
         const otherMap = new Map([]);
 
         return {
             "dnd5e": dnd5eMap,
             "pf1e": pf1eMap,
             "pf2e": pf2eMap,
-            "wfrp": wfrpMap,
+            "wfrp4e": wfrp4eMap,
             "other": otherMap,
         }       
     }
