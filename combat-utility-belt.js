@@ -40,6 +40,12 @@ class CUBButler {
                 healthAttribute: "status.wounds",
                 initiative: "characteristics.i"
             },
+            archmage: {
+                id: "archmage",
+                name: "13th Age",
+                healthAttribute: "attributes.hp",
+                initiative: "attributes.init.mod"
+            },
             other: {
                 id: "other",
                 name: "Custom/Other",
@@ -623,7 +629,7 @@ class CUBEnhancedConditions {
                 scope: "world",
                 type: String,
                 default: (CUBButler.DEFAULT_GAME_SYSTEMS[game.system.id] != null) ? CUBButler.DEFAULT_GAME_SYSTEMS[game.system.id].id : CUBButler.DEFAULT_GAME_SYSTEMS.other.id,
-                choices: this.gameSystemChoices,
+                choices: this.systemChoices,
                 config: true,
                 onChange: s => {
                     this.settings.system = s;
@@ -700,7 +706,7 @@ class CUBEnhancedConditions {
 
     }
 
-    get gameSystemChoices() {
+    get systemChoices() {
         const systemIds = Object.getOwnPropertyNames(CUBButler.DEFAULT_GAME_SYSTEMS);
         let result = {};
 
@@ -1084,7 +1090,7 @@ class CUBEnhancedConditionsConfig extends FormApplication {
 
         const formData = {
             conditionmap: this.data.map,
-            systems: this.data.DEFAULT_CONFIG.systems,
+            systems: this.data.systemChoices,
             system: this.data.system,
         }
 
