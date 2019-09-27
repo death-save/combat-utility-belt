@@ -283,37 +283,35 @@ class CUBRerollInitiative {
      */
     async _hookUpdateCombat() {
         Hooks.on("updateCombat",(async (combat, update) => {
-            let rerolled;
+            const roundUpdate = Boolean(getProperty(update, "round"))
+            
+            //only proceed if there is an update to the round
+            if(roundUpdate) {                
+                
+                /**
+                 *  firstly is the specified module setting turned on (eg. is rerolling enabled), 
+                 *  then test for the presence of the combat object's previous values and an update object,
+                 *  check that the round props are numbers,
+                 *  to avoid any hysteria at the start of combat, only reroll if the update round is gt or equal to 1
+                 *  finally test if the update's round is greater than the previous combat round 
+                 */
+                if(game.user.isGM
+                    && this.settings.reroll
+                    && (combat.previous && update)
+                    && !isNaN(combat.previous.round || update.round)
+                    && update.round >= 1
+                    && update.round > combat.previous.round){
+                    try {
+                        await combat.resetAll();
+                        combat.rollAll();
+                        this.currentCombatRound = combat.round;
+                    } catch(e) {
+                        console.log(e);
+                    }
 
-            //quick sanity check to see if this function has already executed this round
-            if(this.currentCombatRound != combat.round){
-                rerolled = false;
+                }
             }
             
-            /**
-             *  firstly is the specified module setting turned on (eg. is rerolling enabled), 
-             *  then test for the presence of the combat object's previous values and an update object,
-             *  check that the round props are numbers,
-             *  to avoid any hysteria at the start of combat, only reroll if the update round is gt or equal to 1
-             *  finally test if the update's round is greater than the previous combat round 
-             */
-            if(game.user.isGM
-                && this.settings.reroll
-                && !rerolled 
-                && (combat.previous && update)
-                && !isNaN(combat.previous.round || update.round)
-                && update.round >= 1
-                && update.round > combat.previous.round){
-                try {
-                    await combat.resetAll();
-                    combat.rollAll();
-                    rerolled = true;
-                    this.currentCombatRound = combat.round;
-                } catch(e) {
-                    console.log(e);
-                }
-
-            }
         }));
     }
 }
