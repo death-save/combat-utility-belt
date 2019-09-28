@@ -60,15 +60,16 @@ class CUBButler {
  * Initiates module classes (and shines a light on the dark night sky)
  */
 class CUBSignal {
-    constructor(){
-        this.hookOnInit();
-        this.hookOnReady();
-        this.hookOnRenderSettings();
-        this.hookOnPreUpdateCombat();
+    static lightUp() {
+        CUBSignal.hookOnInit();
+        CUBSignal.hookOnReady();
+        CUBSignal.hookOnRenderSettings();
+        CUBSignal.hookOnPreUpdateCombat();
+        CUBSignal.hookOnRenderTokenHUD();
     }
 
 
-    hookOnInit() {
+    static hookOnInit() {
         Hooks.on("init", () => {
             //CUB.sidekick = new CUBSidekick();
             CUB.hideNPCNames = new CUBHideNPCNames();
@@ -77,25 +78,44 @@ class CUBSignal {
         });
     }
 
-    hookOnReady() {
+    static hookOnReady() {
         Hooks.on("ready", () => {
             CUB.enhancedConditions = new CUBEnhancedConditions();
             CUB.rerollInitiative = new CUBRerollInitiative();
             CUB.injuredAndDead = new CUBInjuredAndDead();
+            CUB.enhancedConditions._toggleSidebarButtonDisplay(CUB.enhancedConditions.settings.enhancedConditions);
+
         });
     }
 
-    hookOnRenderSettings() {
+    static hookOnRenderSettings() {
         Hooks.on("renderSettings", (app, html) => {
             CUBEnhancedConditions._createSidebarButton(html);
-            CUB.enhancedConditions._toggleSidebarButtonDisplay(CUB.enhancedConditions.settings.enhancedConditions);
         });
     }
 
-    hookOnPreUpdateCombat() {
+    static hookOnPreUpdateCombat() {
         //Hooks.on("preUpdateCombat", (combat, update) => {
             //CUB.rerollInitiative.resetAndReroll(combat, update);
         //});
+    }
+
+    static hookOnRenderTokenHUD() {
+        Hooks.on("renderTokenHUD", (app, html, data) => {
+            const statusEffects = html.find(".control-icon.effects");
+
+            const div = $(
+                `<div class="control-icon lab">
+                    <i class="fas fa-flask"></i>
+                </div>`
+            );
+
+            statusEffects.after(div);
+
+            div.click(ev => {
+                new CUBEnhancedConditionsConfig().render();
+            });
+        });
     }
 }
 
@@ -849,7 +869,7 @@ class CUBEnhancedConditions {
 
         if(game.user.isGM && display && sidebarButton) {
             sidebarButton.style.display = "block";
-        } else {
+        } else if (sidebarButton && (!game.user.isGM || !display)){
             sidebarButton.style.display = "none";
         }
     }
@@ -892,7 +912,7 @@ class CUBEnhancedConditions {
             const conditionIcons = this.icons;
 
             console.log(app,html);
-            let statusIcons = html.find(".effect-control");
+            let statusIcons = html.find("img.effect-control");
 
             for(let i of statusIcons) {
                 const src = i.attributes.src.value;
@@ -1140,9 +1160,6 @@ class CUBEnhancedConditionsConfig extends FormApplication {
 
         //not sure what to do about this yet, probably nothing
         console.assert(conditions.length === icons.length, "There are unmapped conditions");
-
-        
-
     }
 
     activateListeners(html) {
@@ -1454,4 +1471,4 @@ class CUBInjuredAndDead {
     }
 }
 
-var cubSignal = new CUBSignal;
+CUBSignal.lightUp();
