@@ -213,14 +213,14 @@ class CUBSidekick  {
             let updated = setProperty(tempSettingObject, joinedSubkeys, value);
 
             if(updated) {
-                console.log(CUBButler.MODULE_NAME, settingKey, tempSettingObject);
+                //console.log(CUBButler.MODULE_NAME, settingKey, tempSettingObject);
                 newSettingValue = await game.settings.set(CUBButler.MODULE_NAME, settingKey, tempSettingObject);
             } else {
                 throw("Failed to update nested property of " + key + " check syntax");
             }
             
         } else if(typeof oldSettingValue === typeof value) {
-            console.log(CUBButler.MODULE_NAME, key, value);
+            //console.log(CUBButler.MODULE_NAME, key, value);
             newSettingValue = await game.settings.set(CUBButler.MODULE_NAME, key, value);
         }
         
@@ -300,7 +300,7 @@ class CUBRerollInitiative {
     resetAndReroll(combat, update) {
         const roundChanged = Boolean(getProperty(update, "round"));
         if(roundChanged) {
-            console.log(combat, update);
+            //console.log(combat, update);
             for(let c of combat.turns) {
                 
             }
@@ -350,7 +350,7 @@ class CUBRerollInitiative {
                         await combat.rollAll();
                         this.currentCombatRound = combat.round;
                     } catch(e) {
-                        console.log(e);
+                        //console.log(e);
                     }
 
                 }
@@ -405,6 +405,7 @@ class CUBHideNPCNames {
                 onChange: s => {
                     this.settings.hideNames = s;
                     ui.combat.render();
+                    ui.chat.render(true);
                 }
             },
             unknownCreatureString: {
@@ -416,7 +417,10 @@ class CUBHideNPCNames {
                 config: true,
                 onChange: s => {
                     this.settings.unknownCreatureString = s;
-                    ui.render();
+                    if(this.settings.hideNames) {
+                        ui.combat.render();
+                        ui.chat.render();
+                    }
                 }
             }
         }
@@ -428,7 +432,7 @@ class CUBHideNPCNames {
      */
     _hookOnRenderCombatTracker() {
         Hooks.on("renderCombatTracker", (app,html) => {
-            console.log(app,html);
+            //console.log(app,html);
             // if not GM
             if(!game.user.isGM) {
                 let combatantListElement = html.find('li');
@@ -480,7 +484,7 @@ class CUBHideNPCNames {
                     el.innerHTML = el.innerHTML.replace(new RegExp(data.alias, 'g'), replacement);
                 });
             }
-            console.log(message,data,html);
+            //console.log(message,data,html);
         });
     }
 }
@@ -747,7 +751,7 @@ class CUBEnhancedConditions {
         try {
             entry = await JournalEntry.create({name: condition, permission: {default: ENTITY_PERMISSIONS.LIMITED}},{displaySheet: false});
         } catch (e) {
-            console.log(e);
+            //console.log(e);
         } finally {
             return await entry;
         }
@@ -768,7 +772,7 @@ class CUBEnhancedConditions {
         }
        
 
-        console.log(this.settings.maps);
+        //console.log(this.settings.maps);
         
         
         if(this.settings.removeDefaultEffects) {
@@ -778,7 +782,7 @@ class CUBEnhancedConditions {
                 entries = map.entries();
                 for(let [k,v] of entries){
                     CONFIG.statusEffects.push(v);
-                    console.log(k,v);
+                    //console.log(k,v);
                 }
             } else if(map instanceof Array) {
                 //add the icons from the condition map to the status effects array
@@ -887,11 +891,11 @@ class CUBEnhancedConditions {
     */
     _hookOnUpdateToken(){
         Hooks.on("updateToken", (token,sceneId,update) => {
-            console.log(token,sceneId,update);
+            //console.log(token,sceneId,update);
             let effects = update.effects;
             
             //If the update has effects in it, lookup mapping and set the current token
-            if(effects){
+            if(this.settings.enhancedConditions && effects){
                 this.currentToken = token;
                 return this.lookupEntryMapping(effects);
             }
@@ -906,7 +910,7 @@ class CUBEnhancedConditions {
         Hooks.on("renderTokenHUD", (app, html) => {
             const conditionIcons = this.icons;
 
-            console.log(app,html);
+            //console.log(app,html);
             let statusIcons = html.find("img.effect-control");
 
             for(let i of statusIcons) {
@@ -951,7 +955,7 @@ class CUBEnhancedConditions {
                     }
                 }
             } catch (e) {
-                console.log(e);
+                //console.log(e);
             } finally {
                 mapEntries.push(entry);
             }
@@ -969,7 +973,7 @@ class CUBEnhancedConditions {
             }
         }
 
-        console.log(conditionEntries);
+        //console.log(conditionEntries);
         if(this.settings.output && conditionEntries.length > 0){
             return this.outputChatMessage(conditionEntries);
         } else {
@@ -1064,16 +1068,16 @@ class CUBEnhancedConditions {
         let chatConditions = [];
         let journalLink;
 
-        console.log("current token",token);
-        console.log("current actor",actor);
+        //console.log("current token",token);
+        //console.log("current actor",actor);
         //console.log("token id",this.tokenData.id);
         
         if(actor){
-            console.log("Speaker is an actor:",actor);
+            //console.log("Speaker is an actor:",actor);
             tokenSpeaker = ChatMessage.getSpeaker({"actor":actor});
         }
         else {
-            console.log("Speaker is a token:",token);
+            //console.log("Speaker is a token:",token);
             tokenSpeaker = ChatMessage.getSpeaker({"token":token});
         }
 
@@ -1121,7 +1125,7 @@ class CUBEnhancedConditions {
             actor = await game.actors.entities.find(a => a.id === id);
             
         }
-        console.log("found actor: ",actor)
+        //console.log("found actor: ",actor)
         return actor;
     } 
     
@@ -1186,7 +1190,7 @@ class CUBEnhancedConditionsConfig extends FormApplication {
      * @param {Object} formdata 
      */
     _updateObject(event,formdata) {
-        console.log(event,formdata);
+        //console.log(event,formdata);
         let conditions = [];
         let icons = [];
         let entries = [];
@@ -1267,11 +1271,11 @@ class CUBEnhancedConditionsConfig extends FormApplication {
         });
 
         removeRowButton.click(async ev => {
-            console.log(ev);
+            //console.log(ev);
             const splitName = ev.currentTarget.name.split("-");
             const row = splitName[splitName.length -1];
 
-            console.log("row", row);
+            //console.log("row", row);
             ev.preventDefault();
             CUB.enhancedConditions.settings.maps[this.data.system].splice(row,1);
             this.render(true);
@@ -1279,7 +1283,7 @@ class CUBEnhancedConditionsConfig extends FormApplication {
 
         iconPath.change(async ev => {
             ev.preventDefault();
-            console.log("change", ev, this);
+            //console.log("change", ev, this);
             const splitName = ev.target.name.split("-");
             const row = splitName[splitName.length -1];
 
@@ -1293,7 +1297,7 @@ class CUBEnhancedConditionsConfig extends FormApplication {
 
         restoreDefaultsButton.click(async ev => {
             ev.preventDefault();
-            console.log("restore defaults clicked", ev);
+            //console.log("restore defaults clicked", ev);
             CUB.enhancedConditions.settings.maps[this.data.system] = CUB.enhancedConditions.DEFAULT_MAPS[this.data.system] ? CUB.enhancedConditions.DEFAULT_MAPS[this.data.system] : [];
             this.render(true);
         });
@@ -1437,7 +1441,7 @@ class CUBInjuredAndDead {
 
             //killswitch for function execution -- does the update have a health attribute
             if(this.currentActor != token.actor.id && healthChanged) {
-                console.log(token,sceneid,update);
+                //console.log(token,sceneid,update);
                 const currentHealth = getProperty(token.actor.data.data, this.settings.healthAttribute).value;
                 const updateHealth = getProperty(update.actorData.data, this.settings.healthAttribute).value;
                 const maxHealth = getProperty(token.actor.data.data, this.settings.healthAttribute).max;
@@ -1494,13 +1498,13 @@ class CUBInjuredAndDead {
             //if(update["data." + this.settings.healthAttribute + ".value"]) {
             if(healthChanged) {
                 this.currentActor = actor.id;
-                console.log(actor, update);
+                //console.log(actor, update);
                 const currentHealth = getProperty(actor.data.data, this.settings.healthAttribute).value;
                 const updateHealth = update["data." + this.settings.healthAttribute + ".value"];
                 const maxHealth = getProperty(actor.data.data, this.settings.healthAttribute).max;
                 let token = canvas.tokens.placeables.find(t => t.actor.id == actor.id);
 
-                console.log(token);
+                //console.log(token);
 
                 //if hp = 0 mark as dead
                 if(this.settings.dead && updateHealth == 0){
