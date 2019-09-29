@@ -494,6 +494,7 @@ class CUBEnhancedConditions {
             enhancedConditions : CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.ConditionsN + ")", this.SETTINGS_META.enhancedConditions),
             system : CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.SystemN + ")", this.SETTINGS_META.system ),
             folderType : CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.FolderTypeN + ")", this.SETTINGS_META.folderType),
+            compendium : CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.CompendiumN + ")", this.SETTINGS_META.compendium),
             maps : CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.MapsN + ")", this.SETTINGS_META.maps),
             output : CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.OutputChatN + ")", this.SETTINGS_META.outputChat),
             systemName : CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.SystemNameN + ")", this.SETTINGS_META.systemName),
@@ -519,7 +520,7 @@ class CUBEnhancedConditions {
             iconPath: "modules/combat-utility-belt/icons/",
             folderTypes: {
                 journal: "Journal",
-                //compendium: "Compendium"
+                compendium: "Compendium"
             },
             folderName: "conditions",
             systems: {
@@ -611,7 +612,9 @@ class CUBEnhancedConditions {
             SystemNameN: "Game System Name",
             SystemNameH: "The short-hand version of the game system name",
             RemoveDefaultEffectsN: "Remove Default Status Effects",
-            RemoveDefaultEffectsH: "Remove existing status effect icons from token HUD"
+            RemoveDefaultEffectsH: "Remove existing status effect icons from token HUD",
+            CompendiumN: "Condition Compendium",
+            CompendiumH: "The compendium that contains condition journal entries"
         }
     }
 
@@ -660,6 +663,20 @@ class CUBEnhancedConditions {
                     this.settings.folderType = s;
                 }
 
+            },
+
+            compendium: {
+                name: this.SETTINGS_DESCRIPTORS.CompendiumN,
+                hint: this.SETTINGS_DESCRIPTORS.CompendiumH,
+                scope: "world",
+                type: String,
+                default: game.packs.find(p => p.metadata.name == "conditions" + game.system.id),
+                choices: this.getCompendiumChoices(),
+                config: true,
+                onChange: s => {
+                    this.settings.compendium = s;
+                    //this.settings.systemName = CUBSidekick.getKeyByValue(this.DEFAULT_CONFIG.systems, this.DEFAULT_CONFIG.systems[s]);
+                }
             },
     
             maps: {
@@ -723,7 +740,18 @@ class CUBEnhancedConditions {
         for(let i of systemIds) {
             result[i] = CUBButler.DEFAULT_GAME_SYSTEMS[i].name;
         }
-        return result
+        return result;
+    }
+
+    getCompendiumChoices() {
+        const compendiums = game.packs;
+        let result = {};
+
+        for(let n of compendiums) {
+            result[n.metadata.name] = n.metadata.label; 
+        }
+        
+        return result;
     }
 
     /**
@@ -955,7 +983,12 @@ class CUBEnhancedConditions {
         for(let e of mapEntries){
             if(e){
                 let entry = await game.journal.entities.find(j => j.id == e);
-                conditionEntries.push(entry);
+                if(entry) {
+                    conditionEntries.push(entry);
+                } else {
+                    conditionEntries.push(e);
+                }
+                
             }
         }
 
