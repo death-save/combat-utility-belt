@@ -649,7 +649,7 @@ class CUBEnhancedConditions {
                 hint: this.SETTINGS_DESCRIPTORS.OutputChatH,
                 scope: "world",
                 type: Boolean,
-                config: true,
+                config: false,
                 default: this.DEFAULT_CONFIG.outputChat,
                 onChange: s => {
                     this.settings.output = s;
