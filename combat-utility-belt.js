@@ -561,6 +561,7 @@ class CUBEnhancedConditions {
         const pf1eMap = [];
         const pf2eMap = [];
         const wfrp4eMap = [];
+        const archmageMap = [];
         const otherMap = [];
 
         return {
@@ -568,6 +569,7 @@ class CUBEnhancedConditions {
             "pf1e": pf1eMap,
             "pf2e": pf2eMap,
             "wfrp4e": wfrp4eMap,
+            "archmage": archmageMap,
             "other": otherMap,
         }       
     }
@@ -885,7 +887,7 @@ class CUBEnhancedConditions {
             //If the update has effects in it, lookup mapping and set the current token
             if(effects){
                 this.currentToken = token;
-                return this.lookupConditionMapping(effects);
+                return this.lookupEntryMapping(effects);
             }
             return;
         });
@@ -913,6 +915,57 @@ class CUBEnhancedConditions {
         });
     }
 
+    /**
+     * 
+     * @param {*} icons 
+     */
+    async lookupEntryMapping(icons) {
+        let map;
+        let mapEntries = [];
+        let conditionEntries = [];
+        let entry;
+
+        if(this.map instanceof Map) {
+            map = this.map.entries();
+        } else if(this.map instanceof Array) {
+            map = this.map;
+        } else {
+            throw "condition map is not iterable";
+        }
+        //iterate through incoming icons and check the conditionMap for the corresponding entry
+        for (let i of icons){
+            try {
+                for (let [mc, mi, me] of map) {
+                    if(mi == i) {
+                        if(me != " ") {
+                            entry = me;
+                        } else {
+                            entry = mc;
+                        }
+                        
+                    }
+                }
+            } catch (e) {
+                console.log(e);
+            } finally {
+                mapEntries.push(entry);
+            }
+        }
+
+        for(let e of mapEntries){
+            if(e){
+                let entry = await game.journal.entities.find(j => j.id == e);
+                conditionEntries.push(entry);
+            }
+        }
+
+        console.log(conditionEntries);
+        if(this.settings.output && conditionEntries.length > 0){
+            return this.outputChatMessage(conditionEntries);
+        } else {
+            return;
+        }
+    }
 
     /**
     * @name lookupConditionMapping
@@ -994,6 +1047,7 @@ class CUBEnhancedConditions {
         let tokenSpeaker = {};
         let chatContent;
         let chatConditions = [];
+        let journalLink;
 
         console.log("current token",token);
         console.log("current actor",actor);
@@ -1015,7 +1069,12 @@ class CUBEnhancedConditions {
         
         //iterate through the journal entries and output to chat
         for (let e of entries){
-            let journalLink = "@JournalEntry["+e.name+"]";
+            if (e instanceof Object) {
+                journalLink = "@JournalEntry["+e.name+"]";
+            } else {
+                journalLink = e;
+            }
+            
             //let journalLink = e.name;
             //need to figure out best way to break out entries -- newline is being turned into space
             chatConditions.push("\n"+journalLink);   
