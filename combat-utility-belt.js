@@ -102,19 +102,7 @@ class CUBSignal {
 
     static hookOnRenderTokenHUD() {
         Hooks.on("renderTokenHUD", (app, html, data) => {
-            const statusEffects = html.find(".control-icon.effects");
-
-            const div = $(
-                `<div class="control-icon lab">
-                    <i class="fas fa-flask"></i>
-                </div>`
-            );
-
-            statusEffects.after(div);
-
-            div.click(ev => {
-                new CUBEnhancedConditionsConfig().render();
-            });
+            
         });
     }
 }
@@ -552,27 +540,28 @@ class CUBEnhancedConditions {
      * @todo: needs a redesign -- programmatic matching to systems?
      */
     get DEFAULT_MAPS() {
-        const dnd5eMap = new Map([
-            ["Blinded", this.DEFAULT_CONFIG.iconPath + "blinded.svg"],
-            ["Charmed", this.DEFAULT_CONFIG.iconPath + "charmed.svg"],
-            ["Deafened", this.DEFAULT_CONFIG.iconPath + "deafened.svg"],
-            ["Exhaustion", this.DEFAULT_CONFIG.iconPath + "exhaustion1.svg"],
-            ["Frightened", this.DEFAULT_CONFIG.iconPath + "frightened.svg"],
-            ["Incapacitated", this.DEFAULT_CONFIG.iconPath + "incapacitated.svg"],
-            ["Invisible", this.DEFAULT_CONFIG.iconPath + "invisible.svg"],
-            ["Paralyzed", this.DEFAULT_CONFIG.iconPath + "paralyzed.svg"],
-            ["Petrified", this.DEFAULT_CONFIG.iconPath + "petrified.svg"],
-            ["Poisoned", this.DEFAULT_CONFIG.iconPath + "poisoned.svg"],
-            ["Prone", this.DEFAULT_CONFIG.iconPath + "prone.svg"],
-            ["Restrained", this.DEFAULT_CONFIG.iconPath + "restrained.svg"],
-            ["Stunned", this.DEFAULT_CONFIG.iconPath + "stunned.svg"],
-            ["Unconscious", this.DEFAULT_CONFIG.iconPath + "unconscious.svg"]
-        ]);
+        const dnd5eMap = [
+            //Condition - Icon - JournalEntry
+            ["Blinded", this.DEFAULT_CONFIG.iconPath + "blinded.svg", ""],
+            ["Charmed", this.DEFAULT_CONFIG.iconPath + "charmed.svg", ""],
+            ["Deafened", this.DEFAULT_CONFIG.iconPath + "deafened.svg", ""],
+            ["Exhaustion", this.DEFAULT_CONFIG.iconPath + "exhaustion1.svg", ""],
+            ["Frightened", this.DEFAULT_CONFIG.iconPath + "frightened.svg", ""],
+            ["Incapacitated", this.DEFAULT_CONFIG.iconPath + "incapacitated.svg", ""],
+            ["Invisible", this.DEFAULT_CONFIG.iconPath + "invisible.svg", ""],
+            ["Paralyzed", this.DEFAULT_CONFIG.iconPath + "paralyzed.svg", ""],
+            ["Petrified", this.DEFAULT_CONFIG.iconPath + "petrified.svg", ""],
+            ["Poisoned", this.DEFAULT_CONFIG.iconPath + "poisoned.svg", ""],
+            ["Prone", this.DEFAULT_CONFIG.iconPath + "prone.svg", ""],
+            ["Restrained", this.DEFAULT_CONFIG.iconPath + "restrained.svg", ""],
+            ["Stunned", this.DEFAULT_CONFIG.iconPath + "stunned.svg", ""],
+            ["Unconscious", this.DEFAULT_CONFIG.iconPath + "unconscious.svg", ""]
+        ];
 
-        const pf1eMap = new Map([]);
-        const pf2eMap = new Map([]);
-        const wfrp4eMap = new Map([]);
-        const otherMap = new Map([]);
+        const pf1eMap = [];
+        const pf2eMap = [];
+        const wfrp4eMap = [];
+        const otherMap = [];
 
         return {
             "dnd5e": dnd5eMap,
@@ -584,7 +573,7 @@ class CUBEnhancedConditions {
     }
 
     /**
-     * Converts the condition maps into arrays
+     * DEPRECATED - Converts the condition maps into arrays
      */
     get DEFAULT_MAP_ARRAYS(){
         let arrayedMaps = {}
@@ -676,8 +665,7 @@ class CUBEnhancedConditions {
                 hint: this.SETTINGS_DESCRIPTORS.MapsH,
                 scope: "world",
                 type: Object,
-                //default: this.DEFAULT_MAPS,
-                default: this.DEFAULT_MAP_ARRAYS,
+                default: this.DEFAULT_MAPS,
                 onChange: s => {
                     this.settings.maps = s;
                     this._updateStatusIcons(s[this.settings.system]);
@@ -1107,11 +1095,17 @@ class CUBEnhancedConditionsConfig extends FormApplication {
         //const maps = CUBSidekick.getGadgetSetting(this.data.GADGET_NAME + "(" + this.data.SETTINGS_DESCRIPTORS.MapsN + ")");
         //const system = CUBSidekick.getGadgetSetting(this.data.GADGET_NAME + "(" + this.data.SETTINGS_DESCRIPTORS.SystemNameN + ")");
         //const conditionMapArray = Array.from(maps[system]);
+        let entries = {};
+
+        for(let e of game.journal.entities) {
+            entries[e.id] = e.name;
+        }
 
         const formData = {
             conditionmap: this.data.map,
             systems: this.data.systemChoices,
             system: this.data.system,
+            entries: entries
         }
 
         return formData;
@@ -1126,6 +1120,7 @@ class CUBEnhancedConditionsConfig extends FormApplication {
         console.log(event,formdata);
         let conditions = [];
         let icons = [];
+        let entries = [];
         //let oldMapsSetting = CUBSidekick.getGadgetSetting(CUBEnhancedConditions.GADGET_NAME + "(" + CUBEnhancedConditions.SETTINGS_DESCRIPTORS.MapsN + ")");
         let newMap = [];
         //const system = CUBSidekick.getGadgetSetting(this.data.GADGET_NAME + "(" + this.data.SETTINGS_DESCRIPTORS.SystemNameN + ")");
@@ -1133,8 +1128,9 @@ class CUBEnhancedConditionsConfig extends FormApplication {
         //let mergeMapsSetting = {};
 
         //need to tighten these up to check for the existence of digits after the word
-        const conditionRegex = new RegExp('condition.',"i");
+        const conditionRegex = new RegExp('condition',"i");
         const iconRegex = new RegExp('icon',"i")
+        const journalRegex = new RegExp('journal',"i");
 
 
         //write it back to the relevant condition map
@@ -1144,11 +1140,13 @@ class CUBEnhancedConditionsConfig extends FormApplication {
                 conditions.push(formdata[e]);
             } else if (e.match(iconRegex)) {
                 icons.push(formdata[e]);
+            } else if (e.match(journalRegex)) {
+                entries.push(formdata[e]);
             }
         }
 
         for(let i = 0;i <= conditions.length - 1; i++){
-            newMap.push([conditions[i], icons[i]]);
+            newMap.push([conditions[i], icons[i], entries[i]]);
         }
 /*
         mergeMapsSetting = mergeObject(oldMapsSetting, {
