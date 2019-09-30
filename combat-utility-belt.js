@@ -520,7 +520,7 @@ class CUBEnhancedConditions {
             //compendium : CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.CompendiumN + ")", this.SETTINGS_META.compendium),
             //createEntries : CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_META.CreateEntriesN + ")", this.SETTINGS_META.createEntries),
         }
-
+        this.coreStatusIcons = this.coreStatusIcons || this._backupCoreStatusIcons();
         this._updateStatusIcons();
         this._hookOnUpdateToken();
         this._hookOnRenderTokenHUD();
@@ -630,6 +630,7 @@ class CUBEnhancedConditions {
                 onChange: s => {
                     this.settings.enhancedConditions = s;
                     this._toggleSidebarButtonDisplay(s);
+                    this._updateStatusIcons();
                 }
     
             },
@@ -748,7 +749,7 @@ class CUBEnhancedConditions {
     /**
      * Retrieve the statusEffect icons from the Foundry CONFIG
      */
-    get coreStatusIcons() {
+    _backupCoreStatusIcons() {
         CONFIG.defaultStatusEffects = CONFIG.defaultStatusEffects || duplicate(CONFIG.statusEffects);
         if(!Object.isFrozen(CONFIG.defaultStatusEffects)) {
             Object.freeze(CONFIG.defaultStatusEffects);
@@ -781,31 +782,39 @@ class CUBEnhancedConditions {
         let entries;
 
         //save the original icons
+        if(!this.coreStatusIcons) {
+            this.coreStatusIcons = this._backupCoreStatusIcons();
+        }
+        /*
         if(!CONFIG.defaultStatusEffects) {
             CONFIG.defaultStatusEffects = duplicate(CONFIG.statusEffects);
             Object.freeze(CONFIG.defaultStatusEffects);
         }
-       
+       */
 
         //console.log(this.settings.maps);
-        
-        
-        if(this.settings.removeDefaultEffects) {
-            CONFIG.statusEffects = this.settings.maps[this.settings.system] ? this.icons : [];
-        } else {
-            if(map instanceof Map){
-                entries = map.entries();
-                for(let [k,v] of entries){
-                    CONFIG.statusEffects.push(v);
-                    //console.log(k,v);
-                }
-            } else if(map instanceof Array) {
-                //add the icons from the condition map to the status effects array
-                CONFIG.statusEffects = CONFIG.defaultStatusEffects.concat(this.icons)
+        //killswitch for further execution of the function
+        if(this.settings.enhancedConditions) {
+            if(this.settings.removeDefaultEffects) {
+                CONFIG.statusEffects = this.settings.maps[this.settings.system] ? this.icons : [];
             } else {
-                entries = [];
-            }
-        }   
+                if(map instanceof Map){
+                    entries = map.entries();
+                    for(let [k,v] of entries){
+                        CONFIG.statusEffects.push(v);
+                        //console.log(k,v);
+                    }
+                } else if(map instanceof Array) {
+                    //add the icons from the condition map to the status effects array
+                    CONFIG.statusEffects = this.coreStatusIcons.concat(this.icons)
+                } else {
+                    entries = [];
+                }
+            }   
+        } else {
+            CONFIG.statusEffects = this.coreStatusIcons;
+        }
+        
     }
     
     /**
@@ -924,18 +933,21 @@ class CUBEnhancedConditions {
     _hookOnRenderTokenHUD() {
         Hooks.on("renderTokenHUD", (app, html) => {
             const conditionIcons = this.icons;
-
-            //console.log(app,html);
             let statusIcons = html.find("img.effect-control");
 
-            for(let i of statusIcons) {
-                const src = i.attributes.src.value;
-
-                if(conditionIcons.includes(src)){
-                    i.setAttribute("title", this.inverseMap.get(src));
+            //console.log(app,html);
+            //killswitch for further execution of function
+            if(this.settings.enhancedConditions){
+                for(let i of statusIcons) {
+                    const src = i.attributes.src.value;
+    
+                    if(conditionIcons.includes(src)){
+                        i.setAttribute("title", this.inverseMap.get(src));
+                    }
+                    
                 }
-                
             }
+            
         });
     }
 
