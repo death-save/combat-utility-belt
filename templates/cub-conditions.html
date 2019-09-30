@@ -11,7 +11,6 @@
     </div>
     <ol class="condition-map-list">
         {{#each conditionmap as |item|}}
-        {{log this}}
         <li class="condition-map-item">
             <div class="flexrow condition-lab">
 
@@ -29,7 +28,6 @@
                                 <i class="fas fa-book-open"></i>
                                 <select name="journal-{{@index}}" class="journal" title="Condition Journal Entry" data-dtype="String">
                                     {{#select item.[2]}}
-                                    {{log ../entries}}
                                     <option value=" "></option>
                                     {{#each ../entries as |title id|}}
                                         <option value="{{id}}">{{title}}</option>
