@@ -81,13 +81,13 @@
 
  ~~Simply wrap the belt around your waist and affix the clasp.~~
 
- Navigate to the Foundry Setup screen and click on the Modules tab
- Click Install Module and paste in the following link: https://raw.githubusercontent.com/death-save/combat-utility-belt/beta/module.json
- Once the Combat Utility Belt is installed, open your desired world and ~~wreak havoc on your players~~ navigate to the Settings > Module Settings and enable the settings you want!
+ 1. Navigate to the Foundry Setup screen and click on the Modules tab
+ 2. Click Install Module and paste in the following link: https://raw.githubusercontent.com/death-save/combat-utility-belt/beta/module.json
+ 3. Once the Combat Utility Belt is installed, open your desired world and ~~wreak havoc on your players~~ navigate to the Settings > Module Settings and enable the settings you want!
  
  ### Enhanced Conditions Post-Install Setup for:
  #### D&D 5e
- To ensure you can link to journal entries to the desired condition, copy the journal entries from the included compendium
+ To ensure you can link to journal entries to the desired condition, copy the journal entries from the included Conditions compendium
  
  #### Other Game Systems
 Create the relevant condition journal entries and ensure players have `Observer` permission
@@ -98,12 +98,12 @@ Create the relevant condition journal entries and ensure players have `Observer`
  ### Top 3 Open Issues
 - [ ] `Hide NPC Names` Create a flag on actors to track what PCs know about that NPC - [Issue #15](https://github.com/death-save/combat-utility-belt/issues/15)
 - [ ] `Mark Dead` should also mark combatant defeated - [Issue #11](https://github.com/death-save/combat-utility-belt/issues/11)
-- [ ] `Enhanced Conditions` Allow linking directly to compendium entries
+- [ ] `Enhanced Conditions` Allow linking directly to compendium entries - [Issue #19](https://github.com/death-save/combat-utility-belt/issues/19)
 
  ## Known Bugs
  ~~None, the Combat Utility Belt is perfect~~
-1. [Issue #18](https://github.com/death-save/combat-utility-belt/issues/18) When changing the setting for `Hide NPC Names`, the Chat Log will be rendered in whatever sidebar tab the user currently has open. This is a known issue in FVTT (https://gitlab.com/foundrynet/foundryvtt/issues/1471).
-2. [Issue #5](https://github.com/death-save/combat-utility-belt/issues/5) When `Reroll Initiative` is enabled and initiative is rolled from D&D Beyond using the Beyond20 extension, the combat encounter will become corrupt. WORKAROUND: Do not roll initiative using Beyond20, or disable `Reroll Initiative`
+1. `Hide NPC Names` When changing the setting for `Hide NPC Names`, the Chat Log will be rendered in whatever sidebar tab the user currently has open. This is a known issue in FVTT (https://gitlab.com/foundrynet/foundryvtt/issues/1471). -- [Issue #18](https://github.com/death-save/combat-utility-belt/issues/18)
+2. `Reroll Initiative` when this is enabled and initiative is rolled from D&D Beyond using the Beyond20 extension, the combat encounter will become corrupt. **WORKAROUND**: Do not roll initiative using Beyond20, or disable `Reroll Initiative` -- [Issue #5](https://github.com/death-save/combat-utility-belt/issues/5)
 
 **WARNING** no warranty given or implied is provided for this module. Use at your own risk. This is probably not a legally binding disclaimer.
 
