@@ -25,6 +25,7 @@
  * Reroll Initiative
  * Roll Initiative from Sheet
  * Temporary Combatants
+ * Concentration Checks
 
  ## Reroll Initiative
 
@@ -82,6 +83,8 @@
 ## Quick Edit Token Resource from Combat Tracker
 *full write up coming soon*
  
+## Concentration Checks
+*full write up coming soon*
  
  ---
 
