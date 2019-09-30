@@ -1,4 +1,7 @@
 # Combat Utility Belt **Beta**
+[Installation](#Installation)
+[Module Manifest](https://raw.githubusercontent.com/death-save/combat-utility-belt/beta/module.json)
+
  Every ~~hero~~ GM needs gadgets to keep their game safe from dastardly players up to no good!
 
  And where better to store those gadget than on your very own Combat Utility Belt!
