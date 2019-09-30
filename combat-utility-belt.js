@@ -481,9 +481,10 @@ class CUBHideNPCNames {
      */
     _hookOnRenderChatMessage(){
         Hooks.on("renderChatMessage", (message, data, html) => {
-            const pcActor = game.actors.entities.find(a => a.id === data.message.speaker.actor).isPC;
+            const pcActor = game.actors.entities.find(a => a.id === data.message.speaker.actor) 
+                ? game.actors.entities.find(a => a.id === data.message.speaker.actor).isPC : null;
 
-            if(!game.user.isGM && !pcActor && this.settings.hideNames) {
+            if(!game.user.isGM && pcActor == false && this.settings.hideNames) {
                 const replacement = this.settings.unknownCreatureString || " ";
                 html.find(`:contains('${data.alias}')`).each((i, el) => {
                     el.innerHTML = el.innerHTML.replace(new RegExp(data.alias, 'g'), replacement);
