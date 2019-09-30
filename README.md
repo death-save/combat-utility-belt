@@ -110,3 +110,8 @@ Create the relevant condition journal entries and ensure players have `Observer`
 
 **WARNING** no warranty given or implied is provided for this module. Use at your own risk. This is probably not a legally binding disclaimer.
 
+## Donations
+
+I work on Foundry modules as a hobby. If you'd like to support my work you can use the link below:
+
+[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.me/evanc)
