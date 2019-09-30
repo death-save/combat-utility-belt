@@ -1,5 +1,5 @@
 # Combat Utility Belt **Beta**
- Every DM hero needs gadgets to keep their game safe from players up to no good!
+ Every ~~hero~~ GM needs gadgets to keep their game safe from dastardly players up to no good!
 
  And where better to store those gadget than on your very own Combat Utility Belt!
 
@@ -16,9 +16,9 @@
  ### Compatible Systems
 
  - [X] D&D5e
- - [ ] PF1E
- - [ ] PF2E
- - [ ] WFRP
+ - [X] PF2E
+ - [X] WFRP4E
+ - [ ] 13th Age (untested)
  - [ ] Simple/Other
 
  ## Hide NPC Names
@@ -32,10 +32,10 @@
  ### Compatible Systems
 
  - [X] D&D5e
- - [ ] PF1E
- - [ ] PF2E
- - [ ] WFRP
- - [ ] Simple/Other
+ - [X] PF2E
+ - [X] WFRP
+ - [ ] 13th Age (untested)
+ - [X] Simple/Other
 
  ## Enhanced Conditions
 
@@ -56,9 +56,9 @@
  ### Compatible Systems
 
  - [X] D&D5e
- - [ ] PF1E
  - [ ] PF2E
  - [ ] WFRP
+ - [ ] 13th Age (untested)
  - [ ] Simple/Other
 
  ## Mark Injured/Dead Tokens
@@ -72,10 +72,10 @@
  ### Compatible Systems
 
  - [X] D&D5e
- - [ ] PF1E
- - [ ] PF2E
- - [ ] WFRP
- - [ ] Simple/Other
+ - [X] PF2E
+ - [X] WFRP
+ - [ ] 13th Age (untested)
+ - [X] Simple/Other
 
  ---
 
@@ -84,18 +84,28 @@
  ~~Simply wrap the belt around your waist and affix the clasp.~~
 
  Navigate to the Foundry Setup screen and click on the Modules tab
- Click Install Module and paste in the following link: <link to manifest json>
- Once the Combat Utility Belt is installed, open your desired world and ~~wreak havoc on your players~~ navigate to the Settings > Module Settings
+ Click Install Module and paste in the following link: https://raw.githubusercontent.com/death-save/combat-utility-belt/beta/module.json
+ Once the Combat Utility Belt is installed, open your desired world and ~~wreak havoc on your players~~ navigate to the Settings > Module Settings and enable the settings you want!
+ 
+ ### Enhanced Conditions Post-Install Setup for:
+ #### D&D 5e
+ To ensure you can link to journal entries to the desired condition, copy the journal entries from the included compendium
+ 
+ #### Other Game Systems
+Create the relevant condition journal entries and ensure players have `Observer` permission
 
  ## To do
- ### Top 3
- [ ] Allow users to add new systems for Enhanced Conditions
- [ ] Hide NPC initiative rolls
- [ ] Create a flag on actors to track what PCs know about that NPC
+ See [Issue Log](https://github.com/death-save/combat-utility-belt/issues) 
+ 
+ ### Top 3 Open Issues
+- [ ] `Hide NPC Names` Create a flag on actors to track what PCs know about that NPC - [Issue #15](https://github.com/death-save/combat-utility-belt/issues/15)
+- [ ] `Mark Dead` should also mark combatant defeated - [Issue #11](https://github.com/death-save/combat-utility-belt/issues/11)
+- [ ] `Enhanced Conditions` Allow linking directly to compendium entries
 
-See [Issue Log](https://github.com/death-save/combat-utility-belt/issues) 
+ ## Known Bugs
+ ~~None, the Combat Utility Belt is perfect~~
+1. [Issue #18](https://github.com/death-save/combat-utility-belt/issues/18) When changing the setting for `Hide NPC Names`, the Chat Log will be rendered in whatever sidebar tab the user currently has open. This is a known issue in FVTT (https://gitlab.com/foundrynet/foundryvtt/issues/1471).
+2. [Issue #5](https://github.com/death-save/combat-utility-belt/issues/5) When `Reroll Initiative` is enabled and initiative is rolled from D&D Beyond using the Beyond20 extension, the combat encounter will become corrupt. WORKAROUND: Do not roll initiative using Beyond20, or disable `Reroll Initiative`
 
-## Known Bugs
-
-~~None, the Combat Utility Belt is perfect~~
+**WARNING** no warranty given or implied is provided for this module. Use at your own risk. This is probably not a legally binding disclaimer.
 
