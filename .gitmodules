@@ -1,0 +1,3 @@
+[submodule "types-foundry-vtt"]
+	path = types-foundry-vtt
+	url = https://gitlab.com/errational/types-foundry-vtt.git

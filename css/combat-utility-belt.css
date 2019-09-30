@@ -1,0 +1,32 @@
+img.icon {
+    width: 50px;
+    background:black;
+}
+
+.condition-map-list {
+    list-style:none;
+}
+
+.condition-map-item {
+    border-bottom: 2px groove beige;
+}
+
+.flexcol.condition-lab {
+    margin: 3px;
+}
+
+.flexcol.condition-lab.text-entry {
+    flex: 7;
+}
+
+.flexcol.condition-lab.text-entry.condition {
+    margin: 0px 3px 3px 0px;
+}
+
+.flexcol.condition-lab.text-entry.journal {
+    margin: 0px 0px 3px 0px;
+}
+
+.flexrow.condition-lab {
+    justify-content: space-around;
+}

@@ -1,5 +1,111 @@
-# Combat Utility Belt
-WIP - when a release-ready version is available you will find it here.
-Checkout the `develop` branch for latest dev version
-**WARNING** no warranty given or implied is provided for any code in the develop branch. Use at your own risk. This is probably not a legally binding disclaimer.
+# Combat Utility Belt **Beta**
+ Every ~~hero~~ GM needs gadgets to keep their game safe from dastardly players up to no good!
+
+ And where better to store those gadget than on your very own Combat Utility Belt!
+
+ This handy-dandy combat aid comes packed with 4 gadgets to ensure you get a TPK every time.
+
+ ## Reroll Initiative
+
+ [reroll initiative animation]
+
+ The BBEG rolled a 2 for initiative? Not anymore! This gadget rerolls initiative for all combatants each round.
+
+ Glorious chaos!
+
+ ### Compatible Systems
+
+ - [X] D&D5e
+ - [X] PF2E
+ - [X] WFRP4E
+ - [ ] 13th Age (untested)
+ - [ ] Simple/Other
+
+ ## Hide NPC Names
+
+ [hide npc names animation]
+
+ Maybe you forgot that your NPC's name reveals a dark secret about their past, or maybe you forgot to give them a name.
+
+ Fret no more, for this gadget replaces NPC names with a replacement of your choice. Personally, I'm a fan of Melvin.
+
+ ### Compatible Systems
+
+ - [X] D&D5e
+ - [X] PF2E
+ - [X] WFRP
+ - [ ] 13th Age (untested)
+ - [X] Simple/Other
+
+ ## Enhanced Conditions
+
+ [enhanced conditions animation]
+
+ It's not enough to *show* your players when their poisoned, you want to really drive it  home by linking the condition so they can wallow in misery as they fail their ability checks.
+
+ This gadget creates a dynamo-powered link between token status icons and journal entries with further info on that status effect.
+
+ ### Condition Lab
+
+ [condition lab animation]
+
+ In here you can mix up your ~~dastardly~~ heroic combination of status icons and condition names.
+
+ I like the Deadly STD one!
+
+ ### Compatible Systems
+
+ - [X] D&D5e
+ - [ ] PF2E
+ - [ ] WFRP
+ - [ ] 13th Age (untested)
+ - [ ] Simple/Other
+
+ ## Mark Injured/Dead Tokens
+
+ [mark injured dead tokens animation]
+
+ Ack! Gasp! I'm bloodied! What does that even mean? Who knows?!
+
+ Well, now *you* do! With this gadget you can define a threshold (% of hp) that marks a token as injured. This gadget can also mark tokens as dead when their hp reaches 0. Outstanding! Now my players will have no doubt that I am the most ~~evil~~ heroic GM there was!
+
+ ### Compatible Systems
+
+ - [X] D&D5e
+ - [X] PF2E
+ - [X] WFRP
+ - [ ] 13th Age (untested)
+ - [X] Simple/Other
+
+ ---
+
+ ## Installation
+
+ ~~Simply wrap the belt around your waist and affix the clasp.~~
+
+ Navigate to the Foundry Setup screen and click on the Modules tab
+ Click Install Module and paste in the following link: https://raw.githubusercontent.com/death-save/combat-utility-belt/beta/module.json
+ Once the Combat Utility Belt is installed, open your desired world and ~~wreak havoc on your players~~ navigate to the Settings > Module Settings and enable the settings you want!
+ 
+ ### Enhanced Conditions Post-Install Setup for:
+ #### D&D 5e
+ To ensure you can link to journal entries to the desired condition, copy the journal entries from the included compendium
+ 
+ #### Other Game Systems
+Create the relevant condition journal entries and ensure players have `Observer` permission
+
+ ## To do
+ See [Issue Log](https://github.com/death-save/combat-utility-belt/issues) 
+ 
+ ### Top 3 Open Issues
+- [ ] `Hide NPC Names` Create a flag on actors to track what PCs know about that NPC - [Issue #15](https://github.com/death-save/combat-utility-belt/issues/15)
+- [ ] `Mark Dead` should also mark combatant defeated - [Issue #11](https://github.com/death-save/combat-utility-belt/issues/11)
+- [ ] `Enhanced Conditions` Allow linking directly to compendium entries
+
+ ## Known Bugs
+ ~~None, the Combat Utility Belt is perfect~~
+1. [Issue #18](https://github.com/death-save/combat-utility-belt/issues/18) When changing the setting for `Hide NPC Names`, the Chat Log will be rendered in whatever sidebar tab the user currently has open. This is a known issue in FVTT (https://gitlab.com/foundrynet/foundryvtt/issues/1471).
+2. [Issue #5](https://github.com/death-save/combat-utility-belt/issues/5) When `Reroll Initiative` is enabled and initiative is rolled from D&D Beyond using the Beyond20 extension, the combat encounter will become corrupt. WORKAROUND: Do not roll initiative using Beyond20, or disable `Reroll Initiative`
+
+**WARNING** no warranty given or implied is provided for this module. Use at your own risk. This is probably not a legally binding disclaimer.
 
