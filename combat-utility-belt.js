@@ -404,8 +404,13 @@ class CUBHideNPCNames {
                 config: true,
                 onChange: s => {
                     this.settings.hideNames = s;
+                    
                     ui.combat.render();
-                    ui.chat.render(true);
+                    if(ui.chat.element.is(":visible")){
+                        ui.chat.render();
+                    } else {
+                        this._switchTabs();
+                    }
                 }
             },
             unknownCreatureString: {
@@ -486,6 +491,16 @@ class CUBHideNPCNames {
             }
             //console.log(message,data,html);
         });
+    }
+
+    _switchTabs() {
+        const currentTab = ui.sidebar.tabs.tabs.find(".active");
+        const chatTab = ui.sidebar.tabs.tabs.find('[data-tab="chat"]');
+
+        
+        ui.sidebar.tabs.activateTab(chatTab);
+        ui.chat.render();
+        ui.sidebar.tabs.activateTab(currentTab);
     }
 }
 
