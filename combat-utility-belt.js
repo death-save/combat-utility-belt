@@ -918,16 +918,15 @@ class CUBEnhancedConditions {
     * Hooks on token updates. If the update includes effects, calls the journal entry lookup
     */
     _hookOnUpdateToken(){
-        Hooks.on("updateToken", (token,sceneId,update) => {
+        Hooks.on("updateToken", (token, sceneId, update) => {
             //console.log(token,sceneId,update);
             let effects = update.effects;
             
             //If the update has effects in it, lookup mapping and set the current token
-            if(this.settings.enhancedConditions && effects){
+            if(game.user.isGM && this.settings.enhancedConditions && effects){
                 this.currentToken = token;
                 return this.lookupEntryMapping(effects);
             }
-            return;
         });
     }
 
