@@ -481,23 +481,20 @@ class CUBHideNPCNames {
      */
     _hookOnRenderChatMessage(){
         Hooks.on("renderChatMessage", (message, data, html) => {
-            //retrieve the actor id of the speaker
-            const messageActor = message.data.speaker.actor;
-            let speakerIsNPC = false;
+            //killswitch for execution of hook logic
+            if(game.user.isGM || !this.settings.hideNames) { return }
             
-            //if there is a actor id for the speaker and there is a matching actor entity that is not a PC,
-            //then the speaker is an npc
-            if(messageActor && game.actors.entities.find(a => a.id === messageActor).isPC == false) {
-                speakerIsNPC = true;
-            }
+            const messageActorId = message.data.speaker.actor;
+            const messageActor = game.actors.get(messageActorId);
+            const speakerIsNPC = messageActor && !messageActor.isPC;                
             
-            if(!game.user.isGM && speakerIsNPC && this.settings.hideNames) {
+            if(speakerIsNPC) {
                 const replacement = this.settings.unknownCreatureString || " ";
                 html.find(`:contains('${data.alias}')`).each((i, el) => {
                     el.innerHTML = el.innerHTML.replace(new RegExp(data.alias, 'g'), replacement);
                 });
             }
-            //console.log(message,data,html);
+            //console.log(message,data,html);            
         });
     }
 
