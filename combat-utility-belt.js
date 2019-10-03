@@ -992,7 +992,10 @@ class CUBEnhancedConditions {
             } catch (e) {
                 //console.log(e);
             } finally {
-                mapEntries.push(entry);
+                if(entry) {
+                    mapEntries.push(entry);
+                }
+                
             }
         }
 
