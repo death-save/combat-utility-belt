@@ -481,15 +481,20 @@ class CUBHideNPCNames {
      */
     _hookOnRenderChatMessage(){
         Hooks.on("renderChatMessage", (message, data, html) => {
-            const pcActor = game.actors.entities.find(a => a.id === data.message.speaker.actor).isPC;
-
-            if(!game.user.isGM && !pcActor && this.settings.hideNames) {
+            //killswitch for execution of hook logic
+            if(game.user.isGM || !this.settings.hideNames) { return }
+            
+            const messageActorId = message.data.speaker.actor;
+            const messageActor = game.actors.get(messageActorId);
+            const speakerIsNPC = messageActor && !messageActor.isPC;                
+            
+            if(speakerIsNPC) {
                 const replacement = this.settings.unknownCreatureString || " ";
                 html.find(`:contains('${data.alias}')`).each((i, el) => {
                     el.innerHTML = el.innerHTML.replace(new RegExp(data.alias, 'g'), replacement);
                 });
             }
-            //console.log(message,data,html);
+            //console.log(message,data,html);            
         });
     }
 
