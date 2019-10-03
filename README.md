@@ -108,7 +108,12 @@ Create the relevant condition journal entries and ensure players have `Observer`
 1. `Hide NPC Names` When changing the setting for `Hide NPC Names`, the Chat Log will be rendered in whatever sidebar tab the user currently has open. This is a known issue in FVTT (https://gitlab.com/foundrynet/foundryvtt/issues/1471). -- [Issue #18](https://github.com/death-save/combat-utility-belt/issues/18)
 2. `Reroll Initiative` when this is enabled and initiative is rolled from D&D Beyond using the Beyond20 extension, the combat encounter will become corrupt. **WORKAROUND**: Do not roll initiative using Beyond20, or disable `Reroll Initiative` -- [Issue #5](https://github.com/death-save/combat-utility-belt/issues/5)
 
-**WARNING** no warranty given or implied is provided for this module. Use at your own risk. This is probably not a legally binding disclaimer.
+## Thanks/Attribution
+Firstly thanks to everyone who has downloaded the mod, and a special thank you to everyone who provided bug reports or feedback!
+
+I need to acknowledge that many of the functions found in the Combat Utility Belt are inspired by API scripts for Roll20 written by Robin Kuiper (namely the Combat Tracker, Death Tracker and StatusInfo ones).
+
+A big thanks to trdischat#2123 on the Foundry Discord for the awesome set of condition icons used in the `Dungeons & Dragons 5th Edition` mapping.
 
 ## Donations
 
