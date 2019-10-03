@@ -10,7 +10,7 @@
 
  ## Reroll Initiative
 
-![reroll-initiative](https://github.com/death-save/combat-utility-belt/blob/beta/demos/reroll-initiative.gif)
+![reroll-initiative](https://github.com/death-save/media/blob/master/combat-utility-belt/reroll-initiative.gif)
 
  The BBEG rolled a 2 for initiative? Not anymore! This gadget rerolls initiative for all combatants each round.
 
@@ -26,7 +26,7 @@
 
  ## Hide NPC Names
 
-![hide-npc-names](https://github.com/death-save/combat-utility-belt/blob/beta/demos/hide-npc-names.gif)
+![hide-npc-names](https://github.com/death-save/media/blob/master/combat-utility-belt/hide-npc-names.gif)
 
  Maybe you forgot that your NPC's name reveals a dark secret about their past, or maybe you forgot to give them a name.
 
@@ -42,7 +42,7 @@
 
  ## Enhanced Conditions
 
- ![enhanced-conditions](https://github.com/death-save/combat-utility-belt/blob/beta/demos/enhanced-conditions.gif)
+ ![enhanced-conditions](https://github.com/death-save/media/blob/master/combat-utility-belt/enhanced-conditions.gif)
 
  It's not enough to *show* your players when their poisoned, you want to really drive it  home by linking the condition so they can wallow in misery as they fail their ability checks.
 
@@ -64,7 +64,7 @@
 
  ## Mark Injured/Dead Tokens
 
-![mark-injure-dead](https://github.com/death-save/combat-utility-belt/blob/beta/demos/mark-injured-dead.gif)
+![mark-injured-dead](https://github.com/death-save/media/blob/master/combat-utility-belt/mark-injured-dead.gif)
 
  Ack! Gasp! I'm bloodied! What does that even mean? Who knows?!
 
