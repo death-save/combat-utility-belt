@@ -89,8 +89,8 @@
  3. Once the Combat Utility Belt is installed, open your desired world and ~~wreak havoc on your players~~ navigate to the Settings > Module Settings and enable the settings you want!
  
  ### Enhanced Conditions Post-Install Setup for:
- #### D&D 5e
- To ensure you can link to journal entries to the desired condition, copy the journal entries from the included Conditions compendium
+ #### D&D 5e & PF2e
+ To ensure you can link to journal entries to the desired condition, copy the journal entries from the included Conditions compendium into your world's journal.
  
  #### Other Game Systems
 Create the relevant condition journal entries and ensure players have `Observer` permission
@@ -114,6 +114,7 @@ Firstly thanks to everyone who has downloaded the mod, and a special thank you t
 I need to acknowledge that many of the functions found in the Combat Utility Belt are inspired by API scripts for Roll20 written by Robin Kuiper (namely the Combat Tracker, Death Tracker and StatusInfo ones).
 
 A big thanks to trdischat#2123 on the Foundry Discord for the awesome set of condition icons used in the `Dungeons & Dragons 5th Edition` mapping.
+Thanks to hooking#0492 for the Pathfinder 2nd Edition condition mapping for use with his Pathfinder 2nd Edition system!
 
 ## Donations
 
