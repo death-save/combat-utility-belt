@@ -583,7 +583,48 @@ class CUBEnhancedConditions {
         ];
 
         const pf1eMap = [];
-        const pf2eMap = [];
+        
+        const pf2eMap = [
+            //Condition - Icon - JournalEntry
+            ["Sickened","systems/pf2e/icons/skills/affliction_13.jpg","10wWFAHLfbwWZsqd"],
+            ["Petrified","systems/pf2e/icons/skills/affliction_09.jpg","5paAjdoOD6B7tsA2"],
+            ["Stupefied","systems/pf2e/icons/skills/violet_03.jpg","63wWtiJkuJRvwhZG"],
+            ["Flat-Footed","systems/pf2e/icons/skills/weapon_17.jpg","80w6tVHIaqnH93z9"],
+            ["Fascinated","systems/pf2e/icons/skills/violet_17.jpg","BYPcRRUXBupV6hwf"],
+            ["Enfeebled","systems/pf2e/icons/skills/violet_28.jpg","CHiTRRw0MOWY9Jk3"],
+            ["Encumbered","systems/pf2e/icons/skills/gray_05.jpg","CrgtNdJSVGGL3aDq"],
+            ["Quickened","systems/pf2e/icons/skills/blue_35.jpg","CzXTbe1546ks6TnG"],
+            ["Concealed","systems/pf2e/icons/skills/shadow_14.jpg","G9P9U82fxErbDQtZ"],
+            ["Fatigued","systems/pf2e/icons/skills/red_33.jpg","JfS9fFf1IN78E8RX"],
+            ["Immobilized","systems/pf2e/icons/skills/green_16.jpg","OAasGGgpW5DMDsNL"],
+            ["Blinded","systems/pf2e/icons/skills/light_03.jpg","OVCML9tV9ESVLSkx"],
+            ["Frightened","systems/pf2e/icons/skills/shadow_01.jpg","W75oKNgpfo5aBfky"],
+            ["Clumsy","systems/pf2e/icons/skills/light_05.jpg","RZ4vKqIc7qLJ4Dxd"],
+            ["Fleeing","systems/pf2e/icons/skills/beast_01.jpg","TXcNXYBtfGl61Jyr"],
+            ["Invisible","systems/pf2e/icons/skills/water_07.jpg","TvM13DGnC91SeXVK"],
+            ["Observed","systems/pf2e/icons/skills/light_02.jpg","UujTH4tkXyNXLrPQ"],
+            ["Undetected","systems/pf2e/icons/skills/emerald_07.jpg","XjIwmep75HKT2t0J"],
+            ["Prone","systems/pf2e/icons/skills/yellow_19.jpg","Z7BUhH3Nh230b0TL"],
+            ["Unnoticed","systems/pf2e/icons/skills/green_18.jpg","ZekDLkXZYWE60DY8"],
+            ["Slowed","systems/pf2e/icons/skills/blue_04.jpg","d4Dn38ovmdWhTQmu"],
+            ["Wounded","systems/pf2e/icons/skills/blood_04.jpg","e20MENagRGOrwfRw"],
+            ["Dazzled","systems/pf2e/icons/skills/shadow_12.jpg","ifH99cFL2tiiaWW8"],
+            ["Stunned","systems/pf2e/icons/skills/affliction_02.jpg","j3D89IsprsXm5pnc"],
+            ["Dying","systems/pf2e/icons/skills/yellow_32.jpg","ju4sDRRIVb6jqhg2"],
+            ["Doomed","systems/pf2e/icons/skills/blood_12.jpg","miiTSYPzTWdIPSKo"],
+            ["Controlled","systems/pf2e/icons/skills/red_05.jpg","n2a5YblrrpGulbcv"],
+            ["Hidden","systems/pf2e/icons/skills/shadow_17.jpg","ntbSMB1hykx2k2ZV"],
+            ["Unconscious","systems/pf2e/icons/skills/light_01.jpg","oauNp8mACdPG4rge"],
+            ["Persistent Damage","systems/pf2e/icons/skills/blood_03.jpg","pBulHre91DxM8gky"],
+            ["Paralyzed","systems/pf2e/icons/skills/ice_03.jpg","pzUBAfxs7AloC3ij"],
+            ["Broken","systems/pf2e/icons/skills/red_16.jpg","qNBWZ45sH6HY3xOs"],
+            ["Drained","systems/pf2e/icons/skills/affliction_01.jpg","ryKqcDMvj2XOVhSE"],
+            ["Deafened","systems/pf2e/icons/skills/red_10.jpg","sjHLxUQzTVhmFwLi"],
+            ["Restrained","systems/pf2e/icons/skills/red_06.jpg","vgfGkug8InDFHwEW"],
+            ["Grabbed","systems/pf2e/icons/skills/yellow_08.jpg","xteIzoajoYW5bmVR"],
+            ["Confused","systems/pf2e/icons/skills/red_01.jpg","yblD8fOR1J8rDwEQ"]
+        ];
+
         const wfrp4eMap = [];
         const archmageMap = [];
         const otherMap = [];
