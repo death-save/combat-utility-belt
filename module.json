@@ -2,7 +2,7 @@
   "name": "combat-utility-belt",
   "title": "Combat Utility Belt (Beta)",
   "description": "Adds various combat-focused functionality such as: Reroll Initiative, Hide NPC Names, Enhanced Conditions, Mark Injured/Dead",
-  "version": "0.5.2",
+  "version": "0.5.3",
   "author": "Evan Clarke [errational]",
   "url": "https://github.com/death-save/combat-utility-belt",
   "manifest": "https://raw.githubusercontent.com/death-save/combat-utility-belt/beta/module.json",
@@ -15,6 +15,14 @@
       "system": "dnd5e",
       "module": "combat-utility-belt",
       "path": "./packs/conditionsdnd5e.db",
+      "entity": "JournalEntry"
+    },
+    {
+      "name": "conditionspf2e",
+      "label": "Conditions (PF2e)",
+      "system": "pf2e",
+      "module": "combat-utility-belt",
+      "path": "./packs/conditionspf2e.db",
       "entity": "JournalEntry"
     }
   ],
