@@ -1511,14 +1511,29 @@ class CUBInjuredAndDead {
         return value === 0 ? true : false;
     }
 
-    _checkForInjured(value, max) {
-        if(value < max * this.settings.threshold / 100) {
-            return true;
+    _checkInjuredOrDead(token, update) {
+        const currentHealth = getProperty(token.actor.data.data, this.settings.healthAttribute).value;
+        const updateHealth = getProperty(update.actorData.data, this.settings.healthAttribute).value;
+        const maxHealth = getProperty(token.actor.data.data, this.settings.healthAttribute).max;
+        const hasEffects = getProperty(token, "data.effects.length") > 0;
+
+        if (updateHealth === 0 ) {
+            return "dead";
+        } else if(updateHealth < maxHealth * this.settings.threshold / 100) {
+            return "injured";
         } else {
-            return false;
+            return;
         }
     }
 
+    _hookOnTokenUpdate() {
+        Hooks.on("updateToken", (token, sceneId, update) => {
+            if(token.data.actorLink) { return }
+
+            
+        });
+    }
+    
     
     /**
      * Hooks on token update
