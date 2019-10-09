@@ -1511,6 +1511,27 @@ class CUBInjuredAndDead {
         return value === 0 ? true : false;
     }
 
+    _checkForInjured(value, max) {
+        if (value < max * (this.settings.threshold / 100)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    _checkTokenHealthState(token, update) {
+        const currentHealth = getProperty(token, "actor.data.data." + this.settings.healthAttribute + ".value");
+        const updateHealth = getProperty(update, "actorData.data." + this.settings.healthAttribute + ".value");
+        const maxHealth = getProperty(token, "actor.data.data." + this.settings.healthAttribute + ".max");
+
+        if (this._checkForDeadUnconscious(updateHealth)) {
+            return "dead";
+        } else if(this._checkForInjured(updateHealth, maxHealth)) {
+            return "injured";
+        }
+    }
+
+    /*
     _checkInjuredOrDead(token, update) {
         const currentHealth = getProperty(token.actor.data.data, this.settings.healthAttribute).value;
         const updateHealth = getProperty(update.actorData.data, this.settings.healthAttribute).value;
@@ -1525,13 +1546,65 @@ class CUBInjuredAndDead {
             return;
         }
     }
+    */
 
     _hookOnTokenUpdate() {
         Hooks.on("updateToken", (token, sceneId, update) => {
             if(token.data.actorLink) { return }
+            let tokenHealthState;
+
+            if(this.settings.injured || this.settings.dead) {
+                tokenHealthState = this._checkTokenHealthState(token, update);
+
+                if(tokenHealthState == "dead") {
+                    this._markDead(token);
+                } else if (tokenHealthState == "injured") {
+                    this._markInjured(token);
+                } else {
+                    this._markHealthy(token);
+                }
+             }
+
 
             
         });
+    }
+
+    _markHealthy(token) {
+        const tokenEffects = getProperty(token, "data.effects");
+        const hasEffects = getProperty(token, "data.effects.length") > 0;
+        const isInjured = Boolean(tokenEffects.find(e => e == this.settings.injuredIcon)) || false;
+
+        if(hasEffects && isInjured) {
+            token.toggleEffect(this.settings.injuredIcon);
+        }
+    }
+
+    _markInjured(token) {
+        const tokenEffects = getProperty(token, "data.effects");
+        const hasEffects = getProperty(token, "data.effects.length") > 0;
+        const isInjured = Boolean(tokenEffects.find(e => e == this.settings.injuredIcon)) || false;
+
+        if(!isInjured) {
+            token.toggleEffect(this.settings.injuredIcon);
+        }
+    }
+
+    _markDead(token) {
+        const tokenEffects = getProperty(token, "data.effects");
+        const hasEffects = getProperty(token, "data.effects.length") > 0;
+        const tokenOverlay = getProperty(token, "data.overlay");
+        const isDead = (tokenOverlay == this.settings.deadIcon) ? true : false;
+
+        if(hasEffects) {
+            for (let e of tokenEffects) {
+                token.toggleEffect(e);
+            }
+        }
+
+        if(!isDead) {
+            token.toggleOverlay(this.settings.deadIcon);
+        }
     }
     
     
@@ -1539,6 +1612,7 @@ class CUBInjuredAndDead {
      * Hooks on token update
      * @todo: need a check to see if the actor has been evaluated already
      */
+    /*
 	_hookOnTokenUpdate() {
         Hooks.on("updateToken", (token, sceneid, update) => {
             //if the token is linked to an actor, we are in the wrong hook
@@ -1595,10 +1669,43 @@ class CUBInjuredAndDead {
         
         });
     }
+    */
+   _hookOnUpdateActor() {
+        Hooks.on("updateActor", (actor, update) => {
+            if(!this.settings.dead && !this.settings.injured) { return }
+            const healthState = this._checkActorHealthState(actor, update);
+            const activeToken = canvas.tokens.placeables.find(t => t.actor.id == actor.id);
+
+            switch (healthState) {
+                case "dead":
+                    this._markDead(activeToken);
+                    break;
+                case "injured" :
+                    this._markInjured(activeToken);
+                    break;
+                default:
+                    this._markHealthy(activeToken);
+                    break;
+            }
+        });
+    }
+
+    _checkActorHealthState(actor, update) {
+        const currentHealth = getProperty(actor, "data.data." + this.settings.healthAttribute + ".value");
+        const updateHealth = getProperty(update, "data." + this.settings.healthAttribute + ".value");
+        const maxHealth = getProperty(actor, "data.data." + this.settings.healthAttribute + ".max");
+
+        if (this._checkForDeadUnconscious(updateHealth)) {
+            return "dead";
+        } else if(this._checkForInjured(updateHealth, maxHealth)) {
+            return "injured";
+        }
+    }
     
     /**
      * Hooks on Actor update
      */
+    /*
     _hookOnUpdateActor() {
         Hooks.on("updateActor", async (actor, update) => {
             
@@ -1652,6 +1759,7 @@ class CUBInjuredAndDead {
             }
         });
     }
+    */
 }
 
 CUBSignal.lightUp();
