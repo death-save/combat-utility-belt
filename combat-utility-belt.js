@@ -1506,8 +1506,46 @@ class CUBInjuredAndDead {
         }
 		
     }
+
+    /**
+     * Checks the health state of a token using the update supplied from a Hook
+     * @param {Object} token 
+     * @param {Object} update 
+     */
+    _checkTokenHealthState(token, update) {
+        const currentHealth = getProperty(token, "actor.data.data." + this.settings.healthAttribute + ".value");
+        const updateHealth = getProperty(update, "actorData.data." + this.settings.healthAttribute + ".value");
+        const maxHealth = getProperty(token, "actor.data.data." + this.settings.healthAttribute + ".max");
+
+        if(this._checkForDead(currentHealth)) {
+            return "dead";
+        } else if(this._checkForInjured(currentHealth, maxHealth)) {
+            return "injured";
+        }
+    }
+
+    /**
+     * Checks the health state of an actor using the update supplied from a Hook
+     * @param {Object} actor 
+     * @param {Object} update 
+     */
+    _checkActorHealthState(actor, update) {
+        const currentHealth = getProperty(actor, "data.data." + this.settings.healthAttribute + ".value");
+        const updateHealth = getProperty(update, "data." + this.settings.healthAttribute + ".value");
+        const maxHealth = getProperty(actor, "data.data." + this.settings.healthAttribute + ".max");
+
+        if (this._checkForDead(currentHealth)) {
+            return "dead";
+        } else if(this._checkForInjured(currentHealth, maxHealth)) {
+            return "injured";
+        }
+    }
     
-    _checkForDeadUnconscious(value) {
+    /**
+     * Checks if the given value is 0
+     * @param {Number} value 
+     */
+    _checkForDead(value) {
         return value === 0 ? true : false;
     }
 
@@ -1519,47 +1557,37 @@ class CUBInjuredAndDead {
         }
     }
 
-    _checkTokenHealthState(token, update) {
-        const currentHealth = getProperty(token, "actor.data.data." + this.settings.healthAttribute + ".value");
-        const updateHealth = getProperty(update, "actorData.data." + this.settings.healthAttribute + ".value");
-        const maxHealth = getProperty(token, "actor.data.data." + this.settings.healthAttribute + ".max");
-
-        if (this._checkForDeadUnconscious(updateHealth)) {
-            return "dead";
-        } else if(this._checkForInjured(updateHealth, maxHealth)) {
-            return "injured";
-        }
-    }
-
-    _checkActorHealthState(actor, update) {
-        const currentHealth = getProperty(actor, "data.data." + this.settings.healthAttribute + ".value");
-        const updateHealth = getProperty(update, "data." + this.settings.healthAttribute + ".value");
-        const maxHealth = getProperty(actor, "data.data." + this.settings.healthAttribute + ".max");
-
-        if (this._checkForDeadUnconscious(updateHealth)) {
-            return "dead";
-        } else if(this._checkForInjured(updateHealth, maxHealth)) {
-            return "injured";
-        }
-    }    
-
     _markHealthy(token) {
         const tokenEffects = getProperty(token, "data.effects");
+        const tokenOverlay = getProperty(token, "data.overlay");
+        const hasOverlay = getProperty(token, "data.overlay") != null;
         const hasEffects = getProperty(token, "data.effects.length") > 0;
-        const isInjured = Boolean(tokenEffects.find(e => e == this.settings.injuredIcon)) || false;
+        const wasInjured = Boolean(tokenEffects.find(e => e == this.settings.injuredIcon)) || false;
+        const wasDead = Boolean(tokenOverlay == this.settings.deadIcon);
 
-        if(hasEffects && isInjured) {
+        if(hasEffects && wasInjured) {
             token.toggleEffect(this.settings.injuredIcon);
+        }
+
+        if(hasOverlay && wasDead) {
+            token.toggleOverlay(this.settings.deadIcon);
         }
     }
 
     _markInjured(token) {
         const tokenEffects = getProperty(token, "data.effects");
+        const tokenOverlay = getProperty(token, "data.overlay");
+        const hasOverlay = getProperty(token, "data.overlay") != null;
         const hasEffects = getProperty(token, "data.effects.length") > 0;
         const isInjured = Boolean(tokenEffects.find(e => e == this.settings.injuredIcon)) || false;
+        const wasDead = Boolean(tokenOverlay == this.settings.deadIcon);
 
         if(!isInjured) {
             token.toggleEffect(this.settings.injuredIcon);
+        }
+
+        if(wasDead) {
+            token.toggleOverlay(this.settings.deadIcon);
         }
     }
 
@@ -1570,9 +1598,7 @@ class CUBInjuredAndDead {
         const isDead = (tokenOverlay == this.settings.deadIcon) ? true : false;
 
         if(hasEffects) {
-            for (let e of tokenEffects) {
-                token.toggleEffect(e);
-            }
+            token.update({"effects":[]});
         }
 
         if(!isDead) {
