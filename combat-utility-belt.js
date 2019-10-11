@@ -1559,8 +1559,8 @@ class CUBInjuredAndDead {
 
     _markHealthy(token) {
         const tokenEffects = getProperty(token, "data.effects");
-        const tokenOverlay = getProperty(token, "data.overlay");
-        const hasOverlay = getProperty(token, "data.overlay") != null;
+        const tokenOverlay = getProperty(token, "data.overlayEffect");
+        const hasOverlay = getProperty(token, "data.overlayEffect") != null;
         const hasEffects = getProperty(token, "data.effects.length") > 0;
         const wasInjured = Boolean(tokenEffects.find(e => e == this.settings.injuredIcon)) || false;
         const wasDead = Boolean(tokenOverlay == this.settings.deadIcon);
@@ -1576,8 +1576,8 @@ class CUBInjuredAndDead {
 
     _markInjured(token) {
         const tokenEffects = getProperty(token, "data.effects");
-        const tokenOverlay = getProperty(token, "data.overlay");
-        const hasOverlay = getProperty(token, "data.overlay") != null;
+        const tokenOverlay = getProperty(token, "data.overlayEffect");
+        const hasOverlay = getProperty(token, "data.overlayEffect") != null;
         const hasEffects = getProperty(token, "data.effects.length") > 0;
         const isInjured = Boolean(tokenEffects.find(e => e == this.settings.injuredIcon)) || false;
         const wasDead = Boolean(tokenOverlay == this.settings.deadIcon);
@@ -1594,11 +1594,13 @@ class CUBInjuredAndDead {
     _markDead(token) {
         const tokenEffects = getProperty(token, "data.effects");
         const hasEffects = getProperty(token, "data.effects.length") > 0;
-        const tokenOverlay = getProperty(token, "data.overlay");
+        const tokenOverlay = getProperty(token, "data.overlayEffect");
         const isDead = (tokenOverlay == this.settings.deadIcon) ? true : false;
 
         if(hasEffects) {
-            token.update({"effects":[]});
+            for(let e of tokenEffects) {
+                token.toggleEffect(e);
+            }
         }
 
         if(!isDead) {
@@ -1608,7 +1610,8 @@ class CUBInjuredAndDead {
 
     _hookOnUpdateToken() {
         Hooks.on("updateToken", (token, sceneId, update) => {
-            if(token.data.actorLink) { return }
+            const healthUpdate = getProperty(update, "actorData.data." + this.settings.healthAttribute + ".value");
+            if(healthUpdate == undefined || token.data.actorLink) { return }
             let tokenHealthState;
 
             if(this.settings.injured || this.settings.dead) {
@@ -1627,7 +1630,8 @@ class CUBInjuredAndDead {
 
    _hookOnUpdateActor() {
         Hooks.on("updateActor", (actor, update) => {
-            if(!this.settings.dead && !this.settings.injured) { return }
+            const healthUpdate = update["data." + this.settings.healthAttribute + ".value"];
+            if(healthUpdate == undefined || (!this.settings.dead && !this.settings.injured)) { return }
             const healthState = this._checkActorHealthState(actor, update);
             const activeToken = canvas.tokens.placeables.find(t => t.actor.id == actor.id);
 
