@@ -54,6 +54,14 @@ class CUBButler {
             }
         }
     }
+
+    static get HEALTH_STATES() {
+        return {
+            HEALTHY: "healthy",
+            INJURED: "injured",
+            DEAD: "dead"
+        }
+    }
 }
 
 /**
@@ -1518,9 +1526,9 @@ class CUBInjuredAndDead {
         const maxHealth = getProperty(token, "actor.data.data." + this.settings.healthAttribute + ".max");
 
         if(this._checkForDead(currentHealth)) {
-            return "dead";
+            return CUBButler.HEALTH_STATES.DEAD;
         } else if(this._checkForInjured(currentHealth, maxHealth)) {
-            return "injured";
+            return CUBButler.HEALTH_STATES.INJURED;
         }
     }
 
@@ -1535,9 +1543,9 @@ class CUBInjuredAndDead {
         const maxHealth = getProperty(actor, "data.data." + this.settings.healthAttribute + ".max");
 
         if (this._checkForDead(currentHealth)) {
-            return "dead";
+            return CUBButler.HEALTH_STATES.DEAD;
         } else if(this._checkForInjured(currentHealth, maxHealth)) {
-            return "injured";
+            return CUBButler.HEALTH_STATES.INJURED;
         }
     }
     
@@ -1637,9 +1645,9 @@ class CUBInjuredAndDead {
             if(this.settings.injured || this.settings.dead) {
                 tokenHealthState = this._checkTokenHealthState(token, update);
 
-                if(tokenHealthState == "dead") {
+                if(tokenHealthState == CUBButler.HEALTH_STATES.DEAD) {
                     this._markDead(token);
-                } else if (tokenHealthState == "injured") {
+                } else if (tokenHealthState == CUBButler.HEALTH_STATES.INJURED) {
                     this._markInjured(token);
                 } else {
                     this._markHealthy(token);
@@ -1664,10 +1672,10 @@ class CUBInjuredAndDead {
             
             if(activeToken == undefined) { return }
             switch (healthState) {
-                case "dead":
+                case CUBButler.HEALTH_STATES.DEAD:
                     this._markDead(activeToken);
                     break;
-                case "injured" :
+                case CUBButler.HEALTH_STATES.INJURED :
                     this._markInjured(activeToken);
                     break;
                 default:
