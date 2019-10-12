@@ -985,7 +985,7 @@ class CUBEnhancedConditions {
     */
     _hookOnUpdateToken(){
         Hooks.on("updateToken", (token, sceneId, update) => {
-            if(!this.settings.enhancedConditions || game.userId != this.callingUser || !game.user.isGM) { return }
+            if(!this.settings.enhancedConditions || game.userId != this.callingUser) { return }
             //console.log(token,sceneId,update);
             let effects = update.effects;
             
@@ -1024,13 +1024,12 @@ class CUBEnhancedConditions {
 
     /**
      * Checks statusEffect icons against mapping and returns matching journal entries
-     * @param {*} icons 
+     * @param {Array} icons 
      */
     async lookupEntryMapping(icons) {
         let map;
         let mapEntries = [];
         let conditionEntries = [];
-        let entry;
 
         if(this.map instanceof Map) {
             map = this.map.entries();
@@ -1041,6 +1040,7 @@ class CUBEnhancedConditions {
         }
         //iterate through incoming icons and check the conditionMap for the corresponding entry
         for (let i of icons){
+            let entry;
             try {
                 for (let [mc, mi, me] of map) {
                     if(mi == i) {
@@ -1049,7 +1049,6 @@ class CUBEnhancedConditions {
                         } else {
                             entry = mc;
                         }
-                        
                     }
                 }
             } catch (e) {
