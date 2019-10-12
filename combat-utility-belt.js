@@ -521,6 +521,7 @@ class CUBHideNPCNames {
  * Builds a mapping between status icons and journal entries that represent conditions
  */
 class CUBEnhancedConditions {
+    
     constructor(){
         this.settings = {
             enhancedConditions : CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.ConditionsN + ")", this.SETTINGS_META.enhancedConditions),
@@ -534,7 +535,9 @@ class CUBEnhancedConditions {
             //createEntries : CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_META.CreateEntriesN + ")", this.SETTINGS_META.createEntries),
         }
         this.coreStatusIcons = this.coreStatusIcons || this._backupCoreStatusIcons();
+        this.callingUser = "";
         this._updateStatusIcons();
+        this._hookOnPreUpdateToken();
         this._hookOnUpdateToken();
         this._hookOnRenderTokenHUD();
     }
@@ -969,16 +972,27 @@ class CUBEnhancedConditions {
     }
 
     /**
+     * Hook on the pre token update to get the calling user id
+     */
+    _hookOnPreUpdateToken() {
+        Hooks.on("preUpdateToken", (token, sceneId, update) => {
+            this.callingUser = game.userId;
+        });
+    }
+
+    /**
     * Hooks on token updates. If the update includes effects, calls the journal entry lookup
     */
     _hookOnUpdateToken(){
         Hooks.on("updateToken", (token, sceneId, update) => {
+            if(!this.settings.enhancedConditions || game.userId != this.callingUser || !game.user.isGM) { return }
             //console.log(token,sceneId,update);
             let effects = update.effects;
             
             //If the update has effects in it, lookup mapping and set the current token
-            if(game.user.isGM && this.settings.enhancedConditions && effects){
+            if(effects){
                 this.currentToken = token;
+                this.callingUser = ""
                 return this.lookupEntryMapping(effects);
             }
         });
@@ -1395,6 +1409,7 @@ class CUBEnhancedConditionsConfig extends FormApplication {
 
 //auto bloodied and dead
 class CUBInjuredAndDead {
+    
     constructor(){
         this.settings = {
             injured: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.InjuredN + ")", this.SETTINGS_META.injured),
@@ -1406,6 +1421,8 @@ class CUBInjuredAndDead {
         }
 
         this.currentActor;
+        this.callingUser = "";
+        this._hookOnPreUpdateToken();
         this._hookOnUpdateToken();
         this._hookOnUpdateActor();
     }
@@ -1632,6 +1649,15 @@ class CUBInjuredAndDead {
     }
 
     /**
+     * Hook on pre token update to get the calling user Id
+     */
+    _hookOnPreUpdateToken() {
+        Hooks.on("preUpdateToken", (token, sceneId, update) => {
+            this.callingUser = game.userId;
+        });
+    }
+
+    /**
      * Hook on the token update,
      * check the health state of the token,
      * then mark it appropriately
@@ -1639,7 +1665,8 @@ class CUBInjuredAndDead {
     _hookOnUpdateToken() {
         Hooks.on("updateToken", (token, sceneId, update) => {
             const healthUpdate = getProperty(update, "actorData.data." + this.settings.healthAttribute + ".value");
-            if(healthUpdate == undefined || token.data.actorLink) { return }
+            if(game.userId != this.callingUser || healthUpdate == undefined || token.data.actorLink) { return }
+
             let tokenHealthState;
 
             if(this.settings.injured || this.settings.dead) {
@@ -1653,6 +1680,8 @@ class CUBInjuredAndDead {
                     this._markHealthy(token);
                 }
             }
+
+            this.callingUser = "";
         });
     }
 
