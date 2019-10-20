@@ -1908,7 +1908,12 @@ class CUBCombatTracker {
      */
     _panToToken(tracker, update) {
         if ((game.user.isGM && this.settings.panGMOnly) || !this.settings.panGMOnly) {
-            let token = tracker.turns[update.turn].token;
+            let token;
+            if (hasProperty(update, 'turn')) {
+                token = tracker.turns[update.turn].token;
+            } else {
+                token = tracker.turns[0].token;
+            }
             let actor = game.actors.get(token.actorId);
             if (game.user.isGM || actor.data.permission[game.userId] === 3) {
                 let xCoord = token.x;
