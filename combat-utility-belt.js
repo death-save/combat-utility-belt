@@ -1933,7 +1933,12 @@ class CUBCombatTracker {
      */
     _selectToken(tracker, update) {
         if ((game.user.isGM && this.settings.selectGMOnly) || !this.settings.selectGMOnly) {
-            let token = tracker.turns[update.turn].token;
+            let token;
+            if (hasProperty(update, 'turn')) {
+                token = tracker.turns[update.turn].token;
+            } else {
+                token = tracker.turns[0].token;
+            }
             const canvasToken = canvas.tokens.get(token.id);
             canvasToken.control();
         }
