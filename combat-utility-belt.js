@@ -92,6 +92,7 @@ class CUBSignal {
             CUB.rerollInitiative = new CUBRerollInitiative();
             CUB.injuredAndDead = new CUBInjuredAndDead();
             CUB.combatTracker = new CUBCombatTracker();
+            CUB.tokenUtility = new CUBTokenUtility();
             CUB.enhancedConditions._toggleSidebarButtonDisplay(CUB.enhancedConditions.settings.enhancedConditions);
             if (CUB.combatTracker.settings.xpModule) {
                 Combat.prototype.endCombat = CUBCombatTracker.prototype.endCombat;
@@ -2052,6 +2053,167 @@ class CUBCombatTracker {
                 },
                 default: 'yes'
             }).render(true);
+        });
+    }
+}
+
+class CUBTokenUtility {
+    constructor() {
+        this.settings = {
+            mightySummoner: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.MightySummonerN + ")", this.SETTINGS_META.mightySummoner),
+            autoRollHostileHp: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.AutoRollHostileHpN + ")", this.SETTINGS_META.autoRollHostileHp)
+        }
+        this._hookCreateToken();
+    }
+
+    get GADGET_NAME() {
+        return "token-utility";
+    }
+
+    get SETTINGS_DESCRIPTORS() {
+        return {
+            MightySummonerN: "--Mighty Summoner--",
+            MightySummonerH: "Automatically check to see if token owner of NEUTRAL actor also owns an actor with the Mighty Summoner feat. Automatically calculates and adds new HP formula and rolls HP for token on canvas drop",
+            AutoRollHostileHpN: "--Auto Roll Hostile--",
+            AutoRollHostileHpH: "Automatically roll hp for hostile tokens on canvas drop"
+        }
+    }
+
+    get DEFAULT_CONFIG() {
+        return {
+            mightySummoner: false,
+            AutoRollHostileHp: false
+        }
+    }
+
+    get SETTINGS_META() {
+        return {
+            mightySummoner: {
+                name: this.SETTINGS_DESCRIPTORS.MightySummonerN,
+                hint: this.SETTINGS_DESCRIPTORS.MightySummonerH,
+                default: this.DEFAULT_CONFIG.mightySummoner,
+                scope: "world",
+                type: Boolean,
+                config: true,
+                onChange: s => {
+                    this.settings.mightySummoner = s;
+                }
+            },
+            autoRollHostileHp: {
+                name: this.SETTINGS_DESCRIPTORS.AutoRollHostileHpN,
+                hint: this.SETTINGS_DESCRIPTORS.AutoRollHostileHpH,
+                default: this.DEFAULT_CONFIG.autoRollHostileHp,
+                scope: "world",
+                type: Boolean,
+                config: true,
+                onChange: s => {
+                    this.settings.autoRollHostileHp = s;
+                }
+            }
+        }
+    }
+
+    _summonerFeats(token, sceneId, update) {
+        if (!this._actorHasFeat(token.actor)) {
+            let owners = this._getOwners(token.actor)
+            let actors;
+            owners.forEach(owner => {
+                let owned = this._getActorsOwned(owner)
+                if (actors === undefined) {
+                    actors = owned
+                } else {
+                    actors.push(owned);
+                }
+            });
+            let summoners;
+            if (actors !== undefined) {
+                summoners = actors.find(actor => this._actorHasFeat(actor));
+            }
+            if (summoners !== undefined) {
+                new Dialog({
+                    title: `Feat Summoning`,
+                    content: '<p>Mighty Summoner found. Is this monster being summoned?</p>',
+                    buttons: {
+                        yes: {
+                            icon: '<i class="fas fa-check"></i>',
+                            label: 'Yes',
+                            callback: () => {
+                                this._addFeatHealth(token, sceneId, update);
+                            }
+                        },
+                        no: {
+                            icon: '<i class="fas fa-times"></i>',
+                            label: 'No'
+                        }
+                    },
+                    default: 'yes'
+                }).render(true);
+            }
+        }
+    }
+
+    _actorHasFeat(actor) {
+        if (hasProperty(actor, 'data.items')) {
+            return (actor.data.items.find(item => (item.type === 'feat' && item.name.includes('Mighty Summoner'))) !== undefined);
+        }
+    }
+
+    _getOwners(actor) {
+        
+        return Object.keys(actor.data.permission).filter(item => item != 'default').filter(user => actor.data.permission[user] === 3);;
+    }
+
+    _getActorsOwned(owner) {
+        return game.actors.entities.filter(actor => hasProperty(actor, 'data.permission.' + owner));
+    }
+    
+    _rerollTokenHp(token, sceneId) {
+        let formula = token.actor.data.data.attributes.hp.formula
+        let r = new Roll(formula);
+        r.roll();
+        let hp = r.total;
+        let update = {
+            actorData: {
+                data: {
+                    attributes: {
+                        hp: {
+                            value: hp,
+                            max: hp
+                        }
+                    }
+                }
+            }
+        }
+        canvas.tokens.get(token.data.id).update(sceneId, update)
+    }
+
+    _addFeatHealth(token, sceneId, update) {
+        let formula = token.actor.data.data.attributes.hp.formula;
+        let match = formula.match(/\d+/)[0]
+        if (match !== undefined) {
+            let actor = token.actor;
+            formula += ' + ' + (match * 2);
+            actor.data.data.attributes.hp.formula = formula;
+            update.actorData = {
+                data: {
+                    attributes: {
+                        hp: {
+                            formula: formula,
+                        }
+                    }
+                }
+            }
+            this._rerollTokenHp(token, sceneId)
+        }
+    }
+    
+    _hookCreateToken() {
+        Hooks.on("createToken", (token, sceneId, update) => {
+            if (token.data.disposition === -1 && this.settings.autoRollHostileHp && !token.actor.isPC) {
+                this._rerollTokenHp(token, sceneId)
+            } else if (this.settings.mightySummoner) {
+                this._summonerFeats(token, sceneId, update);
+            }
         });
     }
 }
