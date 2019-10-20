@@ -1807,13 +1807,13 @@ class CUBCombatTracker {
             PanOnNextTurnN: "--Pan to token--",
             PanOnNextTurnH: "Pan the canvas to the token whose turn it is in the combat tracker",
             PanGMOnlyN: "Pan for GM Only",
-            PanGMOnlyH: "Only pan to token for the GM. Players will need to refresh!",
+            PanGMOnlyH: "Only pan to token for the GM.",
             PanPlayersN: "Pan owned only",
             PanPlayersH: "Pan players to their owned tokens only",
             SelectOnNextTurnN: "--Select Token--",
             SelectOnNextTurnH: "Select the token whose turn it is in the combat tracker.",
             SelectGMOnlyN: "Select for GM Only",
-            SelectGMOnlyH: "Only select token for the GM. Players will need to refresh! If enabled for players, it will still only auto select owned tokens",
+            SelectGMOnlyH: "Only select token for the GM. If enabled for players, it will still only auto select owned tokens",
             XPModuleN: "--Enable XP Module--",
             XPModuleH: "REQUIRES REFRESH! Adds an option at the end of combat to automatically distribute xp from the combat to the players"
         }
