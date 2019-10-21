@@ -2129,7 +2129,7 @@ class CUBTokenUtility {
             if (actors !== undefined) {
                 summoners = actors.find(actor => this._actorHasFeat(actor));
             }
-            if (summoners !== undefined) {
+            if (summoners !== undefined && game.user.isGM) {
                 new Dialog({
                     title: `Feat Summoning`,
                     content: '<p>Mighty Summoner found. Is this monster being summoned?</p>',
