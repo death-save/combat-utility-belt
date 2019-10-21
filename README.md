@@ -1,4 +1,8 @@
 # Combat Utility Belt **Beta**
+**Authors**
+Evan Clarke (errational#2007 on Foundry discord)
+Reaver#4634 on Foundry discord
+
 [Installation](#Installation)    
 [Module Manifest](https://raw.githubusercontent.com/death-save/combat-utility-belt/beta/module.json)
 
@@ -78,6 +82,16 @@
  - [ ] 13th Age (untested)
  - [X] Simple/Other
 
+## Pan/Select Token
+*full write up coming soon*
+
+## Calculate Encounter XP
+*full write up coming soon*
+
+## Auto Roll Token HP
+*full write up coming soon*
+ 
+ 
  ---
 
  ## Installation
@@ -117,7 +131,6 @@ A big thanks to trdischat#2123 on the Foundry Discord for the awesome set of con
 Thanks to hooking#0492 for the Pathfinder 2nd Edition condition mapping for use with his Pathfinder 2nd Edition system!
 
 ## Donations
+Evan: [![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.me/evanc)
 
-I work on Foundry modules as a hobby. If you'd like to support my work you can use the link below:
-
-[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.me/evanc)
+Reaver: [![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.me/reaver01)
