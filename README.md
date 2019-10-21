@@ -1,5 +1,5 @@
 # Combat Utility Belt **Beta**
-**Authors**: Evan Clarke (errational#2007 on Foundry discord) & Reaver#4634 on Foundry discord
+**Authors**: Evan Clarke (errational#2007 on Foundry discord) & Jordan Williams (Reaver#4634 on Foundry discord)
 
 [Installation](#Installation)    
 [Module Manifest](https://raw.githubusercontent.com/death-save/combat-utility-belt/beta/module.json)
