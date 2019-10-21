@@ -1173,7 +1173,7 @@ class CUBEnhancedConditions {
     async outputChatMessage(entries) {
         const chatUser = game.userId;
         const token = this.currentToken;
-        const actor = await this.lookupTokenActor(token.actor.id);
+        //const actor = await this.lookupTokenActor(token.actor.id);
         const chatType = CHAT_MESSAGE_TYPES.OTHER;
         let tokenSpeaker = {};
         let chatContent;
@@ -1184,17 +1184,17 @@ class CUBEnhancedConditions {
         //console.log("current actor",actor);
         //console.log("token id",this.tokenData.id);
 
-        if (actor) {
-            //console.log("Speaker is an actor:",actor);
-            tokenSpeaker = ChatMessage.getSpeaker({
-                "actor": actor
-            });
-        } else {
-            //console.log("Speaker is a token:",token);
-            tokenSpeaker = ChatMessage.getSpeaker({
-                "token": token
-            });
-        }
+        //if (actor) {
+        //console.log("Speaker is an actor:",actor);
+        //    tokenSpeaker = ChatMessage.getSpeaker({
+        //        "actor": actor
+        //    });
+        //} else {
+        //console.log("Speaker is a token:",token);
+        tokenSpeaker = ChatMessage.getSpeaker({
+            "token": token
+        });
+        //}
 
         //create some boiler text for prepending to the conditions array
         if (entries.length > 0) {
@@ -2159,14 +2159,14 @@ class CUBTokenUtility {
     }
 
     _getOwners(actor) {
-        
+
         return Object.keys(actor.data.permission).filter(item => item != 'default').filter(user => actor.data.permission[user] === 3);;
     }
 
     _getActorsOwned(owner) {
         return game.actors.entities.filter(actor => hasProperty(actor, 'data.permission.' + owner));
     }
-    
+
     _rerollTokenHp(token, sceneId) {
         let formula = token.actor.data.data.attributes.hp.formula
         let r = new Roll(formula);
@@ -2206,7 +2206,7 @@ class CUBTokenUtility {
             this._rerollTokenHp(token, sceneId)
         }
     }
-    
+
     _hookCreateToken() {
         Hooks.on("createToken", (token, sceneId, update) => {
             if (token.data.disposition === -1 && this.settings.autoRollHostileHp && !token.actor.isPC) {
