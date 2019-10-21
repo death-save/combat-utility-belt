@@ -1941,7 +1941,9 @@ class CUBCombatTracker {
                 token = tracker.turns[0].token;
             }
             const canvasToken = canvas.tokens.get(token.id);
-            canvasToken.control();
+            if ((hasProperty(canvasToken.actor.data.permission, game.userId) && canvasToken.actor.data.permission[game.userId] > 1) || game.user.isGM) {
+                canvasToken.control();
+            }
         }
     }
 
@@ -2159,7 +2161,6 @@ class CUBTokenUtility {
     }
 
     _getOwners(actor) {
-
         return Object.keys(actor.data.permission).filter(item => item != 'default').filter(user => actor.data.permission[user] === 3);;
     }
 
