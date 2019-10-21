@@ -1,5 +1,5 @@
 # Combat Utility Belt **Beta**
-**Authors**: Evan Clarke (errational#2007 on Foundry discord) & Reaver#4634 on Foundry discord
+**Authors**: Evan Clarke (errational#2007 on Foundry discord) & Jordan Williams (Reaver#4634 on Foundry discord)
 
 [Installation](#Installation)    
 [Module Manifest](https://raw.githubusercontent.com/death-save/combat-utility-belt/beta/module.json)
@@ -131,4 +131,4 @@ Thanks to hooking#0492 for the Pathfinder 2nd Edition condition mapping for use 
 ## Donations
 Evan: [![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.me/evanc)
 
-Reaver: [![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.me/reaver01)
+Jordan: [![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.me/reaver01)
