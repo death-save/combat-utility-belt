@@ -1951,16 +1951,17 @@ class CUBCombatTracker {
      * Gives XP to the living PCs in the turn tracker based on enemies killed
      * @param {Object} tracker
      */
-    _giveXP(tracker) {
-        let defeatedEnemies = tracker.turns.filter(object => (!object.actor.isPC && object.defeated && object.token.disposition === -1));
-        let players = tracker.turns.filter(object => (object.actor.isPC && !object.defeated));
+    _giveXP(encounters, combatId) {
+        const tracker = encounters.entities.find(combat => combat.data._id === combatId);
+        const defeatedEnemies = tracker.turns.filter(object => (!object.actor.isPC && object.defeated && object.token.disposition === -1));
+        const players = tracker.turns.filter(object => (object.actor.isPC && !object.defeated));
         let experience = 0;
         if (defeatedEnemies.length > 0 && this.addExperience) {
             defeatedEnemies.forEach(enemy => {
                 experience += enemy.actor.data.data.details.xp.value;
             });
             if (players.length > 0) {
-                let dividedExperience = Math.floor(experience / players.length);
+                const dividedExperience = Math.floor(experience / players.length);
                 let experienceMessage = '<b>Experience Awarded!</b><p><b>' + dividedExperience + '</b> added to:</br>';
                 players.forEach(player => {
                     const actor = game.actors.entities.find(actor => actor.id === player.actor.data._id);
@@ -2013,9 +2014,9 @@ class CUBCombatTracker {
      * Gives players in the combat tracker xp for the combat
      */
     _hookOnPreDeleteCombat() {
-        Hooks.on("preDeleteCombat", (tracker, update) => {
+        Hooks.on("preDeleteCombat", (encounters, combatId) => {
             if (this.settings.xpModule) {
-                this._giveXP(tracker)
+                this._giveXP(encounters, combatId)
             }
         });
     }
