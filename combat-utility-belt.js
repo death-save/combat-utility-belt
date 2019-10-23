@@ -404,6 +404,7 @@ class CUBRerollInitiative {
             await combat.resetAll();
             await combat.rollAll();
         }
+        this.callingUser = null;
     }
 }
 
