@@ -87,9 +87,7 @@ class CUBSignal {
 
     static hookOnInit() {
         Hooks.on("init", () => {
-            //CUB.sidekick = new CUBSidekick();
             CUB.hideNPCNames = new CUBHideNPCNames();
-            //CUBEnhancedConditions._createSidebarButton();
             CUBSidekick.handlebarsHelpers();
         });
     }
@@ -495,7 +493,8 @@ class CUBHideNPCNames {
 
     /**
      * Hooks on the Combat Tracker render to replace the NPC names
-     * @todo move hooks to signal class
+     * @param {Object} app - the Application instance
+     * @param {Object} html - jQuery html object
      */
     _hookOnRenderCombatTracker(app, html) {
         //console.log(app,html);
@@ -536,6 +535,7 @@ class CUBHideNPCNames {
 
     /**
      * Replaces instances of hidden NPC name in chat
+     * @todo: If a player owns the message speaker - reveal the message
      */
     _hookOnRenderChatMessage(message, data, html) {
         //killswitch for execution of hook logic
@@ -613,7 +613,7 @@ class CUBEnhancedConditions {
 
     /**
      * Defines the maps used in the gadget
-     * @todo: needs a redesign -- programmatic matching to systems?
+     * @todo: needs a redesign -- change to arrays of objects?
      */
     get DEFAULT_MAPS() {
         const dnd5eMap = [
@@ -1105,81 +1105,7 @@ class CUBEnhancedConditions {
     }
 
     /**
-     * @name lookupConditionMapping
-     * @description check icon <-> condition mapping and call condition journal entry lookup against matches
-     * @todo 
-     * @parameter {Object} icons
-     */
-    /* deprecated, remove?
-    async lookupConditionMapping(icons){
-        let conditions = [];
-        let condition;
-        let entries;
-        //console.log(conditionMapping);
-
-        if(this.map instanceof Map) {
-            entries = this.map.entries();
-        } else if(this.map instanceof Array) {
-            entries = this.map;
-        } else {
-            throw "condition map is not iterable";
-        }
-        //iterate through incoming icons and check the conditionMap for the corresponding entry
-        for (let i of icons){
-            try {
-                for (let [k,v] of entries) {
-                    if(v == i) {
-                        condition = k;
-                    }
-                }
-            } catch (e) {
-                console.log(e);
-            } finally {
-                conditions.push(condition);
-            }
-             
-        }
-        console.log(conditions);
-        return this.lookupConditionEntries(conditions);
-    }
-    */
-
-
-    /**
-     * @name lookupConditionEntries
-     * @description lookup condition journal/compendium entry and call chat output if option set
-     * @todo rebuild to allow switching between journal/compendium lookup
-     */
-    /* deprecated, remove?
-    async lookupConditionEntries(conditions){
-        let conditionEntries = [];
-        let missingEntries = [];
-
-        for(let c of conditions){
-            if(c){
-                let re = new RegExp(c,'i');
-                let entry = await game.journal.entities.find(j => j.name.match(re));
-             
-                if(!entry && this.settings.createEntries && game.user.isGM) {
-                    missingEntries.push(c);
-                    entry = await this.constructor._createJournalEntry(c);
-                }
-                console.log(entry);
-                conditionEntries.push(entry);
-            }
-        }
-
-        console.log(conditionEntries);
-        if(this.settings.output && conditionEntries.length > 0){
-            return this.outputChatMessage(conditionEntries);
-        } else {
-            return;
-        }       
-    }
-    */
-
-    /**
-     * @todo if flag is set: output condition text to chat -- i think this has to be async
+     * Output condition entries to chat
      */
     async outputChatMessage(entries) {
         const chatUser = game.userId;
@@ -1238,8 +1164,6 @@ class CUBEnhancedConditions {
         }
     }
 
-
-
     /**
      * looks up the corresponding actor entity for the token
      * @param {String} id 
@@ -1269,7 +1193,9 @@ class CUBEnhancedConditions {
 
 }
 
-//enhanced conditions config
+/**
+ * Form application for managing mapping of Conditions to Icons and JournalEntries
+ */
 class CUBEnhancedConditionsConfig extends FormApplication {
     constructor() {
         super();
@@ -1289,10 +1215,6 @@ class CUBEnhancedConditionsConfig extends FormApplication {
     }
 
     getData() {
-        //map = game.settings.get(cubGetModuleName(), CUBEnhancedConditions.GADGET_NAME + "(" + CUBEnhancedConditions.SETTINGS.MapsN + ")");
-        //const maps = CUBSidekick.getGadgetSetting(this.data.GADGET_NAME + "(" + this.data.SETTINGS_DESCRIPTORS.MapsN + ")");
-        //const system = CUBSidekick.getGadgetSetting(this.data.GADGET_NAME + "(" + this.data.SETTINGS_DESCRIPTORS.SystemNameN + ")");
-        //const conditionMapArray = Array.from(maps[system]);
         let entries = {};
 
         for (let e of game.journal.entities) {
@@ -1332,7 +1254,7 @@ class CUBEnhancedConditionsConfig extends FormApplication {
 
 
         //write it back to the relevant condition map
-        //todo: maybe switch to a switch
+        //@todo: maybe switch to a switch
         for (let e in formdata) {
             if (e.match(conditionRegex)) {
                 conditions.push(formdata[e]);
@@ -1346,11 +1268,6 @@ class CUBEnhancedConditionsConfig extends FormApplication {
         for (let i = 0; i <= conditions.length - 1; i++) {
             newMap.push([conditions[i], icons[i], entries[i]]);
         }
-        /*
-                mergeMapsSetting = mergeObject(oldMapsSetting, {
-                    [system]: newMap
-                });
-        */
 
         CUBSidekick.setGadgetSetting(this.data.GADGET_NAME + "(" + this.data.SETTINGS_DESCRIPTORS.MapsN + ")" + "." + this.data.system, newMap);
 
@@ -1412,9 +1329,6 @@ class CUBEnhancedConditionsConfig extends FormApplication {
             const splitName = ev.target.name.split("-");
             const row = splitName[splitName.length - 1];
 
-            //CUB.enhancedConditions.settings.maps[this.data.system][row][1] = ev.target.val();
-            //this.render(true);
-
             //target the icon
             let icon = $(this.form).find("img[name='icon-" + row);
             icon.attr("src", ev.target.value);
@@ -1431,7 +1345,9 @@ class CUBEnhancedConditionsConfig extends FormApplication {
 
 }
 
-//auto bloodied, dead, and marking dead in combat tracker
+/**
+ * Mark a token injured or dead based on threshold
+ */
 class CUBInjuredAndDead {
 
     constructor() {
@@ -1709,6 +1625,9 @@ class CUBInjuredAndDead {
      * Hook on the token update,
      * check the health state of the token,
      * then mark it appropriately
+     * @param {Object} token
+     * @param {String} sceneId
+     * @param {Object} update
      */
     _hookOnUpdateToken(token, sceneId, update) {
         const healthUpdate = getProperty(update, "actorData.data." + this.settings.healthAttribute + ".value");
@@ -1742,6 +1661,9 @@ class CUBInjuredAndDead {
      * Hook on the actor update,
      * check the health state of the actor,
      * then mark the active token appropriately
+     * @param {Object} token
+     * @param {String} sceneId
+     * @param {Object} update
      */
     _hookOnUpdateActor(actor, update) {
         const healthUpdate = update["data." + this.settings.healthAttribute + ".value"];
@@ -2178,4 +2100,7 @@ class CUBTokenUtility {
     }
 }
 
+/**
+ * Start the module
+ */
 CUBSignal.lightUp();
