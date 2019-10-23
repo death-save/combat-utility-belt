@@ -79,6 +79,7 @@ class CUBSignal {
         CUBSignal.hookOnUpdateActor();
         CUBSignal.hookOnPreUpdateCombat();
         CUBSignal.hookOnUpdateCombat();
+        CUBSignal.hookOnUpdateCombatAsync();
         CUBSignal.hookOnPreDeleteCombat();
         CUBSignal.hookOnRenderCombatTracker();
         CUBSignal.hookOnRenderChatMessage();
@@ -146,6 +147,7 @@ class CUBSignal {
 
     static hookOnPreUpdateCombat() {
         Hooks.on("preUpdateCombat", (combat, update) => {
+            CUB.rerollInitiative.callingUser = game.userId;
             CUB.combatTracker.callingUser = game.userId;
         });
     }
@@ -153,6 +155,12 @@ class CUBSignal {
     static hookOnUpdateCombat() {
         Hooks.on("updateCombat", (tracker, update) => {
             CUB.combatTracker._hookOnUpdateCombat(tracker, update);
+        });
+    }
+
+    static async hookOnUpdateCombatAsync() {
+        Hooks.on("updateCombat", async (combat, update) => {
+            CUB.rerollInitiative._hookOnUpdateCombat(combat,update);
         });
     }
 
@@ -321,8 +329,7 @@ class CUBRerollInitiative {
         this.settings = {
             reroll: CUBSidekick.initGadgetSetting(this.GADGET_NAME, this.SETTINGS_META)
         };
-        this._hookUpdateCombat();
-        this.currentCombatRound = null;
+        this.callingUser = null;
     }
 
     get GADGET_NAME() {
@@ -359,6 +366,7 @@ class CUBRerollInitiative {
 
     }
 
+    /*
     resetAndReroll(combat, update) {
         const roundChanged = Boolean(getProperty(update, "round"));
         if (roundChanged) {
@@ -382,43 +390,20 @@ class CUBRerollInitiative {
     _rollInitiative(combatant) {
         //call an initiative die roll for the combatant
     }
+    /*
 
-    /**
-     * Hook on update of Combat class. 
+    /** 
      * Reroll initiative if requirements met
      */
-    async _hookUpdateCombat() {
-        Hooks.on("updateCombat", (async (combat, update) => {
-            const roundUpdate = Boolean(getProperty(update, "round"));
+    async _hookOnUpdateCombat(combat, update) {
+        const roundUpdate = Boolean(getProperty(update, "round"));
 
-            //only proceed if there is an update to the round
-            if (roundUpdate) {
-
-                /**
-                 *  firstly is the specified module setting turned on (eg. is rerolling enabled), 
-                 *  then test for the presence of the combat object's previous values and an update object,
-                 *  check that the round props are numbers,
-                 *  to avoid any hysteria at the start of combat, only reroll if the update round is gt or equal to 1
-                 *  finally test if the update's round is greater than the previous combat round 
-                 */
-                if (game.user.isGM &&
-                    this.settings.reroll &&
-                    (combat.previous && update) &&
-                    !isNaN(combat.previous.round || update.round) &&
-                    update.round >= 1 &&
-                    update.round > combat.previous.round) {
-                    try {
-                        await combat.resetAll();
-                        await combat.rollAll();
-                        this.currentCombatRound = combat.round;
-                    } catch (e) {
-                        //console.log(e);
-                    }
-
-                }
-            }
-
-        }));
+        if (this.callingUser != game.userId || !game.user.isGM || !this.settings.reroll || !roundUpdate) return;
+        
+        if (update.round >= 1 && update.round > combat.previous.round) {
+            await combat.resetAll();
+            await combat.rollAll();
+        }
     }
 }
 
