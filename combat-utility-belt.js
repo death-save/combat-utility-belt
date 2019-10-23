@@ -52,7 +52,7 @@ class CUBButler {
                 healthAttribute: "health",
                 initiative: "initiative"
             }
-        }
+        };
     }
 
     static get HEALTH_STATES() {
@@ -60,7 +60,7 @@ class CUBButler {
             HEALTHY: "healthy",
             INJURED: "injured",
             DEAD: "dead"
-        }
+        };
     }
 }
 
@@ -72,16 +72,23 @@ class CUBSignal {
         CUBSignal.hookOnInit();
         CUBSignal.hookOnReady();
         CUBSignal.hookOnRenderSettings();
-        CUBSignal.hookOnPreUpdateCombat();
         CUBSignal.hookOnRenderTokenHUD();
+        CUBSignal.hookOnCreateToken();
+        CUBSignal.hookOnPreUpdateToken();
+        CUBSignal.hookOnUpdateToken();
+        CUBSignal.hookOnUpdateActor();
+        CUBSignal.hookOnPreUpdateCombat();
+        CUBSignal.hookOnUpdateCombat();
+        CUBSignal.hookOnUpdateCombatAsync();
+        CUBSignal.hookOnPreDeleteCombat();
+        CUBSignal.hookOnRenderCombatTracker();
+        CUBSignal.hookOnRenderChatMessage();
     }
 
 
     static hookOnInit() {
         Hooks.on("init", () => {
-            //CUB.sidekick = new CUBSidekick();
             CUB.hideNPCNames = new CUBHideNPCNames();
-            //CUBEnhancedConditions._createSidebarButton();
             CUBSidekick.handlebarsHelpers();
         });
     }
@@ -106,15 +113,72 @@ class CUBSignal {
         });
     }
 
-    static hookOnPreUpdateCombat() {
-        //Hooks.on("preUpdateCombat", (combat, update) => {
-        //CUB.rerollInitiative.resetAndReroll(combat, update);
-        //});
-    }
-
     static hookOnRenderTokenHUD() {
         Hooks.on("renderTokenHUD", (app, html, data) => {
+            CUB.enhancedConditions._hookOnRenderTokenHUD(app, html, data);
+        });
+    }
 
+    static hookOnCreateToken() {
+        Hooks.on("createToken", (token, sceneId, update) => {
+            CUB.tokenUtility._hookOnCreateToken(token, sceneId, update);
+        });
+    }
+
+    static hookOnPreUpdateToken() {
+        Hooks.on("preUpdateToken", (token, sceneId, update) => {
+            CUB.injuredAndDead.callingUser = game.userId;
+            CUB.enhancedConditions.callingUser = game.userId;
+        });
+    }
+
+    static hookOnUpdateToken() {
+        Hooks.on("updateToken", (token, sceneId, update) => {
+            CUB.enhancedConditions._hookOnUpdateToken(token, sceneId, update);
+            CUB.injuredAndDead._hookOnUpdateToken(token, sceneId, update);
+        });
+    }
+
+    static hookOnUpdateActor() {
+        Hooks.on("updateActor", (actor, update) => {
+            CUB.injuredAndDead._hookOnUpdateActor(actor, update);
+        });
+    }
+
+    static hookOnPreUpdateCombat() {
+        Hooks.on("preUpdateCombat", (combat, update) => {
+            CUB.rerollInitiative.callingUser = game.userId;
+            CUB.combatTracker.callingUser = game.userId;
+        });
+    }
+
+    static hookOnUpdateCombat() {
+        Hooks.on("updateCombat", (tracker, update) => {
+            CUB.combatTracker._hookOnUpdateCombat(tracker, update);
+        });
+    }
+
+    static async hookOnUpdateCombatAsync() {
+        Hooks.on("updateCombat", async (combat, update) => {
+            CUB.rerollInitiative._hookOnUpdateCombat(combat,update);
+        });
+    }
+
+    static hookOnPreDeleteCombat() {
+        Hooks.on("preDeleteCombat", (encounters, combatId) => {
+            CUB.combatTracker._hookOnPreDeleteCombat(encounters, combatId);
+        });
+    }
+
+    static hookOnRenderCombatTracker() {
+        Hooks.on("renderCombatTracker", (app, html) => {
+            CUB.hideNPCNames._hookOnRenderCombatTracker(app, html);
+        });
+    }
+
+    static hookOnRenderChatMessage() {
+        Hooks.on("renderChatMessage", (message, data, html) => {
+            CUB.hideNPCNames._hookOnRenderChatMessage(message, data, html);
         });
     }
 }
@@ -232,9 +296,7 @@ class CUBSidekick {
             //console.log(CUBButler.MODULE_NAME, key, value);
             newSettingValue = await game.settings.set(CUBButler.MODULE_NAME, key, value);
         }
-
         return newSettingValue;
-
     }
 
     /**
@@ -253,7 +315,6 @@ class CUBSidekick {
             for (let a in arguments) {
                 result += (typeof arguments[a] === "string" ? arguments[a] : "");
             }
-
             return result;
         });
     }
@@ -267,9 +328,8 @@ class CUBRerollInitiative {
     constructor() {
         this.settings = {
             reroll: CUBSidekick.initGadgetSetting(this.GADGET_NAME, this.SETTINGS_META)
-        }
-        this._hookUpdateCombat();
-        this.currentCombatRound = null;
+        };
+        this.callingUser = null;
     }
 
     get GADGET_NAME() {
@@ -280,14 +340,14 @@ class CUBRerollInitiative {
     get DEFAULT_CONFIG() {
         return {
             reroll: false
-        }
+        };
     }
 
     get SETTINGS_DESCRIPTORS() {
         return {
             RerollN: "--Reroll Initiative--",
             RerollH: "Reroll initiative for each combatant every round"
-        }
+        };
 
     }
 
@@ -302,10 +362,11 @@ class CUBRerollInitiative {
             onChange: s => {
                 this.settings.reroll = s;
             }
-        }
+        };
 
     }
 
+    /*
     resetAndReroll(combat, update) {
         const roundChanged = Boolean(getProperty(update, "round"));
         if (roundChanged) {
@@ -329,43 +390,20 @@ class CUBRerollInitiative {
     _rollInitiative(combatant) {
         //call an initiative die roll for the combatant
     }
+    /*
 
-    /**
-     * Hook on update of Combat class. 
+    /** 
      * Reroll initiative if requirements met
      */
-    async _hookUpdateCombat() {
-        Hooks.on("updateCombat", (async (combat, update) => {
-            const roundUpdate = Boolean(getProperty(update, "round"))
+    async _hookOnUpdateCombat(combat, update) {
+        const roundUpdate = Boolean(getProperty(update, "round"));
 
-            //only proceed if there is an update to the round
-            if (roundUpdate) {
-
-                /**
-                 *  firstly is the specified module setting turned on (eg. is rerolling enabled), 
-                 *  then test for the presence of the combat object's previous values and an update object,
-                 *  check that the round props are numbers,
-                 *  to avoid any hysteria at the start of combat, only reroll if the update round is gt or equal to 1
-                 *  finally test if the update's round is greater than the previous combat round 
-                 */
-                if (game.user.isGM &&
-                    this.settings.reroll &&
-                    (combat.previous && update) &&
-                    !isNaN(combat.previous.round || update.round) &&
-                    update.round >= 1 &&
-                    update.round > combat.previous.round) {
-                    try {
-                        await combat.resetAll();
-                        await combat.rollAll();
-                        this.currentCombatRound = combat.round;
-                    } catch (e) {
-                        //console.log(e);
-                    }
-
-                }
-            }
-
-        }));
+        if (this.callingUser != game.userId || !game.user.isGM || !this.settings.reroll || !roundUpdate) return;
+        
+        if (update.round >= 1 && update.round > combat.previous.round) {
+            await combat.resetAll();
+            await combat.rollAll();
+        }
     }
 }
 
@@ -377,9 +415,7 @@ class CUBHideNPCNames {
         this.settings = {
             hideNames: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.HideNamesN + ")", this.SETTINGS_META.hideNames),
             unknownCreatureString: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.UnknownCreatureN + ")", this.SETTINGS_META.unknownCreatureString)
-        }
-        this._hookOnRenderCombatTracker();
-        this._hookOnRenderChatMessage();
+        };
     }
 
     get GADGET_NAME() {
@@ -392,14 +428,14 @@ class CUBHideNPCNames {
             HideNamesH: "Hides NPC names in the Combat Tracker",
             UnknownCreatureN: "Unknown Creature Name",
             UnknownCreatureH: "Text to display for hidden NPC names"
-        }
+        };
     }
 
     get DEFAULT_CONFIG() {
         return {
             hideNames: false,
             unknownCreatureString: "Unknown Creature"
-        }
+        };
     }
 
     get SETTINGS_META() {
@@ -437,82 +473,77 @@ class CUBHideNPCNames {
                     }
                 }
             }
-        }
+        };
     }
 
     /**
      * Hooks on the Combat Tracker render to replace the NPC names
-     * @todo move hooks to signal class
+     * @param {Object} app - the Application instance
+     * @param {Object} html - jQuery html object
      */
-    _hookOnRenderCombatTracker() {
-        Hooks.on("renderCombatTracker", (app, html) => {
-            //console.log(app,html);
-            // if not GM
-            if (!game.user.isGM) {
-                let combatantListElement = html.find('li');
+    _hookOnRenderCombatTracker(app, html) {
+        //console.log(app,html);
+        // if not GM
+        if (!game.user.isGM) {
+            let combatantListElement = html.find("li");
 
-                //for each combatant
-                for (let e of combatantListElement) {
-                    let token = game.scenes.active.data.tokens.find(t => t.id == e.dataset.tokenId);
+            //for each combatant
+            for (let e of combatantListElement) {
+                let token = game.scenes.active.data.tokens.find(t => t.id == e.dataset.tokenId);
 
-                    let actor = game.actors.entities.find(a => a.id === token.actorId);
+                let actor = game.actors.entities.find(a => a.id === token.actorId);
 
-                    //if not PC, module is enabled
-                    if (!actor.isPC && this.settings.hideNames) {
-                        //find the flexcol elements
-                        let tokenNames = e.getElementsByClassName("token-name");
-                        let tokenImages = e.getElementsByClassName("token-image");
+                //if not PC, module is enabled
+                if (!actor.isPC && this.settings.hideNames) {
+                    //find the flexcol elements
+                    let tokenNames = e.getElementsByClassName("token-name");
+                    let tokenImages = e.getElementsByClassName("token-image");
 
-                        //iterate through the returned elements
-                        for (let f of tokenNames) {
-                            //find the h4 elements
-                            let header = f.getElementsByTagName("H4");
-                            //iterate through
-                            for (let h of header) {
-                                //replace the name
-                                h.textContent = this.settings.unknownCreatureString;
-                            }
+                    //iterate through the returned elements
+                    for (let f of tokenNames) {
+                        //find the h4 elements
+                        let header = f.getElementsByTagName("H4");
+                        //iterate through
+                        for (let h of header) {
+                            //replace the name
+                            h.textContent = this.settings.unknownCreatureString;
                         }
-
-                        for (let i of tokenImages) {
-                            i.setAttribute("title", this.settings.unknownCreatureString);
-                        }
-
                     }
 
+                    for (let i of tokenImages) {
+                        i.setAttribute("title", this.settings.unknownCreatureString);
+                    }
                 }
             }
-        });
+        }
     }
 
     /**
      * Replaces instances of hidden NPC name in chat
+     * @todo: If a player owns the message speaker - reveal the message
      */
-    _hookOnRenderChatMessage() {
-        Hooks.on("renderChatMessage", (message, data, html) => {
-            //killswitch for execution of hook logic
-            if (game.user.isGM || !this.settings.hideNames) {
-                return
-            }
+    _hookOnRenderChatMessage(message, data, html) {
+        //killswitch for execution of hook logic
+        if (game.user.isGM || !this.settings.hideNames) {
+            return;
+        }
 
-            const messageActorId = message.data.speaker.actor;
-            const messageActor = game.actors.get(messageActorId);
-            const speakerIsNPC = messageActor && !messageActor.isPC;
+        const messageActorId = message.data.speaker.actor;
+        const messageActor = game.actors.get(messageActorId);
+        const speakerIsNPC = messageActor && !messageActor.isPC;
 
-            if (speakerIsNPC) {
-                const replacement = this.settings.unknownCreatureString || " ";
-                html.find(`:contains('${data.alias}')`).each((i, el) => {
-                    el.innerHTML = el.innerHTML.replace(new RegExp(data.alias, 'g'), replacement);
-                });
-            }
-            //console.log(message,data,html);            
-        });
+        if (speakerIsNPC) {
+            const replacement = this.settings.unknownCreatureString || " ";
+            html.find(`:contains('${data.alias}')`).each((i, el) => {
+                el.innerHTML = el.innerHTML.replace(new RegExp(data.alias, "g"), replacement);
+            });
+        }
+        //console.log(message,data,html);
     }
 
     _switchTabs() {
         const currentTab = ui.sidebar.tabs.tabs.find(".active");
-        const chatTab = ui.sidebar.tabs.tabs.find('[data-tab="chat"]');
-
+        const chatTab = ui.sidebar.tabs.tabs.find(`[data-tab="chat"]`);
 
         ui.sidebar.tabs.activateTab(chatTab);
         ui.chat.render();
@@ -524,7 +555,6 @@ class CUBHideNPCNames {
  * Builds a mapping between status icons and journal entries that represent conditions
  */
 class CUBEnhancedConditions {
-
     constructor() {
         this.settings = {
             enhancedConditions: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.ConditionsN + ")", this.SETTINGS_META.enhancedConditions),
@@ -536,13 +566,11 @@ class CUBEnhancedConditions {
             //folderType : CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.FolderTypeN + ")", this.SETTINGS_META.folderType),
             //compendium : CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.CompendiumN + ")", this.SETTINGS_META.compendium),
             //createEntries : CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_META.CreateEntriesN + ")", this.SETTINGS_META.createEntries),
-        }
+        };
         this.coreStatusIcons = this.coreStatusIcons || this._backupCoreStatusIcons();
         this.callingUser = "";
         this._updateStatusIcons();
-        this._hookOnPreUpdateToken();
-        this._hookOnUpdateToken();
-        this._hookOnRenderTokenHUD();
+        this.currentToken = {};
     }
 
     /**
@@ -565,13 +593,12 @@ class CUBEnhancedConditions {
             folderName: "conditions",
             createEntries: false
             */
-        }
-
+        };
     }
 
     /**
      * Defines the maps used in the gadget
-     * @todo: needs a redesign -- programmatic matching to systems?
+     * @todo: needs a redesign -- change to arrays of objects?
      */
     get DEFAULT_MAPS() {
         const dnd5eMap = [
@@ -650,7 +677,7 @@ class CUBEnhancedConditions {
             "wfrp4e": wfrp4eMap,
             "archmage": archmageMap,
             "other": otherMap,
-        }
+        };
     }
 
     /**
@@ -676,7 +703,7 @@ class CUBEnhancedConditions {
             FolderTypeN: "Folder Type",
             FolderTypeH: "Folder type to use when looking for Condition entries",
             */
-        }
+        };
     }
 
     /**
@@ -696,7 +723,6 @@ class CUBEnhancedConditions {
                     this._toggleSidebarButtonDisplay(s);
                     this._updateStatusIcons();
                 }
-
             },
 
             system: {
@@ -789,10 +815,7 @@ class CUBEnhancedConditions {
                 }
             }
             */
-        }
-
-
-
+        };
     }
 
     /**
@@ -807,8 +830,6 @@ class CUBEnhancedConditions {
         }
         return result;
     }
-
-
 
     /**
      * Retrieve the statusEffect icons from the Foundry CONFIG
@@ -877,7 +898,7 @@ class CUBEnhancedConditions {
                     }
                 } else if (map instanceof Array) {
                     //add the icons from the condition map to the status effects array
-                    CONFIG.statusEffects = this.coreStatusIcons.concat(this.icons)
+                    CONFIG.statusEffects = this.coreStatusIcons.concat(this.icons);
                 } else {
                     entries = [];
                 }
@@ -885,7 +906,6 @@ class CUBEnhancedConditions {
         } else {
             CONFIG.statusEffects = this.coreStatusIcons;
         }
-
     }
 
     /**
@@ -912,7 +932,7 @@ class CUBEnhancedConditions {
      */
     get icons() {
         if (this.map instanceof Map) {
-            return Array.from((this.settings.maps[this.settings.system]).values())
+            return Array.from((this.settings.maps[this.settings.system]).values());
         } else if (this.map instanceof Array && this.map[0] instanceof Array) {
             let iconArray = [];
             this.map.forEach((value, index, array) => {
@@ -970,68 +990,46 @@ class CUBEnhancedConditions {
         }
     }
 
-    /**
-     * @name currentToken
-     * @type Object {Token}
-     * @description holds the token for use elsewhere in the class
-     */
-    currentToken = {};
-
     get system() {
         return this.settings.system;
     }
 
     /**
-     * Hook on the pre token update to get the calling user id
-     */
-    _hookOnPreUpdateToken() {
-        Hooks.on("preUpdateToken", (token, sceneId, update) => {
-            this.callingUser = game.userId;
-        });
-    }
-
-    /**
      * Hooks on token updates. If the update includes effects, calls the journal entry lookup
      */
-    _hookOnUpdateToken() {
-        Hooks.on("updateToken", (token, sceneId, update) => {
-            if (!this.settings.enhancedConditions || game.userId != this.callingUser) {
-                return
-            }
-            //console.log(token,sceneId,update);
-            let effects = update.effects;
+    _hookOnUpdateToken(token, sceneId, update) {
+        if (!this.settings.enhancedConditions || game.userId != this.callingUser) {
+            return;
+        }
+        //console.log(token,sceneId,update);
+        let effects = update.effects;
 
-            //If the update has effects in it, lookup mapping and set the current token
-            if (effects) {
-                this.currentToken = token;
-                this.callingUser = ""
-                return this.lookupEntryMapping(effects);
-            }
-        });
+        //If the update has effects in it, lookup mapping and set the current token
+        if (effects) {
+            this.currentToken = token;
+            this.callingUser = "";
+            return this.lookupEntryMapping(effects);
+        }
     }
 
     /**
      * Adds a title/tooltip with the matched Condition name
      */
-    _hookOnRenderTokenHUD() {
-        Hooks.on("renderTokenHUD", (app, html) => {
-            const conditionIcons = this.icons;
-            let statusIcons = html.find("img.effect-control");
+    _hookOnRenderTokenHUD(app, html, data) {
+        const conditionIcons = this.icons;
+        let statusIcons = html.find("img.effect-control");
 
-            //console.log(app,html);
-            //killswitch for further execution of function
-            if (this.settings.enhancedConditions) {
-                for (let i of statusIcons) {
-                    const src = i.attributes.src.value;
+        //console.log(app,html);
+        //killswitch for further execution of function
+        if (this.settings.enhancedConditions) {
+            for (let i of statusIcons) {
+                const src = i.attributes.src.value;
 
-                    if (conditionIcons.includes(src)) {
-                        i.setAttribute("title", this.inverseMap.get(src));
-                    }
-
+                if (conditionIcons.includes(src)) {
+                    i.setAttribute("title", this.inverseMap.get(src));
                 }
             }
-
-        });
+        }
     }
 
     /**
@@ -1069,7 +1067,6 @@ class CUBEnhancedConditions {
                 if (entry) {
                     mapEntries.push(entry);
                 }
-
             }
         }
 
@@ -1081,7 +1078,6 @@ class CUBEnhancedConditions {
                 } else {
                     conditionEntries.push(e);
                 }
-
             }
         }
 
@@ -1094,81 +1090,7 @@ class CUBEnhancedConditions {
     }
 
     /**
-     * @name lookupConditionMapping
-     * @description check icon <-> condition mapping and call condition journal entry lookup against matches
-     * @todo 
-     * @parameter {Object} icons
-     */
-    /* deprecated, remove?
-    async lookupConditionMapping(icons){
-        let conditions = [];
-        let condition;
-        let entries;
-        //console.log(conditionMapping);
-
-        if(this.map instanceof Map) {
-            entries = this.map.entries();
-        } else if(this.map instanceof Array) {
-            entries = this.map;
-        } else {
-            throw "condition map is not iterable";
-        }
-        //iterate through incoming icons and check the conditionMap for the corresponding entry
-        for (let i of icons){
-            try {
-                for (let [k,v] of entries) {
-                    if(v == i) {
-                        condition = k;
-                    }
-                }
-            } catch (e) {
-                console.log(e);
-            } finally {
-                conditions.push(condition);
-            }
-             
-        }
-        console.log(conditions);
-        return this.lookupConditionEntries(conditions);
-    }
-    */
-
-
-    /**
-     * @name lookupConditionEntries
-     * @description lookup condition journal/compendium entry and call chat output if option set
-     * @todo rebuild to allow switching between journal/compendium lookup
-     */
-    /* deprecated, remove?
-    async lookupConditionEntries(conditions){
-        let conditionEntries = [];
-        let missingEntries = [];
-
-        for(let c of conditions){
-            if(c){
-                let re = new RegExp(c,'i');
-                let entry = await game.journal.entities.find(j => j.name.match(re));
-             
-                if(!entry && this.settings.createEntries && game.user.isGM) {
-                    missingEntries.push(c);
-                    entry = await this.constructor._createJournalEntry(c);
-                }
-                console.log(entry);
-                conditionEntries.push(entry);
-            }
-        }
-
-        console.log(conditionEntries);
-        if(this.settings.output && conditionEntries.length > 0){
-            return this.outputChatMessage(conditionEntries);
-        } else {
-            return;
-        }       
-    }
-    */
-
-    /**
-     * @todo if flag is set: output condition text to chat -- i think this has to be async
+     * Output condition entries to chat
      */
     async outputChatMessage(entries) {
         const chatUser = game.userId;
@@ -1227,8 +1149,6 @@ class CUBEnhancedConditions {
         }
     }
 
-
-
     /**
      * looks up the corresponding actor entity for the token
      * @param {String} id 
@@ -1238,7 +1158,6 @@ class CUBEnhancedConditions {
         let actor = {};
         if (id) {
             actor = await game.actors.entities.find(a => a.id === id);
-
         }
         //console.log("found actor: ",actor)
         return actor;
@@ -1259,7 +1178,9 @@ class CUBEnhancedConditions {
 
 }
 
-//enhanced conditions config
+/**
+ * Form application for managing mapping of Conditions to Icons and JournalEntries
+ */
 class CUBEnhancedConditionsConfig extends FormApplication {
     constructor() {
         super();
@@ -1279,10 +1200,6 @@ class CUBEnhancedConditionsConfig extends FormApplication {
     }
 
     getData() {
-        //map = game.settings.get(cubGetModuleName(), CUBEnhancedConditions.GADGET_NAME + "(" + CUBEnhancedConditions.SETTINGS.MapsN + ")");
-        //const maps = CUBSidekick.getGadgetSetting(this.data.GADGET_NAME + "(" + this.data.SETTINGS_DESCRIPTORS.MapsN + ")");
-        //const system = CUBSidekick.getGadgetSetting(this.data.GADGET_NAME + "(" + this.data.SETTINGS_DESCRIPTORS.SystemNameN + ")");
-        //const conditionMapArray = Array.from(maps[system]);
         let entries = {};
 
         for (let e of game.journal.entities) {
@@ -1294,7 +1211,7 @@ class CUBEnhancedConditionsConfig extends FormApplication {
             systems: this.data.systemChoices,
             system: this.data.system,
             entries: entries
-        }
+        };
 
         return formData;
     }
@@ -1316,13 +1233,13 @@ class CUBEnhancedConditionsConfig extends FormApplication {
         //let mergeMapsSetting = {};
 
         //need to tighten these up to check for the existence of digits after the word
-        const conditionRegex = new RegExp('condition', "i");
-        const iconRegex = new RegExp('icon', "i")
-        const journalRegex = new RegExp('journal', "i");
+        const conditionRegex = new RegExp("condition", "i");
+        const iconRegex = new RegExp("icon", "i");
+        const journalRegex = new RegExp("journal", "i");
 
 
         //write it back to the relevant condition map
-        //todo: maybe switch to a switch
+        //@todo: maybe switch to a switch
         for (let e in formdata) {
             if (e.match(conditionRegex)) {
                 conditions.push(formdata[e]);
@@ -1336,11 +1253,6 @@ class CUBEnhancedConditionsConfig extends FormApplication {
         for (let i = 0; i <= conditions.length - 1; i++) {
             newMap.push([conditions[i], icons[i], entries[i]]);
         }
-        /*
-                mergeMapsSetting = mergeObject(oldMapsSetting, {
-                    [system]: newMap
-                });
-        */
 
         CUBSidekick.setGadgetSetting(this.data.GADGET_NAME + "(" + this.data.SETTINGS_DESCRIPTORS.MapsN + ")" + "." + this.data.system, newMap);
 
@@ -1402,9 +1314,6 @@ class CUBEnhancedConditionsConfig extends FormApplication {
             const splitName = ev.target.name.split("-");
             const row = splitName[splitName.length - 1];
 
-            //CUB.enhancedConditions.settings.maps[this.data.system][row][1] = ev.target.val();
-            //this.render(true);
-
             //target the icon
             let icon = $(this.form).find("img[name='icon-" + row);
             icon.attr("src", ev.target.value);
@@ -1421,7 +1330,9 @@ class CUBEnhancedConditionsConfig extends FormApplication {
 
 }
 
-//auto bloodied, dead, and marking dead in combat tracker
+/**
+ * Mark a token injured or dead based on threshold
+ */
 class CUBInjuredAndDead {
 
     constructor() {
@@ -1433,13 +1344,8 @@ class CUBInjuredAndDead {
             dead: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.DeadN + ")", this.SETTINGS_META.dead),
             deadIcon: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.DeadIconN + ")", this.SETTINGS_META.deadIcon),
             combatTrackDead: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.CombatTrackDeadN + ")", this.SETTINGS_META.combatTrackDead)
-        }
-
-        this.currentActor;
+        };
         this.callingUser = "";
-        this._hookOnPreUpdateToken();
-        this._hookOnUpdateToken();
-        this._hookOnUpdateActor();
     }
 
     get GADGET_NAME() {
@@ -1462,7 +1368,7 @@ class CUBInjuredAndDead {
             DeadIconH: "Path to the status marker to display for Dead Tokens",
             HealthAttributeN: "Health Attribute",
             HealthAttributeH: "Health/HP attribute name as defined by game system"
-        }
+        };
     }
 
     get DEFAULT_CONFIG() {
@@ -1473,7 +1379,7 @@ class CUBInjuredAndDead {
             dead: false,
             deadIcon: "icons/svg/skull.svg",
             combatTrackDead: false
-        }
+        };
     }
 
     get SETTINGS_META() {
@@ -1557,7 +1463,7 @@ class CUBInjuredAndDead {
                     this.settings.combatTrackDead = s;
                 }
             }
-        }
+        };
 
     }
 
@@ -1701,86 +1607,77 @@ class CUBInjuredAndDead {
     }
 
     /**
-     * Hook on pre token update to get the calling user Id
-     */
-    _hookOnPreUpdateToken() {
-        Hooks.on("preUpdateToken", (token, sceneId, update) => {
-            this.callingUser = game.userId;
-        });
-    }
-
-    /**
      * Hook on the token update,
      * check the health state of the token,
      * then mark it appropriately
+     * @param {Object} token
+     * @param {String} sceneId
+     * @param {Object} update
      */
-    _hookOnUpdateToken() {
-        Hooks.on("updateToken", (token, sceneId, update) => {
-            const healthUpdate = getProperty(update, "actorData.data." + this.settings.healthAttribute + ".value");
-            if (game.userId != this.callingUser || healthUpdate == undefined || token.data.actorLink) {
-                return
-            }
+    _hookOnUpdateToken(token, sceneId, update) {
+        const healthUpdate = getProperty(update, "actorData.data." + this.settings.healthAttribute + ".value");
+        if (game.userId != this.callingUser || healthUpdate == undefined || token.data.actorLink) {
+            return;
+        }
 
-            let tokenHealthState;
+        let tokenHealthState;
 
-            if (this.settings.injured || this.settings.dead || this.settings.combatTrackDead) {
-                tokenHealthState = this._checkTokenHealthState(token, update);
+        if (this.settings.injured || this.settings.dead || this.settings.combatTrackDead) {
+            tokenHealthState = this._checkTokenHealthState(token, update);
 
-                if (tokenHealthState == CUBButler.HEALTH_STATES.DEAD && (this.settings.dead || this.settings.combatTrackDead)) {
-                    this._markDead(token);
-                    if (this.settings.combatTrackDead) {
-                        this._markTrackerDead(token);
-                    }
-                } else if (tokenHealthState == CUBButler.HEALTH_STATES.INJURED && this.settings.injured) {
-                    this._markInjured(token);
-                } else {
-                    this._markHealthy(token);
-                    if (this.settings.combatTrackDead) {
-                        this._markTrackerDead(token);
-                    }
+            if (tokenHealthState == CUBButler.HEALTH_STATES.DEAD && (this.settings.dead || this.settings.combatTrackDead)) {
+                this._markDead(token);
+                if (this.settings.combatTrackDead) {
+                    this._markTrackerDead(token);
+                }
+            } else if (tokenHealthState == CUBButler.HEALTH_STATES.INJURED && this.settings.injured) {
+                this._markInjured(token);
+            } else {
+                this._markHealthy(token);
+                if (this.settings.combatTrackDead) {
+                    this._markTrackerDead(token);
                 }
             }
-
-            this.callingUser = "";
-        });
+        }
+        this.callingUser = "";
     }
 
     /**
      * Hook on the actor update,
      * check the health state of the actor,
      * then mark the active token appropriately
+     * @param {Object} token
+     * @param {String} sceneId
+     * @param {Object} update
      */
-    _hookOnUpdateActor() {
-        Hooks.on("updateActor", (actor, update) => {
-            const healthUpdate = update["data." + this.settings.healthAttribute + ".value"];
-            const activeToken = canvas.tokens.placeables.find(t => t.actor.id == actor.id);
+    _hookOnUpdateActor(actor, update) {
+        const healthUpdate = update["data." + this.settings.healthAttribute + ".value"];
+        const activeToken = canvas.tokens.placeables.find(t => t.actor.id == actor.id);
 
-            if (healthUpdate == undefined || (!this.settings.dead && !this.settings.injured) || activeToken == undefined) {
-                return
-            }
+        if (healthUpdate == undefined || (!this.settings.dead && !this.settings.injured) || activeToken == undefined) {
+            return;
+        }
 
-            const healthState = this._checkActorHealthState(actor, update);
+        const healthState = this._checkActorHealthState(actor, update);
 
-            if (activeToken == undefined) {
-                return
-            }
-            switch (healthState) {
-                case CUBButler.HEALTH_STATES.DEAD:
-                    this._markDead(activeToken);
-                    break;
-                case CUBButler.HEALTH_STATES.INJURED:
-                    this._markInjured(activeToken);
-                    break;
-                default:
-                    this._markHealthy(activeToken);
-                    break;
-            }
-        });
+        if (activeToken == undefined) {
+            return;
+        }
+        switch (healthState) {
+            case CUBButler.HEALTH_STATES.DEAD:
+                this._markDead(activeToken);
+                break;
+            case CUBButler.HEALTH_STATES.INJURED:
+                this._markInjured(activeToken);
+                break;
+            default:
+                this._markHealthy(activeToken);
+                break;
+        }
     }
 }
 
 class CUBCombatTracker {
-
     constructor() {
         this.settings = {
             panOnNextTurn: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.PanOnNextTurnN + ")", this.SETTINGS_META.panOnNextTurn),
@@ -1789,14 +1686,10 @@ class CUBCombatTracker {
             selectOnNextTurn: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.SelectOnNextTurnN + ")", this.SETTINGS_META.selectOnNextTurn),
             selectGMOnly: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.SelectGMOnlyN + ")", this.SETTINGS_META.selectGMOnly),
             xpModule: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.XPModuleN + ")", this.SETTINGS_META.xpModule)
-        }
+        };
 
-        this.currentActor;
         this.callingUser = "";
         this.addExperience;
-        this._hookOnPreUpdateCombat();
-        this._hookOnUpdateCombat();
-        this._hookOnPreDeleteCombat();
     }
 
     get GADGET_NAME() {
@@ -1817,7 +1710,7 @@ class CUBCombatTracker {
             SelectGMOnlyH: "Only select token for the GM. If enabled for players, it will still only auto select owned tokens",
             XPModuleN: "--Enable XP Module--",
             XPModuleH: "REQUIRES REFRESH! Adds an option at the end of combat to automatically distribute xp from the combat to the players"
-        }
+        };
     }
 
     get DEFAULT_CONFIG() {
@@ -1828,7 +1721,7 @@ class CUBCombatTracker {
             panPlayers: true,
             selectGMOnly: true,
             xpModule: false
-        }
+        };
     }
 
     get SETTINGS_META() {
@@ -1899,7 +1792,7 @@ class CUBCombatTracker {
                     this.settings.xpModule = s;
                 }
             }
-        }
+        };
     }
 
     /**
@@ -1910,7 +1803,7 @@ class CUBCombatTracker {
     _panToToken(tracker, update) {
         if ((game.user.isGM && this.settings.panGMOnly) || !this.settings.panGMOnly) {
             let token;
-            if (hasProperty(update, 'turn')) {
+            if (hasProperty(update, "turn")) {
                 token = tracker.turns[update.turn].token;
             } else {
                 token = tracker.turns[0].token;
@@ -1935,7 +1828,7 @@ class CUBCombatTracker {
     _selectToken(tracker, update) {
         if ((game.user.isGM && this.settings.selectGMOnly) || !this.settings.selectGMOnly) {
             let token;
-            if (hasProperty(update, 'turn')) {
+            if (hasProperty(update, "turn")) {
                 token = tracker.turns[update.turn].token;
             } else {
                 token = tracker.turns[0].token;
@@ -1951,25 +1844,26 @@ class CUBCombatTracker {
      * Gives XP to the living PCs in the turn tracker based on enemies killed
      * @param {Object} tracker
      */
-    _giveXP(tracker) {
-        let defeatedEnemies = tracker.turns.filter(object => (!object.actor.isPC && object.defeated && object.token.disposition === -1));
-        let players = tracker.turns.filter(object => (object.actor.isPC && !object.defeated));
+    _giveXP(encounters, combatId) {
+        const tracker = encounters.entities.find(combat => combat.data._id === combatId);
+        const defeatedEnemies = tracker.turns.filter(object => (!object.actor.isPC && object.defeated && object.token.disposition === -1));
+        const players = tracker.turns.filter(object => (object.actor.isPC && !object.defeated));
         let experience = 0;
         if (defeatedEnemies.length > 0 && this.addExperience) {
             defeatedEnemies.forEach(enemy => {
                 experience += enemy.actor.data.data.details.xp.value;
             });
             if (players.length > 0) {
-                let dividedExperience = Math.floor(experience / players.length);
-                let experienceMessage = '<b>Experience Awarded!</b><p><b>' + dividedExperience + '</b> added to:</br>';
+                const dividedExperience = Math.floor(experience / players.length);
+                let experienceMessage = "<b>Experience Awarded!</b><p><b>" + dividedExperience + "</b> added to:</br>";
                 players.forEach(player => {
                     const actor = game.actors.entities.find(actor => actor.id === player.actor.data._id);
                     actor.update({
-                        'data.details.xp.value': player.actor.data.data.details.xp.value + dividedExperience
+                        "data.details.xp.value": player.actor.data.data.details.xp.value + dividedExperience
                     });
-                    experienceMessage += player.actor.data.name + '</br>';
+                    experienceMessage += player.actor.data.name + "</br>";
                 });
-                experienceMessage += '</p>';
+                experienceMessage += "</p>";
                 ChatMessage.create({
                     user: game.user._id,
                     speaker: {
@@ -1982,42 +1876,29 @@ class CUBCombatTracker {
     }
 
     /**
-     * Hook on pre combat update to get the calling user Id
-     */
-    _hookOnPreUpdateCombat() {
-        Hooks.on("preUpdateCombat", (combat, update) => {
-            this.callingUser = game.userId;
-        });
-    }
-
-    /**
      * Hook on the combat update,
      * Pans or selects the current token
      */
-    _hookOnUpdateCombat() {
-        Hooks.on("updateCombat", (tracker, update) => {
-            if (!game.combat || game.combat.turns.length === 0) {
-                return
-            }
-            if (this.settings.panOnNextTurn) {
-                this._panToToken(tracker, update);
-            }
-            if (this.settings.selectOnNextTurn) {
-                this._selectToken(tracker, update);
-            }
-        });
+    _hookOnUpdateCombat(tracker, update) {
+        if (!game.combat || game.combat.turns.length === 0) {
+            return;
+        }
+        if (this.settings.panOnNextTurn) {
+            this._panToToken(tracker, update);
+        }
+        if (this.settings.selectOnNextTurn) {
+            this._selectToken(tracker, update);
+        }
     }
 
     /**
      * Hook on pre combat delete
      * Gives players in the combat tracker xp for the combat
      */
-    _hookOnPreDeleteCombat() {
-        Hooks.on("preDeleteCombat", (tracker, update) => {
-            if (this.settings.xpModule) {
-                this._giveXP(tracker)
-            }
-        });
+    _hookOnPreDeleteCombat(encounters, combatId) {
+        if (this.settings.xpModule) {
+            this._giveXP(encounters, combatId);
+        }
     }
 
     /**
@@ -2026,34 +1907,34 @@ class CUBCombatTracker {
     async endCombat() {
         return new Promise((resolve, reject) => {
             if (!game.user.isGM) {
-                reject('You cannot end an active combat');
+                reject("You cannot end an active combat");
             }
             new Dialog({
-                title: `End Combat?`,
-                content: '<p>End this combat encounter and empty the turn tracker?</p>',
+                title: "End Combat?",
+                content: "<p>End this combat encounter and empty the turn tracker?</p>",
                 buttons: {
                     yes: {
-                        icon: '<i class="fas fa-check"></i>',
-                        label: 'End Combat',
+                        icon: `<i class="fas fa-check"></i>`,
+                        label: "End Combat",
                         callback: () => {
                             CUB.combatTracker.addExperience = false;
                             this.delete().then(resolve);
                         }
                     },
                     xp: {
-                        icon: '<i class="fas fa-check"></i>',
-                        label: 'End with XP',
+                        icon: `<i class="fas fa-check"></i>`,
+                        label: "End with XP",
                         callback: () => {
                             CUB.combatTracker.addExperience = true;
                             this.delete().then(resolve);
                         }
                     },
                     no: {
-                        icon: '<i class="fas fa-times"></i>',
-                        label: 'Cancel'
+                        icon: `<i class="fas fa-times"></i>`,
+                        label: "Cancel"
                     }
                 },
-                default: 'yes'
+                default: "yes"
             }).render(true);
         });
     }
@@ -2064,8 +1945,7 @@ class CUBTokenUtility {
         this.settings = {
             mightySummoner: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.MightySummonerN + ")", this.SETTINGS_META.mightySummoner),
             autoRollHostileHp: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.AutoRollHostileHpN + ")", this.SETTINGS_META.autoRollHostileHp)
-        }
-        this._hookCreateToken();
+        };
     }
 
     get GADGET_NAME() {
@@ -2078,14 +1958,14 @@ class CUBTokenUtility {
             MightySummonerH: "Automatically check to see if token owner of NEUTRAL actor also owns an actor with the Mighty Summoner feat. Automatically calculates and adds new HP formula and rolls HP for token on canvas drop",
             AutoRollHostileHpN: "--Auto Roll Hostile--",
             AutoRollHostileHpH: "Automatically roll hp for hostile tokens on canvas drop"
-        }
+        };
     }
 
     get DEFAULT_CONFIG() {
         return {
             mightySummoner: false,
             AutoRollHostileHp: false
-        }
+        };
     }
 
     get SETTINGS_META() {
@@ -2112,17 +1992,17 @@ class CUBTokenUtility {
                     this.settings.autoRollHostileHp = s;
                 }
             }
-        }
+        };
     }
 
     _summonerFeats(token, sceneId, update) {
         if (!this._actorHasFeat(token.actor)) {
-            let owners = this._getOwners(token.actor)
+            const owners = Object.keys(token.actor.data.permission).filter(item => item != "default").filter(user => token.actor.data.permission[user] === 3);
             let actors;
             owners.forEach(owner => {
-                let owned = this._getActorsOwned(owner)
+                const owned = game.actors.entities.filter(actor => hasProperty(actor, "data.permission." + owner));
                 if (actors === undefined) {
-                    actors = owned
+                    actors = owned;
                 } else {
                     actors.push(owned);
                 }
@@ -2133,47 +2013,55 @@ class CUBTokenUtility {
             }
             if (summoners !== undefined && game.user.isGM) {
                 new Dialog({
-                    title: `Feat Summoning`,
-                    content: '<p>Mighty Summoner found. Is this monster being summoned?</p>',
+                    title: "Feat Summoning",
+                    content: "<p>Mighty Summoner found. Is this monster being summoned?</p>",
                     buttons: {
                         yes: {
-                            icon: '<i class="fas fa-check"></i>',
-                            label: 'Yes',
+                            icon: `<i class="fas fa-check"></i>`,
+                            label: "Yes",
                             callback: () => {
-                                this._addFeatHealth(token, sceneId, update);
+                                let formula = token.actor.data.data.attributes.hp.formula;
+                                const match = formula.match(/\d+/)[0];
+                                if (match !== undefined) {
+                                    let actor = token.actor;
+                                    formula += " + " + (match * 2);
+                                    actor.data.data.attributes.hp.formula = formula;
+                                    update.actorData = {
+                                        data: {
+                                            attributes: {
+                                                hp: {
+                                                    formula: formula,
+                                                }
+                                            }
+                                        }
+                                    };
+                                    this._rerollTokenHp(token, sceneId);
+                                }
                             }
                         },
                         no: {
-                            icon: '<i class="fas fa-times"></i>',
-                            label: 'No'
+                            icon: `<i class="fas fa-times"></i>`,
+                            label: "No"
                         }
                     },
-                    default: 'yes'
+                    default: "yes"
                 }).render(true);
             }
         }
     }
 
     _actorHasFeat(actor) {
-        if (hasProperty(actor, 'data.items')) {
-            return (actor.data.items.find(item => (item.type === 'feat' && item.name.includes('Mighty Summoner'))) !== undefined);
+        if (hasProperty(actor, "data.items")) {
+            return (actor.data.items.find(item => (item.type === "feat" && item.name.includes("Mighty Summoner"))) !== undefined);
         }
     }
 
-    _getOwners(actor) {
-        return Object.keys(actor.data.permission).filter(item => item != 'default').filter(user => actor.data.permission[user] === 3);;
-    }
-
-    _getActorsOwned(owner) {
-        return game.actors.entities.filter(actor => hasProperty(actor, 'data.permission.' + owner));
-    }
-
     _rerollTokenHp(token, sceneId) {
-        let formula = token.actor.data.data.attributes.hp.formula
+        const formula = token.actor.data.data.attributes.hp.formula;
         let r = new Roll(formula);
         r.roll();
-        let hp = r.total;
-        let update = {
+        const hp = r.total;
+        const update = {
             actorData: {
                 data: {
                     attributes: {
@@ -2184,39 +2072,20 @@ class CUBTokenUtility {
                     }
                 }
             }
-        }
-        canvas.tokens.get(token.data.id).update(sceneId, update)
+        };
+        canvas.tokens.get(token.data.id).update(sceneId, update);
     }
 
-    _addFeatHealth(token, sceneId, update) {
-        let formula = token.actor.data.data.attributes.hp.formula;
-        let match = formula.match(/\d+/)[0]
-        if (match !== undefined) {
-            let actor = token.actor;
-            formula += ' + ' + (match * 2);
-            actor.data.data.attributes.hp.formula = formula;
-            update.actorData = {
-                data: {
-                    attributes: {
-                        hp: {
-                            formula: formula,
-                        }
-                    }
-                }
-            }
-            this._rerollTokenHp(token, sceneId)
+    _hookOnCreateToken(token, sceneId, update) {
+        if (token.data.disposition === -1 && this.settings.autoRollHostileHp && !token.actor.isPC) {
+            this._rerollTokenHp(token, sceneId);
+        } else if (this.settings.mightySummoner) {
+            this._summonerFeats(token, sceneId, update);
         }
-    }
-
-    _hookCreateToken() {
-        Hooks.on("createToken", (token, sceneId, update) => {
-            if (token.data.disposition === -1 && this.settings.autoRollHostileHp && !token.actor.isPC) {
-                this._rerollTokenHp(token, sceneId)
-            } else if (this.settings.mightySummoner) {
-                this._summonerFeats(token, sceneId, update);
-            }
-        });
     }
 }
 
+/**
+ * Start the module
+ */
 CUBSignal.lightUp();
