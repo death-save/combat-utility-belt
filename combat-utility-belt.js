@@ -1587,17 +1587,17 @@ class CUBInjuredAndDead {
     }
 
     /**
-     * Set a dead on the combat tracker
+     * Toggles the combat tracker death status based on token hp
      * @param {Object} token 
      */
-    _markTrackerDead(token) {
+    _toggleTrackerDead(token) {
         if (!token.scene.active) {
             return;
         }
         const combat = game.combat;
         if (combat) {
-            let combatant = combat.data.combatants.find(t => t.tokenId == token.data.id);
-            let tokenHp = token.actor.data.data.attributes.hp.value;
+            let combatant = combat.turns.find(t => t.tokenId == token.id);
+            let tokenHp = getProperty(token, "actor.data.data.attributes.hp.value");
             if (combatant) {
                 combat.updateCombatant({
                     id: combatant.id,
@@ -1629,14 +1629,17 @@ class CUBInjuredAndDead {
             if (tokenHealthState == CUBButler.HEALTH_STATES.DEAD && (this.settings.dead || this.settings.combatTrackDead)) {
                 this._markDead(token);
                 if (this.settings.combatTrackDead) {
-                    this._markTrackerDead(token);
+                    this._toggleTrackerDead(token);
                 }
             } else if (tokenHealthState == CUBButler.HEALTH_STATES.INJURED && this.settings.injured) {
                 this._markInjured(token);
+                if (this.settings.combatTrackDead) {
+                    this._toggleTrackerDead(token);
+                }
             } else {
                 this._markHealthy(token);
                 if (this.settings.combatTrackDead) {
-                    this._markTrackerDead(token);
+                    this._toggleTrackerDead(token);
                 }
             }
         }
@@ -1667,12 +1670,21 @@ class CUBInjuredAndDead {
         switch (healthState) {
             case CUBButler.HEALTH_STATES.DEAD:
                 this._markDead(activeToken);
+                if (this.settings.combatTrackDead) {
+                    this._toggleTrackerDead(activeToken);
+                }
                 break;
             case CUBButler.HEALTH_STATES.INJURED:
                 this._markInjured(activeToken);
+                if (this.settings.combatTrackDead) {
+                    this._toggleTrackerDead(activeToken);
+                }
                 break;
             default:
                 this._markHealthy(activeToken);
+                if (this.settings.combatTrackDead) {
+                    this._toggleTrackerDead(activeToken);
+                }
                 break;
         }
     }
