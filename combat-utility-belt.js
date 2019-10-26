@@ -1667,6 +1667,7 @@ class CUBInjuredAndDead {
         switch (healthState) {
             case CUBButler.HEALTH_STATES.DEAD:
                 this._markDead(activeToken);
+                this._markTrackerDead(activeToken);
                 break;
             case CUBButler.HEALTH_STATES.INJURED:
                 this._markInjured(activeToken);
