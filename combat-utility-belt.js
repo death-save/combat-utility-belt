@@ -1652,7 +1652,7 @@ class CUBInjuredAndDead {
      * @param {Object} update
      */
     _hookOnUpdateActor(actor, update) {
-        const healthUpdate = update["data." + this.settings.healthAttribute + ".value"];
+        const healthUpdate = getProperty(update, "data." + this.settings.healthAttribute + ".value");
         const activeToken = canvas.tokens.placeables.find(t => t.actor.id == actor.id);
 
         if (healthUpdate == undefined || (!this.settings.dead && !this.settings.injured) || activeToken == undefined) {

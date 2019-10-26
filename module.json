@@ -2,7 +2,7 @@
   "name": "combat-utility-belt",
   "title": "Combat Utility Belt (Beta)",
   "description": "Adds various combat-focused functionality such as: Reroll Initiative, Hide NPC Names, Enhanced Conditions, Mark Injured/Dead, Pan/Select Token during Combat, Calculate XP, Roll Token HP on drop",
-  "version": "0.6.9",
+  "version": "0.6.10",
   "author": "Evan Clarke [errational#2007] & Jordan Williams [Reaver#4634]",
   "url": "https://github.com/death-save/combat-utility-belt",
   "manifest": "https://raw.githubusercontent.com/death-save/combat-utility-belt/beta/module.json",
