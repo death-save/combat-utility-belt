@@ -1097,7 +1097,7 @@ class CUBEnhancedConditions {
         const chatUser = game.userId;
         const token = this.currentToken;
         //const actor = await this.lookupTokenActor(token.actor.id);
-        const chatType = CHAT_MESSAGE_TYPES.OTHER;
+        const chatType = CONST.CHAT_MESSAGE_TYPES.OTHER;
         let tokenSpeaker = {};
         let chatContent;
         let chatConditions = [];
