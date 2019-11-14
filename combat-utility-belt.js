@@ -177,8 +177,8 @@ class CUBSignal {
     }
 
     static hookOnRenderChatMessage() {
-        Hooks.on("renderChatMessage", (message, data, html) => {
-            CUB.hideNPCNames._hookOnRenderChatMessage(message, data, html);
+        Hooks.on("renderChatMessage", (message, html, data) => {
+            CUB.hideNPCNames._hookOnRenderChatMessage(message, html, data);
         });
     }
 }
@@ -523,7 +523,7 @@ class CUBHideNPCNames {
      * Replaces instances of hidden NPC name in chat
      * @todo: If a player owns the message speaker - reveal the message
      */
-    _hookOnRenderChatMessage(message, data, html) {
+    _hookOnRenderChatMessage(message, html, data) {
         //killswitch for execution of hook logic
         if (game.user.isGM || !this.settings.hideNames) {
             return;
