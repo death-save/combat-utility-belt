@@ -3,3 +3,4 @@ foundry.js
 .eslintrc
 @types
 .vscode
+tsconfig.json
