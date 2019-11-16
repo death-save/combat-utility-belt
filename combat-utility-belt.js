@@ -1192,7 +1192,7 @@ class CUBEnhancedConditionsConfig extends FormApplication {
         return mergeObject(super.defaultOptions, {
             id: "cub-condition-lab",
             title: "Condition Lab",
-            template: "public/modules/combat-utility-belt/templates/cub-conditions.html",
+            template: "modules/combat-utility-belt/templates/cub-conditions.html",
             classes: ["sheet"],
             width: 500,
             height: "auto",
