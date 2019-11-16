@@ -80,7 +80,7 @@ class CUBSignal {
         CUBSignal.hookOnPreUpdateCombat();
         CUBSignal.hookOnUpdateCombat();
         CUBSignal.hookOnUpdateCombatAsync();
-        CUBSignal.hookOnPreDeleteCombat();
+        CUBSignal.hookOnDeleteCombat();
         CUBSignal.hookOnRenderCombatTracker();
         CUBSignal.hookOnRenderChatMessage();
     }
@@ -164,9 +164,9 @@ class CUBSignal {
         });
     }
 
-    static hookOnPreDeleteCombat() {
-        Hooks.on("preDeleteCombat", (combat, combatId) => {
-            CUB.combatTracker._hookOnPreDeleteCombat(combat, combatId);
+    static hookOnDeleteCombat() {
+        Hooks.on("deleteCombat", (combat, combatId, options, userId) => {
+            CUB.combatTracker._hookOnDeleteCombat(combat, combatId, options, userId);
         });
     }
 
@@ -1856,9 +1856,8 @@ class CUBCombatTracker {
     /**
      * Gives XP to the living PCs in the turn tracker based on enemies killed
      * @param {Object} combat -- the combat instance being deleted
-     * @param {String} combatId -- the id of instance being deleted
      */
-    _giveXP(combat, combatId) {
+    _giveXP(combat) {
         const defeatedEnemies = combat.turns.filter(object => (!object.actor.isPC && object.defeated && object.token.disposition === -1));
         const players = combat.turns.filter(object => (object.actor.isPC && !object.defeated));
         let experience = 0;
@@ -1905,12 +1904,12 @@ class CUBCombatTracker {
     }
 
     /**
-     * Hook on pre combat delete
+     * Hook on post combat delete
      * Gives players in the combat tracker xp for the combat
      */
-    _hookOnPreDeleteCombat(combat, combatId) {
-        if (this.settings.xpModule) {
-            this._giveXP(combat, combatId);
+    _hookOnDeleteCombat(combat, combatId, options, userId) {
+        if (this.settings.xpModule && game.userId == userId) {
+            this._giveXP(combat);
         }
     }
 
