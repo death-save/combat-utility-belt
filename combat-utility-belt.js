@@ -165,8 +165,8 @@ class CUBSignal {
     }
 
     static hookOnPreDeleteCombat() {
-        Hooks.on("preDeleteCombat", (encounters, combatId) => {
-            CUB.combatTracker._hookOnPreDeleteCombat(encounters, combatId);
+        Hooks.on("preDeleteCombat", (combat, combatId) => {
+            CUB.combatTracker._hookOnPreDeleteCombat(combat, combatId);
         });
     }
 
@@ -1731,8 +1731,8 @@ class CUBCombatTracker {
             panOnNextTurn: false,
             selectOnNextTurn: false,
             panGMOnly: false,
-            panPlayers: true,
-            selectGMOnly: true,
+            panPlayers: false,
+            selectGMOnly: false,
             xpModule: false
         };
     }
@@ -1855,12 +1855,12 @@ class CUBCombatTracker {
 
     /**
      * Gives XP to the living PCs in the turn tracker based on enemies killed
-     * @param {Object} tracker
+     * @param {Object} combat -- the combat instance being deleted
+     * @param {String} combatId -- the id of instance being deleted
      */
-    _giveXP(encounters, combatId) {
-        const tracker = encounters.entities.find(combat => combat.data._id === combatId);
-        const defeatedEnemies = tracker.turns.filter(object => (!object.actor.isPC && object.defeated && object.token.disposition === -1));
-        const players = tracker.turns.filter(object => (object.actor.isPC && !object.defeated));
+    _giveXP(combat, combatId) {
+        const defeatedEnemies = combat.turns.filter(object => (!object.actor.isPC && object.defeated && object.token.disposition === -1));
+        const players = combat.turns.filter(object => (object.actor.isPC && !object.defeated));
         let experience = 0;
         if (defeatedEnemies.length > 0 && this.addExperience) {
             defeatedEnemies.forEach(enemy => {
@@ -1908,9 +1908,9 @@ class CUBCombatTracker {
      * Hook on pre combat delete
      * Gives players in the combat tracker xp for the combat
      */
-    _hookOnPreDeleteCombat(encounters, combatId) {
+    _hookOnPreDeleteCombat(combat, combatId) {
         if (this.settings.xpModule) {
-            this._giveXP(encounters, combatId);
+            this._giveXP(combat, combatId);
         }
     }
 
@@ -2089,6 +2089,13 @@ class CUBTokenUtility {
         canvas.tokens.get(token.data.id).update(sceneId, update);
     }
 
+    /**
+     * Hook on token create
+     * @param {Object} token 
+     * @param {String} sceneId 
+     * @param {Object} update 
+     * @todo move this to a preCreate hook to avoid a duplicate call to the db
+     */
     _hookOnCreateToken(token, sceneId, update) {
         if (token.data.disposition === -1 && this.settings.autoRollHostileHp && !token.actor.isPC) {
             this._rerollTokenHp(token, sceneId);
