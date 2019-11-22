@@ -80,7 +80,7 @@ class CUBSignal {
         CUBSignal.hookOnPreUpdateCombat();
         CUBSignal.hookOnUpdateCombat();
         CUBSignal.hookOnUpdateCombatAsync();
-        CUBSignal.hookOnPreDeleteCombat();
+        CUBSignal.hookOnDeleteCombat();
         CUBSignal.hookOnRenderCombatTracker();
         CUBSignal.hookOnRenderChatMessage();
     }
@@ -164,9 +164,9 @@ class CUBSignal {
         });
     }
 
-    static hookOnPreDeleteCombat() {
-        Hooks.on("preDeleteCombat", (encounters, combatId) => {
-            CUB.combatTracker._hookOnPreDeleteCombat(encounters, combatId);
+    static hookOnDeleteCombat() {
+        Hooks.on("deleteCombat", (combat, combatId, options, userId) => {
+            CUB.combatTracker._hookOnDeleteCombat(combat, combatId, options, userId);
         });
     }
 
@@ -177,8 +177,8 @@ class CUBSignal {
     }
 
     static hookOnRenderChatMessage() {
-        Hooks.on("renderChatMessage", (message, data, html) => {
-            CUB.hideNPCNames._hookOnRenderChatMessage(message, data, html);
+        Hooks.on("renderChatMessage", (message, html, data) => {
+            CUB.hideNPCNames._hookOnRenderChatMessage(message, html, data);
         });
     }
 }
@@ -523,7 +523,7 @@ class CUBHideNPCNames {
      * Replaces instances of hidden NPC name in chat
      * @todo: If a player owns the message speaker - reveal the message
      */
-    _hookOnRenderChatMessage(message, data, html) {
+    _hookOnRenderChatMessage(message, html, data) {
         //killswitch for execution of hook logic
         if (game.user.isGM || !this.settings.hideNames) {
             return;
@@ -1097,7 +1097,7 @@ class CUBEnhancedConditions {
         const chatUser = game.userId;
         const token = this.currentToken;
         //const actor = await this.lookupTokenActor(token.actor.id);
-        const chatType = CHAT_MESSAGE_TYPES.OTHER;
+        const chatType = CONST.CHAT_MESSAGE_TYPES.OTHER;
         let tokenSpeaker = {};
         let chatContent;
         let chatConditions = [];
@@ -1192,7 +1192,7 @@ class CUBEnhancedConditionsConfig extends FormApplication {
         return mergeObject(super.defaultOptions, {
             id: "cub-condition-lab",
             title: "Condition Lab",
-            template: "public/modules/combat-utility-belt/templates/cub-conditions.html",
+            template: "modules/combat-utility-belt/templates/cub-conditions.html",
             classes: ["sheet"],
             width: 500,
             height: "auto",
@@ -1731,8 +1731,8 @@ class CUBCombatTracker {
             panOnNextTurn: false,
             selectOnNextTurn: false,
             panGMOnly: false,
-            panPlayers: true,
-            selectGMOnly: true,
+            panPlayers: false,
+            selectGMOnly: false,
             xpModule: false
         };
     }
@@ -1855,12 +1855,11 @@ class CUBCombatTracker {
 
     /**
      * Gives XP to the living PCs in the turn tracker based on enemies killed
-     * @param {Object} tracker
+     * @param {Object} combat -- the combat instance being deleted
      */
-    _giveXP(encounters, combatId) {
-        const tracker = encounters.entities.find(combat => combat.data._id === combatId);
-        const defeatedEnemies = tracker.turns.filter(object => (!object.actor.isPC && object.defeated && object.token.disposition === -1));
-        const players = tracker.turns.filter(object => (object.actor.isPC && !object.defeated));
+    _giveXP(combat) {
+        const defeatedEnemies = combat.turns.filter(object => (!object.actor.isPC && object.defeated && object.token.disposition === -1));
+        const players = combat.turns.filter(object => (object.actor.isPC && !object.defeated));
         let experience = 0;
         if (defeatedEnemies.length > 0 && this.addExperience) {
             defeatedEnemies.forEach(enemy => {
@@ -1905,12 +1904,12 @@ class CUBCombatTracker {
     }
 
     /**
-     * Hook on pre combat delete
+     * Hook on post combat delete
      * Gives players in the combat tracker xp for the combat
      */
-    _hookOnPreDeleteCombat(encounters, combatId) {
-        if (this.settings.xpModule) {
-            this._giveXP(encounters, combatId);
+    _hookOnDeleteCombat(combat, combatId, options, userId) {
+        if (this.settings.xpModule && game.userId == userId) {
+            this._giveXP(combat);
         }
     }
 
@@ -2089,6 +2088,13 @@ class CUBTokenUtility {
         canvas.tokens.get(token.data.id).update(sceneId, update);
     }
 
+    /**
+     * Hook on token create
+     * @param {Object} token 
+     * @param {String} sceneId 
+     * @param {Object} update 
+     * @todo move this to a preCreate hook to avoid a duplicate call to the db
+     */
     _hookOnCreateToken(token, sceneId, update) {
         if (token.data.disposition === -1 && this.settings.autoRollHostileHp && !token.actor.isPC) {
             this._rerollTokenHp(token, sceneId);
