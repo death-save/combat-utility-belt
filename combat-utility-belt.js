@@ -491,7 +491,6 @@ class CUBHideNPCNames {
             //for each combatant
             for (let e of combatantListElement) {
                 let token = game.scenes.active.data.tokens.find(t => t._id == e.dataset.tokenId);
-                // token = new Token(token);
                 let actor = game.actors.entities.find(a => a._id === token.actorId);
 
                 //if not PC, module is enabled
