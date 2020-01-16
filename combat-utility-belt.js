@@ -1599,7 +1599,7 @@ class CUBInjuredAndDead {
         if (combat) {
             let combatant = combat.turns.find(t => t.tokenId == token.id);
             let tokenHp = getProperty(token, "actor.data.data.attributes.hp.value");
-            if (combatant && game.user.isGM) {
+            if (combatant) {
                 combat.updateCombatant({
                     _id: combatant._id,
                     defeated: (tokenHp == 0)
