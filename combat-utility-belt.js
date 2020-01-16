@@ -133,9 +133,10 @@ class CUBSignal {
     }
 
     static hookOnUpdateToken() {
-        Hooks.on("updateToken", (token, sceneId, update) => {
-            CUB.enhancedConditions._hookOnUpdateToken(token, sceneId, update);
-            CUB.injuredAndDead._hookOnUpdateToken(token, sceneId, update);
+        
+        Hooks.on("updateToken", (scene, sceneID, update, tokenData, otherID) => {
+            CUB.enhancedConditions._hookOnUpdateToken(scene, sceneID, update, tokenData, otherID);
+            CUB.injuredAndDead._hookOnUpdateToken(scene, sceneID, update, tokenData, otherID);
         });
     }
 
@@ -491,7 +492,6 @@ class CUBHideNPCNames {
             //for each combatant
             for (let e of combatantListElement) {
                 let token = game.scenes.active.data.tokens.find(t => t._id == e.dataset.tokenId);
-                // token = new Token(token);
                 let actor = game.actors.entities.find(a => a._id === token.actorId);
 
                 //if not PC, module is enabled
@@ -1599,7 +1599,7 @@ class CUBInjuredAndDead {
         if (combat) {
             let combatant = combat.turns.find(t => t.tokenId == token.id);
             let tokenHp = getProperty(token, "actor.data.data.attributes.hp.value");
-            if (combatant) {
+            if (combatant && game.user.isGM) {
                 combat.updateCombatant({
                     _id: combatant._id,
                     defeated: (tokenHp == 0)
