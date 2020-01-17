@@ -120,8 +120,8 @@ class CUBSignal {
     }
 
     static hookOnCreateToken() {
-        Hooks.on("createToken", (token, sceneId, update) => {
-            CUB.tokenUtility._hookOnCreateToken(token, sceneId, update);
+        Hooks.on("createToken", (scene, sceneId, tokenData, options, userId) => {
+            CUB.tokenUtility._hookOnCreateToken(scene, sceneId, tokenData);
         });
     }
 
@@ -133,7 +133,6 @@ class CUBSignal {
     }
 
     static hookOnUpdateToken() {
-        
         Hooks.on("updateToken", (scene, sceneID, update, tokenData, userId) => {
             CUB.enhancedConditions._hookOnUpdateToken(scene, sceneID, update, tokenData, userId);
             CUB.injuredAndDead._hookOnUpdateToken(scene, sceneID, update, tokenData, userId);
@@ -999,19 +998,21 @@ class CUBEnhancedConditions {
     /**
      * Hooks on token updates. If the update includes effects, calls the journal entry lookup
      */
-    _hookOnUpdateToken(scene, sceneID, update, tokenData, userId) {
-        if (!this.settings.enhancedConditions || game.userId != this.callingUser) {
+    _hookOnUpdateToken(scene, sceneID, update, options, userId) {
+        if (!this.settings.enhancedConditions || game.userId != userId) {
             return;
         }
+
         //console.log(token,sceneId,update);
         let effects = update.effects;
 
-        //If the update has effects in it, lookup mapping and set the current token
-        if (effects) {
-            this.currentToken = token;
-            this.callingUser = "";
-            return this.lookupEntryMapping(effects);
+        if (!effects) {
+            return;
         }
+
+        //If the update has effects in it, lookup mapping and set the current token
+        this.currentToken = canvas.tokens.get(update._id);
+        return this.lookupEntryMapping(effects);
     }
 
     /**
@@ -1143,7 +1144,10 @@ class CUBEnhancedConditions {
             chatContent += chatConditions;
 
             await ChatMessage.create({
-                speaker: tokenSpeaker,
+                //speaker: tokenSpeaker,
+                speaker: {
+                    alias: "Condition Lab"
+                },
                 content: chatContent,
                 type: chatType,
                 user: chatUser
@@ -2013,11 +2017,28 @@ class CUBTokenUtility {
         };
     }
 
-    _summonerFeats(token, sceneId, update) {
+    /**
+     * 
+     * @param {*} token 
+     * @param {*} sceneId 
+     */
+    _summonerFeats(token, scene) {
+        if (!game.user.isGM) {
+            return;
+        }
+
+        // If the token actor doesn't have the feat, check the other actors owned by the token's owner
         if (!this._actorHasFeat(token.actor)) {
-            console.log("Summoner feats "); console.log(token)
-            const owners = Object.keys(token.actor.data.permission).filter(item => item != "default").filter(user => token.actor.data.permission[user] === 3);
+            //console.log("Summoner feats "); console.log(token)
+            
+            const owners = Object.keys(token.actor.data.permission).filter(p => p !== "default" && token.actor.data.permission[p] === CONST.ENTITY_PERMISSIONS.OWNER);
+
+            if (!owners) {
+                return;
+            }
+
             let actors;
+
             owners.forEach(owner => {
                 const owned = game.actors.entities.filter(actor => hasProperty(actor, "data.permission." + owner));
                 if (actors === undefined) {
@@ -2026,61 +2047,76 @@ class CUBTokenUtility {
                     actors.push(owned);
                 }
             });
-            let summoners;
-            if (actors !== undefined) {
-                summoners = actors.find(actor => this._actorHasFeat(actor));
+
+            if (!actors) {
+                return;
             }
-            if (summoners !== undefined && game.user.isGM) {
-                new Dialog({
-                    title: "Feat Summoning",
-                    content: "<p>Mighty Summoner found. Is this monster being summoned?</p>",
-                    buttons: {
-                        yes: {
-                            icon: `<i class="fas fa-check"></i>`,
-                            label: "Yes",
-                            callback: () => {
-                                let formula = token.actor.data.data.attributes.hp.formula;
-                                const match = formula.match(/\d+/)[0];
-                                if (match !== undefined) {
-                                    let actor = token.actor;
-                                    formula += " + " + (match * 2);
-                                    actor.data.data.attributes.hp.formula = formula;
-                                    update.actorData = {
-                                        data: {
-                                            attributes: {
-                                                hp: {
-                                                    formula: formula,
-                                                }
+
+            const summoners = actors.find(actor => this._actorHasFeat(actor));
+
+            if (!summoners) {
+                return;
+            }
+
+            new Dialog({
+                title: "Feat Summoning",
+                content: "<p>Mighty Summoner found. Is this monster being summoned?</p>",
+                buttons: {
+                    yes: {
+                        icon: `<i class="fas fa-check"></i>`,
+                        label: "Yes",
+                        callback: () => {
+                            let actor = token.actor;
+                            let formula = actor.data.data.attributes.hp.formula;
+                            const match = formula.match(/\d+/)[0];
+                            if (match !== undefined) {
+                                formula += " + " + (match * 2);
+                                actor.data.data.attributes.hp.formula = formula;
+                                token.actorData = {
+                                    data: {
+                                        attributes: {
+                                            hp: {
+                                                formula: formula,
                                             }
                                         }
-                                    };
-                                    this._rerollTokenHp(token, sceneId);
-                                }
+                                    }
+                                };
+                                this._rerollTokenHp(token, scene);
                             }
-                        },
-                        no: {
-                            icon: `<i class="fas fa-times"></i>`,
-                            label: "No"
                         }
                     },
-                    default: "yes"
-                }).render(true);
-            }
+                    no: {
+                        icon: `<i class="fas fa-times"></i>`,
+                        label: "No"
+                    }
+                },
+                default: "yes"
+            }).render(true);
         }
     }
 
+    /**
+     * 
+     * @param {*} actor 
+     */
     _actorHasFeat(actor) {
-        if (hasProperty(actor, "data.items")) {
-            return (actor.data.items.find(item => (item.type === "feat" && item.name.includes("Mighty Summoner"))) !== undefined);
-        }
+        return !!actor.items.find(i => i.type === "feat" && i.name.includes("Mighty Summoner"));
     }
 
-    _rerollTokenHp(token, sceneId) {
+    /**
+     * 
+     * @param {*} token 
+     * @param {*} sceneId 
+     */
+    _rerollTokenHp(token, scene) {
         const formula = token.actor.data.data.attributes.hp.formula;
+
         let r = new Roll(formula);
         r.roll();
         const hp = r.total;
+
         const update = {
+            _id: token.id,
             actorData: {
                 data: {
                     attributes: {
@@ -2092,7 +2128,8 @@ class CUBTokenUtility {
                 }
             }
         };
-        canvas.tokens.get(token.data._id).update(sceneId, update);
+
+        scene.updateEmbeddedEntity("Token", update);
     }
 
     /**
@@ -2102,12 +2139,13 @@ class CUBTokenUtility {
      * @param {Object} update 
      * @todo move this to a preCreate hook to avoid a duplicate call to the db
      */
-    _hookOnCreateToken(scene, sceneId, tokenData, collection, update) {
-        let token = canvas.tokens.ownedTokens.find(t => t.id === update._id);
-        if (token.data.disposition === -1 && this.settings.autoRollHostileHp && !token.actor.isPC) {
-            this._rerollTokenHp(token, sceneId);
+    _hookOnCreateToken(scene, sceneId, tokenData, options, userId) {
+        const token = new Token(tokenData);
+
+        if (tokenData.disposition === -1 && this.settings.autoRollHostileHp && !token.actor.isPC) {
+            this._rerollTokenHp(token, scene);
         } else if (this.settings.mightySummoner) {
-            this._summonerFeats(token, sceneId, update);
+            this._summonerFeats(token, scene);
         }
     }
 }
