@@ -133,9 +133,10 @@ class CUBSignal {
     }
 
     static hookOnUpdateToken() {
-        Hooks.on("updateToken", (token, sceneId, update) => {
-            CUB.enhancedConditions._hookOnUpdateToken(token, sceneId, update);
-            CUB.injuredAndDead._hookOnUpdateToken(token, sceneId, update);
+        
+        Hooks.on("updateToken", (scene, sceneID, update, tokenData, userId) => {
+            CUB.enhancedConditions._hookOnUpdateToken(scene, sceneID, update, tokenData, userId);
+            CUB.injuredAndDead._hookOnUpdateToken(scene, sceneID, update, tokenData, userId);
         });
     }
 
@@ -490,9 +491,8 @@ class CUBHideNPCNames {
 
             //for each combatant
             for (let e of combatantListElement) {
-                let token = game.scenes.active.data.tokens.find(t => t.id == e.dataset.tokenId);
-
-                let actor = game.actors.entities.find(a => a.id === token.actorId);
+                let token = game.scenes.active.data.tokens.find(t => t._id == e.dataset.tokenId);
+                let actor = game.actors.entities.find(a => a._id === token.actorId);
 
                 //if not PC, module is enabled
                 if (!actor.isPC && this.settings.hideNames) {
@@ -998,7 +998,7 @@ class CUBEnhancedConditions {
     /**
      * Hooks on token updates. If the update includes effects, calls the journal entry lookup
      */
-    _hookOnUpdateToken(token, sceneId, update) {
+    _hookOnUpdateToken(scene, sceneID, update, tokenData, userId) {
         if (!this.settings.enhancedConditions || game.userId != this.callingUser) {
             return;
         }
@@ -1158,7 +1158,7 @@ class CUBEnhancedConditions {
     async lookupTokenActor(id) {
         let actor = {};
         if (id) {
-            actor = await game.actors.entities.find(a => a.id === id);
+            actor = await game.actors.entities.find(a => a._id === id);
         }
         //console.log("found actor: ",actor)
         return actor;
@@ -1477,7 +1477,6 @@ class CUBInjuredAndDead {
         const currentHealth = getProperty(token, "actor.data.data." + this.settings.healthAttribute + ".value");
         const updateHealth = getProperty(update, "actorData.data." + this.settings.healthAttribute + ".value");
         const maxHealth = getProperty(token, "actor.data.data." + this.settings.healthAttribute + ".max");
-
         if (this._checkForDead(currentHealth)) {
             return CUBButler.HEALTH_STATES.DEAD;
         } else if (this._checkForInjured(currentHealth, maxHealth)) {
@@ -1532,7 +1531,7 @@ class CUBInjuredAndDead {
         const tokenOverlay = getProperty(token, "data.overlayEffect");
         const hasOverlay = getProperty(token, "data.overlayEffect") != null;
         const hasEffects = getProperty(token, "data.effects.length") > 0;
-        const wasInjured = Boolean(tokenEffects.find(e => e == this.settings.injuredIcon)) || false;
+        const wasInjured = Boolean(tokenEffects && tokenEffects.find(e => e == this.settings.injuredIcon)) || false;
         const wasDead = Boolean(tokenOverlay == this.settings.deadIcon);
 
         if (hasEffects && wasInjured) {
@@ -1594,13 +1593,14 @@ class CUBInjuredAndDead {
         if (!token.scene.active) {
             return;
         }
+
         const combat = game.combat;
         if (combat) {
             let combatant = combat.turns.find(t => t.tokenId == token.id);
             let tokenHp = getProperty(token, "actor.data.data.attributes.hp.value");
             if (combatant) {
                 combat.updateCombatant({
-                    id: combatant.id,
+                    _id: combatant._id,
                     defeated: (tokenHp == 0)
                 });
             }
@@ -1615,10 +1615,11 @@ class CUBInjuredAndDead {
      * @param {String} sceneId
      * @param {Object} update
      */
-    _hookOnUpdateToken(token, sceneId, update) {
+    _hookOnUpdateToken(scene, sceneID, update, tokenData, otherID) {
+        let token = canvas.tokens.get(update._id);
         const healthUpdate = getProperty(update, "actorData.data." + this.settings.healthAttribute + ".value");
-        if (game.userId != this.callingUser || healthUpdate == undefined || token.data.actorLink) {
-            return;
+        if (game.userId != this.callingUser || healthUpdate == undefined || token.actorLink) {
+            return false;
         }
 
         let tokenHealthState;
@@ -1644,6 +1645,7 @@ class CUBInjuredAndDead {
             }
         }
         this.callingUser = "";
+        return false;
     }
 
     /**
@@ -1656,8 +1658,7 @@ class CUBInjuredAndDead {
      */
     _hookOnUpdateActor(actor, update) {
         const healthUpdate = getProperty(update, "data." + this.settings.healthAttribute + ".value");
-        const activeToken = canvas.tokens.placeables.find(t => t.actor.id == actor.id);
-
+        const activeToken = canvas.tokens.get(update._id);
         if (healthUpdate == undefined || (!this.settings.dead && !this.settings.injured) || activeToken == undefined) {
             return;
         }
@@ -1810,11 +1811,13 @@ class CUBCombatTracker {
 
     /**
      * Pans to the current token in the turn tracker
-     * @param {Object} tracker 
+     * @param {Object} combat
      * @param {Object} update 
      */
-    _panToToken(tracker, update) {
+    _panToToken(combat, update) {
+        // seem to be difference params depending on who originated.
         if ((game.user.isGM && this.settings.panGMOnly) || !this.settings.panGMOnly) {
+            let tracker = combat.entities ? combat.entities.find(tr=>tr._id===update._id) : combat;
             let token;
             if (hasProperty(update, "turn")) {
                 token = tracker.turns[update.turn].token;
@@ -1835,18 +1838,19 @@ class CUBCombatTracker {
 
     /**
      * Selects the current token in the turn tracker
-     * @param {Object} tracker 
+     * @param {Object} combat 
      * @param {Object} update 
      */
-    _selectToken(tracker, update) {
+    _selectToken(combat, update) {
         if ((game.user.isGM && this.settings.selectGMOnly) || !this.settings.selectGMOnly) {
             let token;
+            let tracker = combat.entities ? combat.entities.find(tr=>tr._id===update._id) : combat;
             if (hasProperty(update, "turn")) {
                 token = tracker.turns[update.turn].token;
             } else {
                 token = tracker.turns[0].token;
             }
-            const canvasToken = canvas.tokens.get(token.id);
+            const canvasToken = canvas.tokens.get(token._id);
             if ((hasProperty(canvasToken.actor.data.permission, game.userId) && canvasToken.actor.data.permission[game.userId] > 1) || game.user.isGM) {
                 canvasToken.control();
             }
@@ -1869,7 +1873,7 @@ class CUBCombatTracker {
                 const dividedExperience = Math.floor(experience / players.length);
                 let experienceMessage = "<b>Experience Awarded!</b><p><b>" + dividedExperience + "</b> added to:</br>";
                 players.forEach(player => {
-                    const actor = game.actors.entities.find(actor => actor.id === player.actor.data._id);
+                    const actor = game.actors.entities.find(actor => actor.i_d === player.actor.data._id);
                     actor.update({
                         "data.details.xp.value": player.actor.data.data.details.xp.value + dividedExperience
                     });
@@ -1891,7 +1895,8 @@ class CUBCombatTracker {
      * Hook on the combat update,
      * Pans or selects the current token
      */
-    _hookOnUpdateCombat(tracker, update) {
+    _hookOnUpdateCombat(combat, update) {
+        let tracker = combat.entities ? combat.entities.find(tr=>tr._id===update._id) : combat;
         if (!game.combat || game.combat.turns.length === 0) {
             return;
         }
@@ -2009,6 +2014,7 @@ class CUBTokenUtility {
 
     _summonerFeats(token, sceneId, update) {
         if (!this._actorHasFeat(token.actor)) {
+            console.log("Summoner feats "); console.log(token)
             const owners = Object.keys(token.actor.data.permission).filter(item => item != "default").filter(user => token.actor.data.permission[user] === 3);
             let actors;
             owners.forEach(owner => {
@@ -2085,7 +2091,7 @@ class CUBTokenUtility {
                 }
             }
         };
-        canvas.tokens.get(token.data.id).update(sceneId, update);
+        canvas.tokens.get(token.data._id).update(sceneId, update);
     }
 
     /**
@@ -2095,7 +2101,8 @@ class CUBTokenUtility {
      * @param {Object} update 
      * @todo move this to a preCreate hook to avoid a duplicate call to the db
      */
-    _hookOnCreateToken(token, sceneId, update) {
+    _hookOnCreateToken(scene, sceneId, tokenData, collection, update) {
+        let token = canvas.tokens.ownedTokens.find(t => t.id === update._id);
         if (token.data.disposition === -1 && this.settings.autoRollHostileHp && !token.actor.isPC) {
             this._rerollTokenHp(token, sceneId);
         } else if (this.settings.mightySummoner) {
