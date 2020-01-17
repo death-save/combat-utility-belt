@@ -613,6 +613,7 @@ class CUBEnhancedConditions {
             ["Exhaustion 4", this.DEFAULT_CONFIG.iconPath + "exhaustion4.svg", ""],
             ["Exhaustion 5", this.DEFAULT_CONFIG.iconPath + "exhaustion5.svg", ""],
             ["Frightened", this.DEFAULT_CONFIG.iconPath + "frightened.svg", ""],
+            ["Grappled", this.DEFAULT_CONFIG.iconPath + "grappled.svg",""],
             ["Incapacitated", this.DEFAULT_CONFIG.iconPath + "incapacitated.svg", ""],
             ["Invisible", this.DEFAULT_CONFIG.iconPath + "invisible.svg", ""],
             ["Paralyzed", this.DEFAULT_CONFIG.iconPath + "paralyzed.svg", ""],
