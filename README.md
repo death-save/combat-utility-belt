@@ -1,4 +1,4 @@
-![https://img.shields.io/badge/Foundry%20VTT-0.4.0%2B-green](https://img.shields.io/badge/Foundry%20VTT-0.4.0%2B-green)
+![https://img.shields.io/badge/Foundry%20VTT-0.4.4%2B-green](https://img.shields.io/badge/Foundry%20VTT-0.4.4%2B-green)
 
 # Combat Utility Belt **Beta**
 **Authors**: Evan Clarke (errational#2007 on Foundry discord) & Jordan Williams (Reaver#4634 on Foundry discord)
@@ -119,9 +119,7 @@ Create the relevant condition journal entries and ensure players have `Observer`
 - [ ] `Enhanced Conditions` Allow linking directly to compendium entries - [Issue #19](https://github.com/death-save/combat-utility-belt/issues/19)
 
  ## Known Bugs
- ~~None, the Combat Utility Belt is perfect~~
-~~1. `Hide NPC Names` When changing the setting for `Hide NPC Names`, the Chat Log will be rendered in whatever sidebar tab the user currently has open. This is a known issue in FVTT (https://gitlab.com/foundrynet/foundryvtt/issues/1471). -- [Issue #18](https://github.com/death-save/combat-utility-belt/issues/18)~~
-~~2. `Reroll Initiative` when this is enabled and initiative is rolled from D&D Beyond using the Beyond20 extension, the combat encounter will become corrupt. **WORKAROUND**: Do not roll initiative using Beyond20, or disable `Reroll Initiative` -- [Issue #5](https://github.com/death-save/combat-utility-belt/issues/5)~~
+None currently
 
 ## Thanks/Attribution
 Firstly thanks to everyone who has downloaded the mod, and a special thank you to everyone who provided bug reports or feedback!
