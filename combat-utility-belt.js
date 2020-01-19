@@ -1891,16 +1891,16 @@ class CUBCombatTracker {
             });
             if (players.length > 0) {
                 const dividedExperience = Math.floor(experience / players.length);
-                let experienceMessage = "<b>Experience Awarded!</b><p><b>" + dividedExperience + "</b> added to:</br>";
-                players.forEach(async player => {
+                let experienceMessage = "<b>Experience Awarded!</b> (" + experience + "xp)<p><b>" + dividedExperience + "xp </b> added to:</br>";
+                players.forEach(player => {
                     const actor = game.actors.entities.find(actor => actor._id === player.actor.data._id);
-                    await actor.update({
+                    actor.update({
                         "data.details.xp.value": player.actor.data.data.details.xp.value + dividedExperience
                     });
                     experienceMessage += player.actor.data.name + "</br>";
                 });
                 experienceMessage += "</p>";
-                await ChatMessage.create({
+                ChatMessage.create({
                     user: game.user._id,
                     speaker: {
                         actor: this.actor

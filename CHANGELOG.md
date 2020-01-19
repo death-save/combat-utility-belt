@@ -14,6 +14,7 @@
 - FIXED: Enhanced Conditions no longer outputs multiple chat messages for the same condition add/remove
 - FIXED: Enabling Reroll Initiative and Select Token caused only player-owned tokens to be selected on round change when initiative was being rerolled
 - Reroll Initiative has been improved to be more efficient
+- Updated the Experience Awarded chat message to display the total XP awarded
 
 ## [0.7.2] - 2020-01-17
 ### Added
