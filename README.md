@@ -4,7 +4,8 @@
 **Authors**: Evan Clarke (errational#2007 on Foundry discord) & Jordan Williams (Reaver#4634 on Foundry discord)
 
 [Installation](#Installation)    
-[Module Manifest](https://raw.githubusercontent.com/death-save/combat-utility-belt/beta/module.json)
+[Module Manifest](https://raw.githubusercontent.com/death-save/combat-utility-belt/beta/module.json)    
+[Changelog](https://github.com/death-save/combat-utility-belt/blob/beta/CHANGELOG.md)
 
  Every ~~hero~~ GM needs gadgets to keep their game safe from dastardly players up to no good!
 
