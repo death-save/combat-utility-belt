@@ -6,8 +6,8 @@
   "minimumCoreVersion": "0.4.4",
   "author": "Evan Clarke [errational#2007] & Jordan Williams [Reaver#4634]",
   "url": "https://github.com/death-save/combat-utility-belt",
-  "manifest": "https://raw.githubusercontent.com/death-save/combat-utility-belt/fvtt-044/module.json",
-  "download": "https://github.com/death-save/combat-utility-belt/archive/fvtt-044.zip",
+  "manifest": "https://raw.githubusercontent.com/death-save/combat-utility-belt/beta/module.json",
+  "download": "https://github.com/death-save/combat-utility-belt/archive/beta.zip",
   "scripts": ["./combat-utility-belt.js"],
   "packs": [
     {
