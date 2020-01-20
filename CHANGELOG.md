@@ -5,6 +5,10 @@
 - Combatant stats in Combat Tracker
 - Hide NPC Names in Artwork "Share With Players"
 
+## [0.7.8] - 2020-01-20
+### Changed
+- FIXED: Mark Injured/Dead not detecting the user correctly
+
 ## [0.7.7] - 2020-01-18
 ### Added
 - Support for Foundry VTT 0.4.5

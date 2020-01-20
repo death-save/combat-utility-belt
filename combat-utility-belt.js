@@ -1633,7 +1633,7 @@ class CUBInjuredAndDead {
     _hookOnUpdateToken(scene, sceneID, update, options, userId) {
         let token = canvas.tokens.get(update._id);
         const healthUpdate = getProperty(update, "actorData.data." + this.settings.healthAttribute + ".value");
-        if (game.userId != this.callingUser || healthUpdate == undefined || token.actorLink) {
+        if (game.userId != userId || healthUpdate == undefined || token.actorLink) {
             return false;
         }
 
