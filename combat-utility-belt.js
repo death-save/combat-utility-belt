@@ -1670,38 +1670,42 @@ class CUBInjuredAndDead {
      * @param {Object} token
      * @param {String} sceneId
      * @param {Object} update
+     * @todo refactor as updateMany
      */
     _hookOnUpdateActor(actor, update) {
         const healthUpdate = getProperty(update, "data." + this.settings.healthAttribute + ".value");
-        const activeToken = canvas.tokens.get(update._id);
-        if (healthUpdate == undefined || (!this.settings.dead && !this.settings.injured) || activeToken == undefined) {
+        const activeTokens = actor.getActiveTokens();
+
+        if (healthUpdate == undefined || (!this.settings.dead && !this.settings.injured) || !activeTokens.length) {
             return;
         }
 
         const healthState = this._checkActorHealthState(actor, update);
 
-        if (activeToken == undefined) {
-            return;
-        }
-        switch (healthState) {
-            case CUBButler.HEALTH_STATES.DEAD:
-                this._markDead(activeToken);
-                if (this.settings.combatTrackDead) {
-                    this._toggleTrackerDead(activeToken);
-                }
-                break;
-            case CUBButler.HEALTH_STATES.INJURED:
-                this._markInjured(activeToken);
-                if (this.settings.combatTrackDead) {
-                    this._toggleTrackerDead(activeToken);
-                }
-                break;
-            default:
-                this._markHealthy(activeToken);
-                if (this.settings.combatTrackDead) {
-                    this._toggleTrackerDead(activeToken);
-                }
-                break;
+        for (let t of activeTokens) {
+            switch (healthState) {
+                case CUBButler.HEALTH_STATES.DEAD:
+                    this._markDead(t);
+                    if (this.settings.combatTrackDead) {
+                        this._toggleTrackerDead(t);
+                    }
+                    break;
+
+                case CUBButler.HEALTH_STATES.INJURED:
+                    this._markInjured(t);
+                    if (this.settings.combatTrackDead) {
+                        this._toggleTrackerDead(t);
+                    }
+                    break;
+
+                default:
+                    this._markHealthy(t);
+                    if (this.settings.combatTrackDead) {
+                        this._toggleTrackerDead(t);
+                    }
+                    break;
+                
+            }
         }
     }
 }
