@@ -5,6 +5,11 @@
 - Combatant stats in Combat Tracker
 - Hide NPC Names in Artwork "Share With Players"
 
+## [0.7.9] - 2020-01-22
+### Changed
+- FIXED: Mark Injured/Dead not working for Actors with linked tokens
+- FIXED: Condition Lab button appearing before setting is enabled
+
 ## [0.7.8] - 2020-01-20
 ### Changed
 - FIXED: Mark Injured/Dead not detecting the user correctly
