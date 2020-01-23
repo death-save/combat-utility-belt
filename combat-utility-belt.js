@@ -99,7 +99,7 @@ class CUBSignal {
             CUB.injuredAndDead = new CUBInjuredAndDead();
             CUB.combatTracker = new CUBCombatTracker();
             CUB.tokenUtility = new CUBTokenUtility();
-            CUB.enhancedConditions._toggleSidebarButtonDisplay(CUB.enhancedConditions.settings.enhancedConditions);
+            
             if (CUB.combatTracker.settings.xpModule) {
                 Combat.prototype.endCombat = CUBCombatTracker.prototype.endCombat;
             }
@@ -109,6 +109,7 @@ class CUBSignal {
     static hookOnRenderSettings() {
         Hooks.on("renderSettings", (app, html) => {
             CUBEnhancedConditions._createSidebarButton(html);
+            CUB.enhancedConditions._toggleSidebarButtonDisplay(CUB.enhancedConditions.settings.enhancedConditions);
         });
     }
 
@@ -983,6 +984,8 @@ class CUBEnhancedConditions {
         labButton.click(ev => {
             new CUBEnhancedConditionsConfig().render(true);
         });
+
+        
 
     }
 
