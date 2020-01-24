@@ -129,8 +129,5 @@ I need to acknowledge that many of the functions found in the Combat Utility Bel
 A big thanks to trdischat#2123 on the Foundry Discord for the awesome set of condition icons used in the `Dungeons & Dragons 5th Edition` mapping.
 Thanks to hooking#0492 for the Pathfinder 2nd Edition condition mapping for use with his Pathfinder 2nd Edition system!
 
-## Donations
-Evan: [![ko-fi](https://www.ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/X8X01DBNR)    
-[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.me/evanc)
-
-Jordan: [![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.me/reaver01)
+## Donations/Sponsorship
+Click the Sponsor button at the top of the Github repository!
