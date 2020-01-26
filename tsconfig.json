@@ -1,0 +1,10 @@
+{
+    "compilerOptions": {
+        "allowJs": true,
+        "checkJs": true,
+        "experimentalDecorators": false,
+        "target": "ES2019",
+        "types": ["foundry-pc-types"],
+        "outDir": "./out-js"
+    }
+}
