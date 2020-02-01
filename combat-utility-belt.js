@@ -89,6 +89,7 @@ class CUBSignal {
     static hookOnInit() {
         Hooks.on("init", () => {
             CUB.hideNPCNames = new CUBHideNPCNames();
+            CUB.combatTracker = new CUBCombatTracker();
             CUBSidekick.handlebarsHelpers();
         });
     }
@@ -98,7 +99,6 @@ class CUBSignal {
             CUB.enhancedConditions = new CUBEnhancedConditions();
             CUB.rerollInitiative = new CUBRerollInitiative();
             CUB.injuredAndDead = new CUBInjuredAndDead();
-            CUB.combatTracker = new CUBCombatTracker();
             CUB.actorUtility = new CUBActorUtility();
             CUB.tokenUtility = new CUBTokenUtility();
             
@@ -123,7 +123,7 @@ class CUBSignal {
 
     static hookOnRenderActorSheet() {
         Hooks.on("renderActorSheet", (app, html, data) => {
-            CUB.actorUtility._hookOnRenderActorSheet(app, html, data);
+            CUB.actorUtility._onRenderActorSheet(app, html, data);
         });
     }
 
@@ -154,12 +154,13 @@ class CUBSignal {
 
     static hookOnPreUpdateCombat() {
         Hooks.on("preUpdateCombat", (combat, update, options) => {
-            CUB.rerollInitiative._hookOnPreUpdateCombat(combat, update);
+            
         });
     }
 
     static hookOnUpdateCombat() {
         Hooks.on("updateCombat", (combat, update, options, userId) => {
+            CUB.rerollInitiative._onUpdateCombat(combat, update, options, userId);
             CUB.combatTracker._hookOnUpdateCombat(combat, update);
         });
     }
@@ -171,8 +172,9 @@ class CUBSignal {
     }
 
     static hookOnRenderCombatTracker() {
-        Hooks.on("renderCombatTracker", (app, html) => {
-            CUB.hideNPCNames._hookOnRenderCombatTracker(app, html);
+        Hooks.on("renderCombatTracker", (app, html, data) => {
+            CUB.hideNPCNames._hookOnRenderCombatTracker(app, html, data);
+            CUB.combatTracker._onRenderCombatTracker(app, html, data)
         });
     }
 
@@ -365,12 +367,21 @@ class CUBRerollInitiative {
 
     }
 
-    async _hookOnPreUpdateCombat(combat, update, options={}) {
+    async _onUpdateCombat(combat, update, options={}, userId) {
+        // Return early if we are NOT a GM OR we are not the player that triggered the update AND that player IS a GM
+        if (!game.user.isGM || (game.userId !== userId && game.users.get(userId).isGM)) {
+            return
+        }
+
         const roundUpdate = !!getProperty(update, "round");
 
-        // If we are not the GM, the reroll setting is not enabled or this update does not contains a round, return
-        if (!game.user.isGM || !this.settings.reroll || !roundUpdate) {
+        // Return if the reroll setting is not enabled or this update does not contains a round
+        if (!this.settings.reroll || !roundUpdate) {
             return;
+        }
+
+        if (combat instanceof CombatEncounters) {
+            combat = game.combats.get(update._id);
         }
         
         // If we are not moving forward through the rounds, return
@@ -378,6 +389,12 @@ class CUBRerollInitiative {
             return;
         }
 
+        const combatantIds = combat.combatants.map(c => c._id);
+
+        await combat.rollInitiative(combatantIds);
+        await combat.update({turn: 0});
+
+        /*
         const ids = combat.turns.map(c => c._id);
 
         // Taken from foundry.js Combat.rollInitiative() -->
@@ -431,6 +448,7 @@ class CUBRerollInitiative {
         // Create multiple chat messages
         await ChatMessage.createMany(messages);
         // <-- End of borrowed code
+        */
     }
 }
 
@@ -478,11 +496,7 @@ class CUBHideNPCNames {
                     this.settings.hideNames = s;
 
                     ui.combat.render();
-                    if (ui.chat.element.is(":visible")) {
-                        ui.chat.render();
-                    } else {
-                        this._switchTabs();
-                    }
+                    ui.chat.render();
                 }
             },
             unknownCreatureString: {
@@ -1993,6 +2007,64 @@ class CUBCombatTracker {
             }).render(true);
         });
     }
+
+    _onRenderCombatTracker(app, html, data) {
+        if (!game.user.isGM) {
+            return;
+        }
+
+        const combatantList = html.find("#combat-tracker.directory-list");
+
+        const listItemHtml = `<li><button class="add-temporary"><i class="fa fa-plus"></i> Add Temporary</button></li>`
+
+        if (!game.combat || !combatantList.length) {
+            return;
+        }
+
+        combatantList.append(listItemHtml);
+
+        const button = combatantList.find(".add-temporary")
+
+        button.on("click", event => {
+            this._onAddTemporaryCombatant(event);
+        });
+    }
+
+    _onAddTemporaryCombatant(event) {
+        // spawn a form to enter details
+        const temporaryCombatantForm = new CUBTemporaryCombatantForm(this).render(true);
+    }
+}
+
+class CUBTemporaryCombatantForm extends FormApplication {
+    constructor(object, options) {
+        super(object, options);
+    }
+
+    static get defaultOptions() {
+        return mergeObject(super.defaultOptions, {
+            id: "temporary-combatant-form",
+            title: "Temporary Combatant",
+            template: "modules/combat-utility-belt/templates/temporary-combatant-form.html",
+            classes: ["sheet"],
+            width: 500,
+            height: "auto",
+            resizable: true
+        });
+    }
+
+    async _updateObject(event, formData) {
+        const actor = await Actor.create({name: formData.name, type:"npc"},{showSheet: false, temporary: true});
+        const tokenData = duplicate(actor.data.token);
+        tokenData.x = 0;
+        tokenData.y = 0;
+        tokenData.img = formData.img;
+        const token = await Token.create(game.scenes.active._id, tokenData);
+        canvas.tokens.get(token._id).visible = false;
+        //token._id = randomID();
+        const combatant = await game.combat.createEmbeddedEntity("Combatant", {tokenId: token._id, hidden: formData.hidden, initiative: formData.init});
+        //const combatant = await game.combat.createEmbeddedEntity("Combatant", {tokenId: randomID(), hidden: formData.hidden, initiative: formData.init, name: formData.name, img: "icons/svg/mystery-man.svg"});
+    }
 }
 
 class CUBTokenUtility {
@@ -2188,7 +2260,7 @@ class CUBActorUtility {
         this.actor = null;
     }
 
-    _hookOnRenderActorSheet(app, html, data) {
+    _onRenderActorSheet(app, html, data) {
         this.actor = app.entity;
         const initiative = html.find(".initiative");
 
