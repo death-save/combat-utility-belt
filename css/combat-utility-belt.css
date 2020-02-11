@@ -3,6 +3,10 @@ img.icon {
     background:black;
 }
 
+a.add-temporary {
+    margin: 10px;
+}
+
 .condition-map-list {
     list-style:none;
 }

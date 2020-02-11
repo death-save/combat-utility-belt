@@ -81,6 +81,7 @@ class CUBSignal {
         CUBSignal.hookOnPreUpdateCombat();
         CUBSignal.hookOnUpdateCombat();
         CUBSignal.hookOnDeleteCombat();
+        CUBSignal.hookOnDeleteCombatant();
         CUBSignal.hookOnRenderCombatTracker();
         CUBSignal.hookOnRenderChatMessage();
     }
@@ -168,6 +169,12 @@ class CUBSignal {
     static hookOnDeleteCombat() {
         Hooks.on("deleteCombat", (combat, combatId, options, userId) => {
             CUB.combatTracker._hookOnDeleteCombat(combat, combatId, options, userId);
+        });
+    }
+
+    static hookOnDeleteCombatant() {
+        Hooks.on("preDeleteCombatant", (combat, combatId, combatantId, options) => {
+            CUB.combatTracker._hookOnDeleteCombatant(combat, combatId, combatantId, options);
         });
     }
 
@@ -329,7 +336,8 @@ class CUBSidekick {
 class CUBRerollInitiative {
     constructor() {
         this.settings = {
-            reroll: CUBSidekick.initGadgetSetting(this.GADGET_NAME, this.SETTINGS_META)
+            reroll: CUBSidekick.initGadgetSetting(this.GADGET_NAME, this.SETTINGS_META),
+            rerollTempCombatants: CUBSidekick.initGadgetSetting(this.GADGET_NAME, this.SETTINGS_DESCRIPTORS)
         };
     }
 
@@ -340,28 +348,44 @@ class CUBRerollInitiative {
 
     get DEFAULT_CONFIG() {
         return {
-            reroll: false
+            reroll: false,
+            rerollTempCombatants: false
         };
     }
 
     get SETTINGS_DESCRIPTORS() {
         return {
             RerollN: "--Reroll Initiative--",
-            RerollH: "Reroll initiative for each combatant every round"
+            RerollH: "Reroll initiative for each combatant every round",
+            RerollTempCombatantsN: "Reroll Temporary Combatants",
+            RerollTempCombatantsH: "Set whether to reroll initiative for Temporary Combatants if they are enabled"
         };
 
     }
 
     get SETTINGS_META() {
         return {
-            name: this.SETTINGS_DESCRIPTORS.RerollN,
-            hint: this.SETTINGS_DESCRIPTORS.RerollH,
-            scope: "world",
-            type: Boolean,
-            default: this.DEFAULT_CONFIG.reroll,
-            config: true,
-            onChange: s => {
-                this.settings.reroll = s;
+            enableReroll: {
+                name: this.SETTINGS_DESCRIPTORS.RerollN,
+                hint: this.SETTINGS_DESCRIPTORS.RerollH,
+                scope: "world",
+                type: Boolean,
+                default: this.DEFAULT_CONFIG.reroll,
+                config: true,
+                onChange: s => {
+                    this.settings.reroll = s;
+                }
+            },
+            includeTempCombatants: {
+                name: this.SETTINGS_DESCRIPTORS.RerollTempCombatantsN,
+                hint: this.SETTINGS_DESCRIPTORS.RerollTempCombatantsH,
+                scope: "world",
+                type: Boolean,
+                default: this.DEFAULT_CONFIG.rerollTempCombatants,
+                config: true,
+                onChange: s => {
+                    this.settings.rerollTempCombatants = s;
+                }
             }
         };
 
@@ -1743,11 +1767,11 @@ class CUBCombatTracker {
             panPlayers: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.PanPlayersN + ")", this.SETTINGS_META.panPlayers),
             selectOnNextTurn: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.SelectOnNextTurnN + ")", this.SETTINGS_META.selectOnNextTurn),
             selectGMOnly: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.SelectGMOnlyN + ")", this.SETTINGS_META.selectGMOnly),
+            tempCombatants: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.TempCombatantsN + ")", this.SETTINGS_META.tempCombatants),
             xpModule: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.XPModuleN + ")", this.SETTINGS_META.xpModule)
         };
 
         this.callingUser = "";
-        this.addExperience;
     }
 
     get GADGET_NAME() {
@@ -1766,6 +1790,8 @@ class CUBCombatTracker {
             SelectOnNextTurnH: "Select the token whose turn it is in the combat tracker.",
             SelectGMOnlyN: "Select for GM Only",
             SelectGMOnlyH: "Only select token for the GM. If enabled for players, it will still only auto select owned tokens",
+            TempCombatantsN: "--Enable Temporary Combatants--",
+            TempCombatantsH: "Allows the creation of temporary/freeform combatants from the Combat Tracker",
             XPModuleN: "--Enable XP Module--",
             XPModuleH: "REQUIRES REFRESH! Adds an option at the end of combat to automatically distribute xp from the combat to the players"
         };
@@ -1778,6 +1804,7 @@ class CUBCombatTracker {
             panGMOnly: false,
             panPlayers: false,
             selectGMOnly: false,
+            tempCombatants: false,
             xpModule: false
         };
     }
@@ -1837,6 +1864,18 @@ class CUBCombatTracker {
                 config: true,
                 onChange: s => {
                     this.settings.selectGMOnly = s;
+                }
+            },
+            tempCombatants: {
+                name: this.SETTINGS_DESCRIPTORS.TempCombatantsN,
+                hint: this.SETTINGS_DESCRIPTORS.TempCombatantsH,
+                default: this.DEFAULT_CONFIG.tempCombatants,
+                scope: "world",
+                type: Boolean,
+                config: true,
+                onChange: s => {
+                    this.settings.tempCombatants = s;
+                    ui.combat.render();
                 }
             },
             xpModule: {
@@ -1961,12 +2000,37 @@ class CUBCombatTracker {
     }
 
     /**
-     * Hook on post combat delete
-     * Gives players in the combat tracker xp for the combat
+     * Handler for deleteCombat hook
+     * @param {*} combat 
+     * @param {*} combatId 
+     * @param {*} options 
+     * @param {*} userId 
      */
     _hookOnDeleteCombat(combat, combatId, options, userId) {
         if (this.settings.xpModule && game.userId == userId) {
             this._giveXP(combat);
+        }
+
+        const tempCombatants = combat.combatants.filter(c => hasProperty(c, "flags." + CUBButler.MODULE_NAME + "." + this.GADGET_NAME + "(temporaryCombatant)"));
+
+        if (this.settings.tempCombatants && tempCombatants.length) {
+            this._removeTemporaryCombatants(tempCombatants, combat.scene);
+        }  
+    }
+
+    /**
+     * Handler for deleteCombatant hook
+     * @param {*} combat 
+     * @param {*} combatId 
+     * @param {*} combatantId 
+     * @param {*} options 
+     */
+    _hookOnDeleteCombatant(combat, combatId, combatantId, options) {
+        const combatant = combat.combatants.find(c => c._id === combatantId);
+        const tokenData = combatant.token.data || null;
+
+        if (hasProperty(tokenData, "flags." + [CUBButler.MODULE_NAME] + "." + [CUB.combatTracker.GADGET_NAME] + "(temporaryCombatant)")) {
+            this._removeTemporaryCombatant(combatant, combat.scene);
         }
     }
 
@@ -2008,14 +2072,20 @@ class CUBCombatTracker {
         });
     }
 
+    /**
+     * 
+     * @param {*} app 
+     * @param {*} html 
+     * @param {*} data 
+     */
     _onRenderCombatTracker(app, html, data) {
-        if (!game.user.isGM) {
+        if (!game.user.isGM || !this.settings.tempCombatants) {
             return;
         }
 
         const combatantList = html.find("#combat-tracker.directory-list");
 
-        const listItemHtml = `<li><button class="add-temporary"><i class="fa fa-plus"></i> Add Temporary</button></li>`
+        const listItemHtml = `<div class="flexrow"><a class="add-temporary"><i class="fa fa-plus"></i> Add Temporary Combatant</a></div>`
 
         if (!game.combat || !combatantList.length) {
             return;
@@ -2030,9 +2100,52 @@ class CUBCombatTracker {
         });
     }
 
+    /**
+     * 
+     * @param {*} event 
+     */
     _onAddTemporaryCombatant(event) {
         // spawn a form to enter details
         const temporaryCombatantForm = new CUBTemporaryCombatantForm(this).render(true);
+    }
+
+    /**
+     * Removes any temporary combatants created by this module
+     * @param {*} combatants 
+     * @param {*} scene 
+     */
+    _removeTemporaryCombatants(combatants, scene) {
+        
+        const tokenIds = combatants.map(c => c.tokenId);
+        const actorIds = combatants.map(c => c.actor._id);
+
+        if (tokenIds) {
+            scene.deleteManyEmbeddedEntities("Token", tokenIds);
+        }
+        
+        if (actorIds) {
+            Actor.deleteMany(actorIds);
+        }
+        
+    }
+
+    /**
+     * Removes a single temporary combatant created by this module
+     * @param {*} combatant 
+     * @param {*} scene 
+     */
+    _removeTemporaryCombatant(combatant, scene) {
+        const tokenId = combatant.tokenId;
+        const actor = game.actors.get(combatant.actor._id);
+
+        if (tokenId){
+            scene.deleteEmbeddedEntity("Token", tokenId);
+        }
+        
+        if (actor){
+            actor.delete();
+        }
+        
     }
 }
 
@@ -2054,16 +2167,38 @@ class CUBTemporaryCombatantForm extends FormApplication {
     }
 
     async _updateObject(event, formData) {
-        const actor = await Actor.create({name: formData.name, type:"npc"},{showSheet: false, temporary: true});
+        const folderName = "Temporary Combatants";
+        let folder = game.folders.entities.find(f => f.name === folderName);
+        if (!folder) {
+            folder = await Folder.create({name: "Temporary Combatants", type: "Actor", parent: null});
+        }
+
+        const actor = await Actor.create({
+            name: formData.name, 
+            type:"npc",
+            img: formData.icon,
+            folder: folder.id,
+            flags: {
+                [CUBButler.MODULE_NAME + "." + CUB.combatTracker.GADGET_NAME + "(temporaryCombatant)"]: true
+            }
+        },{displaySheet: false});
+
         const tokenData = duplicate(actor.data.token);
         tokenData.x = 0;
         tokenData.y = 0;
-        tokenData.img = formData.img;
+        tokenData.disposition = 0;
+        tokenData.img = formData.icon;
         const token = await Token.create(game.scenes.active._id, tokenData);
-        canvas.tokens.get(token._id).visible = false;
-        //token._id = randomID();
-        const combatant = await game.combat.createEmbeddedEntity("Combatant", {tokenId: token._id, hidden: formData.hidden, initiative: formData.init});
-        //const combatant = await game.combat.createEmbeddedEntity("Combatant", {tokenId: randomID(), hidden: formData.hidden, initiative: formData.init, name: formData.name, img: "icons/svg/mystery-man.svg"});
+
+        const combatant = await game.combat.createEmbeddedEntity("Combatant", {
+            tokenId: token._id, 
+            hidden: formData.hidden, 
+            initiative: formData.init,
+            flags: {
+                [CUBButler.MODULE_NAME + "." + CUB.combatTracker.GADGET_NAME + "(temporaryCombatant)"]: true
+            }
+        });
+        
     }
 }
 
@@ -2133,7 +2268,7 @@ class CUBTokenUtility {
         }
 
         // If the token actor doesn't have the feat, check the other actors owned by the token's owner
-        if (!this._actorHasFeat(token.actor)) {
+        if (token.actor && !this._actorHasFeat(token.actor)) {
             //console.log("Summoner feats "); console.log(token)
             
             const owners = Object.keys(token.actor.data.permission).filter(p => p !== "default" && token.actor.data.permission[p] === CONST.ENTITY_PERMISSIONS.OWNER);
@@ -2247,7 +2382,7 @@ class CUBTokenUtility {
     _hookOnCreateToken(scene, sceneId, tokenData, options, userId) {
         const token = new Token(tokenData);
 
-        if (tokenData.disposition === -1 && this.settings.autoRollHostileHp && !token.actor.isPC) {
+        if (tokenData.disposition === -1 && this.settings.autoRollHostileHp && token.actor && !token.actor.isPC) {
             this._rerollTokenHp(token, scene);
         } else if (this.settings.mightySummoner) {
             this._summonerFeats(token, scene);
