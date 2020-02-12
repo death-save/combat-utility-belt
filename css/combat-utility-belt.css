@@ -3,6 +3,10 @@ img.icon {
     background:black;
 }
 
+input.resource {
+    background: white;
+}
+
 a.add-temporary {
     margin: 10px;
 }
