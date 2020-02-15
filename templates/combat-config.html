@@ -1,0 +1,28 @@
+<form autocomplete="off" onsubmit="event.preventDefault();">
+    <div class="form-group">
+        <img src="{{cubSettings.icon1}}" width="14"/>
+        <label>{{localize 'COMBAT.Resource'}}</label>
+        <input type="text" name="resource" value="{{settings.resource}}" placeholder="resource.path"/>
+        <p class="notes">{{localize 'COMBAT.ResourceHint'}}</p>
+        <input name="icon1" type="text" value="" placeholder="path.to.icon" />
+        <button type="button" name="file-picker" class="file-picker" data-type="imagevideo" data-target="icon1" title="Browse Files" tabindex="-1">
+            <i class="fas fa-file-import fa-fw"></i>
+        </button>
+    </div>
+
+    <div class="form-group">
+        <label>Tracked Resource 2</label>
+        <input type="text" name="resource2" value="{{cubSettings.resource2}}" placeholder="resource.path"/>
+        <p class="notes">{{localize 'COMBAT.ResourceHint'}}</p>
+    </div>
+
+    <div class="form-group">
+        <label>{{localize 'COMBAT.SkipDefeated'}}</label>
+        <input type="checkbox" name="skipDefeated" {{checked settings.skipDefeated}} data-dtype="Boolean"/>
+        <p class="notes">{{localize 'COMBAT.SkipDefeatedHint'}}</p>
+    </div>
+
+    <button type="submit" name="submit">
+        <i class="fas fa-save"></i> {{localize 'COMBAT.SettingsSave'}}
+    </button>
+</form>

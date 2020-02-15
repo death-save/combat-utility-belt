@@ -3,6 +3,20 @@ img.icon {
     background:black;
 }
 
+.token-resource input[name="resource"] {
+    color: white;
+    background: none;
+    border: 1px solid transparent;
+}
+
+.token-resource input[name="resource"]:hover {
+    border: 1px solid white;
+}
+
+a.add-temporary {
+    margin: 10px;
+}
+
 .condition-map-list {
     list-style:none;
 }
