@@ -188,7 +188,8 @@ class CUBSignal {
 
     static hookOnRenderCombatTrackerConfig() {
         Hooks.on("renderCombatTrackerConfig", (app, html, data) => {
-            CUB.combatTracker._onRenderCombatTrackerConfig(app, html, data);
+            // Possible future feature
+            //CUB.combatTracker._onRenderCombatTrackerConfig(app, html, data);
         });
     }
 
@@ -605,14 +606,26 @@ class CUBHideNPCNames {
             return;
         }
 
+        jQuery.expr[':'].icontains = function(a, i, m) {
+            return jQuery(a).text().toUpperCase()
+                .indexOf(m[3].toUpperCase()) >= 0;
+        };
+
         const messageActorId = message.data.speaker.actor;
         const messageActor = game.actors.get(messageActorId);
         const speakerIsNPC = messageActor && !messageActor.isPC;
 
         if (speakerIsNPC) {
             const replacement = this.settings.unknownCreatureString || " ";
-            html.find(`:contains('${data.alias}')`).each((i, el) => {
-                el.innerHTML = el.innerHTML.replace(new RegExp(data.alias, "g"), replacement);
+            const matchedContent = html.find(`:icontains('${data.alias}')`);
+            
+            matchedContent.each((i, el) => {
+                el.innerHTML = el.innerHTML.replace(new RegExp("\\b" + data.alias + "\\b", "gi"), replacement);
+                /*
+                $(el).text((i, text) => {
+                    return $(el).text().replace(new RegExp("\\b" + data.alias + "\\b", "gi"), replacement);
+                });
+                */
             });
         }
         //console.log(message,data,html);
@@ -2101,7 +2114,7 @@ class CUBCombatTracker {
     }
 
     /**
-     * 
+     * Handler for combat tracker render
      * @param {*} app 
      * @param {*} html 
      * @param {*} data 
@@ -2111,51 +2124,11 @@ class CUBCombatTracker {
             return;
         }
 
-        const resource = html.find(".resource");
+        const resourceSpans = html.find(".resource");
 
-        resource.on("dblclick", event => {
-            event.preventDefault();
-            const resourceInputHtml = `<input type="text" name="resource" value="${event.target.innerText}">`
-            const targetElement = event.target;
-            const originalHtml = duplicate(event.target);
-            const trackerSettings = game.settings.get("core", Combat.CONFIG_SETTING);
-            const resource = trackerSettings.resource;
-
-            const li = event.target.closest("li");
-            const tokenId = li.dataset.tokenId;
-
-            $(targetElement).replaceWith(resourceInputHtml);
-            const resourceInput = $(li).find("input[name='resource']");
-
-            resourceInput.on("change", async event => {
-                const token = canvas.tokens.get(tokenId);
-                await token.actor.update({["data." + resource]: event.target.value});
-            });
-
-            resourceInput.on("focusout", event => {
-                $(event.target).replaceWith(originalHtml);
-            });
-        });
-
-
-
-        /*
-        const trackerConfigButton = html.find("a.combat-settings");
-
-        trackerConfigButton.off("click");
-
-        trackerConfigButton.on("click", event => {
-            event.preventDefault();
-
-            new CUBCombatTrackerConfig().render(true);
-        });
-
-        const trackerSettings = CUBSidekick.getGadgetSetting(CUB.combatTracker.GADGET_NAME + "(" + CUB.combatTracker.SETTINGS_DESCRIPTORS.TrackerConfigSettingsN + ")");
-
-        if (trackerSettings.resource2) {
-
+        if (resourceSpans.length) {
+            this._replaceResourceElement(html);
         }
-        */
 
         if (!this.settings.tempCombatants) {
             return;
@@ -2176,10 +2149,67 @@ class CUBCombatTracker {
         button.on("click", event => {
             this._onAddTemporaryCombatant(event);
         });
+
+        // Possible future feature
+        /*
+        const trackerConfigButton = html.find("a.combat-settings");
+
+        trackerConfigButton.off("click");
+
+        trackerConfigButton.on("click", event => {
+            event.preventDefault();
+
+            new CUBCombatTrackerConfig().render(true);
+        });
+
+        const trackerSettings = CUBSidekick.getGadgetSetting(CUB.combatTracker.GADGET_NAME + "(" + CUB.combatTracker.SETTINGS_DESCRIPTORS.TrackerConfigSettingsN + ")");
+
+        if (trackerSettings.resource2) {
+
+        }
+        */
     }
 
     /**
-     * 
+     * Replaces the default token resource span with a text input
+     * @param {*} html 
+     */
+    _replaceResourceElement(html) {
+        // Find all the resource spans
+        const resourceSpans = html.find(".resource");
+
+
+        // Replace the element
+        $(resourceSpans).each(function() {
+            $(this).replaceWith('<input type="text" name="resource" value="' + $(this).text() + '">');
+        });
+
+        const resourceInputs = html.find('input[name="resource"]');
+        resourceInputs.on("change", event => this._onChangeResource(event));
+    }
+
+    /**
+     * Handler for updates to the token resource
+     * @param {*} event 
+     */
+    async _onChangeResource(event) {
+        // Get the tracker settings and extract the resource property
+        const trackerSettings = game.settings.get("core", Combat.CONFIG_SETTING);
+        const resource = trackerSettings.resource;
+
+        // Find the parent list element
+        const li = event.target.closest("li");
+
+        // Get the tokenId from the list element
+        const tokenId = li.dataset.tokenId;
+
+        // Find the token and update
+        const token = canvas.tokens.get(tokenId);
+        await token.actor.update({["data." + resource]: event.target.value});
+    }
+
+    /**
+     * Open the Temporary Combatant form
      * @param {*} event 
      */
     _onAddTemporaryCombatant(event) {
@@ -2283,7 +2313,7 @@ class CUBTemporaryCombatantForm extends FormApplication {
         const folderName = "Temporary Combatants";
         let folder = game.folders.entities.find(f => f.name === folderName);
         if (!folder) {
-            folder = await Folder.create({name: "Temporary Combatants", type: "Actor", parent: null});
+            folder = await Folder.create({name: "Temporary Combatants", type: "Actor", parent: null}, {displaySheet: false});
         }
 
         const actor = await Actor.create({
