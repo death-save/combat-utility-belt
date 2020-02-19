@@ -3,7 +3,15 @@
 ## [Unreleased]
 - Compendium support for Condition Lab
 - Combatant stats in Combat Tracker
-- Hide NPC Names in Artwork "Share With Players"
+- ~~Hide NPC Names in Artwork "Share With Players"~~
+- Refine Hide NPC Names to allow for "known" NPC names/information
+
+## [0.8.1] - 2020-02-18
+### Added
+- Hide NPC Names now hides NPC names in the Character and Token Artwork popouts
+
+### Changed
+- Fixed a bug where the Condition Lab button would fail to load due to long scene load times.
 
 ## [0.8.0] - 2020-02-15
 ### Added
@@ -42,3 +50,6 @@
 - Fixed some logic in Mighty Summoner functionality
 - Changed Condition output in chat to come from "Condition Lab" instead of the token
 
+## [pre-0.7.2] - Ancient History
+- Stuff happened
+- Here be dragons
