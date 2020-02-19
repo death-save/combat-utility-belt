@@ -74,6 +74,7 @@ class CUBSignal {
         CUBSignal.hookOnRenderSettings();
         CUBSignal.hookOnRenderTokenHUD();
         CUBSignal.hookOnRenderActorSheet();
+        CUBSignal.hookOnRenderImagePopout();
         CUBSignal.hookOnCreateToken();
         CUBSignal.hookOnPreUpdateToken();
         CUBSignal.hookOnUpdateToken();
@@ -90,6 +91,7 @@ class CUBSignal {
 
     static hookOnInit() {
         Hooks.on("init", () => {
+            CUB.enhancedConditions = new CUBEnhancedConditions();
             CUB.hideNPCNames = new CUBHideNPCNames();
             CUB.combatTracker = new CUBCombatTracker();
             CUBSidekick.handlebarsHelpers();
@@ -98,7 +100,6 @@ class CUBSignal {
 
     static hookOnReady() {
         Hooks.on("ready", () => {
-            CUB.enhancedConditions = new CUBEnhancedConditions();
             CUB.rerollInitiative = new CUBRerollInitiative();
             CUB.injuredAndDead = new CUBInjuredAndDead();
             CUB.actorUtility = new CUBActorUtility();
@@ -126,6 +127,12 @@ class CUBSignal {
     static hookOnRenderActorSheet() {
         Hooks.on("renderActorSheet", (app, html, data) => {
             CUB.actorUtility._onRenderActorSheet(app, html, data);
+        });
+    }
+
+    static hookOnRenderImagePopout() {
+        Hooks.on("renderImagePopout", (app, html, data) => {
+            CUB.hideNPCNames._onRenderImagePopout(app, html, data);
         });
     }
 
@@ -629,6 +636,26 @@ class CUBHideNPCNames {
             });
         }
         //console.log(message,data,html);
+    }
+
+    _onRenderImagePopout(app, html, data) {
+        if (game.user.isGM || app.options.entity.type !== "Actor") {
+            return;
+        }
+
+        const actor = game.actors.get(app.options.entity.id);
+
+        if (actor.isPC) {
+            return;
+        }
+
+        const header = html.find("header");
+        const replacement = this.settings.unknownCreatureString || " ";
+        const matchedContent = header.find(`:icontains('${actor.name}')`);
+
+        matchedContent.text((index, text) => {
+            return text.replace(new RegExp("\\b" + actor.name + "\\b", "gi"), replacement);
+        });
     }
 }
 
