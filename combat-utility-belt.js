@@ -1849,14 +1849,11 @@ class CUBConcentrator {
         return _isConcentrating;
     }
 
-
-
-
     _hookOnPreUpdateToken(scene, sceneID, update, options){
         let token = canvas.tokens.get(options.currentData._id);
         let actorId = getProperty(token, "data.actorId");
         const current = getProperty(token, "actor")
-        if (!game.user.isGM || !current || !this.settings.concentrating)
+        if (!game.user.isGM || !current || !this.settings.concentrating || token.actorLink)
             return false;
         
 
@@ -2571,9 +2568,3 @@ class CUBTokenUtility {
  * Start the module
  */
 CUBSignal.lightUp();
-
-Hooks.on("createToken", (scene, sceneID, tokenData, tokenChange, idk) => {
-    let id = tokenData._id;
-    let token = canvas.tokens.get(id);
-    token.update({});
-})
