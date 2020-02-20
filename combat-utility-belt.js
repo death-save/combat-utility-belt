@@ -73,8 +73,6 @@ class CUBSignal {
         CUBSignal.hookOnReady();
         CUBSignal.hookOnRenderSettings();
         CUBSignal.hookOnRenderTokenHUD();
-        CUBSignal.hookOnRenderActorSheet();
-        CUBSignal.hookOnRenderImagePopout();
         CUBSignal.hookOnCreateToken();
         CUBSignal.hookOnPreUpdateToken();
         CUBSignal.hookOnUpdateToken();
@@ -82,32 +80,37 @@ class CUBSignal {
         CUBSignal.hookOnPreUpdateCombat();
         CUBSignal.hookOnUpdateCombat();
         CUBSignal.hookOnDeleteCombat();
-        CUBSignal.hookOnDeleteCombatant();
         CUBSignal.hookOnRenderCombatTracker();
-        CUBSignal.hookOnRenderCombatTrackerConfig();
         CUBSignal.hookOnRenderChatMessage();
+        CUBSignal.handlebarsInitiate();
     }
-
 
     static hookOnInit() {
         Hooks.on("init", () => {
-            CUB.enhancedConditions = new CUBEnhancedConditions();
             CUB.hideNPCNames = new CUBHideNPCNames();
-            CUB.combatTracker = new CUBCombatTracker();
             CUBSidekick.handlebarsHelpers();
         });
     }
 
     static hookOnReady() {
         Hooks.on("ready", () => {
+            CUB.enhancedConditions = new CUBEnhancedConditions();
             CUB.rerollInitiative = new CUBRerollInitiative();
             CUB.injuredAndDead = new CUBInjuredAndDead();
-            CUB.actorUtility = new CUBActorUtility();
+            CUB.concentrator = new CUBConcentrator();
+            CUB.combatTracker = new CUBCombatTracker();
             CUB.tokenUtility = new CUBTokenUtility();
             
             if (CUB.combatTracker.settings.xpModule) {
                 Combat.prototype.endCombat = CUBCombatTracker.prototype.endCombat;
             }
+
+            // If Concentrator
+            game.socket.on("module.combat-utility-belt", packet => {
+                if(game.user.id === packet.userId){
+                    CUBRoller.handleSocketCall(packet);
+                }
+            });
         });
     }
 
@@ -121,18 +124,6 @@ class CUBSignal {
     static hookOnRenderTokenHUD() {
         Hooks.on("renderTokenHUD", (app, html, data) => {
             CUB.enhancedConditions._hookOnRenderTokenHUD(app, html, data);
-        });
-    }
-
-    static hookOnRenderActorSheet() {
-        Hooks.on("renderActorSheet", (app, html, data) => {
-            CUB.actorUtility._onRenderActorSheet(app, html, data);
-        });
-    }
-
-    static hookOnRenderImagePopout() {
-        Hooks.on("renderImagePopout", (app, html, data) => {
-            CUB.hideNPCNames._onRenderImagePopout(app, html, data);
         });
     }
 
@@ -151,6 +142,7 @@ class CUBSignal {
     static hookOnUpdateToken() {
         Hooks.on("updateToken", (scene, sceneID, update, options, userId) => {
             CUB.enhancedConditions._hookOnUpdateToken(scene, sceneID, update, options, userId);
+            CUB.concentrator._hookOnUpdateToken(scene, sceneID, update, options, userId);
             CUB.injuredAndDead._hookOnUpdateToken(scene, sceneID, update, options, userId);
         });
     }
@@ -163,13 +155,12 @@ class CUBSignal {
 
     static hookOnPreUpdateCombat() {
         Hooks.on("preUpdateCombat", (combat, update, options) => {
-            
+            CUB.rerollInitiative._hookOnPreUpdateCombat(combat, update);
         });
     }
 
     static hookOnUpdateCombat() {
         Hooks.on("updateCombat", (combat, update, options, userId) => {
-            CUB.rerollInitiative._onUpdateCombat(combat, update, options, userId);
             CUB.combatTracker._hookOnUpdateCombat(combat, update);
         });
     }
@@ -180,29 +171,25 @@ class CUBSignal {
         });
     }
 
-    static hookOnDeleteCombatant() {
-        Hooks.on("preDeleteCombatant", (combat, combatId, combatantId, options) => {
-            CUB.combatTracker._hookOnDeleteCombatant(combat, combatId, combatantId, options);
-        });
-    }
-
     static hookOnRenderCombatTracker() {
-        Hooks.on("renderCombatTracker", (app, html, data) => {
-            CUB.hideNPCNames._hookOnRenderCombatTracker(app, html, data);
-            CUB.combatTracker._onRenderCombatTracker(app, html, data);
-        });
-    }
-
-    static hookOnRenderCombatTrackerConfig() {
-        Hooks.on("renderCombatTrackerConfig", (app, html, data) => {
-            // Possible future feature
-            //CUB.combatTracker._onRenderCombatTrackerConfig(app, html, data);
+        Hooks.on("renderCombatTracker", (app, html) => {
+            CUB.hideNPCNames._hookOnRenderCombatTracker(app, html);
         });
     }
 
     static hookOnRenderChatMessage() {
         Hooks.on("renderChatMessage", (message, html, data) => {
             CUB.hideNPCNames._hookOnRenderChatMessage(message, html, data);
+        });
+    }
+
+    static handlebarsInitiate(){
+        Handlebars.registerHelper('request-roll-ability', function(ability){
+            return CONFIG.DND5E["abilities"][ability]
+        });
+        
+        Handlebars.registerHelper('request-roll-skill', function(skill){
+            return CONFIG.DND5E["skills"][skill]
         });
     }
 }
@@ -351,8 +338,7 @@ class CUBSidekick {
 class CUBRerollInitiative {
     constructor() {
         this.settings = {
-            reroll: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.RerollN + ")", this.SETTINGS_META.enableReroll),
-            rerollTempCombatants: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.RerollTempCombatantsN + ")" , this.SETTINGS_META.includeTempCombatants)
+            reroll: CUBSidekick.initGadgetSetting(this.GADGET_NAME, this.SETTINGS_META)
         };
     }
 
@@ -363,64 +349,39 @@ class CUBRerollInitiative {
 
     get DEFAULT_CONFIG() {
         return {
-            reroll: false,
-            rerollTempCombatants: false
+            reroll: false
         };
     }
 
     get SETTINGS_DESCRIPTORS() {
         return {
             RerollN: "--Reroll Initiative--",
-            RerollH: "Reroll initiative for each combatant every round",
-            RerollTempCombatantsN: "Reroll Temporary Combatants",
-            RerollTempCombatantsH: "Set whether to reroll initiative for Temporary Combatants if they are enabled"
+            RerollH: "Reroll initiative for each combatant every round"
         };
 
     }
 
     get SETTINGS_META() {
         return {
-            enableReroll: {
-                name: this.SETTINGS_DESCRIPTORS.RerollN,
-                hint: this.SETTINGS_DESCRIPTORS.RerollH,
-                scope: "world",
-                type: Boolean,
-                default: this.DEFAULT_CONFIG.reroll,
-                config: true,
-                onChange: s => {
-                    this.settings.reroll = s;
-                }
-            },
-            includeTempCombatants: {
-                name: this.SETTINGS_DESCRIPTORS.RerollTempCombatantsN,
-                hint: this.SETTINGS_DESCRIPTORS.RerollTempCombatantsH,
-                scope: "world",
-                type: Boolean,
-                default: this.DEFAULT_CONFIG.rerollTempCombatants,
-                config: true,
-                onChange: s => {
-                    this.settings.rerollTempCombatants = s;
-                }
+            name: this.SETTINGS_DESCRIPTORS.RerollN,
+            hint: this.SETTINGS_DESCRIPTORS.RerollH,
+            scope: "world",
+            type: Boolean,
+            default: this.DEFAULT_CONFIG.reroll,
+            config: true,
+            onChange: s => {
+                this.settings.reroll = s;
             }
         };
 
     }
 
-    async _onUpdateCombat(combat, update, options={}, userId) {
-        // Return early if we are NOT a GM OR we are not the player that triggered the update AND that player IS a GM
-        if (!game.user.isGM || (game.userId !== userId && game.users.get(userId).isGM)) {
-            return
-        }
-
+    async _hookOnPreUpdateCombat(combat, update, options={}) {
         const roundUpdate = !!getProperty(update, "round");
 
-        // Return if the reroll setting is not enabled or this update does not contains a round
-        if (!this.settings.reroll || !roundUpdate) {
+        // If we are not the GM, the reroll setting is not enabled or this update does not contains a round, return
+        if (!game.user.isGM || !this.settings.reroll || !roundUpdate) {
             return;
-        }
-
-        if (combat instanceof CombatEncounters) {
-            combat = game.combats.get(update._id);
         }
         
         // If we are not moving forward through the rounds, return
@@ -428,18 +389,6 @@ class CUBRerollInitiative {
             return;
         }
 
-        let combatantIds;
-
-        if (!this.settings.rerollTempCombatants) {
-            combatantIds = combat.combatants.filter(c => !hasProperty(c, "flags." + [CUBButler.MODULE_NAME] + "." + [CUB.combatTracker.GADGET_NAME] + "(temporaryCombatant)")).map(c => c._id);
-        } else {
-            combatantIds = combat.combatants.map(c => c._id);
-        }
-
-        await combat.rollInitiative(combatantIds);
-        await combat.update({turn: 0});
-
-        /*
         const ids = combat.turns.map(c => c._id);
 
         // Taken from foundry.js Combat.rollInitiative() -->
@@ -493,7 +442,6 @@ class CUBRerollInitiative {
         // Create multiple chat messages
         await ChatMessage.createMany(messages);
         // <-- End of borrowed code
-        */
     }
 }
 
@@ -541,7 +489,11 @@ class CUBHideNPCNames {
                     this.settings.hideNames = s;
 
                     ui.combat.render();
-                    ui.chat.render();
+                    if (ui.chat.element.is(":visible")) {
+                        ui.chat.render();
+                    } else {
+                        this._switchTabs();
+                    }
                 }
             },
             unknownCreatureString: {
@@ -613,49 +565,17 @@ class CUBHideNPCNames {
             return;
         }
 
-        jQuery.expr[':'].icontains = function(a, i, m) {
-            return jQuery(a).text().toUpperCase()
-                .indexOf(m[3].toUpperCase()) >= 0;
-        };
-
         const messageActorId = message.data.speaker.actor;
         const messageActor = game.actors.get(messageActorId);
         const speakerIsNPC = messageActor && !messageActor.isPC;
 
         if (speakerIsNPC) {
             const replacement = this.settings.unknownCreatureString || " ";
-            const matchedContent = html.find(`:icontains('${data.alias}')`);
-            
-            matchedContent.each((i, el) => {
-                el.innerHTML = el.innerHTML.replace(new RegExp("\\b" + data.alias + "\\b", "gi"), replacement);
-                /*
-                $(el).text((i, text) => {
-                    return $(el).text().replace(new RegExp("\\b" + data.alias + "\\b", "gi"), replacement);
-                });
-                */
+            html.find(`:contains('${data.alias}')`).each((i, el) => {
+                el.innerHTML = el.innerHTML.replace(new RegExp(data.alias, "g"), replacement);
             });
         }
         //console.log(message,data,html);
-    }
-
-    _onRenderImagePopout(app, html, data) {
-        if (game.user.isGM || app.options.entity.type !== "Actor") {
-            return;
-        }
-
-        const actor = game.actors.get(app.options.entity.id);
-
-        if (actor.isPC) {
-            return;
-        }
-
-        const header = html.find("header");
-        const replacement = this.settings.unknownCreatureString || " ";
-        const matchedContent = header.find(`:icontains('${actor.name}')`);
-
-        matchedContent.text((index, text) => {
-            return text.replace(new RegExp("\\b" + actor.name + "\\b", "gi"), replacement);
-        });
     }
 }
 
@@ -731,7 +651,8 @@ class CUBEnhancedConditions {
             ["Prone", this.DEFAULT_CONFIG.iconPath + "prone.svg", ""],
             ["Restrained", this.DEFAULT_CONFIG.iconPath + "restrained.svg", ""],
             ["Stunned", this.DEFAULT_CONFIG.iconPath + "stunned.svg", ""],
-            ["Unconscious", this.DEFAULT_CONFIG.iconPath + "unconscious.svg", ""]
+            ["Unconscious", this.DEFAULT_CONFIG.iconPath + "unconscious.svg", ""],
+            ["Concentrating", this.DEFAULT_CONFIG.iconPath + "concentrating.svg", ""]
         ];
 
         const pf1eMap = [];
@@ -1812,6 +1733,337 @@ class CUBInjuredAndDead {
     }
 }
 
+class CUBConcentrator {
+    constructor(){
+        this.settings = {
+            concentrating: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.ConcentratingN + ")", this.SETTINGS_META.concentrating),
+            concentratingIcon: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.ConcentratingIconN + ")", this.SETTINGS_META.concentratingIcon),
+            healthAttribute: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.HealthAttributeN + ")", this.SETTINGS_META.healthAttribute),
+            displayChat: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.ConcentratingChatPromptN + ")", this.SETTINGS_META.displayChat),
+            rollRequest: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.ConcentratingRollRequestN + ")", this.SETTINGS_META.rollRequest),      
+        }
+    }
+
+    get GADGET_NAME() {
+        return 'concentrator'
+    }
+
+    get SETTINGS_DESCRIPTORS(){
+        return {
+            ConcentratingN: "--Cause Concentration Checks--",
+            ConcentratingH: "Requires concentration checks on tokens with the concentrating status effect",
+            ConcentratingIconN: "Concentration Status Marker",
+            ConcentratingIconH: "Path to the status marker to display for Concetrating tokens",
+            ConcentratingChatPromptN: "Concentration chat notifications",
+            ConcentratingChatPromptH: "Display a warning in chat whenever concentration is threatened",
+            ConcentratingRollRequestN: "Request a roll when concentration is threatened",
+            ConcentratingRollRequestH: "Will display a promtp requesting a roll whenever concentration is threatened.",
+            HealthAttributeN: "Health Attribute",
+            HealthAttributeH: "Health/HP attribute name as defined by game system"
+        }
+    }
+
+    get DEFAULT_CONFIG(){
+        return {
+            concentrating: false,
+            concentratingIcon: "modules/combat-utility-belt/icons/concentrating.svg"
+        };
+    }
+
+    get SETTINGS_META(){
+        return {
+            concentrating: {
+                name: this.SETTINGS_DESCRIPTORS.ConcentratingN,
+                hint: this.SETTINGS_DESCRIPTORS.ConcentratingH,
+                default: this.DEFAULT_CONFIG.concentrating,
+                scope: "world",
+                type: Boolean,
+                config: true,
+                onChange: s => {
+                    this.settings.concentrating = s;
+                }
+            },
+            concentratingIcon: {
+                name: this.SETTINGS_DESCRIPTORS.ConcentratingIconN,
+                hint: this.SETTINGS_DESCRIPTORS.ConcentratingIconH,
+                default: this.DEFAULT_CONFIG.concentratingIcon,
+                scope: "world",
+                type: String,
+                config: true,
+                onChange: s => {
+                    this.settings.concentratingIcon = s;
+                }
+            },
+            healthAttribute: {
+                name: this.SETTINGS_DESCRIPTORS.HealthAttributeN,
+                hint: this.SETTINGS_DESCRIPTORS.HealthAttributeH,
+                default: (CUBButler.DEFAULT_GAME_SYSTEMS[game.system.id] != null) ? CUBButler.DEFAULT_GAME_SYSTEMS[game.system.id].healthAttribute : CUBButler.DEFAULT_GAME_SYSTEMS.other.healthAttribute,
+                scope: "world",
+                type: String,
+                config: true,
+                onChange: s => {
+                    this.settings.healthAttribute = s;
+                }
+            },
+            displayChat: {
+                name: this.SETTINGS_DESCRIPTORS.ConcentratingChatPromptN,
+                hint: this.SETTINGS_DESCRIPTORS.ConcentratingChatPromptH,
+                default: (CUBButler.DEFAULT_GAME_SYSTEMS[game.system.id] != null) ? CUBButler.DEFAULT_GAME_SYSTEMS[game.system.id].healthAttribute : CUBButler.DEFAULT_GAME_SYSTEMS.other.healthAttribute,
+                scope: "world",
+                type: Boolean,
+                config: true,
+                onChange: s => {
+                    this.settings.healthAttribute = s;
+                }
+            },
+            rollRequest: {
+                name: this.SETTINGS_DESCRIPTORS.ConcentratingRollRequestN,
+                hint: this.SETTINGS_DESCRIPTORS.ConcentratingRollRequestH,
+                default: (CUBButler.DEFAULT_GAME_SYSTEMS[game.system.id] != null) ? CUBButler.DEFAULT_GAME_SYSTEMS[game.system.id].healthAttribute : CUBButler.DEFAULT_GAME_SYSTEMS.other.healthAttribute,
+                scope: "world",
+                type: Boolean,
+                config: true,
+                onChange: s => {
+                    this.settings.healthAttribute = s;
+                }
+            }
+        };
+    }
+
+    _wasDamageTaken(token, update){
+        token.refresh();
+        const  newHealth = getProperty(token, "actor.data.data." + this.settings.healthAttribute + ".value");
+        const oldHealth = getProperty(update, "currentData.actorData.data." + this.settings.healthAttribute + ".value");
+        return newHealth < oldHealth;
+    }
+
+    _isConcentrating(token){
+        const tokenEffects = getProperty(token, "data.effects");
+        const _isConcentrating = Boolean(tokenEffects && tokenEffects.find(e => e == this.settings.concentratingIcon)) || false;
+        return _isConcentrating;
+    }
+
+    _hookOnUpdateToken(scene, sceneID, update, options, userId){
+        let token = canvas.tokens.get(update._id);
+        let actorId = getProperty(token, "data.actorId");
+        if (game.userId != userId || token.actorLink || !this.settings.concentrating)
+            return false;
+        
+
+        if(this._isConcentrating(token) && this._wasDamageTaken(token, options)){
+
+            if(this.settings.displayChat)
+                this._displayChat(getProperty(options, "currentData.name"));
+            
+            if(this.settings.rollRequest && actorId){
+                let actor = game.actors.get(actorId)
+                if(actor){
+                    let owners = game.users.entities.filter(user => actor.hasPerm(user, "OWNER") && !user.isGM);
+                    this._distributePrompts(actorId, owners);
+                }
+            }
+        }
+    }
+
+    _displayChat(name){
+        if(game.user.isGM){
+            ChatMessage.create({
+                user: game.user._id,
+                speaker: {},
+                content: `${name}'s concentration is waivering!`,
+            });
+        }       
+    }
+
+    _distributePrompts(actorId, owners){
+        owners.forEach(owner => { this._displayPrompt(actorId, owner.id)});
+    }
+
+    _displayPrompt(actorId, userId){
+        game.socket.emit("module.combat-utility-belt", {
+            userId: userId,
+            characters: [actorId],
+            attributes: [],
+            skills: [],
+            saves: ["con"],
+            modifiers: {mod: 0, bonus: 0, dc: 10, advantage: 0, hidden: false}
+        }, resp => {});
+    }
+}
+
+class CUBRoller extends FormApplication {
+    constructor(...args){
+        super(...args);
+        this.data;
+        this.characters;
+        this.portraits;
+        this.counter = 0;
+        this.advantage;
+    }
+
+    static get defaultOptions() {
+        const options = super.defaultOptions;
+        options.template = "modules/request_roll/templates/requested_roll.html";
+        options.width = 650;
+        options.height = "auto";
+        options.title = "Roll Requested!"
+        options.closeOnSubmit = false;
+        options.id = "roll-requested-container"
+        return options;
+    }
+
+    async getData() {
+        const templateData = {
+            characters: this.portraits,
+            attributes: this.data.attributes,
+            skills: this.data.skills,
+            saves: this.data.saves,
+            advantage: this.advantage
+        }
+        return templateData;
+    }
+
+    activateListeners(html) {
+        super.activateListeners(html);
+
+        $(document).ready(function(){
+            $('#player-container img:not(:first)').addClass('not-selected')
+            $('.roll-content').hide();
+            $('.roll-content:first').show();
+        });
+
+        $(".player-portrait").click(function() {
+            let id = $(this).attr('id');
+            if($(this).hasClass("not-selected"))
+            {
+                $('#player-container img').addClass('not-selected');
+                $('#player-container img').removeClass('active');
+                $(this).removeClass("not-selected");
+                $(this).addClass("active")
+                $('.roll-content').hide();
+                $('#' + id + 'C').insertAfter($('.roll-content:last'));
+                $('#' + id + 'C').fadeIn('slow');
+            }
+        });
+
+        $(".clickable-roll").click(this._onRoll.bind(this));
+    }
+
+    _onRoll(event){
+        event.preventDefault();
+        $(event.target).prop('disabled', true)
+        let id = $(event.target).attr('id');
+        let pid = $(event.target).parent().attr('id');
+        let parts = id.split('-');
+        let modResult = 0;
+        let character = this.characters.filter(function(character){
+            return character.actor === pid;
+        })
+        let label = "";
+        switch(parts[0]){
+            case "attribute":
+                modResult = game.actors.get(character[0].actor).data.data.abilities[parts[1]].mod;
+                label = `${CONFIG.DND5E.abilities[parts[1]]} ability check`;
+                break;
+            case "save":
+                modResult = game.actors.get(character[0].actor).data.data.abilities[parts[1]].save;
+                label = `${CONFIG.DND5E.abilities[parts[1]]} saving throw`;
+                break;
+            case "skill":
+                modResult = game.actors.get(character[0].actor).data.data.skills[parts[1]].mod;
+                label = `${CONFIG.DND5E.skills[parts[1]]} skill check`;
+                break;
+        }
+        $(event.target).parent().hide(1000);
+        this._roll(this.data.modifiers.advantage, {mod : modResult, bonus: this.data.modifiers.bonus}, label, label, character[0], this.data.modifiers.hidden, this.data.modifiers.dc);
+    }
+
+    async handleData(data){
+        this.data = data;
+        await this._updateCharacters();
+        if(this._handleCounter())
+            return;
+        await this._handleAdvantage();
+        this.render(true);
+    }
+
+    async _updateCharacters(){
+        this.characters = [];
+        this.portraits = [];
+        this.data.characters.forEach(character =>{
+            let image = game.actors.get(character).img;
+            this.portraits.push({img : image, id: character});
+            let actorData = {
+                actor: character,
+                alias: game.actors.get(character).data.name,
+                scene: game.scenes.active.id
+            }
+            this.characters.push(actorData);
+        });
+    }
+
+    _handleCounter(){
+        this.counter += this.portraits.length * (this.data.attributes.length + this.data.skills.length + this.data.saves.length); 
+        if(this.counter == 0)
+            return true;
+    }
+
+    async _handleAdvantage(){
+        switch(this.data.modifiers.advantage){
+            case 0:
+                this.advantage = "";
+                break;
+            case 1:
+                this.advantage = " at advantage!";
+                break;
+            case -1:
+                this.advantage = " at disadvantage";
+                break;
+        }
+    }
+
+    _roll = (adv, data, title, flavor, speaker, hidden, dc) => {
+        let rollMode = (hidden == 1) ? "blindroll" : "roll";
+        let parts = ["@bonus", "@mod", "1d20"] 
+        if (adv === 1) {
+          parts[0] = ["2d20kh"];
+          flavor = `${title} (Advantage)`;
+        }
+        else if (adv === -1) {
+          parts[0] = ["2d20kl"];
+          flavor = `${title} (Disadvantage)`;
+        }
+
+        // Don't include situational bonus unless it is defined
+        if (!data.bonus && parts.indexOf("@bonus") !== -1) parts.shift();
+  
+        // Execute the roll
+        let combinedString = parts.join(" + ");
+        if(false) // game.settings.get('request_roll', 'enableDcResolve') If future auto resolve is desired.
+            combinedString += `ms>=${dc}`;
+        let roll = new Roll(combinedString, data).roll();
+
+        // Flag critical thresholds
+        let d20 = roll.parts[roll.parts.length - 1];
+        d20.options.critical = 20;
+        d20.options.fumble = 1;
+        
+        // Convert the roll to a chat message
+        roll.toMessage({
+          speaker: speaker,
+          flavor: flavor,
+          rollMode: rollMode
+        });
+        if(--this.counter == 0)
+            this.close();
+    };
+
+    static handleSocketCall(packet){
+        let requestedRoll = new CUBRoller();
+        requestedRoll.handleData(packet);
+    }
+}
+
 class CUBCombatTracker {
     constructor() {
         this.settings = {
@@ -1820,12 +2072,11 @@ class CUBCombatTracker {
             panPlayers: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.PanPlayersN + ")", this.SETTINGS_META.panPlayers),
             selectOnNextTurn: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.SelectOnNextTurnN + ")", this.SETTINGS_META.selectOnNextTurn),
             selectGMOnly: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.SelectGMOnlyN + ")", this.SETTINGS_META.selectGMOnly),
-            trackerConfigSettings: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.TrackerConfigSettingsN + ")", this.SETTINGS_META.trackerConfigSettings),
-            tempCombatants: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.TempCombatantsN + ")", this.SETTINGS_META.tempCombatants),
             xpModule: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.XPModuleN + ")", this.SETTINGS_META.xpModule)
         };
 
         this.callingUser = "";
+        this.addExperience;
     }
 
     get GADGET_NAME() {
@@ -1840,14 +2091,10 @@ class CUBCombatTracker {
             PanGMOnlyH: "Only pan to token for the GM.",
             PanPlayersN: "Pan owned only",
             PanPlayersH: "Pan players to their owned tokens only",
-            TrackerConfigSettingsN: "Combat Tracker Settings",
-            TrackerConfigSettingsH: "Additional settings for the Combat Tracker",
             SelectOnNextTurnN: "--Select Token--",
             SelectOnNextTurnH: "Select the token whose turn it is in the combat tracker.",
             SelectGMOnlyN: "Select for GM Only",
             SelectGMOnlyH: "Only select token for the GM. If enabled for players, it will still only auto select owned tokens",
-            TempCombatantsN: "--Enable Temporary Combatants--",
-            TempCombatantsH: "Allows the creation of temporary/freeform combatants from the Combat Tracker",
             XPModuleN: "--Enable XP Module--",
             XPModuleH: "REQUIRES REFRESH! Adds an option at the end of combat to automatically distribute xp from the combat to the players"
         };
@@ -1860,7 +2107,6 @@ class CUBCombatTracker {
             panGMOnly: false,
             panPlayers: false,
             selectGMOnly: false,
-            tempCombatants: false,
             xpModule: false
         };
     }
@@ -1920,30 +2166,6 @@ class CUBCombatTracker {
                 config: true,
                 onChange: s => {
                     this.settings.selectGMOnly = s;
-                }
-            },
-            tempCombatants: {
-                name: this.SETTINGS_DESCRIPTORS.TempCombatantsN,
-                hint: this.SETTINGS_DESCRIPTORS.TempCombatantsH,
-                default: this.DEFAULT_CONFIG.tempCombatants,
-                scope: "world",
-                type: Boolean,
-                config: true,
-                onChange: s => {
-                    this.settings.tempCombatants = s;
-                    ui.combat.render();
-                }
-            },
-            trackerConfigSettings: {
-                name: this.SETTINGS_DESCRIPTORS.TrackerConfigSettingsN,
-                hint: this.SETTINGS_DESCRIPTORS.TrackerConfigSettingsH,
-                default: {},
-                scope: "world",
-                type: Object,
-                config: false,
-                onChange: s => {
-                    this.settings.trackerConfigSettings = s;
-                    ui.combat.render();
                 }
             },
             xpModule: {
@@ -2068,37 +2290,12 @@ class CUBCombatTracker {
     }
 
     /**
-     * Handler for deleteCombat hook
-     * @param {*} combat 
-     * @param {*} combatId 
-     * @param {*} options 
-     * @param {*} userId 
+     * Hook on post combat delete
+     * Gives players in the combat tracker xp for the combat
      */
     _hookOnDeleteCombat(combat, combatId, options, userId) {
         if (this.settings.xpModule && game.userId == userId) {
             this._giveXP(combat);
-        }
-
-        const tempCombatants = combat.combatants.filter(c => hasProperty(c, "flags." + CUBButler.MODULE_NAME + "." + this.GADGET_NAME + "(temporaryCombatant)"));
-
-        if (this.settings.tempCombatants && tempCombatants.length) {
-            this._removeTemporaryCombatants(tempCombatants, combat.scene);
-        }  
-    }
-
-    /**
-     * Handler for deleteCombatant hook
-     * @param {*} combat 
-     * @param {*} combatId 
-     * @param {*} combatantId 
-     * @param {*} options 
-     */
-    _hookOnDeleteCombatant(combat, combatId, combatantId, options) {
-        const combatant = combat.combatants.find(c => c._id === combatantId);
-        const tokenData = combatant.token.data || null;
-
-        if (hasProperty(tokenData, "flags." + [CUBButler.MODULE_NAME] + "." + [CUB.combatTracker.GADGET_NAME] + "(temporaryCombatant)")) {
-            this._removeTemporaryCombatant(combatant, combat.scene);
         }
     }
 
@@ -2138,237 +2335,6 @@ class CUBCombatTracker {
                 default: "yes"
             }).render(true);
         });
-    }
-
-    /**
-     * Handler for combat tracker render
-     * @param {*} app 
-     * @param {*} html 
-     * @param {*} data 
-     */
-    async _onRenderCombatTracker(app, html, data) {
-        if (!game.user.isGM) {
-            return;
-        }
-
-        const resourceSpans = html.find(".resource");
-
-        if (resourceSpans.length) {
-            this._replaceResourceElement(html);
-        }
-
-        if (!this.settings.tempCombatants) {
-            return;
-        }
-
-        const combatantList = html.find("#combat-tracker.directory-list");
-
-        const listItemHtml = `<div class="flexrow"><a class="add-temporary"><i class="fa fa-plus"></i> Add Temporary Combatant</a></div>`
-
-        if (!game.combat || !combatantList.length) {
-            return;
-        }
-
-        combatantList.append(listItemHtml);
-
-        const button = combatantList.find(".add-temporary")
-
-        button.on("click", event => {
-            this._onAddTemporaryCombatant(event);
-        });
-
-        // Possible future feature
-        /*
-        const trackerConfigButton = html.find("a.combat-settings");
-
-        trackerConfigButton.off("click");
-
-        trackerConfigButton.on("click", event => {
-            event.preventDefault();
-
-            new CUBCombatTrackerConfig().render(true);
-        });
-
-        const trackerSettings = CUBSidekick.getGadgetSetting(CUB.combatTracker.GADGET_NAME + "(" + CUB.combatTracker.SETTINGS_DESCRIPTORS.TrackerConfigSettingsN + ")");
-
-        if (trackerSettings.resource2) {
-
-        }
-        */
-    }
-
-    /**
-     * Replaces the default token resource span with a text input
-     * @param {*} html 
-     */
-    _replaceResourceElement(html) {
-        // Find all the resource spans
-        const resourceSpans = html.find(".resource");
-
-
-        // Replace the element
-        $(resourceSpans).each(function() {
-            $(this).replaceWith('<input type="text" name="resource" value="' + $(this).text() + '">');
-        });
-
-        const resourceInputs = html.find('input[name="resource"]');
-        resourceInputs.on("change", event => this._onChangeResource(event));
-    }
-
-    /**
-     * Handler for updates to the token resource
-     * @param {*} event 
-     */
-    async _onChangeResource(event) {
-        // Get the tracker settings and extract the resource property
-        const trackerSettings = game.settings.get("core", Combat.CONFIG_SETTING);
-        const resource = trackerSettings.resource;
-
-        // Find the parent list element
-        const li = event.target.closest("li");
-
-        // Get the tokenId from the list element
-        const tokenId = li.dataset.tokenId;
-
-        // Find the token and update
-        const token = canvas.tokens.get(tokenId);
-        await token.actor.update({["data." + resource]: event.target.value});
-    }
-
-    /**
-     * Open the Temporary Combatant form
-     * @param {*} event 
-     */
-    _onAddTemporaryCombatant(event) {
-        // spawn a form to enter details
-        const temporaryCombatantForm = new CUBTemporaryCombatantForm(this).render(true);
-    }
-
-    /**
-     * Removes any temporary combatants created by this module
-     * @param {*} combatants 
-     * @param {*} scene 
-     */
-    _removeTemporaryCombatants(combatants, scene) {
-        
-        const tokenIds = combatants.map(c => c.tokenId);
-        const actorIds = combatants.map(c => c.actor._id);
-
-        if (tokenIds) {
-            scene.deleteManyEmbeddedEntities("Token", tokenIds);
-        }
-        
-        if (actorIds) {
-            Actor.deleteMany(actorIds);
-        }
-        
-    }
-
-    /**
-     * Removes a single temporary combatant created by this module
-     * @param {*} combatant 
-     * @param {*} scene 
-     */
-    _removeTemporaryCombatant(combatant, scene) {
-        const tokenId = combatant.tokenId;
-        const actor = game.actors.get(combatant.actor._id);
-
-        if (tokenId){
-            scene.deleteEmbeddedEntity("Token", tokenId);
-        }
-        
-        if (actor){
-            actor.delete();
-        }
-        
-    }
-}
-
-/**
- * 
- */
-class CUBCombatTrackerConfig extends CombatTrackerConfig {
-    static get defaultOptions() {
-        return mergeObject(super.defaultOptions, {
-            template: "modules/combat-utility-belt/templates/combat-config.html",
-            height: 500
-        });
-    }
-
-    getData() {
-        return mergeObject(super.getData, {
-            cubSettings: CUBSidekick.getGadgetSetting(CUB.combatTracker.GADGET_NAME + "(" + CUB.combatTracker.SETTINGS_DESCRIPTORS.TrackerConfigSettingsN + ")")
-        });
-    }
-
-    _updateObject(event, formData) {
-        super._updateObject(event, formData);
-
-        const icon1 = formData.icon1;
-        const resource2 = formData.resource2;
-        const icon2 = formData.icon2;
-
-        CUBSidekick.setGadgetSetting(CUB.combatTracker.GADGET_NAME + "(" + CUB.combatTracker.SETTINGS_DESCRIPTORS.TrackerConfigSettingsN + ")", {
-            icon1: icon1,
-            resource2: resource2,
-            icon2: icon2
-        });
-    }
-}
-
-/**
- * 
- */
-class CUBTemporaryCombatantForm extends FormApplication {
-    constructor(object, options) {
-        super(object, options);
-    }
-
-    static get defaultOptions() {
-        return mergeObject(super.defaultOptions, {
-            id: "temporary-combatant-form",
-            title: "Temporary Combatant",
-            template: "modules/combat-utility-belt/templates/temporary-combatant-form.html",
-            classes: ["sheet"],
-            width: 500,
-            height: "auto",
-            resizable: true
-        });
-    }
-
-    async _updateObject(event, formData) {
-        const folderName = "Temporary Combatants";
-        let folder = game.folders.entities.find(f => f.name === folderName);
-        if (!folder) {
-            folder = await Folder.create({name: "Temporary Combatants", type: "Actor", parent: null}, {displaySheet: false});
-        }
-
-        const actor = await Actor.create({
-            name: formData.name, 
-            type:"npc",
-            img: formData.icon,
-            folder: folder.id,
-            flags: {
-                [CUBButler.MODULE_NAME + "." + CUB.combatTracker.GADGET_NAME + "(temporaryCombatant)"]: true
-            }
-        },{displaySheet: false});
-
-        const tokenData = duplicate(actor.data.token);
-        tokenData.x = 0;
-        tokenData.y = 0;
-        tokenData.disposition = 0;
-        tokenData.img = formData.icon;
-        const token = await Token.create(game.scenes.active._id, tokenData);
-
-        const combatant = await game.combat.createEmbeddedEntity("Combatant", {
-            tokenId: token._id, 
-            hidden: formData.hidden, 
-            initiative: formData.init,
-            flags: {
-                [CUBButler.MODULE_NAME + "." + CUB.combatTracker.GADGET_NAME + "(temporaryCombatant)"]: true
-            }
-        });
-        
     }
 }
 
@@ -2438,7 +2404,7 @@ class CUBTokenUtility {
         }
 
         // If the token actor doesn't have the feat, check the other actors owned by the token's owner
-        if (token.actor && !this._actorHasFeat(token.actor)) {
+        if (!this._actorHasFeat(token.actor)) {
             //console.log("Summoner feats "); console.log(token)
             
             const owners = Object.keys(token.actor.data.permission).filter(p => p !== "default" && token.actor.data.permission[p] === CONST.ENTITY_PERMISSIONS.OWNER);
@@ -2552,7 +2518,7 @@ class CUBTokenUtility {
     _hookOnCreateToken(scene, sceneId, tokenData, options, userId) {
         const token = new Token(tokenData);
 
-        if (tokenData.disposition === -1 && this.settings.autoRollHostileHp && token.actor && !token.actor.isPC) {
+        if (tokenData.disposition === -1 && this.settings.autoRollHostileHp && !token.actor.isPC) {
             this._rerollTokenHp(token, scene);
         } else if (this.settings.mightySummoner) {
             this._summonerFeats(token, scene);
@@ -2560,69 +2526,8 @@ class CUBTokenUtility {
     }
 }
 
-class CUBActorUtility {
-    constructor() {
-        this.actor = null;
-    }
-
-    _onRenderActorSheet(app, html, data) {
-        this.actor = app.entity;
-        const initiative = html.find(".initiative");
-
-        if (initiative.length === 0) {
-            return;
-        }
-
-        const heading = initiative.find("h4").first();
-
-        if (heading.length === 0) {
-            return;
-        }
-
-        heading.addClass("rollable");
-
-        heading.on("click", event => {
-
-            this._onClickInitiative(event);
-        });
-    }
-
-    async _onClickInitiative(event) {
-        if ( !game.combat ) {
-            if ( game.user.isGM ) {
-                await Combat.create({scene: canvas.scene._id, active: true});
-            } else {
-                return ui.notification.warn("GM must create an encounter before you can roll initiative");
-            }
-        } 
-
-        const tokens = this.actor.getActiveTokens();
-
-        if (!tokens) {
-            return;
-        }
-
-        const tokensToAdd = tokens.filter(t => t.inCombat === false);
-        const createData = tokensToAdd.map(t => {return {tokenId: t.id, hidden: t.data.hidden}});
-
-        const combatants = await game.combat.createManyEmbeddedEntities("Combatant", createData);
-
-        if (!combatants) {
-            return;
-        }
-
-        const combatantsToRoll = combatants.map(c => c._id);
-
-        if (!combatantsToRoll) {
-            return;
-        }
-
-        await game.combat.rollInitiative(combatantsToRoll);
-        
-    }
-}
-
 /**
  * Start the module
  */
 CUBSignal.lightUp();
+
