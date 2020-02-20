@@ -144,7 +144,6 @@ class CUBSignal {
     static hookOnUpdateToken() {
         Hooks.on("updateToken", (scene, sceneID, update, options, userId) => {
             CUB.enhancedConditions._hookOnUpdateToken(scene, sceneID, update, options, userId);
-            CUB.concentrator._hookOnUpdateToken(scene, sceneID, update, options, userId);
             CUB.injuredAndDead._hookOnUpdateToken(scene, sceneID, update, options, userId);
         });
     }
@@ -1741,6 +1740,9 @@ class CUBInjuredAndDead {
     }
 }
 
+/**
+ * Request a roll or display concentration checks when damage is taken.
+ */
 class CUBConcentrator {
     constructor(){
         this.settings = {
@@ -1758,7 +1760,7 @@ class CUBConcentrator {
 
     get SETTINGS_DESCRIPTORS(){
         return {
-            ConcentratingN: "--Cause Concentration Checks--",
+            ConcentratingN: "--Cause Concentration Checks (DnD5e)--",
             ConcentratingH: "Requires concentration checks on tokens with the concentrating status effect",
             ConcentratingIconN: "Concentration Status Marker",
             ConcentratingIconH: "Path to the status marker to display for Concetrating tokens",
@@ -1838,16 +1840,9 @@ class CUBConcentrator {
         };
     }
 
-<<<<<<< HEAD
     _wasDamageTaken(update, current){
         const newHealth = getProperty(update, "actorData.data." + this.settings.healthAttribute + ".value");
         const oldHealth = getProperty(current, "data.data." + this.settings.healthAttribute + ".value");
-=======
-    _wasDamageTaken(token, update){
-        token.refresh();
-        const  newHealth = getProperty(token, "actor.data.data." + this.settings.healthAttribute + ".value");
-        const oldHealth = getProperty(update, "currentData.actorData.data." + this.settings.healthAttribute + ".value");
->>>>>>> e6bd2be217cad3c6b138efa03d8c7c6341e8a800
         return newHealth < oldHealth;
     }
 
@@ -1936,6 +1931,9 @@ class CUBConcentrator {
     }
 }
 
+/**
+ * Sends a pop-up to the affected user requesting a roll.
+ */
 class CUBRoller extends FormApplication {
     constructor(...args){
         super(...args);
@@ -2574,9 +2572,4 @@ class CUBTokenUtility {
 /**
  * Start the module
  */
-<<<<<<< HEAD
 CUBSignal.lightUp();
-=======
-CUBSignal.lightUp();
-
->>>>>>> e6bd2be217cad3c6b138efa03d8c7c6341e8a800

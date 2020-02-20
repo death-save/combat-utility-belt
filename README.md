@@ -107,8 +107,11 @@
 ## Auto Roll Token HP
 *full write up coming soon*
  
-## Concentration Checks
-*full write up coming soon*
+## Concentration Checks [A DnD5e feature]
+
+![concentation-check](...)
+
+A DM is responsible for all sorts of things, but keeping track those pesky spell casters and their concentration is one more thing that you shouldn't have to worry about! With this gadget, you can make sure that those *irritating* spellcasters are always checked whenever the concentrating status is applied. Now they'll be careful about getting hit by that goblin sneaking around!
  
  ---
 
