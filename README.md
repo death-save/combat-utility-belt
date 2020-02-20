@@ -1,12 +1,11 @@
-![https://img.shields.io/badge/Foundry%20VTT-0.4.7%2B-green](https://img.shields.io/badge/Foundry%20VTT-0.4.4%2B-green)
+![https://img.shields.io/badge/Foundry%20VTT-0.4.4%2B-green](https://img.shields.io/badge/Foundry%20VTT-0.4.4%2B-green)
 
 # Combat Utility Belt **Beta**
 **Authors**: Evan Clarke (errational#2007 on Foundry discord) & Jordan Williams (Reaver#4634 on Foundry discord)
 
 [Installation](#Installation)    
 [Module Manifest](https://raw.githubusercontent.com/death-save/combat-utility-belt/beta/module.json)    
-[Changelog](https://github.com/death-save/combat-utility-belt/blob/beta/CHANGELOG.md)    
-[System Compatibility](https://docs.google.com/spreadsheets/d/1DUFZb7DniTJYNPXgHYpU5RGfB1p6qY7q8JxUAG4N9hU/edit?usp=sharing)
+[Changelog](https://github.com/death-save/combat-utility-belt/blob/beta/CHANGELOG.md)
 
  Every ~~hero~~ GM needs gadgets to keep their game safe from dastardly players up to no good!
 
@@ -26,6 +25,8 @@
  * Roll Initiative from Sheet
  * Temporary Combatants
  * Concentration Checks
+=======
+
 
  ## Reroll Initiative
 
@@ -35,6 +36,14 @@
 
  Glorious chaos!
 
+ ### Compatible Systems
+
+ - [X] D&D5e
+ - [X] PF2E
+ - [X] WFRP4E
+ - [ ] 13th Age (untested)
+ - [ ] Simple/Other
+
  ## Hide NPC Names
 
 ![hide-npc-names](https://github.com/death-save/media/blob/master/combat-utility-belt/hide-npc-names.gif)
@@ -42,6 +51,14 @@
  Maybe you forgot that your NPC's name reveals a dark secret about their past, or maybe you forgot to give them a name.
 
  Fret no more, for this gadget replaces NPC names with a replacement of your choice. Personally, I'm a fan of Melvin.
+
+ ### Compatible Systems
+
+ - [X] D&D5e
+ - [X] PF2E
+ - [X] WFRP
+ - [ ] 13th Age (untested)
+ - [X] Simple/Other
 
  ## Enhanced Conditions
 
@@ -57,6 +74,14 @@
 
  *I like the Deadly STD one!*
 
+ ### Compatible Systems
+
+ - [X] D&D5e
+ - [X] PF2E
+ - [X] WFRP
+ - [ ] 13th Age (untested)
+ - [X] Simple/Other
+
  ## Mark Injured/Dead Tokens
 
 ![mark-injured-dead](https://github.com/death-save/media/blob/master/combat-utility-belt/mark-injured-dead.gif)
@@ -65,6 +90,14 @@
 
  Well, now *you* do! With this gadget you can define a threshold (% of hp) that marks a token as injured. This gadget can also mark tokens as dead when their hp reaches 0. Outstanding! Now my players will have no doubt that I am the most ~~evil~~ heroic GM there was!
 
+ ### Compatible Systems
+
+ - [X] D&D5e
+ - [X] PF2E
+ - [X] WFRP
+ - [ ] 13th Age (untested)
+ - [X] Simple/Other
+
 ## Pan/Select Token
 *full write up coming soon*
 
@@ -72,15 +105,6 @@
 *full write up coming soon*
 
 ## Auto Roll Token HP
-*full write up coming soon*
-
-## Roll Initiative from Actor Sheet
-*full write up coming soon*
-
-## Temporary Combatants
-*full write up coming soon*
-
-## Quick Edit Token Resource from Combat Tracker
 *full write up coming soon*
  
 ## Concentration Checks
@@ -121,6 +145,8 @@ I need to acknowledge that many of the functions found in the Combat Utility Bel
 
 A big thanks to trdischat#2123 on the Foundry Discord for the awesome set of condition icons used in the `Dungeons & Dragons 5th Edition` mapping.
 Thanks to hooking#0492 for the Pathfinder 2nd Edition condition mapping for use with his Pathfinder 2nd Edition system!
+
+Concentration icon made by [Freepik](https://www.flaticon.com/authors/freepik) from [Flat Icon](www.flaticon.com)
 
 ## Donations/Sponsorship
 Click the Sponsor button at the top of the Github repository!
