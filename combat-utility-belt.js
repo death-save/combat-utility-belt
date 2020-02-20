@@ -76,6 +76,7 @@ class CUBSignal {
         CUBSignal.hookOnCreateToken();
         CUBSignal.hookOnPreUpdateToken();
         CUBSignal.hookOnUpdateToken();
+        CUBSignal.hookOnPreUpdateActor();
         CUBSignal.hookOnUpdateActor();
         CUBSignal.hookOnPreUpdateCombat();
         CUBSignal.hookOnUpdateCombat();
@@ -117,7 +118,8 @@ class CUBSignal {
     static hookOnRenderSettings() {
         Hooks.on("renderSettings", (app, html) => {
             CUBEnhancedConditions._createSidebarButton(html);
-            CUB.enhancedConditions._toggleSidebarButtonDisplay(CUB.enhancedConditions.settings.enhancedConditions);
+            if(CUB.enhancedConditions)
+                CUB.enhancedConditions._toggleSidebarButtonDisplay(CUB.enhancedConditions.settings.enhancedConditions);
         });
     }
 
@@ -134,16 +136,21 @@ class CUBSignal {
     }
 
     static hookOnPreUpdateToken() {
-        Hooks.on("preUpdateToken", (token, sceneId, update) => {
-
+        Hooks.on("preUpdateToken", (scene, sceneId, actorData, currentData) => {
+            CUB.concentrator._hookOnPreUpdateToken(scene, sceneId, actorData, currentData)
         });
     }
 
     static hookOnUpdateToken() {
         Hooks.on("updateToken", (scene, sceneID, update, options, userId) => {
             CUB.enhancedConditions._hookOnUpdateToken(scene, sceneID, update, options, userId);
-            CUB.concentrator._hookOnUpdateToken(scene, sceneID, update, options, userId);
             CUB.injuredAndDead._hookOnUpdateToken(scene, sceneID, update, options, userId);
+        });
+    }
+
+    static hookOnPreUpdateActor() {
+        Hooks.on("preUpdateActor", (actor, update) => {
+            CUB.concentrator._hookOnUpdateActor(actor, update);
         });
     }
 
@@ -1830,10 +1837,9 @@ class CUBConcentrator {
         };
     }
 
-    _wasDamageTaken(token, update){
-        token.refresh();
-        const  newHealth = getProperty(token, "actor.data.data." + this.settings.healthAttribute + ".value");
-        const oldHealth = getProperty(update, "currentData.actorData.data." + this.settings.healthAttribute + ".value");
+    _wasDamageTaken(update, current){
+        const newHealth = getProperty(update, "actorData.data." + this.settings.healthAttribute + ".value");
+        const oldHealth = getProperty(current, "data.data." + this.settings.healthAttribute + ".value");
         return newHealth < oldHealth;
     }
 
@@ -1843,14 +1849,18 @@ class CUBConcentrator {
         return _isConcentrating;
     }
 
-    _hookOnUpdateToken(scene, sceneID, update, options, userId){
-        let token = canvas.tokens.get(update._id);
+
+
+
+    _hookOnPreUpdateToken(scene, sceneID, update, options){
+        let token = canvas.tokens.get(options.currentData._id);
         let actorId = getProperty(token, "data.actorId");
-        if (game.userId != userId || token.actorLink || !this.settings.concentrating)
+        const current = getProperty(token, "actor")
+        if (!game.user.isGM || !current || !this.settings.concentrating)
             return false;
         
 
-        if(this._isConcentrating(token) && this._wasDamageTaken(token, options)){
+        if(this._isConcentrating(token) && this._wasDamageTaken(update, current)){
 
             if(this.settings.displayChat)
                 this._displayChat(getProperty(options, "currentData.name"));
@@ -1864,6 +1874,37 @@ class CUBConcentrator {
             }
         }
     }
+
+    _wasDamageTakenActor(newHealth, oldHealth){
+        return newHealth < oldHealth || false;
+    }
+
+    _hookOnUpdateActor(actor, update) {
+        const tokens = actor.getActiveTokens();
+        const actorId = update._id;
+        const newHealth = getProperty(update, "data." + this.settings.healthAttribute + ".value");
+        const oldHealth = getProperty(actor, "data.data." + this.settings.healthAttribute + ".value");
+        if(!game.user.isGM|| !tokens)
+            return false;
+
+        for(let token of tokens){
+            if(this._isConcentrating(token) && this._wasDamageTakenActor(newHealth, oldHealth)){
+
+                if(this.settings.displayChat)
+                    this._displayChat(getProperty(token, "name"));
+                
+                if(this.settings.rollRequest && actorId){
+                    let actor = game.actors.get(actorId)
+                    if(actor){
+                        let owners = game.users.entities.filter(user => actor.hasPerm(user, "OWNER") && !user.isGM);
+                        this._distributePrompts(actorId, owners);
+                    }
+                }
+                break; // We only want to do this once, so after it succeeds, quit.
+            }
+        }
+    }
+
 
     _displayChat(name){
         if(game.user.isGM){
@@ -2531,3 +2572,8 @@ class CUBTokenUtility {
  */
 CUBSignal.lightUp();
 
+Hooks.on("createToken", (scene, sceneID, tokenData, tokenChange, idk) => {
+    let id = tokenData._id;
+    let token = canvas.tokens.get(id);
+    token.update({});
+})
