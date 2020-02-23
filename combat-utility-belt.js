@@ -78,6 +78,7 @@ class CUBSignal {
         CUBSignal.hookOnCreateToken();
         CUBSignal.hookOnPreUpdateToken();
         CUBSignal.hookOnUpdateToken();
+        CUBSignal.hookOnPreUpdateActor();
         CUBSignal.hookOnUpdateActor();
         CUBSignal.hookOnPreUpdateCombat();
         CUBSignal.hookOnUpdateCombat();
@@ -102,6 +103,7 @@ class CUBSignal {
         Hooks.on("ready", () => {
             CUB.rerollInitiative = new CUBRerollInitiative();
             CUB.injuredAndDead = new CUBInjuredAndDead();
+            CUB.concentrator = new CUBConcentrator();
             CUB.actorUtility = new CUBActorUtility();
             CUB.tokenUtility = new CUBTokenUtility();
             
@@ -143,8 +145,8 @@ class CUBSignal {
     }
 
     static hookOnPreUpdateToken() {
-        Hooks.on("preUpdateToken", (token, sceneId, update) => {
-
+        Hooks.on("preUpdateToken", (scene, sceneId, actorData, currentData) => {
+            CUB.concentrator._hookOnPreUpdateToken(scene, sceneId, actorData, currentData)
         });
     }
 
@@ -152,11 +154,23 @@ class CUBSignal {
         Hooks.on("updateToken", (scene, sceneID, update, options, userId) => {
             CUB.enhancedConditions._hookOnUpdateToken(scene, sceneID, update, options, userId);
             CUB.injuredAndDead._hookOnUpdateToken(scene, sceneID, update, options, userId);
+            CUB.concentrator._hookOnUpdateToken(scene, sceneID, update, options, userId);
+        });
+    }
+
+    static hookOnPreUpdateActor() {
+        Hooks.on("preUpdateActor", (actor, update, options) => {
+            CUB.concentrator._hookOnPreUpdateActor(actor, update, options);
         });
     }
 
     static hookOnUpdateActor() {
-        Hooks.on("updateActor", (actor, update) => {
+        Hooks.on("updateActor", (actor, update, options) => {
+            // Workaround for actor array returned in hook for non triggering clients
+            if (actor instanceof Collection) {
+                actor = actor.entities.find(a => a._id === update._id);
+            }
+            CUB.concentrator._hookOnUpdateActor(actor, update, options);
             CUB.injuredAndDead._hookOnUpdateActor(actor, update);
         });
     }
@@ -333,6 +347,14 @@ class CUBSidekick {
     }
 
     static handlebarsHelpers() {
+        Handlebars.registerHelper('request-roll-ability', function(ability){
+            return CONFIG.DND5E["abilities"][ability]
+        });
+            
+        Handlebars.registerHelper('request-roll-skill', function(skill){
+            return CONFIG.DND5E["skills"][skill]
+        });
+
         Handlebars.registerHelper("concat", () => {
             let result;
 
@@ -693,7 +715,7 @@ class CUBEnhancedConditions {
         return {
             iconPath: "modules/combat-utility-belt/icons/",
             outputChat: true,
-            conditionLab: "Condition Lab"
+            conditionLab: "CUB: Condition Lab"
             /* future features
             folderTypes: {
                 journal: "Journal",
@@ -731,7 +753,8 @@ class CUBEnhancedConditions {
             ["Prone", this.DEFAULT_CONFIG.iconPath + "prone.svg", ""],
             ["Restrained", this.DEFAULT_CONFIG.iconPath + "restrained.svg", ""],
             ["Stunned", this.DEFAULT_CONFIG.iconPath + "stunned.svg", ""],
-            ["Unconscious", this.DEFAULT_CONFIG.iconPath + "unconscious.svg", ""]
+            ["Unconscious", this.DEFAULT_CONFIG.iconPath + "unconscious.svg", ""],
+            ["Concentrating", this.DEFAULT_CONFIG.iconPath + "concentrating.svg", ""]
         ];
 
         const pf1eMap = [];
@@ -1594,6 +1617,7 @@ class CUBInjuredAndDead {
         const currentHealth = getProperty(token, "actor.data.data." + this.settings.healthAttribute + ".value");
         const updateHealth = getProperty(update, "actorData.data." + this.settings.healthAttribute + ".value");
         const maxHealth = getProperty(token, "actor.data.data." + this.settings.healthAttribute + ".max");
+
         if (this._checkForDead(currentHealth)) {
             return CUBButler.HEALTH_STATES.DEAD;
         } else if (this._checkForInjured(currentHealth, maxHealth)) {
@@ -1812,6 +1836,337 @@ class CUBInjuredAndDead {
     }
 }
 
+/**
+ * Request a roll or display concentration checks when damage is taken.
+ * @author JacobMcAuley
+ * @todo Supply DC
+ */
+class CUBConcentrator {
+    constructor(){
+        this.settings = {
+            concentrating: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.ConcentratingN + ")", this.SETTINGS_META.concentrating),
+            concentratingIcon: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.ConcentratingIconN + ")", this.SETTINGS_META.concentratingIcon),
+            healthAttribute: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.HealthAttributeN + ")", this.SETTINGS_META.healthAttribute),
+            displayChat: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.ConcentratingChatPromptN + ")", this.SETTINGS_META.displayChat),
+            rollRequest: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.ConcentratingRollRequestN + ")", this.SETTINGS_META.rollRequest),
+            ability: "con" //change to a setting later maybe?      
+        }
+    }
+
+    get GADGET_NAME() {
+        return "concentrator"
+    }
+
+    get SETTINGS_DESCRIPTORS(){
+        return {
+            ConcentratingN: "--Force Concentration Checks--",
+            ConcentratingH: "Requires concentration checks on tokens with the concentrating status effect when they take damage (D&D 5e only)",
+            ConcentratingIconN: "Concentration Status Icon",
+            ConcentratingIconH: "Path to the icon to use for Concentration",
+            ConcentratingChatMessageN: "Notify Chat",
+            ConcentratingChatMessageH: "Display a message in chat whenever concentration is threatened",
+            ConcentratingRollRequestN: "Prompt Player",
+            ConcentratingRollRequestH: "Prompt the player to make the check or not",
+            HealthAttributeN: "Health Attribute",
+            HealthAttributeH: "Health/HP attribute name as defined by game system"
+        }
+    }
+
+    get DEFAULT_CONFIG(){
+        return {
+            concentrating: false,
+            concentratingIcon: "modules/combat-utility-belt/icons/concentrating.svg",
+            concentrator: "CUB: Concentrator"
+        };
+    }
+
+    get SETTINGS_META(){
+        return {
+            concentrating: {
+                name: this.SETTINGS_DESCRIPTORS.ConcentratingN,
+                hint: this.SETTINGS_DESCRIPTORS.ConcentratingH,
+                default: this.DEFAULT_CONFIG.concentrating,
+                scope: "world",
+                type: Boolean,
+                config: true,
+                onChange: s => {
+                    this.settings.concentrating = s;
+                }
+            },
+            concentratingIcon: {
+                name: this.SETTINGS_DESCRIPTORS.ConcentratingIconN,
+                hint: this.SETTINGS_DESCRIPTORS.ConcentratingIconH,
+                default: this.DEFAULT_CONFIG.concentratingIcon,
+                scope: "world",
+                type: String,
+                config: true,
+                onChange: s => {
+                    this.settings.concentratingIcon = s;
+                }
+            },
+            healthAttribute: {
+                name: this.SETTINGS_DESCRIPTORS.HealthAttributeN,
+                hint: this.SETTINGS_DESCRIPTORS.HealthAttributeH,
+                default: (CUBButler.DEFAULT_GAME_SYSTEMS[game.system.id] != null) ? CUBButler.DEFAULT_GAME_SYSTEMS[game.system.id].healthAttribute : CUBButler.DEFAULT_GAME_SYSTEMS.other.healthAttribute,
+                scope: "world",
+                type: String,
+                config: true,
+                onChange: s => {
+                    this.settings.healthAttribute = s;
+                }
+            },
+            displayChat: {
+                name: this.SETTINGS_DESCRIPTORS.ConcentratingChatMessageN,
+                hint: this.SETTINGS_DESCRIPTORS.ConcentratingChatMessageH,
+                default: (CUBButler.DEFAULT_GAME_SYSTEMS[game.system.id] != null) ? CUBButler.DEFAULT_GAME_SYSTEMS[game.system.id].healthAttribute : CUBButler.DEFAULT_GAME_SYSTEMS.other.healthAttribute,
+                scope: "world",
+                type: Boolean,
+                config: true,
+                onChange: s => {
+                }
+            },
+            rollRequest: {
+                name: this.SETTINGS_DESCRIPTORS.ConcentratingRollRequestN,
+                hint: this.SETTINGS_DESCRIPTORS.ConcentratingRollRequestH,
+                default: (CUBButler.DEFAULT_GAME_SYSTEMS[game.system.id] != null) ? CUBButler.DEFAULT_GAME_SYSTEMS[game.system.id].healthAttribute : CUBButler.DEFAULT_GAME_SYSTEMS.other.healthAttribute,
+                scope: "world",
+                type: Boolean,
+                config: true,
+                onChange: s => {
+                }
+            }
+        };
+    }
+
+    /**
+     * Determines if health has been reduced 
+     * @param {*} update 
+     * @param {*} current 
+     * @returns {Boolean}
+     */
+    _wasDamageTaken(newHealth, oldHealth) {
+        return newHealth < oldHealth || false;
+    }
+
+    /**
+     * Checks for the presence of the concentration condition effect
+     * @param {*} token
+     * @returns {Boolean}
+     */
+    _isConcentrating(token) {
+        const tokenEffects = getProperty(token, "data.effects");
+        const _isConcentrating = Boolean(tokenEffects && tokenEffects.find(e => e == this.settings.concentratingIcon)) || false;
+
+        return _isConcentrating;
+    }
+
+    /**
+     * Calculates damage taken based on two health values
+     * @param {*} newHealth 
+     * @param {*} oldHealth
+     * @returns {Number}
+     */
+    _calculateDamage(newHealth, oldHealth) {
+        return oldHealth - newHealth || 0;
+    }
+
+    /**
+     * Handles preUpdateToken
+     * @param {*} scene 
+     * @param {*} sceneID 
+     * @param {*} update 
+     * @param {*} options 
+     */
+    _hookOnPreUpdateToken(scene, sceneID, update, options){
+        const token = canvas.tokens.get(options.currentData._id);
+        const actorId = getProperty(token, "data.actorId");
+        const current = getProperty(token, "actor");
+
+        // Return early if basic requirements not met
+        if (!game.user.isGM || !current || !this.settings.concentrating || token.actorLink || !actorId) {
+            return;
+        }
+
+        const newHealth = getProperty(update, "actorData.data." + this.settings.healthAttribute + ".value");
+        const oldHealth = getProperty(current, "data.data." + this.settings.healthAttribute + ".value");
+        const isConcentrating = this._isConcentrating(token);
+        const damageTaken = this._wasDamageTaken(newHealth, oldHealth);
+
+        // Return early if damage wasn't taken or the token wasn't concentrating
+        if (!isConcentrating || !damageTaken) {
+            return;
+        }
+
+        const damageAmount = this._calculateDamage(newHealth, oldHealth)
+
+        if(this.settings.displayChat) {
+            this._displayChat(getProperty(options, "currentData.name"), damageAmount);
+        }
+                
+        if(this.settings.rollRequest) {
+            const actor = game.actors.get(actorId);
+
+            if (!actor) {
+                return;
+            }
+
+            const owners = game.users.entities.filter(user => actor.hasPerm(user, "OWNER"));
+            options['affectedUsers'] = {'actorId' : actorId, 'owners': owners};
+        }
+    }
+
+    /**
+     * Handles preUpdate Actor
+     * @param {*} actor 
+     * @param {*} update 
+     * @param {*} options 
+     */
+    _hookOnPreUpdateActor(actor, update, options) {
+        const tokens = actor.getActiveTokens();
+        const actorId = update._id;
+        const newHealth = getProperty(update, "data." + this.settings.healthAttribute + ".value");
+        const oldHealth = getProperty(actor, "data.data." + this.settings.healthAttribute + ".value");
+        const owners = game.users.entities.filter(user => actor.hasPerm(user, "OWNER") && !user.isGM);
+
+        if (owners.length == 0) {
+            owners.push(game.users.entities.find(user => user.isGM));
+        }
+            
+        if (!tokens || !newHealth || !oldHealth || !actor) {
+            return;
+        }
+        
+        const concentratingTokens = tokens.filter(t => this._isConcentrating(t) && this._wasDamageTaken(newHealth, oldHealth));
+
+        if (!concentratingTokens.length) {
+            return;
+        }
+
+        const damageAmount = this._calculateDamage(newHealth, oldHealth);
+
+        if(this.settings.displayChat) {
+            for (const t of tokens) {
+                this._displayChat(getProperty(t, "name"), damageAmount);
+            } 
+        }
+                    
+                
+        if(this.settings.rollRequest && actorId) {
+            options['affectedUsers'] = {'actorId' : actorId, 'owners': owners};
+        }
+    }
+
+    /**
+     * Handle update Actor
+     * @param {*} actor 
+     * @param {*} update 
+     * @param {*} options 
+     */
+    _hookOnUpdateActor(actor, update, options){
+        this._determineDisplayedUsers(options);
+    }
+
+    /**
+     * Handle update Token
+     * @param {*} scene 
+     * @param {*} sceneID 
+     * @param {*} update 
+     * @param {*} options 
+     * @param {*} userId 
+     */
+    _hookOnUpdateToken(scene, sceneID, update, options, userId){
+        this._determineDisplayedUsers(options);
+    }
+
+    /**
+     * Distributes concentration prompts to affected users
+     * @param {*} options 
+     */
+    _determineDisplayedUsers(options){
+        const owners = getProperty(options, 'affectedUsers.owners');
+        const actorId = getProperty(options, 'affectedUsers.actorId');
+
+        if(!owners || !actorId) {
+            return;
+        }
+
+        const users = owners.filter(owner => game.user._id == owner._id) || [];
+
+        if (users.length > 0) {
+            this._distributePrompts(actorId, users);
+        }
+    }
+
+    /**
+     * Displays a chat message for concentration checks
+     * @param {*} name
+     * @param {*} damage
+     */
+    _displayChat(name, damage){
+        if (!game.user.isGM) {
+            return;
+        }
+        
+        const dc = damage > 10 ? damage : 10;
+
+        ChatMessage.create({
+            user: game.user._id,
+            speaker: {
+                alias: this.DEFAULT_CONFIG.concentrator
+            },
+            content: `${name} took damage and their concentration is being tested (DC${dc})!`,
+            type: CONST.CHAT_MESSAGE_TYPES.OTHER
+        });       
+    }
+
+    /**
+     * Distribute concentration prompts to affected users
+     * @param {*} actorId 
+     * @param {*} users 
+     */
+    _distributePrompts(actorId, users){
+        for (const u of users) {
+            this._displayPrompt(actorId, u._id);
+        }
+    }
+
+    /**
+     * Displays the prompt to roll a concentration check
+     * @param {*} actorId 
+     * @param {*} userId 
+     */
+    _displayPrompt(actorId, userId){
+        const actor = game.actors.get(actorId);
+        const ability = this.settings.ability;
+
+        if (!actor) {
+            return;
+        }
+
+        new Dialog({
+            title: "Concentration Check",
+            content: `<p>Roll a concentration check for ${actor.name}?</p>`,
+            buttons: {
+                yes: {
+                    label: "Yes",
+                    icon: `<i class="fas fa-check"></i>`,
+                    callback: e => {
+                        actor.rollAbilitySave(ability);
+                    }
+                },
+                no: {
+                    label: "No",
+                    icon: `<i class="fas fa-times"></i>`,
+                    callback: e => {
+                        //maybe whisper the GM to alert them that the player canceled the check?
+                    }
+                }
+            },
+            default: "Yes"
+        }).render(true);
+    }
+}
+
 class CUBCombatTracker {
     constructor() {
         this.settings = {
@@ -1966,24 +2321,34 @@ class CUBCombatTracker {
      * @param {Object} update 
      */
     _panToToken(combat, update) {
-        // seem to be difference params depending on who originated.
-        if ((game.user.isGM && this.settings.panGMOnly) || !this.settings.panGMOnly) {
-            let tracker = combat.entities ? combat.entities.find(tr=>tr._id===update._id) : combat;
-            let token;
-            if (hasProperty(update, "turn")) {
-                token = tracker.turns[update.turn].token;
-            } else {
-                token = tracker.turns[0].token;
-            }
-            let actor = game.actors.get(token.actorId);
-            if (game.user.isGM || actor.data.permission[game.userId] === 3) {
-                let xCoord = token.x;
-                let yCoord = token.y;
-                canvas.animatePan({
-                    x: xCoord,
-                    y: yCoord
-                });
-            }
+        if (!hasProperty(update, "turn") || !this.settings.panOnNextTurn || (!game.user.isGM && this.settings.panGMOnly)) {
+            return;
+        }
+
+        const combatant = combat.combatant;
+        const temporary = hasProperty(combatant, "flags." + CUBButler.MODULE_NAME + "." + CUBCombatTracker.prototype.GADGET_NAME + "(temporaryCombatant)");
+
+        if (temporary) {
+            return;
+        }
+
+        const tracker = combat.entities ? combat.entities.find(tr=>tr._id===update._id) : combat;
+        let token;
+
+        if (hasProperty(update, "turn")) {
+            token = tracker.turns[update.turn].token;
+        } else {
+            token = tracker.turns[0].token;
+        }
+
+        const actor = game.actors.get(token.actorId);
+        if (game.user.isGM || actor.data.permission[game.userId] === 3) {
+            let xCoord = token.x;
+            let yCoord = token.y;
+            canvas.animatePan({
+                x: xCoord,
+                y: yCoord
+            });
         }
     }
 
@@ -1993,7 +2358,14 @@ class CUBCombatTracker {
      * @param {Object} update 
      */
     async _selectToken(combat, update) {
-        if (!game.user.isGM && this.settings.selectGMOnly) {
+        if (!hasProperty(update, "turn") || !this.settings.selectOnNextTurn || (!game.user.isGM && this.settings.selectGMOnly)) {
+            return;
+        }
+
+        const combatant = combat.combatant;
+        const temporary = hasProperty(combatant, "flags." + CUBButler.MODULE_NAME + "." + CUBCombatTracker.prototype.GADGET_NAME + "(temporaryCombatant)");
+
+        if (temporary) {
             return;
         }
 
@@ -2041,7 +2413,8 @@ class CUBCombatTracker {
                     speaker: {
                         actor: this.actor
                     },
-                    content: experienceMessage
+                    content: experienceMessage,
+                    type: CONST.CHAT_MESSAGE_TYPES.OTHER
                 });
             }
         }
