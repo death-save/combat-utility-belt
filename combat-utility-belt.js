@@ -2106,8 +2106,8 @@ class CUBConcentrator {
         if (!game.user.isGM) {
             return;
         }
-        
-        const dc = damage > 10 ? damage : 10;
+        const halfDamage = Math.floor(damage / 2);
+        const dc = halfDamage > 10 ? halfDamage : 10;
 
         ChatMessage.create({
             user: game.user._id,
