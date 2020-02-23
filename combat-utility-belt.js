@@ -78,6 +78,7 @@ class CUBSignal {
         CUBSignal.hookOnCreateToken();
         CUBSignal.hookOnPreUpdateToken();
         CUBSignal.hookOnUpdateToken();
+        CUBSignal.hookOnPreUpdateActor();
         CUBSignal.hookOnUpdateActor();
         CUBSignal.hookOnPreUpdateCombat();
         CUBSignal.hookOnUpdateCombat();
@@ -102,6 +103,7 @@ class CUBSignal {
         Hooks.on("ready", () => {
             CUB.rerollInitiative = new CUBRerollInitiative();
             CUB.injuredAndDead = new CUBInjuredAndDead();
+            CUB.concentrator = new CUBConcentrator();
             CUB.actorUtility = new CUBActorUtility();
             CUB.tokenUtility = new CUBTokenUtility();
             
@@ -143,8 +145,8 @@ class CUBSignal {
     }
 
     static hookOnPreUpdateToken() {
-        Hooks.on("preUpdateToken", (token, sceneId, update) => {
-
+        Hooks.on("preUpdateToken", (scene, sceneId, actorData, currentData) => {
+            CUB.concentrator._hookOnPreUpdateToken(scene, sceneId, actorData, currentData)
         });
     }
 
@@ -152,11 +154,19 @@ class CUBSignal {
         Hooks.on("updateToken", (scene, sceneID, update, options, userId) => {
             CUB.enhancedConditions._hookOnUpdateToken(scene, sceneID, update, options, userId);
             CUB.injuredAndDead._hookOnUpdateToken(scene, sceneID, update, options, userId);
+            CUB.concentrator._hookOnUpdateToken(scene, sceneID, update, options, userId);
+        });
+    }
+
+    static hookOnPreUpdateActor() {
+        Hooks.on("preUpdateActor", (actor, update, options) => {
+            CUB.concentrator._hookOnPreUpdateActor(actor, update, options);
         });
     }
 
     static hookOnUpdateActor() {
-        Hooks.on("updateActor", (actor, update) => {
+        Hooks.on("updateActor", (actor, update, options) => {
+            CUB.concentrator._hookOnUpdateActor(actor, update, options);
             CUB.injuredAndDead._hookOnUpdateActor(actor, update);
         });
     }
@@ -333,6 +343,14 @@ class CUBSidekick {
     }
 
     static handlebarsHelpers() {
+        Handlebars.registerHelper('request-roll-ability', function(ability){
+            return CONFIG.DND5E["abilities"][ability]
+        });
+            
+        Handlebars.registerHelper('request-roll-skill', function(skill){
+            return CONFIG.DND5E["skills"][skill]
+        });
+
         Handlebars.registerHelper("concat", () => {
             let result;
 
@@ -731,7 +749,8 @@ class CUBEnhancedConditions {
             ["Prone", this.DEFAULT_CONFIG.iconPath + "prone.svg", ""],
             ["Restrained", this.DEFAULT_CONFIG.iconPath + "restrained.svg", ""],
             ["Stunned", this.DEFAULT_CONFIG.iconPath + "stunned.svg", ""],
-            ["Unconscious", this.DEFAULT_CONFIG.iconPath + "unconscious.svg", ""]
+            ["Unconscious", this.DEFAULT_CONFIG.iconPath + "unconscious.svg", ""],
+            ["Concentrating", this.DEFAULT_CONFIG.iconPath + "concentrating.svg", ""]
         ];
 
         const pf1eMap = [];
@@ -1809,6 +1828,393 @@ class CUBInjuredAndDead {
                 
             }
         }
+    }
+}
+
+/**
+ * Request a roll or display concentration checks when damage is taken.
+ */
+class CUBConcentrator {
+    constructor(){
+        this.settings = {
+            concentrating: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.ConcentratingN + ")", this.SETTINGS_META.concentrating),
+            concentratingIcon: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.ConcentratingIconN + ")", this.SETTINGS_META.concentratingIcon),
+            healthAttribute: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.HealthAttributeN + ")", this.SETTINGS_META.healthAttribute),
+            displayChat: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.ConcentratingChatPromptN + ")", this.SETTINGS_META.displayChat),
+            rollRequest: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.ConcentratingRollRequestN + ")", this.SETTINGS_META.rollRequest),      
+        }
+    }
+
+    get GADGET_NAME() {
+        return 'concentrator'
+    }
+
+    get SETTINGS_DESCRIPTORS(){
+        return {
+            ConcentratingN: "--Cause Concentration Checks (DnD5e)--",
+            ConcentratingH: "Requires concentration checks on tokens with the concentrating status effect",
+            ConcentratingIconN: "Concentration Status Marker",
+            ConcentratingIconH: "Path to the status marker to display for Concetrating tokens",
+            ConcentratingChatPromptN: "Concentration chat notifications",
+            ConcentratingChatPromptH: "Display a warning in chat whenever concentration is threatened",
+            ConcentratingRollRequestN: "Request a roll when concentration is threatened",
+            ConcentratingRollRequestH: "Will display a promtp requesting a roll whenever concentration is threatened.",
+            HealthAttributeN: "Health Attribute",
+            HealthAttributeH: "Health/HP attribute name as defined by game system"
+        }
+    }
+
+    get DEFAULT_CONFIG(){
+        return {
+            concentrating: false,
+            concentratingIcon: "modules/combat-utility-belt/icons/concentrating.svg",
+            concentrator: "CUBConcentrator"
+        };
+    }
+
+    get SETTINGS_META(){
+        return {
+            concentrating: {
+                name: this.SETTINGS_DESCRIPTORS.ConcentratingN,
+                hint: this.SETTINGS_DESCRIPTORS.ConcentratingH,
+                default: this.DEFAULT_CONFIG.concentrating,
+                scope: "world",
+                type: Boolean,
+                config: true,
+                onChange: s => {
+                    this.settings.concentrating = s;
+                }
+            },
+            concentratingIcon: {
+                name: this.SETTINGS_DESCRIPTORS.ConcentratingIconN,
+                hint: this.SETTINGS_DESCRIPTORS.ConcentratingIconH,
+                default: this.DEFAULT_CONFIG.concentratingIcon,
+                scope: "world",
+                type: String,
+                config: true,
+                onChange: s => {
+                    this.settings.concentratingIcon = s;
+                }
+            },
+            healthAttribute: {
+                name: this.SETTINGS_DESCRIPTORS.HealthAttributeN,
+                hint: this.SETTINGS_DESCRIPTORS.HealthAttributeH,
+                default: (CUBButler.DEFAULT_GAME_SYSTEMS[game.system.id] != null) ? CUBButler.DEFAULT_GAME_SYSTEMS[game.system.id].healthAttribute : CUBButler.DEFAULT_GAME_SYSTEMS.other.healthAttribute,
+                scope: "world",
+                type: String,
+                config: true,
+                onChange: s => {
+                    this.settings.healthAttribute = s;
+                }
+            },
+            displayChat: {
+                name: this.SETTINGS_DESCRIPTORS.ConcentratingChatPromptN,
+                hint: this.SETTINGS_DESCRIPTORS.ConcentratingChatPromptH,
+                default: (CUBButler.DEFAULT_GAME_SYSTEMS[game.system.id] != null) ? CUBButler.DEFAULT_GAME_SYSTEMS[game.system.id].healthAttribute : CUBButler.DEFAULT_GAME_SYSTEMS.other.healthAttribute,
+                scope: "world",
+                type: Boolean,
+                config: true,
+                onChange: s => {
+                    this.settings.healthAttribute = s;
+                }
+            },
+            rollRequest: {
+                name: this.SETTINGS_DESCRIPTORS.ConcentratingRollRequestN,
+                hint: this.SETTINGS_DESCRIPTORS.ConcentratingRollRequestH,
+                default: (CUBButler.DEFAULT_GAME_SYSTEMS[game.system.id] != null) ? CUBButler.DEFAULT_GAME_SYSTEMS[game.system.id].healthAttribute : CUBButler.DEFAULT_GAME_SYSTEMS.other.healthAttribute,
+                scope: "world",
+                type: Boolean,
+                config: true,
+                onChange: s => {
+                    this.settings.healthAttribute = s;
+                }
+            }
+        };
+    }
+
+    _wasDamageTaken(update, current){
+        const newHealth = getProperty(update, "actorData.data." + this.settings.healthAttribute + ".value");
+        const oldHealth = getProperty(current, "data.data." + this.settings.healthAttribute + ".value");
+        return newHealth < oldHealth;
+    }
+
+    _isConcentrating(token){
+        const tokenEffects = getProperty(token, "data.effects");
+        const _isConcentrating = Boolean(tokenEffects && tokenEffects.find(e => e == this.settings.concentratingIcon)) || false;
+        return _isConcentrating;
+    }
+
+    _hookOnPreUpdateToken(scene, sceneID, update, options){
+        let token = canvas.tokens.get(options.currentData._id);
+        let actorId = getProperty(token, "data.actorId");
+        const current = getProperty(token, "actor")
+        if (!game.user.isGM || !current || !this.settings.concentrating || token.actorLink)
+            return false;
+        
+
+        if(this._isConcentrating(token) && this._wasDamageTaken(update, current)){
+
+            if(this.settings.displayChat)
+                this._displayChat(getProperty(options, "currentData.name"));
+            
+            if(this.settings.rollRequest && actorId){
+                let actor = game.actors.get(actorId)
+                if(actor){
+                    let owners = game.users.entities.filter(user => actor.hasPerm(user, "OWNER") && !user.isGM);
+                    options['affectedUsers'] = {'actorId' : actorId, 'owners': owners};
+                }
+            }
+        }
+    }
+
+    _wasDamageTakenActor(newHealth, oldHealth){
+        return newHealth < oldHealth || false;
+    }
+
+    _hookOnPreUpdateActor(actor, update, options) {
+        const tokens = actor.getActiveTokens();
+        const actorId = update._id;
+        const newHealth = getProperty(update, "data." + this.settings.healthAttribute + ".value");
+        const oldHealth = getProperty(actor, "data.data." + this.settings.healthAttribute + ".value");
+        let owners = game.users.entities.filter(user => actor.hasPerm(user, "OWNER") && !user.isGM);
+        if(owners.length == 0)
+            owners.push(game.users.entities.find(user => user.isGM))
+        if(!tokens || !newHealth || !oldHealth || !actor)
+            return false;
+
+        for(let token of tokens){
+            if(this._isConcentrating(token) && this._wasDamageTakenActor(newHealth, oldHealth)){
+
+                if(this.settings.displayChat)
+                    this._displayChat(getProperty(token, "name"));
+                
+                if(this.settings.rollRequest && actorId){
+                        options['affectedUsers'] = {'actorId' : actorId, 'owners': owners};
+                }
+                break; // We only want to do this once, so after it succeeds, quit.
+            }
+        }
+    }
+
+    _hookOnUpdateActor(actor, update, options){
+        this._determineDisplayedUsers(options);
+    }
+
+    _hookOnUpdateToken(scene, sceneID, update, options, userId){
+        this._determineDisplayedUsers(options);
+    }
+
+    _determineDisplayedUsers(options){
+        let owners = getProperty(options, 'affectedUsers.owners')
+        let actorId = getProperty(options, 'affectedUsers.actorId')
+        if(!owners || !actorId)
+            return;
+        let owner= owners.filter(owner => game.user._id == owner._id);
+        if(owner.length != 0)
+            this._distributePrompts(actorId, owner);
+    }
+
+    _displayChat(name){
+        if(game.user.isGM){
+            ChatMessage.create({
+                user: game.user._id,
+                speaker: {
+                    alias: this.DEFAULT_CONFIG.concentrator
+                },
+                content: `${name}'s concentration is waivering!`,
+            });
+        }       
+    }
+
+    _distributePrompts(actorId, owner){
+        this._displayPrompt(actorId, owner.id);
+    }
+
+    _displayPrompt(actorId, userId){
+        CUBRoller.handlePacket({
+            userId: userId,
+            characters: [actorId],
+            attributes: [],
+            skills: [],
+            saves: ["con"],
+            modifiers: {mod: 0, bonus: 0, dc: 10, advantage: 0, hidden: false}
+        });
+    }
+}
+
+/**
+ * Sends a pop-up to the affected user requesting a roll.
+ */
+class CUBRoller extends FormApplication {
+    constructor(...args){
+        super(...args);
+        this.data;
+        this.characters;
+        this.portraits;
+        this.counter = 0;
+        this.advantage;
+    }
+
+    static get defaultOptions() {
+        const options = super.defaultOptions;
+        options.template = "modules/combat-utility-belt/templates/requested_roll.html";
+        options.width = 650;
+        options.height = "auto";
+        options.title = "Roll Requested!"
+        options.closeOnSubmit = false;
+        options.id = "roll-requested-container"
+        return options;
+    }
+
+    async getData() {
+        const templateData = {
+            characters: this.portraits,
+            attributes: this.data.attributes,
+            skills: this.data.skills,
+            saves: this.data.saves,
+            advantage: this.advantage
+        }
+        return templateData;
+    }
+
+    activateListeners(html) {
+        super.activateListeners(html);
+
+        $(document).ready(function(){
+            $('#player-container img:not(:first)').addClass('not-selected')
+            $('.roll-content').hide();
+            $('.roll-content:first').show();
+        });
+
+        $(".player-portrait").click(function() {
+            let id = $(this).attr('id');
+            if($(this).hasClass("not-selected"))
+            {
+                $('#player-container img').addClass('not-selected');
+                $('#player-container img').removeClass('active');
+                $(this).removeClass("not-selected");
+                $(this).addClass("active")
+                $('.roll-content').hide();
+                $('#' + id + 'C').insertAfter($('.roll-content:last'));
+                $('#' + id + 'C').fadeIn('slow');
+            }
+        });
+
+        $(".clickable-roll").click(this._onRoll.bind(this));
+    }
+
+    _onRoll(event){
+        event.preventDefault();
+        $(event.target).prop('disabled', true)
+        let id = $(event.target).attr('id');
+        let pid = $(event.target).parent().attr('id');
+        let parts = id.split('-');
+        let modResult = 0;
+        let character = this.characters.filter(function(character){
+            return character.actor === pid;
+        })
+        let label = "";
+        switch(parts[0]){
+            case "attribute":
+                modResult = game.actors.get(character[0].actor).data.data.abilities[parts[1]].mod;
+                label = `${CONFIG.DND5E.abilities[parts[1]]} ability check`;
+                break;
+            case "save":
+                modResult = game.actors.get(character[0].actor).data.data.abilities[parts[1]].save;
+                label = `${CONFIG.DND5E.abilities[parts[1]]} saving throw`;
+                break;
+            case "skill":
+                modResult = game.actors.get(character[0].actor).data.data.skills[parts[1]].mod;
+                label = `${CONFIG.DND5E.skills[parts[1]]} skill check`;
+                break;
+        }
+        $(event.target).parent().hide(1000);
+        this._roll(this.data.modifiers.advantage, {mod : modResult, bonus: this.data.modifiers.bonus}, label, label, character[0], this.data.modifiers.hidden, this.data.modifiers.dc);
+    }
+
+    async handleData(data){
+        this.data = data;
+        await this._updateCharacters();
+        if(this._handleCounter())
+            return;
+        await this._handleAdvantage();
+        this.render(true);
+    }
+
+    async _updateCharacters(){
+        this.characters = [];
+        this.portraits = [];
+        this.data.characters.forEach(character =>{
+            let image = game.actors.get(character).img;
+            this.portraits.push({img : image, id: character});
+            let actorData = {
+                actor: character,
+                alias: game.actors.get(character).data.name,
+                scene: game.scenes.active.id
+            }
+            this.characters.push(actorData);
+        });
+    }
+
+    _handleCounter(){
+        this.counter += this.portraits.length * (this.data.attributes.length + this.data.skills.length + this.data.saves.length); 
+        if(this.counter == 0)
+            return true;
+    }
+
+    async _handleAdvantage(){
+        switch(this.data.modifiers.advantage){
+            case 0:
+                this.advantage = "";
+                break;
+            case 1:
+                this.advantage = " at advantage!";
+                break;
+            case -1:
+                this.advantage = " at disadvantage";
+                break;
+        }
+    }
+
+    _roll = (adv, data, title, flavor, speaker, hidden, dc) => {
+        let rollMode = (hidden == 1) ? "blindroll" : "roll";
+        let parts = ["@bonus", "@mod", "1d20"] 
+        if (adv === 1) {
+          parts[0] = ["2d20kh"];
+          flavor = `${title} (Advantage)`;
+        }
+        else if (adv === -1) {
+          parts[0] = ["2d20kl"];
+          flavor = `${title} (Disadvantage)`;
+        }
+
+        // Don't include situational bonus unless it is defined
+        if (!data.bonus && parts.indexOf("@bonus") !== -1) parts.shift();
+  
+        // Execute the roll
+        let combinedString = parts.join(" + ");
+        if(false) // game.settings.get('request_roll', 'enableDcResolve') If future auto resolve is desired.
+            combinedString += `ms>=${dc}`;
+        let roll = new Roll(combinedString, data).roll();
+
+        // Flag critical thresholds
+        let d20 = roll.parts[roll.parts.length - 1];
+        d20.options.critical = 20;
+        d20.options.fumble = 1;
+        
+        // Convert the roll to a chat message
+        roll.toMessage({
+          speaker: speaker,
+          flavor: flavor,
+          rollMode: rollMode
+        });
+        if(--this.counter == 0)
+            this.close();
+    };
+
+    static handlePacket(packet){
+        let requestedRoll = new CUBRoller();
+        requestedRoll.handleData(packet);
     }
 }
 

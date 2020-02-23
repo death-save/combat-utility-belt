@@ -27,5 +27,5 @@
       "entity": "JournalEntry"
     }
   ],
-  "styles" : ["./css/combat-utility-belt.css"]
+  "styles" : ["./css/combat-utility-belt.css", "./css/requested_roll.css"]
 }
