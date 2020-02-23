@@ -4,7 +4,6 @@
   "description": "Adds various combat-focused features",
   "version": "0.8.1",
   "minimumCoreVersion": "0.4.7",
-  "socket": true,
   "author": "Evan Clarke [errational#2007] & Jordan Williams [Reaver#4634]",
   "url": "https://github.com/death-save/combat-utility-belt",
   "manifest": "https://raw.githubusercontent.com/death-save/combat-utility-belt/beta/module.json",

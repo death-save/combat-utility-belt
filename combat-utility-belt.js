@@ -110,12 +110,6 @@ class CUBSignal {
             if (CUB.combatTracker.settings.xpModule) {
                 Combat.prototype.endCombat = CUBCombatTracker.prototype.endCombat;
             }
-
-            game.socket.on("module.combat-utility-belt", packet => {
-                if(game.user.id === packet.userId){
-                    CUBRoller.handleSocketCall(packet);
-                }
-            });
         });
     }
 
@@ -160,17 +154,19 @@ class CUBSignal {
         Hooks.on("updateToken", (scene, sceneID, update, options, userId) => {
             CUB.enhancedConditions._hookOnUpdateToken(scene, sceneID, update, options, userId);
             CUB.injuredAndDead._hookOnUpdateToken(scene, sceneID, update, options, userId);
+            CUB.concentrator._hookOnUpdateToken(scene, sceneID, update, options, userId);
         });
     }
 
     static hookOnPreUpdateActor() {
-        Hooks.on("preUpdateActor", (actor, update) => {
-            CUB.concentrator._hookOnUpdateActor(actor, update);
+        Hooks.on("preUpdateActor", (actor, update, options) => {
+            CUB.concentrator._hookOnPreUpdateActor(actor, update, options);
         });
     }
 
     static hookOnUpdateActor() {
-        Hooks.on("updateActor", (actor, update) => {
+        Hooks.on("updateActor", (actor, update, options) => {
+            CUB.concentrator._hookOnUpdateActor(actor, update, options);
             CUB.injuredAndDead._hookOnUpdateActor(actor, update);
         });
     }
@@ -1871,7 +1867,8 @@ class CUBConcentrator {
     get DEFAULT_CONFIG(){
         return {
             concentrating: false,
-            concentratingIcon: "modules/combat-utility-belt/icons/concentrating.svg"
+            concentratingIcon: "modules/combat-utility-belt/icons/concentrating.svg",
+            concentrator: "CUBConcentrator"
         };
     }
 
@@ -1964,7 +1961,7 @@ class CUBConcentrator {
                 let actor = game.actors.get(actorId)
                 if(actor){
                     let owners = game.users.entities.filter(user => actor.hasPerm(user, "OWNER") && !user.isGM);
-                    this._distributePrompts(actorId, owners);
+                    options['affectedUsers'] = {'actorId' : actorId, 'owners': owners};
                 }
             }
         }
@@ -1974,12 +1971,15 @@ class CUBConcentrator {
         return newHealth < oldHealth || false;
     }
 
-    _hookOnUpdateActor(actor, update) {
+    _hookOnPreUpdateActor(actor, update, options) {
         const tokens = actor.getActiveTokens();
         const actorId = update._id;
         const newHealth = getProperty(update, "data." + this.settings.healthAttribute + ".value");
         const oldHealth = getProperty(actor, "data.data." + this.settings.healthAttribute + ".value");
-        if(!game.user.isGM|| !tokens)
+        let owners = game.users.entities.filter(user => actor.hasPerm(user, "OWNER") && !user.isGM);
+        if(owners.length == 0)
+            owners.push(game.users.entities.find(user => user.isGM))
+        if(!tokens || !newHealth || !oldHealth || !actor)
             return false;
 
         for(let token of tokens){
@@ -1989,40 +1989,56 @@ class CUBConcentrator {
                     this._displayChat(getProperty(token, "name"));
                 
                 if(this.settings.rollRequest && actorId){
-                    let actor = game.actors.get(actorId)
-                    if(actor){
-                        let owners = game.users.entities.filter(user => actor.hasPerm(user, "OWNER") && !user.isGM);
-                        this._distributePrompts(actorId, owners);
-                    }
+                        options['affectedUsers'] = {'actorId' : actorId, 'owners': owners};
                 }
                 break; // We only want to do this once, so after it succeeds, quit.
             }
         }
     }
 
+    _hookOnUpdateActor(actor, update, options){
+        this._determineDisplayedUsers(options);
+    }
+
+    _hookOnUpdateToken(scene, sceneID, update, options, userId){
+        this._determineDisplayedUsers(options);
+    }
+
+    _determineDisplayedUsers(options){
+        let owners = getProperty(options, 'affectedUsers.owners')
+        let actorId = getProperty(options, 'affectedUsers.actorId')
+        if(!owners || !actorId)
+            return;
+        let owner= owners.filter(owner => game.user._id == owner._id);
+        if(owner.length != 0)
+            this._distributePrompts(actorId, owner);
+    }
+
     _displayChat(name){
         if(game.user.isGM){
             ChatMessage.create({
                 user: game.user._id,
-                speaker: {},
+                speaker: {
+                    alias: this.DEFAULT_CONFIG.concentrator
+                },
                 content: `${name}'s concentration is waivering!`,
             });
         }       
     }
 
-    _distributePrompts(actorId, owners){
-        owners.forEach(owner => { this._displayPrompt(actorId, owner.id)});
+    _distributePrompts(actorId, owner){
+        this._displayPrompt(actorId, owner.id);
     }
 
     _displayPrompt(actorId, userId){
-        game.socket.emit("module.combat-utility-belt", {
+        CUBRoller.handlePacket({
             userId: userId,
             characters: [actorId],
             attributes: [],
             skills: [],
             saves: ["con"],
             modifiers: {mod: 0, bonus: 0, dc: 10, advantage: 0, hidden: false}
-        }, resp => {});
+        });
     }
 }
 
@@ -2196,7 +2212,7 @@ class CUBRoller extends FormApplication {
             this.close();
     };
 
-    static handleSocketCall(packet){
+    static handlePacket(packet){
         let requestedRoll = new CUBRoller();
         requestedRoll.handleData(packet);
     }
