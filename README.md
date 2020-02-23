@@ -1,7 +1,8 @@
-![https://img.shields.io/badge/Foundry%20VTT-0.4.7%2B-green](https://img.shields.io/badge/Foundry%20VTT-0.4.4%2B-green)
+![https://img.shields.io/badge/Foundry%20VTT-0.4.7%2B-green](https://img.shields.io/badge/Foundry%20VTT-0.4.7%2B-green)
 
 # Combat Utility Belt **Beta**
-**Author**: Evan Clarke (errational#2007 on discord) 
+**Author**: Evan Clarke (errational#2007 on discord)
+
 **Contributors**: Jordan Williams (Reaver#4634), Jacob McAuley (JacobMcAuley#3461)
 
 [Installation](#Installation)    
