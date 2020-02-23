@@ -6,14 +6,21 @@
 - ~~Hide NPC Names in Artwork "Share With Players"~~
 - Refine Hide NPC Names to allow for "known" NPC names/information
 
-## [0.8.2] - 2020-02-23
+## [0.9.1] - 2020-02-23
+### Fixed
+- Concentrator now correctly calculates DC when damage > 10. Math is hard.
+
+### Changed
+- Incremented previous release from v0.8.2 to v0.9.0 due to magnitude
+
+## [0.9.0] - 2020-02-23
 ### Added
 - Concentration Checks -- allows a forced Concentration check when a token or actor takes damage. Thanks @jacobmcauley for this awesome feature! (D&D5e only at this time)
 
-## Changed
+### Changed
 - Moved attribution for contributors from the manifest to the README to avoid confusion
 
-## Fixed
+### Fixed
 - Fixed a bug where panning/selecting tokens would select temporary combatants
 - Improved logic around the Update Actor hook
 
