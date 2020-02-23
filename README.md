@@ -70,7 +70,7 @@ This handy-dandy combat aid comes packed with a bunch of gadgets to ensure you g
 
 ## Concentration Checks (D&D 5th Edition only)
 
-![concentrator](https://i.imgur.com/nRGJCJ7.gifv)
+![concentrator](https://github.com/death-save/media/blob/master/combat-utility-belt/concentrator.gif)
 
 A DM is responsible for all sorts of things, but keeping track those pesky spell casters and their concentration is one more thing that you shouldn't have to worry about! With this gadget, you can make sure that those *irritating* spellcasters are always checked whenever the concentrating status is applied. Now they'll be careful about getting hit by that goblin sneaking around!
 
