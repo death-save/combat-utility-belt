@@ -95,6 +95,7 @@ class CUBSignal {
             CUB.enhancedConditions = new CUBEnhancedConditions();
             CUB.hideNPCNames = new CUBHideNPCNames();
             CUB.combatTracker = new CUBCombatTracker();
+            CUB.concentrator = new CUBConcentrator();
             CUBSidekick.handlebarsHelpers();
         });
     }
@@ -103,7 +104,6 @@ class CUBSignal {
         Hooks.on("ready", () => {
             CUB.rerollInitiative = new CUBRerollInitiative();
             CUB.injuredAndDead = new CUBInjuredAndDead();
-            CUB.concentrator = new CUBConcentrator();
             CUB.actorUtility = new CUBActorUtility();
             CUB.tokenUtility = new CUBTokenUtility();
             
@@ -217,6 +217,7 @@ class CUBSignal {
     static hookOnRenderChatMessage() {
         Hooks.on("renderChatMessage", (message, html, data) => {
             CUB.hideNPCNames._hookOnRenderChatMessage(message, html, data);
+            CUB.concentrator._onRenderChatMessage(message, html, data);
         });
     }
 }
@@ -1849,7 +1850,8 @@ class CUBConcentrator {
             healthAttribute: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.HealthAttributeN + ")", this.SETTINGS_META.healthAttribute),
             displayChat: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.ConcentratingChatPromptN + ")", this.SETTINGS_META.displayChat),
             rollRequest: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.ConcentratingRollRequestN + ")", this.SETTINGS_META.rollRequest),
-            ability: "con" //change to a setting later maybe?      
+            ability: "con", //change to a setting later maybe?
+            autoConcentrate: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.ConcentratingAutoStatusN + ")", this.SETTINGS_META.autoConcentrate)   
         }
     }
 
@@ -1868,7 +1870,9 @@ class CUBConcentrator {
             ConcentratingRollRequestN: "Prompt Player",
             ConcentratingRollRequestH: "Prompt the player to make the check or not",
             HealthAttributeN: "Health Attribute",
-            HealthAttributeH: "Health/HP attribute name as defined by game system"
+            HealthAttributeH: "Health/HP attribute name as defined by game system",
+            ConcentratingAutoStatusN: "Automatically Set Concentrating Status",
+            ConcentratingAutoStatusH: "When a Concentration spell is cast, automatically set the Concentrating status"
         }
     }
 
@@ -1923,6 +1927,7 @@ class CUBConcentrator {
                 type: Boolean,
                 config: true,
                 onChange: s => {
+                    this.settings.displayChat = s;
                 }
             },
             rollRequest: {
@@ -1933,6 +1938,18 @@ class CUBConcentrator {
                 type: Boolean,
                 config: true,
                 onChange: s => {
+                    this.settings.rollRequest = s;
+                }
+            },
+            autoConcentrate: {
+                name: this.SETTINGS_DESCRIPTORS.ConcentratingAutoStatusN,
+                hint: this.SETTINGS_DESCRIPTORS.ConcentratingAutoStatusH,
+                default: false,
+                scope: "world",
+                type: Boolean,
+                config: true,
+                onChange: s => {
+                    this.settings.autoConcentrate = s;
                 }
             }
         };
@@ -1968,6 +1985,59 @@ class CUBConcentrator {
      */
     _calculateDamage(newHealth, oldHealth) {
         return oldHealth - newHealth || 0;
+    }
+
+    /**
+     * Handle render ChatMessage
+     * @param {*} app 
+     * @param {*} html 
+     * @param {*} data 
+     */
+    _onRenderChatMessage(app, html, data) {
+        if (!game.user.isGM || app.data.timestamp + 500 < Date.now() || !this.settings.autoConcentrate) {
+            return;
+        }
+
+        const itemDiv = html.find("div[data-item-id]");
+
+        if (itemDiv.length === 0) {
+            return;
+        }
+
+        const actorId = app.data.speaker.actor || null;
+        const tokenId = app.data.speaker.token || null;
+        const itemId = itemDiv.data("itemId");
+
+        if (!itemId || (!tokenId && !actorId)) {
+            return;
+        }
+
+        const actor = game.actors.get(actorId);
+        const tokens = [canvas.tokens.get(tokenId)] || actor ? actor.getActiveTokens() : [];
+        const item = (tokenId ? token.actor.getOwnedItem(itemId) : actor.getOwnedItem(itemId)) || null;
+
+        if (!item || !tokens) {
+            return;
+        }
+
+        const isSpell = item.type === "spell";
+        const isConcentration = isSpell ? item.data.data.components.concentration : false;
+
+        if (!isSpell && !isConcentration) {
+            return;
+        }
+
+        for (const t of tokens) {
+            const tokenEffects = getProperty(t, "data.effects");
+            const isAlreadyConcentrating = !!tokenEffects.find(e => e === this.settings.concentratingIcon);
+
+            if (isAlreadyConcentrating) {
+                // maybe raise a message to the GM?
+                continue;
+            }
+
+            t.toggleEffect(this.settings.concentratingIcon);
+        } 
     }
 
     /**
