@@ -6,6 +6,11 @@
 - ~~Hide NPC Names in Artwork "Share With Players"~~
 - Refine Hide NPC Names to allow for "known" NPC names/information
 
+## [0.9.4] - 2020-02-23
+### Fixed
+- Resolved Concentrator token detection bug
+- Concentrator no longer fires on non-Concentration spells
+
 ## [0.9.3] - 2020-02-23
 ### Added
 - Concentrator now supports spells cast from D&D Beyond using [Beyond20](https://beyond20.here-for-more.info/) by @kakaroto
