@@ -6,6 +6,11 @@
 - ~~Hide NPC Names in Artwork "Share With Players"~~
 - Refine Hide NPC Names to allow for "known" NPC names/information
 
+## [0.9.3] - 2020-02-23
+### Added
+- Concentrator now supports spells cast from D&D Beyond using [Beyond20](https://beyond20.here-for-more.info/) by @kakaroto
+- Concentrator now includes a setting to notify if a second Concentration spell is cast while the caster is already Concentrating on a spell. The options are: "None" (no notification), "GM Only" (whisper notification to GMs) and "All" (create general chat message)
+
 ## [0.9.2] - 2020-02-23
 ### Added
 - Concentrator now includes a setting to automatically add the Concentrating status if you cast a Concentration spell
