@@ -2037,15 +2037,15 @@ class CUBConcentrator {
             return;
         }
 
-        const item = itemId ? (tokenId ? token.actor.getOwnedItem(itemId) : actor.getOwnedItem(itemId)) : null;
-        const isSpell = (concentrationDiv.length > 0 && itemDiv.length === 0) ? true : (itemDiv.length > 0 ? item.type === "spell" : false);
-        const isConcentration = concentrationDiv.length > 0 ? true : (itemDiv.length > 0 && isSpell) ? item.data.data.components.concentration : false;
-
-        if (!isSpell && !isConcentration) {
-            return;
-        }
-
         for (const t of tokens) {
+            const item = itemId ? (tokenId ? t.actor.getOwnedItem(itemId) : actor.getOwnedItem(itemId)) : null;
+            const isSpell = (concentrationDiv.length > 0 && itemDiv.length === 0) ? true : (itemDiv.length > 0 ? item.type === "spell" : false);
+            const isConcentration = concentrationDiv.length > 0 ? true : (itemDiv.length > 0 && isSpell) ? item.data.data.components.concentration : false;
+
+            if (!isConcentration) {
+                continue;
+            }
+
             const tokenEffects = getProperty(t, "data.effects");
             const isAlreadyConcentrating = !!tokenEffects.find(e => e === this.settings.concentratingIcon);
 
@@ -2059,7 +2059,7 @@ class CUBConcentrator {
             }
 
             t.toggleEffect(this.settings.concentratingIcon);
-        } 
+        }  
     }
 
     /**
