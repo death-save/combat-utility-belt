@@ -1851,7 +1851,8 @@ class CUBConcentrator {
             displayChat: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.ConcentratingChatPromptN + ")", this.SETTINGS_META.displayChat),
             rollRequest: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.ConcentratingRollRequestN + ")", this.SETTINGS_META.rollRequest),
             ability: "con", //change to a setting later maybe?
-            autoConcentrate: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.ConcentratingAutoStatusN + ")", this.SETTINGS_META.autoConcentrate)   
+            autoConcentrate: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.ConcentratingAutoStatusN + ")", this.SETTINGS_META.autoConcentrate),
+            notifyDoubleConcentration: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.ConcentratingNotifyDoubleN + ")", this.SETTINGS_META.notifyDoubleConcentration)   
         }
     }
 
@@ -1872,7 +1873,9 @@ class CUBConcentrator {
             HealthAttributeN: "Health Attribute",
             HealthAttributeH: "Health/HP attribute name as defined by game system",
             ConcentratingAutoStatusN: "Automatically Set Concentrating Status",
-            ConcentratingAutoStatusH: "When a Concentration spell is cast, automatically set the Concentrating status"
+            ConcentratingAutoStatusH: "When a Concentration spell is cast, automatically set the Concentrating status",
+            ConcentratingNotifyDoubleN: "Notify on Double Concentration",
+            ConcentratingNotifyDoubleH: "Send a message when a Concentration spell is cast while another spell is being Concentrated on"
         }
     }
 
@@ -1951,6 +1954,18 @@ class CUBConcentrator {
                 onChange: s => {
                     this.settings.autoConcentrate = s;
                 }
+            },
+            notifyDoubleConcentration: {
+                name: this.SETTINGS_DESCRIPTORS.ConcentratingNotifyDoubleN,
+                hint: this.SETTINGS_DESCRIPTORS.ConcentratingNotifyDoubleH,
+                default: "None",
+                scope: "world",
+                type: String,
+                choices: ["None", "GM Only", "Everyone"],
+                config: true,
+                onChange: s => {
+                    this.settings.notifyDoubleConcentration = s;
+                }
             }
         };
     }
@@ -2000,28 +2015,31 @@ class CUBConcentrator {
 
         const itemDiv = html.find("div[data-item-id]");
 
-        if (itemDiv.length === 0) {
+        // support Beyond20
+        const concentrationDiv = html.find(":contains('Requires Concentration')");
+
+        if (itemDiv.length === 0 && concentrationDiv.length === 0) {
             return;
         }
 
         const actorId = app.data.speaker.actor || null;
         const tokenId = app.data.speaker.token || null;
-        const itemId = itemDiv.data("itemId");
+        const itemId = itemDiv.data("itemId") || null;
 
-        if (!itemId || (!tokenId && !actorId)) {
+        if (!tokenId && !actorId) {
             return;
         }
 
         const actor = game.actors.get(actorId);
         const tokens = [canvas.tokens.get(tokenId)] || actor ? actor.getActiveTokens() : [];
-        const item = (tokenId ? token.actor.getOwnedItem(itemId) : actor.getOwnedItem(itemId)) || null;
 
-        if (!item || !tokens) {
+        if (!tokens) {
             return;
         }
 
-        const isSpell = item.type === "spell";
-        const isConcentration = isSpell ? item.data.data.components.concentration : false;
+        const item = itemId ? (tokenId ? token.actor.getOwnedItem(itemId) : actor.getOwnedItem(itemId)) : null;
+        const isSpell = (concentrationDiv.length > 0 && itemDiv.length === 0) ? true : (itemDiv.length > 0 ? item.type === "spell" : false);
+        const isConcentration = concentrationDiv.length > 0 ? true : (itemDiv.length > 0 && isSpell) ? item.data.data.components.concentration : false;
 
         if (!isSpell && !isConcentration) {
             return;
@@ -2032,7 +2050,11 @@ class CUBConcentrator {
             const isAlreadyConcentrating = !!tokenEffects.find(e => e === this.settings.concentratingIcon);
 
             if (isAlreadyConcentrating) {
-                // maybe raise a message to the GM?
+
+                if (this.settings.notifyDoubleConcentration !== "None") {
+                    this._notifyDoubleConcentration(t);
+                }
+
                 continue;
             }
 
@@ -2234,6 +2256,23 @@ class CUBConcentrator {
             },
             default: "Yes"
         }).render(true);
+    }
+
+    /**
+     * Displays a chat message to GMs if a Concentration spell is cast while already concentrating
+     * @param {*} token 
+     */
+    _notifyDoubleConcentration(token) {
+        const isWhisper = this.settings.notifyDoubleConcentration === "GM Only";
+
+        ChatMessage.create({
+            speaker: {
+                alias: CUBConcentrator.prototype.DEFAULT_CONFIG.concentrator
+            },
+            whisper: isWhisper ? game.users.entities.filter(u => u.isGM) : "",
+            content: `<p>${token.name} cast a spell requiring Concentration while concentrating on another spell. Concentration on the original spell is lost.`,
+            type: CONST.CHAT_MESSAGE_TYPES.OTHER
+        });
     }
 }
 
