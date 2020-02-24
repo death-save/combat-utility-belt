@@ -6,6 +6,10 @@
 - ~~Hide NPC Names in Artwork "Share With Players"~~
 - Refine Hide NPC Names to allow for "known" NPC names/information
 
+## [0.9.2] - 2020-02-23
+### Added
+- Concentrator now includes a setting to automatically add the Concentrating status if you cast a Concentration spell
+
 ## [0.9.1] - 2020-02-23
 ### Fixed
 - Concentrator now correctly calculates DC when damage > 10. Math is hard.
