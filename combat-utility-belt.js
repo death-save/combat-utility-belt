@@ -59,7 +59,8 @@ class CUBButler {
         return {
             HEALTHY: "healthy",
             INJURED: "injured",
-            DEAD: "dead"
+            DEAD: "dead",
+            UNCONSCIOUS: "unconscious"
         };
     }
 }
@@ -348,14 +349,6 @@ class CUBSidekick {
     }
 
     static handlebarsHelpers() {
-        Handlebars.registerHelper('request-roll-ability', function(ability){
-            return CONFIG.DND5E["abilities"][ability]
-        });
-            
-        Handlebars.registerHelper('request-roll-skill', function(skill){
-            return CONFIG.DND5E["skills"][skill]
-        });
-
         Handlebars.registerHelper("concat", () => {
             let result;
 
@@ -738,6 +731,7 @@ class CUBEnhancedConditions {
             //Condition - Icon - JournalEntry
             ["Blinded", this.DEFAULT_CONFIG.iconPath + "blinded.svg", ""],
             ["Charmed", this.DEFAULT_CONFIG.iconPath + "charmed.svg", ""],
+            ["Concentrating", this.DEFAULT_CONFIG.iconPath + "concentrating.svg", ""],
             ["Deafened", this.DEFAULT_CONFIG.iconPath + "deafened.svg", ""],
             ["Exhaustion 1", this.DEFAULT_CONFIG.iconPath + "exhaustion1.svg", ""],
             ["Exhaustion 2", this.DEFAULT_CONFIG.iconPath + "exhaustion2.svg", ""],
@@ -754,8 +748,7 @@ class CUBEnhancedConditions {
             ["Prone", this.DEFAULT_CONFIG.iconPath + "prone.svg", ""],
             ["Restrained", this.DEFAULT_CONFIG.iconPath + "restrained.svg", ""],
             ["Stunned", this.DEFAULT_CONFIG.iconPath + "stunned.svg", ""],
-            ["Unconscious", this.DEFAULT_CONFIG.iconPath + "unconscious.svg", ""],
-            ["Concentrating", this.DEFAULT_CONFIG.iconPath + "concentrating.svg", ""]
+            ["Unconscious", "icons/svg/unconscious.svg", ""]
         ];
 
         const pf1eMap = [];
@@ -766,7 +759,7 @@ class CUBEnhancedConditions {
             ["Broken", "systems/pf2e/icons/skills/red_16.jpg", ""],
             ["Clumsy", "systems/pf2e/icons/skills/light_05.jpg", ""],
             ["Concealed", "systems/pf2e/icons/skills/shadow_14.jpg", ""],
-            ["Confused", "systems/pf2e/icons/skills/red_01.jpg", ""]
+            ["Confused", "systems/pf2e/icons/skills/red_01.jpg", ""],
             ["Controlled", "systems/pf2e/icons/skills/red_05.jpg", ""],
             ["Dazzled", "systems/pf2e/icons/skills/shadow_12.jpg", ""],
             ["Deafened", "systems/pf2e/icons/skills/red_10.jpg", ""],
@@ -1485,6 +1478,9 @@ class CUBInjuredAndDead {
             injuredIcon: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.InjuredIconN + ")", this.SETTINGS_META.injuredIcon),
             dead: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.DeadN + ")", this.SETTINGS_META.dead),
             deadIcon: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.DeadIconN + ")", this.SETTINGS_META.deadIcon),
+            unconscious: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.UnconsciousN + ")", this.SETTINGS_META.unconscious),
+            unconsciousActorType: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.UnconsciousActorTypeN + ")", this.SETTINGS_META.unconsciousActorType),
+            unconsciousIcon: CUBSidekick.initGadgetSetting(this.GADGET_NAME +  "(" + this.SETTINGS_DESCRIPTORS.UnconsciousIconN + ")", this.SETTINGS_META.unconsciousIcon), 
             combatTrackDead: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.CombatTrackDeadN + ")", this.SETTINGS_META.combatTrackDead)
         };
         this.callingUser = "";
@@ -1509,7 +1505,13 @@ class CUBInjuredAndDead {
             DeadIconN: "Dead Status Marker",
             DeadIconH: "Path to the status marker to display for Dead Tokens",
             HealthAttributeN: "Health Attribute",
-            HealthAttributeH: "Health/HP attribute name as defined by game system"
+            HealthAttributeH: "Health/HP attribute name as defined by game system",
+            UnconsciousN: "--Mark Unconscious--",
+            UnconsciousH: "Sets a unconscious (instead of dead) status marker on a certain Actor type when they reach 0 health",
+            UnconsciousActorTypeN: "Unconscious Actor Type",
+            UnconsciousActorTypeH: "Select the Actor Type to mark unconscious instead of dead",
+            UnconsciousIconN: "Unconscious Status Marker",
+            UnconsciousIconH: "Path to the status marker to display for Unconscious Tokens"
         };
     }
 
@@ -1520,7 +1522,10 @@ class CUBInjuredAndDead {
             threshold: 50,
             dead: false,
             deadIcon: "icons/svg/skull.svg",
-            combatTrackDead: false
+            combatTrackDead: false,
+            unconscious: false,
+            unconsciousActorType: "",
+            unconsciousIcon: "icons/svg/unconscious.svg"
         };
     }
 
@@ -1536,7 +1541,6 @@ class CUBInjuredAndDead {
                 onChange: s => {
                     this.settings.injured = s;
                 }
-
             },
             injuredIcon: {
                 name: this.SETTINGS_DESCRIPTORS.InjuredIconN,
@@ -1548,7 +1552,6 @@ class CUBInjuredAndDead {
                 onChange: s => {
                     this.settings.injuredIcon = s;
                 }
-
             },
             threshold: {
                 name: this.SETTINGS_DESCRIPTORS.ThresholdN,
@@ -1604,6 +1607,40 @@ class CUBInjuredAndDead {
                 onChange: s => {
                     this.settings.combatTrackDead = s;
                 }
+            },
+            unconscious: {
+                name: this.SETTINGS_DESCRIPTORS.UnconsciousN,
+                hint: this.SETTINGS_DESCRIPTORS.UnconsciousH,
+                default: this.DEFAULT_CONFIG.unconscious,
+                scope: "world",
+                type: Boolean,
+                config: true,
+                onChange: s => {
+                    this.settings.unconscious = s;
+                }
+            },
+            unconsciousActorType: {
+                name: this.SETTINGS_DESCRIPTORS.UnconsciousActorTypeN,
+                hint: this.SETTINGS_DESCRIPTORS.UnconsciousActorTypeH,
+                default: this.DEFAULT_CONFIG.unconsciousActorType,
+                scope: "world",
+                type: String,
+                choices: game.system.entityTypes.Actor,
+                config: true,
+                onChange: s => {
+                    this.settings.unconsciousActorType = s;
+                }
+            },
+            unconsciousIcon: {
+                name: this.SETTINGS_DESCRIPTORS.UnconsciousIconN,
+                hint: this.SETTINGS_DESCRIPTORS.UnconsciousIconH,
+                default: this.DEFAULT_CONFIG.unconsciousIcon,
+                scope: "world",
+                type: String,
+                config: true,
+                onChange: s => {
+                    this.settings.unconsciousIcon = s;
+                }
             }
         };
 
@@ -1618,12 +1655,20 @@ class CUBInjuredAndDead {
         const currentHealth = getProperty(token, "actor.data.data." + this.settings.healthAttribute + ".value");
         const updateHealth = getProperty(update, "actorData.data." + this.settings.healthAttribute + ".value");
         const maxHealth = getProperty(token, "actor.data.data." + this.settings.healthAttribute + ".max");
+        const isDead = this._checkForDead(currentHealth);
+        const isInjured = this._checkForInjured(currentHealth, maxHealth);
+        const markUnconscious = (this.settings.unconscious && token.actor.data.type === this.settings.unconsciousActorType) ? true : false;
 
-        if (this._checkForDead(currentHealth)) {
+        if (isDead) {
+            if (markUnconscious) {
+                return CUBButler.HEALTH_STATES.UNCONSCIOUS;
+            }
             return CUBButler.HEALTH_STATES.DEAD;
-        } else if (this._checkForInjured(currentHealth, maxHealth)) {
+        } else if (isInjured) {
             return CUBButler.HEALTH_STATES.INJURED;
         }
+
+        return;
     }
 
     /**
@@ -1635,17 +1680,26 @@ class CUBInjuredAndDead {
         const currentHealth = getProperty(actor, "data.data." + this.settings.healthAttribute + ".value");
         const updateHealth = getProperty(update, "data." + this.settings.healthAttribute + ".value");
         const maxHealth = getProperty(actor, "data.data." + this.settings.healthAttribute + ".max");
+        const isDead = this._checkForDead(currentHealth);
+        const isInjured = this._checkForInjured(currentHealth, maxHealth);
+        const markUnconscious = (this.settings.unconscious && actor.data.type === this.unconsciousActorType) ? true : false;
 
-        if (this._checkForDead(currentHealth)) {
+        if (isDead) {
+            if (markUnconscious) {
+                return CUBButler.HEALTH_STATES.UNCONSCIOUS;
+            }
             return CUBButler.HEALTH_STATES.DEAD;
-        } else if (this._checkForInjured(currentHealth, maxHealth)) {
+        } else if (isInjured) {
             return CUBButler.HEALTH_STATES.INJURED;
         }
+
+        return;
     }
 
     /**
-     * Checks if the given value is 0
+     * Checks if the given health value is 0
      * @param {Number} value 
+     * @returns {Boolean}
      */
     _checkForDead(value) {
         return value === 0 ? true : false;
@@ -1654,13 +1708,23 @@ class CUBInjuredAndDead {
     /**
      * Checks if the given value is below the threshold
      * @param {Number} value 
-     * @param {Number} max 
+     * @param {Number} max
+     * @returns {Boolean}
      */
     _checkForInjured(value, max) {
-        if (value < max * (this.settings.threshold / 100)) {
-            return true;
-        } else {
-            return false;
+        return (value < max * (this.settings.threshold / 100)) ?  true : false;
+    }
+
+    /**
+     * Retrieves an Actor type based on the index stored in the setting
+     * @returns {String}
+     */
+    get unconsciousActorType() {
+        try {
+            return game.system.entityTypes.Actor[this.settings.unconsciousActorType];
+        } catch(e) {
+            console.warn(e);
+            return;
         }
     }
 
@@ -1674,14 +1738,19 @@ class CUBInjuredAndDead {
         const hasOverlay = getProperty(token, "data.overlayEffect") != null;
         const hasEffects = getProperty(token, "data.effects.length") > 0;
         const wasInjured = Boolean(tokenEffects && tokenEffects.find(e => e == this.settings.injuredIcon)) || false;
-        const wasDead = Boolean(tokenOverlay == this.settings.deadIcon);
+        const wasDead = Boolean(tokenOverlay === this.settings.deadIcon);
+        const wasUnconscious = Boolean(tokenOverlay === this.settings.unconsciousIcon);
 
         if (hasEffects && wasInjured) {
-            token.toggleEffect(this.settings.injuredIcon);
+            return token.toggleEffect(this.settings.injuredIcon);
         }
 
         if (hasOverlay && wasDead) {
-            token.toggleOverlay(this.settings.deadIcon);
+            return token.toggleOverlay(this.settings.deadIcon);
+        }
+
+        if (hasOverlay && wasUnconscious) {
+            return token.toggleOverlay(this.settings.unconsciousIcon);
         }
     }
 
@@ -1696,6 +1765,7 @@ class CUBInjuredAndDead {
         const hasEffects = getProperty(token, "data.effects.length") > 0;
         const isInjured = Boolean(tokenEffects.find(e => e == this.settings.injuredIcon)) || false;
         const wasDead = Boolean(tokenOverlay == this.settings.deadIcon);
+        const wasUnconscious = Boolean(tokenOverlay === this.settings.unconsciousIcon);
 
         if (!isInjured) {
             token.toggleEffect(this.settings.injuredIcon);
@@ -1704,17 +1774,39 @@ class CUBInjuredAndDead {
         if (wasDead) {
             token.toggleOverlay(this.settings.deadIcon);
         }
+
+        if (wasUnconscious) {
+            token.toggleOverlay(this.settings.unconsciousIcon);
+        }
     }
 
     /**
      * Set a dead overlay on a token, removes all effects
      * @param {Object} token 
      */
-    _markDead(token) {
+    async _markDead(token) {
         const tokenEffects = getProperty(token, "data.effects");
         const hasEffects = getProperty(token, "data.effects.length") > 0;
         const tokenOverlay = getProperty(token, "data.overlayEffect");
-        const isDead = (tokenOverlay == this.settings.deadIcon) ? true : false;
+        const isDead = (tokenOverlay === this.settings.deadIcon) ? true : false;
+        const isInjured = Boolean(tokenEffects.find(e => e == this.settings.injuredIcon)) || false;
+        const isUnconscious = (tokenOverlay === this.settings.unconsciousIcon) ? true : false;
+        const markUnconscious = (this.settings.unconscious && token.actor.data.type === this.unconsciousActorType) ? true : false;
+
+        if (!isUnconscious && markUnconscious) {
+            if (hasEffects && isInjured) {
+                token.toggleEffect(this.settings.injuredIcon);
+            }
+            await token.toggleOverlay(this.settings.unconsciousIcon);
+            if (CUB.enhancedConditions && CUB.enhancedConditions.settings.enhancedConditions) {
+                CUB.enhancedConditions.currentToken = token;
+                const effects = tokenEffects.concat(token.data.overlayEffect);
+
+                CUB.enhancedConditions.lookupEntryMapping(effects);
+            }
+
+            return;
+        }
 
         if (hasEffects) {
             token.update(token.scene.id, {
@@ -1723,7 +1815,7 @@ class CUBInjuredAndDead {
         }
 
         if (!isDead) {
-            token.toggleOverlay(this.settings.deadIcon);
+            return token.toggleOverlay(this.settings.deadIcon);
         }
     }
 
@@ -1731,7 +1823,7 @@ class CUBInjuredAndDead {
      * Toggles the combat tracker death status based on token hp
      * @param {Object} token 
      */
-    _toggleTrackerDead(token) {
+    async _toggleTrackerDead(token) {
         if (!token.scene.active || !game.user.isGM) {
             return;
         }
@@ -1741,7 +1833,7 @@ class CUBInjuredAndDead {
             let combatant = combat.turns.find(t => t.tokenId == token.id);
             let tokenHp = getProperty(token, "actor.data.data.attributes.hp.value");
             if (combatant) {
-                combat.updateCombatant({
+                await combat.updateCombatant({
                     _id: combatant._id,
                     defeated: (tokenHp == 0)
                 });
@@ -1757,24 +1849,28 @@ class CUBInjuredAndDead {
      * @param {String} sceneId
      * @param {Object} update
      */
-    _hookOnUpdateToken(scene, sceneID, update, options, userId) {
+    async _hookOnUpdateToken(scene, sceneID, update, options, userId) {
+        if (!this.settings.dead && !this.settings.injured && !this.settings.unconscious) {
+            return;
+        }
+
         let token = canvas.tokens.get(update._id);
         const healthUpdate = getProperty(update, "actorData.data." + this.settings.healthAttribute + ".value");
         if (game.userId != userId || healthUpdate == undefined || token.actorLink) {
-            return false;
+            return;
         }
 
         let tokenHealthState;
 
-        if (this.settings.injured || this.settings.dead || this.settings.combatTrackDead) {
+        if (this.settings.injured || this.settings.dead || this.settings.unconscious || this.settings.combatTrackDead) {
             tokenHealthState = this._checkTokenHealthState(token, update);
 
-            if (tokenHealthState == CUBButler.HEALTH_STATES.DEAD && (this.settings.dead || this.settings.combatTrackDead)) {
-                this._markDead(token);
+            if ((tokenHealthState === CUBButler.HEALTH_STATES.DEAD || tokenHealthState === CUBButler.HEALTH_STATES.UNCONSCIOUS) && (this.settings.dead || this.settings.combatTrackDead)) {
                 if (this.settings.combatTrackDead) {
-                    this._toggleTrackerDead(token);
+                    await this._toggleTrackerDead(token);
                 }
-            } else if (tokenHealthState == CUBButler.HEALTH_STATES.INJURED && this.settings.injured) {
+                this._markDead(token);
+            } else if (tokenHealthState === CUBButler.HEALTH_STATES.INJURED && this.settings.injured) {
                 this._markInjured(token);
                 if (this.settings.combatTrackDead) {
                     this._toggleTrackerDead(token);
@@ -1787,7 +1883,7 @@ class CUBInjuredAndDead {
             }
         }
         this.callingUser = "";
-        return false;
+        return;
     }
 
     /**
@@ -1800,10 +1896,14 @@ class CUBInjuredAndDead {
      * @todo refactor as updateMany
      */
     _hookOnUpdateActor(actor, update) {
+        if (!this.settings.dead && !this.settings.injured && !this.settings.unconscious) {
+            return;
+        }
+
         const healthUpdate = getProperty(update, "data." + this.settings.healthAttribute + ".value");
         const activeTokens = actor.getActiveTokens();
 
-        if (healthUpdate == undefined || (!this.settings.dead && !this.settings.injured) || !activeTokens.length) {
+        if (healthUpdate === undefined || !activeTokens.length) {
             return;
         }
 
@@ -1812,6 +1912,7 @@ class CUBInjuredAndDead {
         for (let t of activeTokens) {
             switch (healthState) {
                 case CUBButler.HEALTH_STATES.DEAD:
+                case CUBButler.HEALTH_STATES.UNCONSCIOUS:
                     this._markDead(t);
                     if (this.settings.combatTrackDead) {
                         this._toggleTrackerDead(t);

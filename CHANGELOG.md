@@ -6,6 +6,14 @@
 - ~~Hide NPC Names in Artwork "Share With Players"~~
 - Refine Hide NPC Names to allow for "known" NPC names/information
 
+## [0.9.5] - 2020-02-24
+### Added
+- Mark Injured/Dead now includes an Unconscious status that can be assigned to a certain type of Actor (eg. Player Characters) in settings
+
+### Changed
+- Enhanced Conditions Unconscious mapping now maps to the default Foundry unconscious icon
+- PF2e default Condition mapping is now sorted alphabetically (thanks to @trey#9048)
+
 ## [0.9.4] - 2020-02-24
 ### Fixed
 - Resolved Concentrator token detection bug
