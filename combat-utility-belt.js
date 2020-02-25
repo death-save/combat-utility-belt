@@ -748,7 +748,7 @@ class CUBEnhancedConditions {
             ["Prone", this.DEFAULT_CONFIG.iconPath + "prone.svg", ""],
             ["Restrained", this.DEFAULT_CONFIG.iconPath + "restrained.svg", ""],
             ["Stunned", this.DEFAULT_CONFIG.iconPath + "stunned.svg", ""],
-            ["Unconscious", "./icons/svg/unconscious.svg", ""]
+            ["Unconscious", "icons/svg/unconscious.svg", ""]
         ];
 
         const pf1eMap = [];
@@ -1717,7 +1717,7 @@ class CUBInjuredAndDead {
 
     /**
      * Retrieves an Actor type based on the index stored in the setting
-     * @returns {String} actorType
+     * @returns {String}
      */
     get unconsciousActorType() {
         try {
@@ -1799,8 +1799,13 @@ class CUBInjuredAndDead {
             }
             await token.toggleOverlay(this.settings.unconsciousIcon);
             if (CUB.enhancedConditions && CUB.enhancedConditions.settings.enhancedConditions) {
-                CUB.enhancedConditions.lookupEntryMapping([token.data.overlayEffect]);
+                CUB.enhancedConditions.currentToken = token;
+                const effects = tokenEffects.concat(token.data.overlayEffect);
+
+                CUB.enhancedConditions.lookupEntryMapping(effects);
             }
+
+            return;
         }
 
         if (hasEffects) {
