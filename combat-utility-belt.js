@@ -1784,7 +1784,7 @@ class CUBInjuredAndDead {
      * Set a dead overlay on a token, removes all effects
      * @param {Object} token 
      */
-    _markDead(token) {
+    async _markDead(token) {
         const tokenEffects = getProperty(token, "data.effects");
         const hasEffects = getProperty(token, "data.effects.length") > 0;
         const tokenOverlay = getProperty(token, "data.overlayEffect");
@@ -1797,7 +1797,10 @@ class CUBInjuredAndDead {
             if (hasEffects && isInjured) {
                 token.toggleEffect(this.settings.injuredIcon);
             }
-            return token.toggleOverlay(this.settings.unconsciousIcon);
+            await token.toggleOverlay(this.settings.unconsciousIcon);
+            if (CUB.enhancedConditions && CUB.enhancedConditions.settings.enhancedConditions) {
+                CUB.enhancedConditions.lookupEntryMapping([token.data.overlayEffect]);
+            }
         }
 
         if (hasEffects) {
@@ -1815,7 +1818,7 @@ class CUBInjuredAndDead {
      * Toggles the combat tracker death status based on token hp
      * @param {Object} token 
      */
-    _toggleTrackerDead(token) {
+    async _toggleTrackerDead(token) {
         if (!token.scene.active || !game.user.isGM) {
             return;
         }
@@ -1825,7 +1828,7 @@ class CUBInjuredAndDead {
             let combatant = combat.turns.find(t => t.tokenId == token.id);
             let tokenHp = getProperty(token, "actor.data.data.attributes.hp.value");
             if (combatant) {
-                combat.updateCombatant({
+                await combat.updateCombatant({
                     _id: combatant._id,
                     defeated: (tokenHp == 0)
                 });
@@ -1841,7 +1844,7 @@ class CUBInjuredAndDead {
      * @param {String} sceneId
      * @param {Object} update
      */
-    _hookOnUpdateToken(scene, sceneID, update, options, userId) {
+    async _hookOnUpdateToken(scene, sceneID, update, options, userId) {
         if (!this.settings.dead && !this.settings.injured && !this.settings.unconscious) {
             return;
         }
@@ -1858,10 +1861,10 @@ class CUBInjuredAndDead {
             tokenHealthState = this._checkTokenHealthState(token, update);
 
             if ((tokenHealthState === CUBButler.HEALTH_STATES.DEAD || tokenHealthState === CUBButler.HEALTH_STATES.UNCONSCIOUS) && (this.settings.dead || this.settings.combatTrackDead)) {
-                this._markDead(token);
                 if (this.settings.combatTrackDead) {
-                    this._toggleTrackerDead(token);
+                    await this._toggleTrackerDead(token);
                 }
+                this._markDead(token);
             } else if (tokenHealthState === CUBButler.HEALTH_STATES.INJURED && this.settings.injured) {
                 this._markInjured(token);
                 if (this.settings.combatTrackDead) {
