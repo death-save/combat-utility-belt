@@ -731,6 +731,7 @@ class CUBEnhancedConditions {
             //Condition - Icon - JournalEntry
             ["Blinded", this.DEFAULT_CONFIG.iconPath + "blinded.svg", ""],
             ["Charmed", this.DEFAULT_CONFIG.iconPath + "charmed.svg", ""],
+            ["Concentrating", this.DEFAULT_CONFIG.iconPath + "concentrating.svg", ""],
             ["Deafened", this.DEFAULT_CONFIG.iconPath + "deafened.svg", ""],
             ["Exhaustion 1", this.DEFAULT_CONFIG.iconPath + "exhaustion1.svg", ""],
             ["Exhaustion 2", this.DEFAULT_CONFIG.iconPath + "exhaustion2.svg", ""],
@@ -747,8 +748,7 @@ class CUBEnhancedConditions {
             ["Prone", this.DEFAULT_CONFIG.iconPath + "prone.svg", ""],
             ["Restrained", this.DEFAULT_CONFIG.iconPath + "restrained.svg", ""],
             ["Stunned", this.DEFAULT_CONFIG.iconPath + "stunned.svg", ""],
-            ["Unconscious", this.DEFAULT_CONFIG.iconPath + "unconscious.svg", ""],
-            ["Concentrating", this.DEFAULT_CONFIG.iconPath + "concentrating.svg", ""]
+            ["Unconscious", "./icons/svg/unconscious.svg", ""]
         ];
 
         const pf1eMap = [];
@@ -759,7 +759,7 @@ class CUBEnhancedConditions {
             ["Broken", "systems/pf2e/icons/skills/red_16.jpg", ""],
             ["Clumsy", "systems/pf2e/icons/skills/light_05.jpg", ""],
             ["Concealed", "systems/pf2e/icons/skills/shadow_14.jpg", ""],
-            ["Confused", "systems/pf2e/icons/skills/red_01.jpg", ""]
+            ["Confused", "systems/pf2e/icons/skills/red_01.jpg", ""],
             ["Controlled", "systems/pf2e/icons/skills/red_05.jpg", ""],
             ["Dazzled", "systems/pf2e/icons/skills/shadow_12.jpg", ""],
             ["Deafened", "systems/pf2e/icons/skills/red_10.jpg", ""],
