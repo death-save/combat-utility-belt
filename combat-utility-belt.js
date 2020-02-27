@@ -2171,7 +2171,7 @@ class CUBConcentrator {
      * @param {*} options 
      */
     _hookOnPreUpdateToken(scene, sceneID, update, options){
-        const token = canvas.tokens.get(options.currentData._id);
+        const token = canvas.tokens.get(update._id);
         const actorId = getProperty(token, "data.actorId");
         const current = getProperty(token, "actor");
 
