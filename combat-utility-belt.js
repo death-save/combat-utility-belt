@@ -98,6 +98,7 @@ class CUBSignal {
             CUB.combatTracker = new CUBCombatTracker();
             CUB.concentrator = new CUBConcentrator();
             CUBSidekick.handlebarsHelpers();
+            CUBSidekick.jQueryHelpers();
         });
     }
 
@@ -348,6 +349,9 @@ class CUBSidekick {
         return Object.keys(object).find(key => object[key] === value);
     }
 
+    /**
+     * Adds additional handlebars helpers
+     */
     static handlebarsHelpers() {
         Handlebars.registerHelper("concat", () => {
             let result;
@@ -358,6 +362,44 @@ class CUBSidekick {
             return result;
         });
     }
+
+    /**
+     * Adds additional jquery helpers
+     */
+    static jQueryHelpers() {
+        jQuery.expr[':'].icontains = function(a, i, m) {
+            return jQuery(a).text().toUpperCase()
+                .indexOf(m[3].toUpperCase()) >= 0;
+        };
+    }
+
+    /**
+     * Takes an array of terms (eg. name parts) and returns groups of neighbouring terms
+     * @param {*} arr 
+     */
+    static getTerms(arr) {
+        const terms = [];
+        const rejectTerms = ["of", "its", "the", "a", "it's", "if", "in", "for", "on", "by"];
+        for ( let i of arr.keys() ) {
+            let len = arr.length - i;
+            for ( let p=0; p<=i; p++ ) {
+                let part = arr.slice(p, p+len);
+                if (part.length === 1 && rejectTerms.includes(part[0])) {
+                    continue;
+                } 
+                terms.push(part.join(" "));
+            }
+        }
+        return terms;
+    }
+
+    /**
+     * Escapes regex special chars
+     * @param {*} string 
+     */
+    static escapeRegExp(string) {
+        return string.replace(/[.*+\-?^${}()|[\]\\]/g, '\\$&');
+      }
 }
 
 /**
@@ -519,8 +561,18 @@ class CUBRerollInitiative {
 class CUBHideNPCNames {
     constructor() {
         this.settings = {
-            hideNames: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.HideNamesN + ")", this.SETTINGS_META.hideNames),
-            unknownCreatureString: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.UnknownCreatureN + ")", this.SETTINGS_META.unknownCreatureString)
+            hideNames: CUBSidekick.initGadgetSetting(
+                this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.HideNamesN + ")", 
+                this.SETTINGS_META.hideNames
+            ),
+            unknownCreatureString: CUBSidekick.initGadgetSetting(
+                this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.UnknownCreatureN + ")",
+                this.SETTINGS_META.unknownCreatureString
+            ),
+            hideFooter: CUBSidekick.initGadgetSetting(
+                this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.HideFooterN + ")",
+                this.SETTINGS_META.hideFooter
+            )
         };
     }
 
@@ -533,14 +585,17 @@ class CUBHideNPCNames {
             HideNamesN: "--Hide NPC Names--",
             HideNamesH: "Hides NPC names in the Combat Tracker",
             UnknownCreatureN: "Unknown Creature Name",
-            UnknownCreatureH: "Text to display for hidden NPC names"
+            UnknownCreatureH: "Text to display for hidden NPC names",
+            HideFooterN: "Hide Chat Card Footer",
+            HideFooterH: "When NPC names are hidden, also hide the chat card footer which can contain sensitive information"
         };
     }
 
     get DEFAULT_CONFIG() {
         return {
             hideNames: false,
-            unknownCreatureString: "Unknown Creature"
+            unknownCreatureString: "Unknown Creature",
+            hideFooter: false
         };
     }
 
@@ -574,6 +629,18 @@ class CUBHideNPCNames {
                         ui.chat.render();
                     }
                 }
+            },
+            hideFooter: {
+                name: this.SETTINGS_DESCRIPTORS.HideFooterN,
+                hint: this.SETTINGS_DESCRIPTORS.HideFooterH,
+                scope: "world",
+                type: Boolean,
+                default: this.DEFAULT_CONFIG.hideFooter,
+                config: true,
+                onChange: s => {
+                    this.settings.hideFooter = s;
+                    ui.chat.render();
+                }
             }
         };
     }
@@ -582,39 +649,43 @@ class CUBHideNPCNames {
      * Hooks on the Combat Tracker render to replace the NPC names
      * @param {Object} app - the Application instance
      * @param {Object} html - jQuery html object
+     * @todo refactor required
      */
     _hookOnRenderCombatTracker(app, html) {
-        //console.log(app,html);
-        // if not GM
-        if (!game.user.isGM) {
-            let combatantListElement = html.find("li");
+        if (game.user.isGM || !this.settings.hideNames) {
+            return;
+        }
+        
+        const combatantListElement = html.find("li");
 
-            //for each combatant
-            for (let e of combatantListElement) {
-                let token = game.scenes.active.data.tokens.find(t => t._id == e.dataset.tokenId);
-                let actor = game.actors.entities.find(a => a._id === token.actorId);
+        // Loop through combatants
+        // @todo replace with map?
+        for (let e of combatantListElement) {
+            const token = game.scenes.active.data.tokens.find(t => t._id == e.dataset.tokenId);
+            const actor = game.actors.entities.find(a => a._id === token.actorId);
 
-                //if not PC, module is enabled
-                if (!actor.isPC && this.settings.hideNames) {
-                    //find the flexcol elements
-                    let tokenNames = e.getElementsByClassName("token-name");
-                    let tokenImages = e.getElementsByClassName("token-image");
+            // If actor is PC, skip
+            if (actor.isPC) {
+                continue;
+            }
+            
+            // Find the flexcol elements
+            let tokenNames = e.getElementsByClassName("token-name");
+            let tokenImages = e.getElementsByClassName("token-image");
 
-                    //iterate through the returned elements
-                    for (let f of tokenNames) {
-                        //find the h4 elements
-                        let header = f.getElementsByTagName("H4");
-                        //iterate through
-                        for (let h of header) {
-                            //replace the name
-                            h.textContent = this.settings.unknownCreatureString;
-                        }
-                    }
+            // Iterate through the returned elements
+            for (let f of tokenNames) {
+                // Find the headers
+                let header = f.getElementsByTagName("H4");
 
-                    for (let i of tokenImages) {
-                        i.setAttribute("title", this.settings.unknownCreatureString);
-                    }
+                // Loop through headers replacing the name
+                for (let h of header) {
+                    h.textContent = this.settings.unknownCreatureString;
                 }
+            }
+
+            for (let i of tokenImages) {
+                i.setAttribute("title", this.settings.unknownCreatureString);
             }
         }
     }
@@ -624,38 +695,42 @@ class CUBHideNPCNames {
      * @todo: If a player owns the message speaker - reveal the message
      */
     _hookOnRenderChatMessage(message, html, data) {
-        //killswitch for execution of hook logic
         if (game.user.isGM || !this.settings.hideNames) {
             return;
         }
-
-        jQuery.expr[':'].icontains = function(a, i, m) {
-            return jQuery(a).text().toUpperCase()
-                .indexOf(m[3].toUpperCase()) >= 0;
-        };
 
         const messageActorId = message.data.speaker.actor;
         const messageActor = game.actors.get(messageActorId);
         const speakerIsNPC = messageActor && !messageActor.isPC;
 
-        if (speakerIsNPC) {
-            const replacement = this.settings.unknownCreatureString || " ";
-            const matchedContent = html.find(`:icontains('${data.alias}')`);
-            
-            matchedContent.each((i, el) => {
-                el.innerHTML = el.innerHTML.replace(new RegExp("\\b" + data.alias + "\\b", "gi"), replacement);
-                /*
-                $(el).text((i, text) => {
-                    return $(el).text().replace(new RegExp("\\b" + data.alias + "\\b", "gi"), replacement);
-                });
-                */
-            });
+        if (!speakerIsNPC) {
+            return;
         }
-        //console.log(message,data,html);
+
+        const replacement = this.settings.unknownCreatureString || " ";
+        const matchString = data.alias.includes(" ") ? CUBSidekick.getTerms(data.alias.split(" ")).map(e => CUBSidekick.escapeRegExp(e)).join("|") : data.alias;
+        const regex = matchString + "(?=[\\s,.!?;:]|[s]|['s])";
+            
+        html.each((i, el) => {
+            el.innerHTML = el.innerHTML.replace(new RegExp(regex, "gim"), replacement);
+        });
+
+        if (!this.settings.hideFooter) {
+            return;
+        }
+
+        const cardFooter = html.find(".card-footer");
+        cardFooter.prop("hidden", true);    
     }
 
+    /**
+     * Replace names in the image popout
+     * @param {*} app 
+     * @param {*} html 
+     * @param {*} data 
+     */
     _onRenderImagePopout(app, html, data) {
-        if (game.user.isGM || app.options.entity.type !== "Actor") {
+        if (game.user.isGM || app.options.entity.type !== "Actor" || !this.settings.hideNames) {
             return;
         }
 
@@ -665,13 +740,13 @@ class CUBHideNPCNames {
             return;
         }
 
-        const header = html.find("header");
+        const windowTitle = html.find(".window-title");
         const replacement = this.settings.unknownCreatureString || " ";
-        const matchedContent = header.find(`:icontains('${actor.name}')`);
+        if (windowTitle.length === 0) {
+            return;
+        } 
 
-        matchedContent.text((index, text) => {
-            return text.replace(new RegExp("\\b" + actor.name + "\\b", "gi"), replacement);
-        });
+        windowTitle.text(replacement);
     }
 }
 
@@ -2283,10 +2358,15 @@ class CUBConcentrator {
             return;
         }
 
-        const users = owners.filter(owner => game.user._id == owner._id) || [];
+        const users = owners.filter(owner => game.user._id === owner._id) || [];
 
         if (users.length > 0) {
-            this._distributePrompts(actorId, users);
+            return this._distributePrompts(actorId, users);
+        }
+
+        if (users.length === 0 && game.user.isGM) {
+            users.push(game.userId);
+            return this._distributePrompts(actorId, users);
         }
     }
 
