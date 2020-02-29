@@ -658,36 +658,23 @@ class CUBHideNPCNames {
         
         const combatantListElement = html.find("li");
 
-        // Loop through combatants
-        // @todo replace with map?
-        for (let e of combatantListElement) {
-            const token = game.scenes.active.data.tokens.find(t => t._id == e.dataset.tokenId);
+        const npcElements = combatantListElement.filter((i, el) => {
+            const token = game.scenes.active.data.tokens.find(t => t._id === el.dataset.tokenId);
             const actor = game.actors.entities.find(a => a._id === token.actorId);
 
-            // If actor is PC, skip
-            if (actor.isPC) {
-                continue;
+            if (actor.isPC === false) {
+                return true;
             }
-            
-            // Find the flexcol elements
-            let tokenNames = e.getElementsByClassName("token-name");
-            let tokenImages = e.getElementsByClassName("token-image");
+        });
 
-            // Iterate through the returned elements
-            for (let f of tokenNames) {
-                // Find the headers
-                let header = f.getElementsByTagName("H4");
-
-                // Loop through headers replacing the name
-                for (let h of header) {
-                    h.textContent = this.settings.unknownCreatureString;
-                }
-            }
-
-            for (let i of tokenImages) {
-                i.setAttribute("title", this.settings.unknownCreatureString);
-            }
+        if (npcElements.length === 0) {
+            return;
         }
+
+        const replacement = this.settings.unknownCreatureString || " ";
+
+        $(npcElements).find(".token-name").text(replacement);
+        $(npcElements).find(".token-image").attr("title", replacement);
     }
 
     /**
@@ -742,6 +729,7 @@ class CUBHideNPCNames {
 
         const windowTitle = html.find(".window-title");
         const replacement = this.settings.unknownCreatureString || " ";
+
         if (windowTitle.length === 0) {
             return;
         } 
