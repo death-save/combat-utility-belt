@@ -98,6 +98,7 @@ class CUBSignal {
             CUB.combatTracker = new CUBCombatTracker();
             CUB.concentrator = new CUBConcentrator();
             CUBSidekick.handlebarsHelpers();
+            CUBSidekick.jQueryHelpers();
         });
     }
 
@@ -348,6 +349,9 @@ class CUBSidekick {
         return Object.keys(object).find(key => object[key] === value);
     }
 
+    /**
+     * Adds additional handlebars helpers
+     */
     static handlebarsHelpers() {
         Handlebars.registerHelper("concat", () => {
             let result;
@@ -358,6 +362,44 @@ class CUBSidekick {
             return result;
         });
     }
+
+    /**
+     * Adds additional jquery helpers
+     */
+    static jQueryHelpers() {
+        jQuery.expr[':'].icontains = function(a, i, m) {
+            return jQuery(a).text().toUpperCase()
+                .indexOf(m[3].toUpperCase()) >= 0;
+        };
+    }
+
+    /**
+     * Takes an array of terms (eg. name parts) and returns groups of neighbouring terms
+     * @param {*} arr 
+     */
+    static getTerms(arr) {
+        const terms = [];
+        const rejectTerms = ["of", "its", "the", "a", "it's", "if", "in", "for", "on", "by"];
+        for ( let i of arr.keys() ) {
+            let len = arr.length - i;
+            for ( let p=0; p<=i; p++ ) {
+                let part = arr.slice(p, p+len);
+                if (part.length === 1 && rejectTerms.includes(part[0])) {
+                    continue;
+                } 
+                terms.push(part.join(" "));
+            }
+        }
+        return terms;
+    }
+
+    /**
+     * Escapes regex special chars
+     * @param {*} string 
+     */
+    static escapeRegExp(string) {
+        return string.replace(/[.*+\-?^${}()|[\]\\]/g, '\\$&');
+      }
 }
 
 /**
@@ -519,8 +561,18 @@ class CUBRerollInitiative {
 class CUBHideNPCNames {
     constructor() {
         this.settings = {
-            hideNames: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.HideNamesN + ")", this.SETTINGS_META.hideNames),
-            unknownCreatureString: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.UnknownCreatureN + ")", this.SETTINGS_META.unknownCreatureString)
+            hideNames: CUBSidekick.initGadgetSetting(
+                this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.HideNamesN + ")", 
+                this.SETTINGS_META.hideNames
+            ),
+            unknownCreatureString: CUBSidekick.initGadgetSetting(
+                this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.UnknownCreatureN + ")",
+                this.SETTINGS_META.unknownCreatureString
+            ),
+            hideFooter: CUBSidekick.initGadgetSetting(
+                this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.HideFooterN + ")",
+                this.SETTINGS_META.hideFooter
+            )
         };
     }
 
@@ -533,14 +585,17 @@ class CUBHideNPCNames {
             HideNamesN: "--Hide NPC Names--",
             HideNamesH: "Hides NPC names in the Combat Tracker",
             UnknownCreatureN: "Unknown Creature Name",
-            UnknownCreatureH: "Text to display for hidden NPC names"
+            UnknownCreatureH: "Text to display for hidden NPC names",
+            HideFooterN: "Hide Chat Card Footer",
+            HideFooterH: "When NPC names are hidden, also hide the chat card footer which can contain sensitive information"
         };
     }
 
     get DEFAULT_CONFIG() {
         return {
             hideNames: false,
-            unknownCreatureString: "Unknown Creature"
+            unknownCreatureString: "Unknown Creature",
+            hideFooter: false
         };
     }
 
@@ -574,6 +629,18 @@ class CUBHideNPCNames {
                         ui.chat.render();
                     }
                 }
+            },
+            hideFooter: {
+                name: this.SETTINGS_DESCRIPTORS.HideFooterN,
+                hint: this.SETTINGS_DESCRIPTORS.HideFooterH,
+                scope: "world",
+                type: Boolean,
+                default: this.DEFAULT_CONFIG.hideFooter,
+                config: true,
+                onChange: s => {
+                    this.settings.hideFooter = s;
+                    ui.chat.render();
+                }
             }
         };
     }
@@ -582,41 +649,32 @@ class CUBHideNPCNames {
      * Hooks on the Combat Tracker render to replace the NPC names
      * @param {Object} app - the Application instance
      * @param {Object} html - jQuery html object
+     * @todo refactor required
      */
     _hookOnRenderCombatTracker(app, html) {
-        //console.log(app,html);
-        // if not GM
-        if (!game.user.isGM) {
-            let combatantListElement = html.find("li");
-
-            //for each combatant
-            for (let e of combatantListElement) {
-                let token = game.scenes.active.data.tokens.find(t => t._id == e.dataset.tokenId);
-                let actor = game.actors.entities.find(a => a._id === token.actorId);
-
-                //if not PC, module is enabled
-                if (!actor.isPC && this.settings.hideNames) {
-                    //find the flexcol elements
-                    let tokenNames = e.getElementsByClassName("token-name");
-                    let tokenImages = e.getElementsByClassName("token-image");
-
-                    //iterate through the returned elements
-                    for (let f of tokenNames) {
-                        //find the h4 elements
-                        let header = f.getElementsByTagName("H4");
-                        //iterate through
-                        for (let h of header) {
-                            //replace the name
-                            h.textContent = this.settings.unknownCreatureString;
-                        }
-                    }
-
-                    for (let i of tokenImages) {
-                        i.setAttribute("title", this.settings.unknownCreatureString);
-                    }
-                }
-            }
+        if (game.user.isGM || !this.settings.hideNames) {
+            return;
         }
+        
+        const combatantListElement = html.find("li");
+
+        const npcElements = combatantListElement.filter((i, el) => {
+            const token = game.scenes.active.data.tokens.find(t => t._id === el.dataset.tokenId);
+            const actor = game.actors.entities.find(a => a._id === token.actorId);
+
+            if (actor.isPC === false) {
+                return true;
+            }
+        });
+
+        if (npcElements.length === 0) {
+            return;
+        }
+
+        const replacement = this.settings.unknownCreatureString || " ";
+
+        $(npcElements).find(".token-name").text(replacement);
+        $(npcElements).find(".token-image").attr("title", replacement);
     }
 
     /**
@@ -624,38 +682,42 @@ class CUBHideNPCNames {
      * @todo: If a player owns the message speaker - reveal the message
      */
     _hookOnRenderChatMessage(message, html, data) {
-        //killswitch for execution of hook logic
         if (game.user.isGM || !this.settings.hideNames) {
             return;
         }
-
-        jQuery.expr[':'].icontains = function(a, i, m) {
-            return jQuery(a).text().toUpperCase()
-                .indexOf(m[3].toUpperCase()) >= 0;
-        };
 
         const messageActorId = message.data.speaker.actor;
         const messageActor = game.actors.get(messageActorId);
         const speakerIsNPC = messageActor && !messageActor.isPC;
 
-        if (speakerIsNPC) {
-            const replacement = this.settings.unknownCreatureString || " ";
-            const matchedContent = html.find(`:icontains('${data.alias}')`);
-            
-            matchedContent.each((i, el) => {
-                el.innerHTML = el.innerHTML.replace(new RegExp("\\b" + data.alias + "\\b", "gi"), replacement);
-                /*
-                $(el).text((i, text) => {
-                    return $(el).text().replace(new RegExp("\\b" + data.alias + "\\b", "gi"), replacement);
-                });
-                */
-            });
+        if (!speakerIsNPC) {
+            return;
         }
-        //console.log(message,data,html);
+
+        const replacement = this.settings.unknownCreatureString || " ";
+        const matchString = data.alias.includes(" ") ? CUBSidekick.getTerms(data.alias.split(" ")).map(e => CUBSidekick.escapeRegExp(e)).join("|") : data.alias;
+        const regex = matchString + "(?=[\\s,.!?;:]|[s]|['s])";
+            
+        html.each((i, el) => {
+            el.innerHTML = el.innerHTML.replace(new RegExp(regex, "gim"), replacement);
+        });
+
+        if (!this.settings.hideFooter) {
+            return;
+        }
+
+        const cardFooter = html.find(".card-footer");
+        cardFooter.prop("hidden", true);    
     }
 
+    /**
+     * Replace names in the image popout
+     * @param {*} app 
+     * @param {*} html 
+     * @param {*} data 
+     */
     _onRenderImagePopout(app, html, data) {
-        if (game.user.isGM || app.options.entity.type !== "Actor") {
+        if (game.user.isGM || app.options.entity.type !== "Actor" || !this.settings.hideNames) {
             return;
         }
 
@@ -665,13 +727,14 @@ class CUBHideNPCNames {
             return;
         }
 
-        const header = html.find("header");
+        const windowTitle = html.find(".window-title");
         const replacement = this.settings.unknownCreatureString || " ";
-        const matchedContent = header.find(`:icontains('${actor.name}')`);
 
-        matchedContent.text((index, text) => {
-            return text.replace(new RegExp("\\b" + actor.name + "\\b", "gi"), replacement);
-        });
+        if (windowTitle.length === 0) {
+            return;
+        } 
+
+        windowTitle.text(replacement);
     }
 }
 
@@ -2171,7 +2234,7 @@ class CUBConcentrator {
      * @param {*} options 
      */
     _hookOnPreUpdateToken(scene, sceneID, update, options){
-        const token = canvas.tokens.get(options.currentData._id);
+        const token = canvas.tokens.get(update._id);
         const actorId = getProperty(token, "data.actorId");
         const current = getProperty(token, "actor");
 
@@ -2283,10 +2346,15 @@ class CUBConcentrator {
             return;
         }
 
-        const users = owners.filter(owner => game.user._id == owner._id) || [];
+        const users = owners.filter(owner => game.user._id === owner._id) || [];
 
         if (users.length > 0) {
-            this._distributePrompts(actorId, users);
+            return this._distributePrompts(actorId, users);
+        }
+
+        if (users.length === 0 && game.user.isGM) {
+            users.push(game.userId);
+            return this._distributePrompts(actorId, users);
         }
     }
 
@@ -2381,10 +2449,12 @@ class CUBCombatTracker {
     constructor() {
         this.settings = {
             panOnNextTurn: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.PanOnNextTurnN + ")", this.SETTINGS_META.panOnNextTurn),
-            panGMOnly: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.PanGMOnlyN + ")", this.SETTINGS_META.panGMOnly),
+            panGM: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.PanGMN + ")", this.SETTINGS_META.panGM),
             panPlayers: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.PanPlayersN + ")", this.SETTINGS_META.panPlayers),
             selectOnNextTurn: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.SelectOnNextTurnN + ")", this.SETTINGS_META.selectOnNextTurn),
-            selectGMOnly: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.SelectGMOnlyN + ")", this.SETTINGS_META.selectGMOnly),
+            selectGM: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.SelectGMN + ")", this.SETTINGS_META.selectGM),
+            selectPlayers: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.SelectPlayersN + ")", this.SETTINGS_META.selectPlayers),
+            observerDeselect: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.ObserverDeselectN + ")", this.SETTINGS_META.observerDeselect),
             trackerConfigSettings: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.TrackerConfigSettingsN + ")", this.SETTINGS_META.trackerConfigSettings),
             tempCombatants: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.TempCombatantsN + ")", this.SETTINGS_META.tempCombatants),
             xpModule: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.XPModuleN + ")", this.SETTINGS_META.xpModule)
@@ -2399,20 +2469,24 @@ class CUBCombatTracker {
 
     get SETTINGS_DESCRIPTORS() {
         return {
-            PanOnNextTurnN: "--Pan to token--",
-            PanOnNextTurnH: "Pan the canvas to the token whose turn it is in the combat tracker",
-            PanGMOnlyN: "Pan for GM Only",
-            PanGMOnlyH: "Only pan to token for the GM.",
-            PanPlayersN: "Pan owned only",
-            PanPlayersH: "Pan players to their owned tokens only",
-            TrackerConfigSettingsN: "Combat Tracker Settings",
-            TrackerConfigSettingsH: "Additional settings for the Combat Tracker",
+            PanOnNextTurnN: "--Pan to Token--",
+            PanOnNextTurnH: "Enables the following token panning functionality",
+            PanGMN: "Pan GM",
+            PanGMH: "Pans GM. Options: None (do not pan GM), NPC (pan only to non-player character tokens), All (pan to all tokens)",
+            PanPlayersN: "Pan Players",
+            PanPlayersH: "Pans players. Options: None (do not pan players), Owner (pan only to Owned tokens), Observer (pan to Observed AND Owned tokens), All (pan to all tokens)",
             SelectOnNextTurnN: "--Select Token--",
-            SelectOnNextTurnH: "Select the token whose turn it is in the combat tracker.",
-            SelectGMOnlyN: "Select for GM Only",
-            SelectGMOnlyH: "Only select token for the GM. If enabled for players, it will still only auto select owned tokens",
+            SelectOnNextTurnH: "Enables the following token select functionality",
+            SelectGMN: "Select GM",
+            SelectGMH: "Selects token based on selected option: None (do not select), NPC (select only non-player character tokens), All (select all tokens)",
+            SelectPlayersN: "Select Players",
+            SelectPlayersH: "Selects Player-owned tokens on their turn in combat",
+            ObserverDeselectN: "Deselect Tokens",
+            ObserverDeselectH: "Deselect controlled tokens on any non-Owned combatant's turn",
             TempCombatantsN: "--Enable Temporary Combatants--",
             TempCombatantsH: "Allows the creation of temporary/freeform combatants from the Combat Tracker",
+            TrackerConfigSettingsN: "Combat Tracker Settings",
+            TrackerConfigSettingsH: "Additional settings for the Combat Tracker",
             XPModuleN: "--Enable XP Module--",
             XPModuleH: "REQUIRES REFRESH! Adds an option at the end of combat to automatically distribute xp from the combat to the players"
         };
@@ -2422,9 +2496,19 @@ class CUBCombatTracker {
         return {
             panOnNextTurn: false,
             selectOnNextTurn: false,
-            panGMOnly: false,
-            panPlayers: false,
-            selectGMOnly: false,
+            panGM: {
+                none: "None",
+                npc: "NPC",
+                all: "All"
+            },
+            panPlayers: {
+                none: "None",
+                owner: "Owner",
+                observer: "Observer",
+                all: "All"
+            },
+            selectPlayers: false,
+            observerDeselect: false,
             tempCombatants: false,
             xpModule: false
         };
@@ -2443,23 +2527,25 @@ class CUBCombatTracker {
                     this.settings.panOnNextTurn = s;
                 }
             },
-            panGMOnly: {
-                name: this.SETTINGS_DESCRIPTORS.PanGMOnlyN,
-                hint: this.SETTINGS_DESCRIPTORS.PanGMOnlyH,
-                default: this.DEFAULT_CONFIG.panOnGMOnly,
+            panGM: {
+                name: this.SETTINGS_DESCRIPTORS.PanGMN,
+                hint: this.SETTINGS_DESCRIPTORS.PanGMH,
+                default: CUBSidekick.getKeyByValue(this.DEFAULT_CONFIG.panGM, this.DEFAULT_CONFIG.panGM.none),
                 scope: "world",
-                type: Boolean,
+                type: String,
+                choices: this.DEFAULT_CONFIG.panGM,
                 config: true,
                 onChange: s => {
-                    this.settings.panOnGMOnly = s;
+                    this.settings.panGM = s;
                 }
             },
             panPlayers: {
                 name: this.SETTINGS_DESCRIPTORS.PanPlayersN,
                 hint: this.SETTINGS_DESCRIPTORS.PanPlayersH,
-                default: this.DEFAULT_CONFIG.panPlayers,
+                default: CUBSidekick.getKeyByValue(this.DEFAULT_CONFIG.panPlayers, this.DEFAULT_CONFIG.panPlayers.none),
                 scope: "world",
-                type: Boolean,
+                type: String,
+                choices: this.DEFAULT_CONFIG.panPlayers,
                 config: true,
                 onChange: s => {
                     this.settings.panPlayers = s;
@@ -2476,15 +2562,38 @@ class CUBCombatTracker {
                     this.settings.selectOnNextTurn = s;
                 }
             },
-            selectGMOnly: {
-                name: this.SETTINGS_DESCRIPTORS.SelectGMOnlyN,
-                hint: this.SETTINGS_DESCRIPTORS.SelectGMOnlyH,
-                default: this.DEFAULT_CONFIG.selectGMOnly,
+            selectGM: {
+                name: this.SETTINGS_DESCRIPTORS.SelectGMN,
+                hint: this.SETTINGS_DESCRIPTORS.SelectGMH,
+                default: CUBSidekick.getKeyByValue(this.DEFAULT_CONFIG.panGM, this.DEFAULT_CONFIG.panGM.none),
+                scope: "world",
+                type: String,
+                choices: this.DEFAULT_CONFIG.panGM, //uses same options as Pan GM
+                config: true,
+                onChange: s => {
+                    this.settings.selectGM = s;
+                }
+            },
+            selectPlayers: {
+                name: this.SETTINGS_DESCRIPTORS.SelectPlayersN,
+                hint: this.SETTINGS_DESCRIPTORS.SelectPlayersH,
+                default: this.DEFAULT_CONFIG.selectPlayers,
                 scope: "world",
                 type: Boolean,
                 config: true,
                 onChange: s => {
-                    this.settings.selectGMOnly = s;
+                    this.settings.selectPlayers = s;
+                }
+            },
+            observerDeselect: {
+                name: this.SETTINGS_DESCRIPTORS.ObserverDeselectN,
+                hint: this.SETTINGS_DESCRIPTORS.ObserverDeselectH,
+                default: this.DEFAULT_CONFIG.observerDeselect,
+                scope: "world",
+                type: Boolean,
+                config: true,
+                onChange: s => {
+                    this.settings.observerDeselect = s;
                 }
             },
             tempCombatants: {
@@ -2526,11 +2635,11 @@ class CUBCombatTracker {
     }
 
     /**
-     * Pans to the current token in the turn tracker
+     * Determines if a panning workflow should begin
      * @param {Object} combat
      * @param {Object} update 
      */
-    _panToToken(combat, update) {
+    _panHandler(combat, update) {
         if (!hasProperty(update, "turn") || !this.settings.panOnNextTurn || (!game.user.isGM && this.settings.panGMOnly)) {
             return;
         }
@@ -2542,24 +2651,102 @@ class CUBCombatTracker {
             return;
         }
 
-        const tracker = combat.entities ? combat.entities.find(tr=>tr._id===update._id) : combat;
-        let token;
+        const tracker = combat.entities ? combat.entities.find(tr => tr._id === update._id) : combat;
+        const token = hasProperty(update, "turn") ? tracker.turns[update.turn].token : tracker.turns[0].token;
 
-        if (hasProperty(update, "turn")) {
-            token = tracker.turns[update.turn].token;
-        } else {
-            token = tracker.turns[0].token;
+        if (!game.user.isGM && this.settings.panPlayers !== CUBSidekick.getKeyByValue(this.DEFAULT_CONFIG.panPlayers, this.DEFAULT_CONFIG.panPlayers.none)) {
+            return this._checkPlayerPan(token);
         }
 
-        const actor = game.actors.get(token.actorId);
-        if (game.user.isGM || actor.data.permission[game.userId] === 3) {
-            let xCoord = token.x;
-            let yCoord = token.y;
-            canvas.animatePan({
+        if (game.user.isGM && this.settings.panGM !== CUBSidekick.getKeyByValue(this.DEFAULT_CONFIG.panGM, this.DEFAULT_CONFIG.panGM.none)) {
+            return this._checkGMPan(token);
+        }
+    }
+
+    /**
+     * Determine if the player should be panned
+     * @param {*} token
+     */
+    _checkPlayerPan(token) {
+        const actor = token ? game.actors.get(token.actorId) : null;
+        const actorPermission = actor ? actor.data.permission[game.userId] || 0 : null;
+
+        if (actorPermission === null) {
+            return;
+        }
+        // all - pan always, owner - pan when i own, observer - pan when i own OR observe, none - return
+
+        switch (this.DEFAULT_CONFIG.panPlayers[this.settings.panPlayers]) {
+            case this.DEFAULT_CONFIG.panPlayers.observer:
+                if (actorPermission >= CONST.ENTITY_PERMISSIONS.OBSERVER) {
+                    break;
+                }
+
+                return;
+     
+            case this.DEFAULT_CONFIG.panPlayers.owner:
+                if (actorPermission >= CONST.ENTITY_PERMISSIONS.OWNER) {
+                    break;
+                }
+
+                return;
+
+            case this.DEFAULT_CONFIG.panPlayers.all:
+                break;
+
+            case this.DEFAULT_CONFIG.panPlayers.none:
+            default:
+                if (!game.user.isGM) {
+                    return;
+                }
+        }
+
+        return this._panToToken(token);
+    }
+
+    /**
+     * Determine if the GM should be panned
+     * @param {*} token
+     */
+    _checkGMPan(token) {
+        const actor = token ? game.actors.get(token.actorId) : null;
+
+        if (!actor) {
+            return;
+        }
+
+        switch (this.DEFAULT_CONFIG.panGM[this.settings.panGM]) {
+            case this.DEFAULT_CONFIG.panGM.none:
+                return;
+            
+            case this.DEFAULT_CONFIG.panGM.npc:
+                if (actor.isPC) {
+                    return;
+                }
+                
+                break;
+            
+            case this.DEFAULT_CONFIG.panGM.all:
+                break;
+
+            default:
+                return;
+        }
+
+        return this._panToToken(token);
+    }
+
+    /**
+     * Pans user to the token
+     * @param {*} token 
+     */
+    _panToToken(token) {
+        const xCoord = token.x;
+        const yCoord = token.y;
+        return canvas.animatePan({
                 x: xCoord,
                 y: yCoord
-            });
-        }
+        });
     }
 
     /**
@@ -2567,8 +2754,8 @@ class CUBCombatTracker {
      * @param {Object} combat 
      * @param {Object} update 
      */
-    async _selectToken(combat, update) {
-        if (!hasProperty(update, "turn") || !this.settings.selectOnNextTurn || (!game.user.isGM && this.settings.selectGMOnly)) {
+    async _selectHandler(combat, update) {
+        if (!hasProperty(update, "turn") || !this.settings.selectOnNextTurn) {
             return;
         }
 
@@ -2579,19 +2766,91 @@ class CUBCombatTracker {
             return;
         }
 
-        let token,
-            tracker = combat.entities ? combat.entities.find(tr => tr._id === update._id) : combat;
+        const tracker = combat.entities ? combat.entities.find(tr => tr._id === update._id) : combat;
+        const token = hasProperty(update, "turn") ? tracker.turns[update.turn].token : tracker.turns[0].token;
 
-        if (hasProperty(update, "turn")) {
-            token = tracker.turns[update.turn].token;
-        } else {
-            token = tracker.turns[0].token;
+        if (!token) {
+            return;
         }
 
-        const canvasToken = canvas.tokens.get(token._id);
+        if (game.user.isGM && this.settings.selectOnNextTurn && this.settings.selectGM !== CUBSidekick.getKeyByValue(this.DEFAULT_CONFIG.panGM, this.DEFAULT_CONFIG.panGM.none)) {
+            return this._checkGMSelect(token);
+        }
 
-        if ((hasProperty(canvasToken.actor.data.permission, game.userId) && canvasToken.actor.data.permission[game.userId] > 1) || game.user.isGM) {
-            await canvasToken.control();
+        if (this.settings.observerDeselect) {
+            this._checkObserverDeselect(token);
+        }
+
+        if (this.settings.selectPlayers) {
+            this._checkPlayerSelect(token);
+        }
+        
+        return;
+    }
+
+    /**
+     * Determine if the current combatant token should be selected for the GM 
+     * @param {*} token 
+     */
+    _checkGMSelect(token) {
+        const actor = token ? game.actors.get(token.actorId) : null;
+
+        if (!actor) {
+            return;
+        }
+
+        switch (this.DEFAULT_CONFIG.panGM[this.settings.selectGM]) {
+            case this.DEFAULT_CONFIG.panGM.none:
+                return;
+            
+            case this.DEFAULT_CONFIG.panGM.npc:
+                if (actor.isPC) {
+                    return;
+                }
+                
+                break;
+            
+            case this.DEFAULT_CONFIG.panGM.all:
+                break;
+
+            default:
+                return;
+        }
+
+        const canvasToken = canvas.tokens.get(token._id) || null;
+        return canvasToken.control();
+    }
+
+    /**
+     * Determines if Player can select the current combatant token
+     * @param {*} token 
+     */
+    _checkPlayerSelect(token) {
+        const actor = token ? game.actors.get(token.actorId) : null;
+        const actorPermission = actor ? actor.data.permission[game.userId] || 0 : null;
+
+        if (!actor || actorPermission === null || actorPermission < CONST.ENTITY_PERMISSIONS.OWNER) {
+            return;
+        }
+
+        const canvasToken = canvas.tokens.get(token._id) || null;
+        return canvasToken.control();
+    }
+
+    /**
+     * Determines if tokens should be deselected when a non-owned Combatant has a turn
+     * @param {*} token 
+     */
+    _checkObserverDeselect(token) {
+        const actor = token ? game.actors.get(token.actorId) : null;
+        const actorPermission = actor ? actor.data.permission[game.userId] || 0 : null;
+
+        if (actorPermission === null) {
+            return;
+        }
+
+        if (actorPermission < CONST.ENTITY_PERMISSIONS.OWNER) {
+            return canvas.tokens.releaseAll();
         }
     }
 
@@ -2642,11 +2901,11 @@ class CUBCombatTracker {
         }
 
         if (this.settings.panOnNextTurn) {
-            this._panToToken(tracker, update);
+            this._panHandler(tracker, update);
         }
 
         if (this.settings.selectOnNextTurn) {
-            this._selectToken(tracker, update);
+            this._selectHandler(tracker, update);
         }
     }
 

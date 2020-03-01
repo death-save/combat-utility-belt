@@ -3,8 +3,17 @@
 ## [Unreleased]
 - Compendium support for Condition Lab
 - Combatant stats in Combat Tracker
-- ~~Hide NPC Names in Artwork "Share With Players"~~
 - Refine Hide NPC Names to allow for "known" NPC names/information
+
+## [0.9.6] - 2020-03-01
+### Added
+- Hide NPC Names now includes a setting to suppress the chat card footer, which can contain sensitive information about the NPC
+- Select Token now includes a setting to deselect all controlled tokens when the user does not have OWNER permission on the active combatant. This setting would generally be used in sessions where multiple players are using a single Foundry client
+
+### Changed
+- Hide NPC Names enhanced to cover a greater number of possible names including names with spaces and special characters
+- Hide NPC Names now replaces names in the body of chat cards
+- Pan/Select Token reworked to offer granular GM/Player control -- SOME SETTINGS HAVE BEEN RESET
 
 ## [0.9.5] - 2020-02-24
 ### Added
