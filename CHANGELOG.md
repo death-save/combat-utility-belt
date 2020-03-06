@@ -5,6 +5,10 @@
 - Combatant stats in Combat Tracker
 - Refine Hide NPC Names to allow for "known" NPC names/information
 
+## [0.9.7] - 2020-03-015
+### Added
+- Added a client setting to set the status effect icon size on tokens. Three options are available: Small (default) -- 5x5 icons, Medium -- 3x3 icons, and Large -- 2x2 icons. If the number of icons exceeds the boundaries of the token the additional icons will "bleed" into the canvas and may obscure other placeable objects or canvas elements. 
+
 ## [0.9.6] - 2020-03-01
 ### Added
 - Hide NPC Names now includes a setting to suppress the chat card footer, which can contain sensitive information about the NPC
