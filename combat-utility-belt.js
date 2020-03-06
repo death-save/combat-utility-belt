@@ -94,6 +94,7 @@ class CUBSignal {
 
     static hookOnInit() {
         Hooks.on("init", () => {
+            CUB.animatedDie = new CUBAnimatedDie();
             CUB.enhancedConditions = new CUBEnhancedConditions();
             CUB.hideNPCNames = new CUBHideNPCNames();
             CUB.combatTracker = new CUBCombatTracker();
@@ -3223,6 +3224,141 @@ class CUBTemporaryCombatantForm extends FormApplication {
             }
         });
         
+    }
+}
+
+/**
+ * 
+ */
+class CUBAnimatedDie {
+    _onRenderRollInitiative(app, html, data) {
+        this.html = html;
+        this.die = html.find(".die");
+        this.sides = 20;
+        this.initialSide = 1;
+        this.lastFace = null;
+        this.timeoutId = null;
+        this.transitionDuration = 300;
+        this.animationDuration = 1000;
+      
+        const listItemHref = html.find("ul > li > a");
+
+        listItemHref.on("click", event => {
+            this.reset();
+            this.rollTo($(listItemHref).attr("href"));
+      
+            return false;
+        });
+
+        this.roll();
+    }
+    
+    /**
+     * Return a random face
+     */
+    randomFace() {
+        const face = Math.floor(Math.random() * this.sides) + this.initialSide;
+        return face;
+    }
+
+    /**
+     * 
+     * @param {*} face 
+     */
+    rollTo(face) {
+        clearTimeout(this.timeoutId);
+
+        const listItemHref = this.html.find("ul > li > a");
+        const faceHref = this.html.find("[href=" + face + "]");
+
+        listItemHref.removeClass("active");
+        faceHref.addClass("active");
+
+        this.die.attr("data-face", face);
+    }
+
+    /**
+     * Reset the die
+     */
+    reset() {
+        this.die.attr("data-face", null).removeClass("rolling");
+    }
+
+    /**
+     * Roll the die
+     */
+    roll() {
+        this.die.addClass("rolling");
+        clearTimeout(this.timeoutId);
+
+        this.timeoutId = setTimeout(() => {
+            this.die.removeClass("rolling");
+
+            this.rollTo(20);
+        }, this.animationDuration);
+
+        return false;
+    }
+}
+
+class CUBCombatCarousel extends Application {
+    constructor(options={}) {
+        super(options);
+
+        Hooks.once("renderCUBCombatCarousel", (app, html, data) => {
+            const wrapperDiv = html.find(".wrapper");
+
+            $(wrapperDiv).slick({
+                centerMode: true,
+                centerPadding: '60px',
+                slidesToShow: 3,
+                responsive: [
+                  {
+                    breakpoint: 768,
+                    settings: {
+                      arrows: false,
+                      centerMode: true,
+                      centerPadding: '40px',
+                      slidesToShow: 3
+                    }
+                  },
+                  {
+                    breakpoint: 480,
+                    settings: {
+                      arrows: true,
+                      centerMode: true,
+                      centerPadding: '40px',
+                      slidesToShow: 1
+                    }
+                  }
+                ]
+            });
+
+            return;
+        });
+    }
+
+    static get defaultOptions() {
+        return mergeObject(super.defaultOptions, {
+            template: "modules/combat-utility-belt/templates/combat-carousel.html",
+            height: 300,
+            width: 1000,
+            id: "cub-combat-carousel",
+            popOut: false,
+            title: "Combat Carousel"
+        });
+    }
+
+    getData() {
+        return {
+            combatants: game.combat.combatants
+        } 
+    }
+
+    _activateListeners() {
+        super._activateListeners();
+
+
     }
 }
 

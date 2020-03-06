@@ -1,0 +1,10 @@
+<div class="combat-carousel wrapper">
+    {{#each combatants}}
+        <div class="combat-carousel card">
+            <img src="{{this.actor.img}}" width="100px"/>
+            <h2>{{this.name}}</h2>
+            <span>Initiative: {{this.initiative}}</span><br />
+            <span>HP: {{this.actor.data.data.attributes.hp.value}} / {{this.actor.data.data.attributes.hp.max}}</span>
+        </div>
+    {{/each}}
+</div>

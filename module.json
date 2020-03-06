@@ -8,7 +8,7 @@
   "url": "https://github.com/death-save/combat-utility-belt",
   "manifest": "https://raw.githubusercontent.com/death-save/combat-utility-belt/beta/module.json",
   "download": "https://github.com/death-save/combat-utility-belt/archive/beta.zip",
-  "scripts": ["./combat-utility-belt.js"],
+  "scripts": ["./combat-utility-belt.js", "./slick/slick.min.js"],
   "packs": [
     {
       "name": "conditionsdnd5e",
@@ -27,5 +27,5 @@
       "entity": "JournalEntry"
     }
   ],
-  "styles" : ["./css/combat-utility-belt.css"]
+  "styles" : ["./css/combat-utility-belt.css","./slick/slick.css", "./slick/slick-theme.css"]
 }
