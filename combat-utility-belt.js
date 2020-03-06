@@ -98,7 +98,6 @@ class CUBSignal {
             CUB.hideNPCNames = new CUBHideNPCNames();
             CUB.combatTracker = new CUBCombatTracker();
             CUB.concentrator = new CUBConcentrator();
-            CUB.animatedDie = new CUBAnimatedDie();
             CUB.tokenUtility = new CUBTokenUtility();
             CUBSidekick.handlebarsHelpers();
             CUBSidekick.jQueryHelpers();
@@ -3304,7 +3303,7 @@ class CUBTokenUtility {
             tokenEffectSize: {
                 name: CUBTokenUtility.SETTINGS_DESCRIPTORS.TokenEffectSizeN,
                 hint: CUBTokenUtility.SETTINGS_DESCRIPTORS.TokenEffectSizeH,
-                default: CUBTokenUtility.DEFAULT_CONFIG.tokenEffectSizeChoices.small,
+                default: CUBSidekick.getKeyByValue(CUBTokenUtility.DEFAULT_CONFIG.tokenEffectSizeChoices, CUBTokenUtility.DEFAULT_CONFIG.tokenEffectSizeChoices.small),
                 scope: "client",
                 type: String,
                 choices: CUBTokenUtility.DEFAULT_CONFIG.tokenEffectSizeChoices,
