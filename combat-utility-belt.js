@@ -408,7 +408,8 @@ class CUBSidekick {
 
     /**
      * Escapes regex special chars
-     * @param {*} string 
+     * @param {String} string 
+     * @return {String} escapedString
      */
     static escapeRegExp(string) {
         return string.replace(/[.*+\-?^${}()|[\]\\]/g, '\\$&');
@@ -708,8 +709,8 @@ class CUBHideNPCNames {
         }
 
         const replacement = this.settings.unknownCreatureString || " ";
-        const matchString = data.alias.includes(" ") ? CUBSidekick.getTerms(data.alias.split(" ")).map(e => CUBSidekick.escapeRegExp(e)).join("|") : data.alias;
-        const regex = matchString + "(?=[\\s,.!?;:]|[s]|['s])";
+        const matchString = data.alias.includes(" ") ? CUBSidekick.getTerms(data.alias.trim().split(" ")).map(e => CUBSidekick.escapeRegExp(e)).join("|") : CUBSidekick.escapeRegExp(data.alias);
+        const regex = matchString + "(?=[\\W]|s|'s)";
             
         html.each((i, el) => {
             el.innerHTML = el.innerHTML.replace(new RegExp(regex, "gim"), replacement);
