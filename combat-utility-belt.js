@@ -1205,7 +1205,7 @@ class CUBEnhancedConditions {
      * Hooks on token updates. If the update includes effects, calls the journal entry lookup
      */
     _hookOnUpdateToken(scene, sceneID, update, options, userId) {
-        if (!this.settings.enhancedConditions || game.userId != userId) {
+        if (!this.settings.enhancedConditions || !game.user.isGM || (game.users.get(userId).isGM && !game.userId === userId)) {
             return;
         }
 
