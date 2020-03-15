@@ -161,7 +161,8 @@ class CUBSignal {
 
     static hookOnPreUpdateToken() {
         Hooks.on("preUpdateToken", (scene, sceneId, actorData, currentData) => {
-            CUB.concentrator._hookOnPreUpdateToken(scene, sceneId, actorData, currentData)
+            CUB.concentrator._hookOnPreUpdateToken(scene, sceneId, actorData, currentData);
+            //CUB.enhancedConditions._hookOnPreUpdateToken(scene, sceneId, actorData, currentData);
         });
     }
 
@@ -1212,7 +1213,27 @@ class CUBEnhancedConditions {
         //console.log(token,sceneId,update);
         let effects = update.effects;
 
-        if (!effects) {
+        if (!effects || effects.length === 0) {
+            return;
+        }
+
+        //If the update has effects in it, lookup mapping and set the current token
+        this.currentToken = canvas.tokens.get(update._id);
+        return this.lookupEntryMapping(effects);
+    }
+
+    /**
+     * Hooks on token updates. If the update includes effects, calls the journal entry lookup
+     */
+    _hookOnPreUpdateToken(scene, sceneID, update, options) {
+        if (!this.settings.enhancedConditions) {
+            return;
+        }
+
+        //console.log(token,sceneId,update);
+        let effects = update.effects;
+
+        if (!effects || effects.length === 0) {
             return;
         }
 
@@ -1972,8 +1993,8 @@ class CUBInjuredAndDead {
      * @param {Object} update
      * @todo refactor as updateMany
      */
-    _hookOnUpdateActor(actor, update) {
-        if (!this.settings.dead && !this.settings.injured && !this.settings.unconscious) {
+    _hookOnUpdateActor(actor, update, userId) {
+        if ((!this.settings.dead && !this.settings.injured && !this.settings.unconscious) || !game.user.isGM) {
             return;
         }
 
@@ -2209,9 +2230,9 @@ class CUBConcentrator {
         }
 
         const actor = game.actors.get(actorId);
-        const tokens = [canvas.tokens.get(tokenId)] || actor ? actor.getActiveTokens() : [];
+        const tokens = tokenId ? [canvas.tokens.get(tokenId)] : actor ? actor.getActiveTokens() : [];
 
-        if (!tokens) {
+        if (tokens.length === 0) {
             return;
         }
 
@@ -2270,7 +2291,8 @@ class CUBConcentrator {
         const damageAmount = this._calculateDamage(newHealth, oldHealth)
 
         if(this.settings.displayChat) {
-            this._displayChat(getProperty(options, "currentData.name"), damageAmount);
+            const name = getProperty(options, "currentData.name");
+            this._displayChat(name, damageAmount);
         }
                 
         if(this.settings.rollRequest) {
@@ -2316,7 +2338,8 @@ class CUBConcentrator {
 
         if(this.settings.displayChat) {
             for (const t of tokens) {
-                this._displayChat(getProperty(t, "name"), damageAmount);
+                const name = getProperty(t, "name");
+                this._displayChat(name, damageAmount);
             } 
         }
                     
@@ -2360,15 +2383,13 @@ class CUBConcentrator {
             return;
         }
 
-        const users = owners.filter(owner => game.user._id === owner._id) || [];
-
-        if (users.length > 0) {
-            return this._distributePrompts(actorId, users);
+        if (owners.length > 0) {
+            return this._distributePrompts(actorId, owners);
         }
 
-        if (users.length === 0 && game.user.isGM) {
-            users.push(game.userId);
-            return this._distributePrompts(actorId, users);
+        if (owners.length === 0 && game.user.isGM) {
+            owners.push(game.userId);
+            return this._distributePrompts(actorId, owners);
         }
     }
 
@@ -2381,15 +2402,14 @@ class CUBConcentrator {
         if (!game.user.isGM) {
             return;
         }
+
         const halfDamage = Math.floor(damage / 2);
         const dc = halfDamage > 10 ? halfDamage : 10;
 
         ChatMessage.create({
             user: game.user._id,
-            speaker: {
-                alias: this.DEFAULT_CONFIG.concentrator
-            },
-            content: `${name} took damage and their concentration is being tested (DC${dc})!`,
+            speaker: ChatMessage.getSpeaker(name),
+            content: `<h4>CUB Concentrator</h4><p>${name} took damage and their concentration is being tested (DC${dc})!</p>`,
             type: CONST.CHAT_MESSAGE_TYPES.OTHER
         });       
     }
@@ -2414,7 +2434,7 @@ class CUBConcentrator {
         const actor = game.actors.get(actorId);
         const ability = this.settings.ability;
 
-        if (!actor) {
+        if (!actor || game.userId !== userId) {
             return;
         }
 
@@ -2449,11 +2469,9 @@ class CUBConcentrator {
         const isWhisper = this.settings.notifyDoubleConcentration === "GM Only";
 
         ChatMessage.create({
-            speaker: {
-                alias: CUBConcentrator.prototype.DEFAULT_CONFIG.concentrator
-            },
+            speaker: ChatMessage.getSpeaker(token),
             whisper: isWhisper ? game.users.entities.filter(u => u.isGM) : "",
-            content: `<p>${token.name} cast a spell requiring Concentration while concentrating on another spell. Concentration on the original spell is lost.`,
+            content: `<h4>CUB Concentrator</h4><p>${token.name} cast a spell requiring Concentration while concentrating on another spell. Concentration on the original spell is lost.`,
             type: CONST.CHAT_MESSAGE_TYPES.OTHER
         });
     }
