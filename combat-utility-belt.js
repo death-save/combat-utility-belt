@@ -94,6 +94,7 @@ class CUBSignal {
 
     static hookOnInit() {
         Hooks.on("init", () => {
+            CUB.animatedDie = new CUBAnimatedDie();
             CUB.enhancedConditions = new CUBEnhancedConditions();
             CUB.hideNPCNames = new CUBHideNPCNames();
             CUB.combatTracker = new CUBCombatTracker();
@@ -160,7 +161,8 @@ class CUBSignal {
 
     static hookOnPreUpdateToken() {
         Hooks.on("preUpdateToken", (scene, sceneId, actorData, currentData) => {
-            CUB.concentrator._hookOnPreUpdateToken(scene, sceneId, actorData, currentData)
+            CUB.concentrator._hookOnPreUpdateToken(scene, sceneId, actorData, currentData);
+            //CUB.enhancedConditions._hookOnPreUpdateToken(scene, sceneId, actorData, currentData);
         });
     }
 
@@ -407,7 +409,8 @@ class CUBSidekick {
 
     /**
      * Escapes regex special chars
-     * @param {*} string 
+     * @param {String} string 
+     * @return {String} escapedString
      */
     static escapeRegExp(string) {
         return string.replace(/[.*+\-?^${}()|[\]\\]/g, '\\$&');
@@ -707,8 +710,8 @@ class CUBHideNPCNames {
         }
 
         const replacement = this.settings.unknownCreatureString || " ";
-        const matchString = data.alias.includes(" ") ? CUBSidekick.getTerms(data.alias.split(" ")).map(e => CUBSidekick.escapeRegExp(e)).join("|") : data.alias;
-        const regex = matchString + "(?=[\\s,.!?;:]|[s]|['s])";
+        const matchString = data.alias.includes(" ") ? CUBSidekick.getTerms(data.alias.trim().split(" ")).map(e => CUBSidekick.escapeRegExp(e)).join("|") : CUBSidekick.escapeRegExp(data.alias);
+        const regex = matchString + "(?=[\\W]|s|'s)";
             
         html.each((i, el) => {
             el.innerHTML = el.innerHTML.replace(new RegExp(regex, "gim"), replacement);
@@ -784,7 +787,8 @@ class CUBEnhancedConditions {
         return {
             iconPath: "modules/combat-utility-belt/icons/",
             outputChat: true,
-            conditionLab: "CUB: Condition Lab"
+            conditionLab: "CUB: Condition Lab",
+            enhancedConditions: "CUB Enhanced Conditions"
             /* future features
             folderTypes: {
                 journal: "Journal",
@@ -1203,14 +1207,34 @@ class CUBEnhancedConditions {
      * Hooks on token updates. If the update includes effects, calls the journal entry lookup
      */
     _hookOnUpdateToken(scene, sceneID, update, options, userId) {
-        if (!this.settings.enhancedConditions || game.userId != userId) {
+        if (!this.settings.enhancedConditions || !game.user.isGM || (game.users.get(userId).isGM && !game.userId === userId)) {
             return;
         }
 
         //console.log(token,sceneId,update);
         let effects = update.effects;
 
-        if (!effects) {
+        if (!effects || effects.length === 0) {
+            return;
+        }
+
+        //If the update has effects in it, lookup mapping and set the current token
+        this.currentToken = canvas.tokens.get(update._id);
+        return this.lookupEntryMapping(effects);
+    }
+
+    /**
+     * Hooks on token updates. If the update includes effects, calls the journal entry lookup
+     */
+    _hookOnPreUpdateToken(scene, sceneID, update, options) {
+        if (!this.settings.enhancedConditions) {
+            return;
+        }
+
+        //console.log(token,sceneId,update);
+        let effects = update.effects;
+
+        if (!effects || effects.length === 0) {
             return;
         }
 
@@ -1244,56 +1268,16 @@ class CUBEnhancedConditions {
      * @param {Array} icons 
      */
     async lookupEntryMapping(icons) {
-        let map;
-        let mapEntries = [];
-        let conditionEntries = [];
+        const conditionEntries = this.map.filter(row => {
+            const [c, i, j] = row;
+            return icons.includes(i) ? true : false;
+        });
 
-        if (this.map instanceof Map) {
-            map = this.map.entries();
-        } else if (this.map instanceof Array) {
-            map = this.map;
-        } else {
-            throw "condition map is not iterable";
-        }
-        //iterate through incoming icons and check the conditionMap for the corresponding entry
-        for (let i of icons) {
-            let entry;
-            try {
-                for (let [mc, mi, me] of map) {
-                    if (mi == i) {
-                        if (me.length > 1) {
-                            entry = me;
-                        } else {
-                            entry = mc;
-                        }
-                    }
-                }
-            } catch (e) {
-                //console.log(e);
-            } finally {
-                if (entry) {
-                    mapEntries.push(entry);
-                }
-            }
-        }
-
-        for (let e of mapEntries) {
-            if (e) {
-                let entry = await game.journal.entities.find(j => j.id == e);
-                if (entry) {
-                    conditionEntries.push(entry);
-                } else {
-                    conditionEntries.push(e);
-                }
-            }
-        }
-
-        //console.log(conditionEntries);
-        if (this.settings.output && conditionEntries.length > 0) {
-            return this.outputChatMessage(conditionEntries);
-        } else {
+        if (conditionEntries.length === 0) {
             return;
         }
+
+        return this.outputChatMessage(conditionEntries);
     }
 
     /**
@@ -1302,61 +1286,36 @@ class CUBEnhancedConditions {
     async outputChatMessage(entries) {
         const chatUser = game.userId;
         const token = this.currentToken;
-        //const actor = await this.lookupTokenActor(token.actor.id);
         const chatType = CONST.CHAT_MESSAGE_TYPES.OTHER;
-        let tokenSpeaker = {};
+
+        let tokenSpeaker = ChatMessage.getSpeaker({token});
         let chatContent;
-        let chatConditions = [];
-        let journalLink;
 
-        //console.log("current token",token);
-        //console.log("current actor",actor);
-        //console.log("token id",this.tokenData.id);
-
-        //if (actor) {
-        //console.log("Speaker is an actor:",actor);
-        //    tokenSpeaker = ChatMessage.getSpeaker({
-        //        "actor": actor
-        //    });
-        //} else {
-        //console.log("Speaker is a token:",token);
-        tokenSpeaker = ChatMessage.getSpeaker({
-            "token": token
-        });
-        //}
-
-        //create some boiler text for prepending to the conditions array
-        if (entries.length > 0) {
-            chatContent = tokenSpeaker.alias + " is:";
+        if (entries.length === 0) {
+            return;
         }
 
-        //iterate through the journal entries and output to chat
-        for (let e of entries) {
-            if (e instanceof Object) {
-                journalLink = "@JournalEntry[" + e.name + "]";
-            } else {
-                journalLink = e;
-            }
+        //create some boiler text for prepending to the conditions array
+        chatContent = `<h3>${this.DEFAULT_CONFIG.enhancedConditions}</h3><p>${tokenSpeaker.alias} is:</p><ul class="chat-message condition-list">`;
 
-            //let journalLink = e.name;
-            //need to figure out best way to break out entries -- newline is being turned into space
-            chatConditions.push("\n" + journalLink);
+        const chatConditions = entries.map(row => {
+            const [condition, icon, journalId] = row;
+            return `<li>${icon ? `<img src="${icon}" class="icon chat-message" title="${condition}">` : ""}${journalId.trim() ? `@JournalEntry[${journalId}]` : ` ${condition}`}</li>`
+        })
+
+        if (chatConditions.length === 0) {
+            return;
         }
 
         //add the conditions to the boiler text
-        if (chatConditions.length > 0) {
-            chatContent += chatConditions;
+        chatContent += `${chatConditions.join("")}</ul>`;
 
-            await ChatMessage.create({
-                //speaker: tokenSpeaker,
-                speaker: {
-                    alias: this.DEFAULT_CONFIG.conditionLab
-                },
-                content: chatContent,
-                type: chatType,
-                user: chatUser
-            });
-        }
+        return await ChatMessage.create({
+            speaker: tokenSpeaker,
+            content: chatContent,
+            type: chatType,
+            user: chatUser
+        });
     }
 
     /**
@@ -1970,8 +1929,8 @@ class CUBInjuredAndDead {
      * @param {Object} update
      * @todo refactor as updateMany
      */
-    _hookOnUpdateActor(actor, update) {
-        if (!this.settings.dead && !this.settings.injured && !this.settings.unconscious) {
+    _hookOnUpdateActor(actor, update, userId) {
+        if ((!this.settings.dead && !this.settings.injured && !this.settings.unconscious) || !game.user.isGM) {
             return;
         }
 
@@ -2207,9 +2166,9 @@ class CUBConcentrator {
         }
 
         const actor = game.actors.get(actorId);
-        const tokens = [canvas.tokens.get(tokenId)] || actor ? actor.getActiveTokens() : [];
+        const tokens = tokenId ? [canvas.tokens.get(tokenId)] : actor ? actor.getActiveTokens() : [];
 
-        if (!tokens) {
+        if (tokens.length === 0) {
             return;
         }
 
@@ -2268,7 +2227,7 @@ class CUBConcentrator {
         const damageAmount = this._calculateDamage(newHealth, oldHealth)
 
         if(this.settings.displayChat) {
-            this._displayChat(getProperty(options, "currentData.name"), damageAmount);
+            this._displayChat(token, damageAmount);
         }
                 
         if(this.settings.rollRequest) {
@@ -2314,7 +2273,7 @@ class CUBConcentrator {
 
         if(this.settings.displayChat) {
             for (const t of tokens) {
-                this._displayChat(getProperty(t, "name"), damageAmount);
+                this._displayChat(t, damageAmount);
             } 
         }
                     
@@ -2358,15 +2317,13 @@ class CUBConcentrator {
             return;
         }
 
-        const users = owners.filter(owner => game.user._id === owner._id) || [];
-
-        if (users.length > 0) {
-            return this._distributePrompts(actorId, users);
+        if (owners.length > 0) {
+            return this._distributePrompts(actorId, owners);
         }
 
-        if (users.length === 0 && game.user.isGM) {
-            users.push(game.userId);
-            return this._distributePrompts(actorId, users);
+        if (owners.length === 0 && game.user.isGM) {
+            owners.push(game.userId);
+            return this._distributePrompts(actorId, owners);
         }
     }
 
@@ -2375,19 +2332,20 @@ class CUBConcentrator {
      * @param {*} name
      * @param {*} damage
      */
-    _displayChat(name, damage){
+    _displayChat(token, damage){
         if (!game.user.isGM) {
             return;
         }
+
         const halfDamage = Math.floor(damage / 2);
         const dc = halfDamage > 10 ? halfDamage : 10;
+        const speaker = ChatMessage.getSpeaker({token});
+        //speaker.alias = CUBConcentrator.prototype.DEFAULT_CONFIG.concentrator;
 
         ChatMessage.create({
             user: game.user._id,
-            speaker: {
-                alias: this.DEFAULT_CONFIG.concentrator
-            },
-            content: `${name} took damage and their concentration is being tested (DC${dc})!`,
+            speaker: speaker,
+            content: `<h3>CUB Concentrator</header></h3>${token.name} took damage and their concentration is being tested (DC${dc})!</p>`,
             type: CONST.CHAT_MESSAGE_TYPES.OTHER
         });       
     }
@@ -2412,7 +2370,7 @@ class CUBConcentrator {
         const actor = game.actors.get(actorId);
         const ability = this.settings.ability;
 
-        if (!actor) {
+        if (!actor || game.userId !== userId) {
             return;
         }
 
@@ -2445,13 +2403,13 @@ class CUBConcentrator {
      */
     _notifyDoubleConcentration(token) {
         const isWhisper = this.settings.notifyDoubleConcentration === "GM Only";
+        const speaker = ChatMessage.getSpeaker({token});
+        //speaker.alias = CUBConcentrator.prototype.DEFAULT_CONFIG.concentrator;
 
         ChatMessage.create({
-            speaker: {
-                alias: CUBConcentrator.prototype.DEFAULT_CONFIG.concentrator
-            },
+            speaker: speaker,
             whisper: isWhisper ? game.users.entities.filter(u => u.isGM) : "",
-            content: `<p>${token.name} cast a spell requiring Concentration while concentrating on another spell. Concentration on the original spell is lost.`,
+            content: `<h4>CUB Concentrator</h4><p>${token.name} cast a spell requiring Concentration while concentrating on another spell. Concentration on the original spell is lost.`,
             type: CONST.CHAT_MESSAGE_TYPES.OTHER
         });
     }
@@ -2892,7 +2850,7 @@ class CUBCombatTracker {
                 ChatMessage.create({
                     user: game.user._id,
                     speaker: {
-                        actor: this.actor
+                        alias: "CUB Experience"
                     },
                     content: experienceMessage,
                     type: CONST.CHAT_MESSAGE_TYPES.OTHER

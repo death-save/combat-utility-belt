@@ -5,6 +5,21 @@
 - Combatant stats in Combat Tracker
 - Refine Hide NPC Names to allow for "known" NPC names/information
 
+## [0.9.8] - 2020-03-16
+### Added
+- Enhanced Conditions now outputs the condition icon in the chat message
+
+### Changed
+- Enhanced Conditions and Concentrator messages are now sent by the token/actor in question--this allows Hide NPC Names to correctly hide the name
+- Reworked the Enhanced Conditions chat message format--the message now displays as a list
+
+### Fixed
+- Enhanced Conditions no longer sends multiple chat messages for a single event
+- Concentrator no longer sends multiple chat messages for a single event
+- Single word names are now correctly hidden by Hide NPC names
+- Spaces around names are now trimmed before being processed by Hide NPC Names
+- Regex is escaped in single word names
+
 ## [0.9.7] - 2020-03-05
 ### Added
 - Added a client setting to set the status effect icon size on tokens. Three options are available: Small (default) -- 5x5 icons, Medium -- 3x3 icons, and Large -- 2x2 icons. If the number of icons exceeds the boundaries of the token the additional icons will "bleed" into the canvas and may obscure other placeable objects or canvas elements. 
