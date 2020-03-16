@@ -1,6 +1,15 @@
+ul.chat-message.condition-list {
+    list-style-type: none;
+    padding: 0;
+}
+
 img.icon {
     width: 50px;
-    background:black;
+    background-color:rgba(0,0,0,0.5);
+}
+
+img.icon.chat-message {
+    width: 16px;
 }
 
 .token-resource input[name="resource"] {
