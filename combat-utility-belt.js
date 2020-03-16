@@ -94,7 +94,6 @@ class CUBSignal {
 
     static hookOnInit() {
         Hooks.on("init", () => {
-            CUB.animatedDie = new CUBAnimatedDie();
             CUB.enhancedConditions = new CUBEnhancedConditions();
             CUB.hideNPCNames = new CUBHideNPCNames();
             CUB.combatTracker = new CUBCombatTracker();
