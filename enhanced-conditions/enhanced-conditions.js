@@ -51,29 +51,8 @@ class CUBEnhancedConditions {
      * @todo: map to entryId and then rebuild on import
      */
     get DEFAULT_MAPS() {
-        const dnd5eMap = [
-            //Condition - Icon - JournalEntry
-            ["Blinded", this.DEFAULT_CONFIG.iconPath + "blinded.svg", ""],
-            ["Charmed", this.DEFAULT_CONFIG.iconPath + "charmed.svg", ""],
-            ["Concentrating", this.DEFAULT_CONFIG.iconPath + "concentrating.svg", ""],
-            ["Deafened", this.DEFAULT_CONFIG.iconPath + "deafened.svg", ""],
-            ["Exhaustion 1", this.DEFAULT_CONFIG.iconPath + "exhaustion1.svg", ""],
-            ["Exhaustion 2", this.DEFAULT_CONFIG.iconPath + "exhaustion2.svg", ""],
-            ["Exhaustion 3", this.DEFAULT_CONFIG.iconPath + "exhaustion3.svg", ""],
-            ["Exhaustion 4", this.DEFAULT_CONFIG.iconPath + "exhaustion4.svg", ""],
-            ["Exhaustion 5", this.DEFAULT_CONFIG.iconPath + "exhaustion5.svg", ""],
-            ["Frightened", this.DEFAULT_CONFIG.iconPath + "frightened.svg", ""],
-            ["Grappled", this.DEFAULT_CONFIG.iconPath + "grappled.svg",""],
-            ["Incapacitated", this.DEFAULT_CONFIG.iconPath + "incapacitated.svg", ""],
-            ["Invisible", this.DEFAULT_CONFIG.iconPath + "invisible.svg", ""],
-            ["Paralyzed", this.DEFAULT_CONFIG.iconPath + "paralyzed.svg", ""],
-            ["Petrified", this.DEFAULT_CONFIG.iconPath + "petrified.svg", ""],
-            ["Poisoned", this.DEFAULT_CONFIG.iconPath + "poisoned.svg", ""],
-            ["Prone", this.DEFAULT_CONFIG.iconPath + "prone.svg", ""],
-            ["Restrained", this.DEFAULT_CONFIG.iconPath + "restrained.svg", ""],
-            ["Stunned", this.DEFAULT_CONFIG.iconPath + "stunned.svg", ""],
-            ["Unconscious", "icons/svg/unconscious.svg", ""]
-        ];
+        const dnd5eJSON = await FilePicker.browse("modules/combat-utility-belt/condition-maps/", "dnd5e.json");
+        const dnd5eMap = JSON.parse(dnd5eJSON);
 
         const pf1eMap = [];
 

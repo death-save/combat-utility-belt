@@ -1,0 +1,102 @@
+{
+   "blinded": {
+       "name":"Blinded", 
+       "icon": "../icons/blinded.svg",
+       "journalId": ""
+    },
+   "charmed": {
+       "name":"Charmed",
+       "icon": "../icons/charmed.svg", 
+       "journalId": ""
+    },
+   "concentrating": {
+       "name": "Concentrating",
+       "icon": "../icons/concentrating.svg",
+       "journalId": ""
+   },
+   "deafened": {
+       "name": "Deafened", 
+       "icon": "../icons/deafened.svg", 
+       "journalId" : ""
+    },
+    "exhaustion1": {
+        "name":"Exhaustion 1",
+        "icon":"../icons/exhaustion1.svg",
+        "journalId": ""
+    },
+    "exhaustion2": {
+        "name":"Exhaustion 2",
+        "icon":"../icons/exhaustion1.svg",
+        "journalId": ""
+    },
+    "exhaustion3": {
+        "name":"Exhaustion 3",
+        "icon":"../icons/exhaustion1.svg",
+        "journalId": ""
+    },
+    "exhaustion4": {
+        "name":"Exhaustion 4",
+        "icon":"../icons/exhaustion1.svg",
+        "journalId": ""
+    },
+    "exhaustion5": {
+        "name":"Exhaustion 5",
+        "icon":"../icons/exhaustion1.svg",
+        "journalId": ""
+    },
+    "frightened": {
+        "name":"Frightened",
+        "icon":"../icons/frightened.svg",
+        "journalId": ""
+    },
+    "grappled": {
+        "name":"Grappled",
+        "icon":"../icons/grappled.svg",
+        "journalId": ""
+    },
+    "incapacitated": {
+        "name":"Incapacitated",
+        "icon":"../icons/incapacitated.svg",
+        "journalId": ""
+    },
+    "invisible": {
+        "name":"Invisible",
+        "icon":"../icons/invisible.svg",
+        "journalId": ""
+    },
+    "paralyzed": {
+        "name":"Grappled",
+        "icon":"../icons/paralyzed.svg",
+        "journalId": ""
+    },
+    "petrified": {
+        "name":"Petrified",
+        "icon":"../icons/petrified.svg",
+        "journalId": ""
+    },
+    "poisoned": {
+        "name":"Poisoned",
+        "icon":"../icons/poisoned.svg",
+        "journalId": ""
+    },
+    "prone": {
+        "name":"Prone",
+        "icon":"../icons/prone.svg",
+        "journalId": ""
+    },
+    "restrained": {
+        "name":"Restrained",
+        "icon":"../icons/restrained.svg",
+        "journalId": ""
+    },
+    "stunned": {
+        "name":"Stunned",
+        "icon":"../icons/stunned.svg",
+        "journalId": ""
+    },
+    "unconscious": {
+        "name":"Unconscious",
+        "icon":"icons/unconscious.svg",
+        "journalId": ""
+    }
+}
