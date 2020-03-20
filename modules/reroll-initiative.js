@@ -34,28 +34,7 @@ class CUBRerollInitiative {
 
     get SETTINGS_META() {
         return {
-            enableReroll: {
-                name: this.SETTINGS_DESCRIPTORS.RerollN,
-                hint: this.SETTINGS_DESCRIPTORS.RerollH,
-                scope: "world",
-                type: Boolean,
-                default: this.DEFAULT_CONFIG.reroll,
-                config: true,
-                onChange: s => {
-                    this.settings.reroll = s;
-                }
-            },
-            includeTempCombatants: {
-                name: this.SETTINGS_DESCRIPTORS.RerollTempCombatantsN,
-                hint: this.SETTINGS_DESCRIPTORS.RerollTempCombatantsH,
-                scope: "world",
-                type: Boolean,
-                default: this.DEFAULT_CONFIG.rerollTempCombatants,
-                config: true,
-                onChange: s => {
-                    this.settings.rerollTempCombatants = s;
-                }
-            }
+            
         };
 
     }

@@ -47,9 +47,21 @@ export const HEALTH_STATES = {
 }
 
 export const DEFAULT_CONFIG = {
-
+    enhancedConditions: {
+        iconPath: "modules/combat-utility-belt/icons/",
+        outputChat: true,
+        conditionLab: "CUB: Condition Lab",
+        enhancedConditions: "CUB Enhanced Conditions"
+    }
 }
 
 export const SETTING_KEYS = {
+    enhancedConditions: {
+        enable: "enable",
+        system: "system",
+        map: "activeMap",
+        removeDefaultEffects: "removeDefaultEffects",
+        output: "outputToChat"
+    }
     
 }

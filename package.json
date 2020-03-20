@@ -4,10 +4,11 @@
   "description": "![https://img.shields.io/badge/Foundry%20VTT-0.4.7%2B-green](https://img.shields.io/badge/Foundry%20VTT-0.4.7%2B-green)",
   "main": "combat-utility-belt.js",
   "dependencies": {
-    "eslint": "^6.8.0",
-    "foundry-pc-types": "^0.1.0"
+    "eslint": "^6.8.0"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "foundry-pc-types": "gitlab:foundry-projects/foundry-pc/foundry-pc-types"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

@@ -1,7 +1,7 @@
 /**
  * Form application for managing mapping of Conditions to Icons and JournalEntries
  */
-class ConditionLab extends FormApplication {
+export class ConditionLab extends FormApplication {
     constructor() {
         super();
         this.data = CUB.enhancedConditions;

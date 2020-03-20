@@ -48,47 +48,6 @@ class CUBTokenUtility {
         };
     }
 
-    get SETTINGS_META() {
-        return {
-            mightySummoner: {
-                name: CUBTokenUtility.SETTINGS_DESCRIPTORS.MightySummonerN,
-                hint: CUBTokenUtility.SETTINGS_DESCRIPTORS.MightySummonerH,
-                default: CUBTokenUtility.DEFAULT_CONFIG.mightySummoner,
-                scope: "world",
-                type: Boolean,
-                config: true,
-                onChange: s => {
-                    this.settings.mightySummoner = s;
-                }
-            },
-            autoRollHostileHp: {
-                name: CUBTokenUtility.SETTINGS_DESCRIPTORS.AutoRollHostileHpN,
-                hint: CUBTokenUtility.SETTINGS_DESCRIPTORS.AutoRollHostileHpH,
-                default: CUBTokenUtility.DEFAULT_CONFIG.autoRollHostileHp,
-                scope: "world",
-                type: Boolean,
-                config: true,
-                onChange: s => {
-                    this.settings.autoRollHostileHp = s;
-                }
-            },
-            tokenEffectSize: {
-                name: CUBTokenUtility.SETTINGS_DESCRIPTORS.TokenEffectSizeN,
-                hint: CUBTokenUtility.SETTINGS_DESCRIPTORS.TokenEffectSizeH,
-                default: CUBSidekick.getKeyByValue(CUBTokenUtility.DEFAULT_CONFIG.tokenEffectSizeChoices, CUBTokenUtility.DEFAULT_CONFIG.tokenEffectSizeChoices.small),
-                scope: "client",
-                type: String,
-                choices: CUBTokenUtility.DEFAULT_CONFIG.tokenEffectSizeChoices,
-                config: true,
-                onChange: s => {
-                    this.settings.tokenEffectSize = s;
-                    Token.prototype.drawEffects = CUBTokenUtility._patchDrawEffects;
-                    canvas.draw();
-                }
-            }
-        };
-    }
-
     /**
      * 
      * @param {*} token 

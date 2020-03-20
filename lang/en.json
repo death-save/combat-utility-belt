@@ -1,0 +1,12 @@
+{
+    "EnhancedConditionsN": "--Enhanced Conditions--",
+    "EnhancedConditionsH": "Links conditions to status icons",
+    "SystemN": "Game System",
+    "SystemH": "Game System to use for condition mapping",
+    "OutputChatN": "Output to Chat",
+    "OutputChatH": "Output matched conditions to chat",
+    "MapsN": "Condition Maps",
+    "MapsH": "Maps of conditions to icons",
+    "RemoveDefaultEffectsN": "Remove Default Status Effects",
+    "RemoveDefaultEffectsH": "Remove existing status effect icons from token HUD"
+}

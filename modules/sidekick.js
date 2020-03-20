@@ -1,7 +1,26 @@
+import * as BUTLER from "./butler.js";
 /**
  * Provides helper methods for use elsewhere in the module (and has your back in a melee)
  */
-class CUBSidekick {
+export class Sidekick {
+
+    static getSetting(key) {
+        return game.settings.get(BUTLER.MODULE_NAME, key);
+    }
+
+    static async setSetting(key, value, awaitResult = false) {
+        return awaitResult ? 
+            await game.settings.set(BUTLER.MODULE_NAME, key, value) : 
+            game.settings.set(BUTLER.MODULE_NAME, key, value);
+    }
+
+    static registerSetting(key, metadata) {
+        return game.settings.register(BUTLER.MODULE_NAME, key, metadata);
+    }
+
+    static registerAllSettings(settingsData) {
+        return Object.keys(settingsData).forEach((key) => Sidekick.registerSetting(key, settingsData[key]));
+    }
 
     /**
      * Validate that an object is actually an object
@@ -81,4 +100,6 @@ class CUBSidekick {
     static escapeRegExp(string) {
         return string.replace(/[.*+\-?^${}()|[\]\\]/g, '\\$&');
     }
+
+
 }

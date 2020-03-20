@@ -44,47 +44,7 @@ class CUBHideNPCNames {
 
     get SETTINGS_META() {
         return {
-            hideNames: {
-                name: this.SETTINGS_DESCRIPTORS.HideNamesN,
-                hint: this.SETTINGS_DESCRIPTORS.HideNamesH,
-                scope: "world",
-                type: Boolean,
-                default: this.DEFAULT_CONFIG.hideNames,
-                config: true,
-                onChange: s => {
-                    this.settings.hideNames = s;
-
-                    ui.combat.render();
-                    ui.chat.render();
-                }
-            },
-            unknownCreatureString: {
-                name: this.SETTINGS_DESCRIPTORS.UnknownCreatureN,
-                hint: this.SETTINGS_DESCRIPTORS.UnknownCreatureH,
-                scope: "world",
-                type: String,
-                default: this.DEFAULT_CONFIG.unknownCreatureString,
-                config: true,
-                onChange: s => {
-                    this.settings.unknownCreatureString = s;
-                    if (this.settings.hideNames) {
-                        ui.combat.render();
-                        ui.chat.render();
-                    }
-                }
-            },
-            hideFooter: {
-                name: this.SETTINGS_DESCRIPTORS.HideFooterN,
-                hint: this.SETTINGS_DESCRIPTORS.HideFooterH,
-                scope: "world",
-                type: Boolean,
-                default: this.DEFAULT_CONFIG.hideFooter,
-                config: true,
-                onChange: s => {
-                    this.settings.hideFooter = s;
-                    ui.chat.render();
-                }
-            }
+            
         };
     }
 

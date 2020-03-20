@@ -1,3 +1,5 @@
+import { Sidekick } from "modules/sidekick.js"
+import { SETTINGS_METADATA } from "./modules/settings";
 /**
  * Assign the namespace Object if it already exists or instantiate it as an object if not.
  */
@@ -45,7 +47,7 @@ class CUBSignal {
             CUB.tokenUtility = new CUBTokenUtility();
             CUBSidekick.handlebarsHelpers();
             CUBSidekick.jQueryHelpers();
-
+            Sidekick.registerAllSettings(SETTINGS_METADATA);
             if (CUB.tokenUtility.settings.tokenEffectSize) {
                 Token.prototype.drawEffects = CUBTokenUtility._patchDrawEffects;
             }

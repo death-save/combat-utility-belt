@@ -6,7 +6,6 @@ class CUBEnhancedConditions {
         this.settings = {
             enhancedConditions: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.ConditionsN + ")", this.SETTINGS_META.enhancedConditions),
             system: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.SystemN + ")", this.SETTINGS_META.system),
-            maps: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.MapsN + ")", this.SETTINGS_META.maps),
             removeDefaultEffects: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.RemoveDefaultEffectsN + ")", this.SETTINGS_META.removeDefaultEffects),
             output: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.OutputChatN + ")", this.SETTINGS_META.outputChat),
             //future features
@@ -15,7 +14,6 @@ class CUBEnhancedConditions {
             //createEntries : CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_META.CreateEntriesN + ")", this.SETTINGS_META.createEntries),
         };
         this.coreStatusIcons = this.coreStatusIcons || this._backupCoreStatusIcons();
-        this.callingUser = "";
         this._updateStatusIcons();
         this.currentToken = {};
     }
@@ -27,32 +25,22 @@ class CUBEnhancedConditions {
         return "enhanced-conditions";
     }
 
-
-    get DEFAULT_CONFIG() {
-        return {
-            iconPath: "modules/combat-utility-belt/icons/",
-            outputChat: true,
-            conditionLab: "CUB: Condition Lab",
-            enhancedConditions: "CUB Enhanced Conditions"
-            /* future features
-            folderTypes: {
-                journal: "Journal",
-                compendium: "Compendium"
-            },
-            folderName: "conditions",
-            createEntries: false
-            */
-        };
-    }
-
     /**
      * Defines the maps used in the gadget
      * @todo: needs a redesign -- change to arrays of objects?
      * @todo: map to entryId and then rebuild on import
      */
     get DEFAULT_MAPS() {
-        const dnd5eJSON = await FilePicker.browse("modules/combat-utility-belt/condition-maps/", "dnd5e.json");
-        const dnd5eMap = JSON.parse(dnd5eJSON);
+        // get the json files
+        // for each fetch and parse the json
+        // add the result to a variable -- CUB.enhancedConditions.maps ???
+
+        const extensions = ["json"];
+        const wildcard = true;
+        const jsonFiles = await FilePicker.browse("modules/combat-utility-belt/condition-maps/", "dnd5e.json", {extensions, wildcard});
+        const jsonFile = await fetch(jsonPath);
+        const json = await jsonFile.json();
+        const map = JSON.parse(json);
 
         const pf1eMap = [];
 
@@ -112,141 +100,11 @@ class CUBEnhancedConditions {
     }
 
     /**
-     * Contains the names and hints for the settings
-     */
-    get SETTINGS_DESCRIPTORS() {
-        return {
-            EnhancedConditionsN: "--Enhanced Conditions--",
-            EnhancedConditionsH: "Links conditions to status icons",
-            SystemN: "Game System",
-            SystemH: "Game System to use for condition mapping",
-            OutputChatN: "Output to Chat",
-            OutputChatH: "Output matched conditions to chat",
-            MapsN: "Condition Maps",
-            MapsH: "Maps of conditions to icons",
-            RemoveDefaultEffectsN: "Remove Default Status Effects",
-            RemoveDefaultEffectsH: "Remove existing status effect icons from token HUD",
-            /* future features
-            CreateEntriesN: "Create Entries",
-            CreateEntriesH: "Create journal entries if none exist",
-            CompendiumN: "Condition Compendium",
-            CompendiumH: "The compendium that contains condition journal entries",
-            FolderTypeN: "Folder Type",
-            FolderTypeH: "Folder type to use when looking for Condition entries",
-            */
-        };
-    }
-
-    /**
      * Defines the metadata for the gadget's settings
      */
     get SETTINGS_META() {
         return {
-            enhancedConditions: {
-                name: this.SETTINGS_DESCRIPTORS.EnhancedConditionsN,
-                hint: this.SETTINGS_DESCRIPTORS.EnhancedConditionsH,
-                scope: "world",
-                type: Boolean,
-                default: false,
-                config: true,
-                onChange: s => {
-                    this.settings.enhancedConditions = s;
-                    this._toggleSidebarButtonDisplay(s);
-                    this._updateStatusIcons();
-                }
-            },
-
-            system: {
-                name: this.SETTINGS_DESCRIPTORS.SystemN,
-                hint: this.SETTINGS_DESCRIPTORS.SystemH,
-                scope: "world",
-                type: String,
-                default: (CUBButler.DEFAULT_GAME_SYSTEMS[game.system.id] != null) ? CUBButler.DEFAULT_GAME_SYSTEMS[game.system.id].id : CUBButler.DEFAULT_GAME_SYSTEMS.other.id,
-                choices: this.systemChoices,
-                config: true,
-                onChange: s => {
-                    this.settings.system = s;
-                }
-            },
-
-            maps: {
-                name: this.SETTINGS_DESCRIPTORS.MapsN,
-                hint: this.SETTINGS_DESCRIPTORS.MapsH,
-                scope: "world",
-                type: Object,
-                default: this.DEFAULT_MAPS,
-                onChange: s => {
-                    this.settings.maps = s;
-                    this._updateStatusIcons(s[this.settings.system]);
-                }
-            },
-
-            outputChat: {
-                name: this.SETTINGS_DESCRIPTORS.OutputChatN,
-                hint: this.SETTINGS_DESCRIPTORS.OutputChatH,
-                scope: "world",
-                type: Boolean,
-                config: false,
-                default: this.DEFAULT_CONFIG.outputChat,
-                onChange: s => {
-                    this.settings.output = s;
-                }
-            },
-
-            removeDefaultEffects: {
-                name: this.SETTINGS_DESCRIPTORS.RemoveDefaultEffectsN,
-                hint: this.SETTINGS_DESCRIPTORS.RemoveDefaultEffectsH,
-                scope: "world",
-                type: Boolean,
-                config: true,
-                default: false,
-                onChange: s => {
-                    this.settings.removeDefaultEffects = s;
-                    this._updateStatusIcons();
-                }
-            },
-
-            /* future features
-            createEntries: {
-                name: this.SETTINGS_DESCRIPTORS.CreateEntriesN,
-                hint: this.SETTINGS_DESCRIPTORS.CreateEntriesH,
-                scope: "world",
-                type: Boolean,
-                default: this.DEFAULT_CONFIG.createEntries,
-                config: true,
-                onChange: s => {
-                    this.settings.createEntries = s;
-                }
-            },
-
-            folderType: {
-                name: this.SETTINGS_DESCRIPTORS.FolderTypeN,
-                hint: this.SETTINGS_DESCRIPTORS.FolderTypeH,
-                scope: "world",
-                type: String,
-                default: this.DEFAULT_CONFIG.folderTypes.journal,
-                choices: this.DEFAULT_CONFIG.folderTypes,
-                config: true,
-                onChange: s => {
-                    this.settings.folderType = s;
-                }
-
-            },
-
-            compendium: {
-                name: this.SETTINGS_DESCRIPTORS.CompendiumN,
-                hint: this.SETTINGS_DESCRIPTORS.CompendiumH,
-                scope: "world",
-                type: String,
-                default: game.packs.find(p => p.metadata.name == "conditions" + game.system.id),
-                choices: this.compendiumChoices,
-                config: true,
-                onChange: s => {
-                    this.settings.compendium = s;
-                }
-            }
-            */
-        };
+            
     }
 
     /**
