@@ -1,28 +1,13 @@
+import * as BUTLER from "butler.js";
+import { ConditionLab } from "./condition-lab.js";
 /**
  * Builds a mapping between status icons and journal entries that represent conditions
  */
-class CUBEnhancedConditions {
+export class EnhancedConditions {
     constructor() {
-        this.settings = {
-            enhancedConditions: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.ConditionsN + ")", this.SETTINGS_META.enhancedConditions),
-            system: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.SystemN + ")", this.SETTINGS_META.system),
-            removeDefaultEffects: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.RemoveDefaultEffectsN + ")", this.SETTINGS_META.removeDefaultEffects),
-            output: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.OutputChatN + ")", this.SETTINGS_META.outputChat),
-            //future features
-            //folderType : CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.FolderTypeN + ")", this.SETTINGS_META.folderType),
-            //compendium : CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.CompendiumN + ")", this.SETTINGS_META.compendium),
-            //createEntries : CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_META.CreateEntriesN + ")", this.SETTINGS_META.createEntries),
-        };
         this.coreStatusIcons = this.coreStatusIcons || this._backupCoreStatusIcons();
         this._updateStatusIcons();
         this.currentToken = {};
-    }
-
-    /**
-     * Returns the name of the gadget
-     */
-    get GADGET_NAME() {
-        return "enhanced-conditions";
     }
 
     /**
@@ -30,95 +15,37 @@ class CUBEnhancedConditions {
      * @todo: needs a redesign -- change to arrays of objects?
      * @todo: map to entryId and then rebuild on import
      */
-    get DEFAULT_MAPS() {
+    static async getDefaultMaps(path, extensions=["json"]) {
         // get the json files
         // for each fetch and parse the json
         // add the result to a variable -- CUB.enhancedConditions.maps ???
+        const defaultMaps = [];
+        const fp = await FilePicker.browse("data", path, {extensions});
 
-        const extensions = ["json"];
-        const wildcard = true;
-        const jsonFiles = await FilePicker.browse("modules/combat-utility-belt/condition-maps/", "dnd5e.json", {extensions, wildcard});
-        const jsonFile = await fetch(jsonPath);
-        const json = await jsonFile.json();
-        const map = JSON.parse(json);
-
-        const pf1eMap = [];
-
-        const pf2eMap = [
-            //Condition - Icon - JournalEntry
-            ["Blinded", "systems/pf2e/icons/skills/light_03.jpg", ""],
-            ["Broken", "systems/pf2e/icons/skills/red_16.jpg", ""],
-            ["Clumsy", "systems/pf2e/icons/skills/light_05.jpg", ""],
-            ["Concealed", "systems/pf2e/icons/skills/shadow_14.jpg", ""],
-            ["Confused", "systems/pf2e/icons/skills/red_01.jpg", ""],
-            ["Controlled", "systems/pf2e/icons/skills/red_05.jpg", ""],
-            ["Dazzled", "systems/pf2e/icons/skills/shadow_12.jpg", ""],
-            ["Deafened", "systems/pf2e/icons/skills/red_10.jpg", ""],
-            ["Doomed", "systems/pf2e/icons/skills/blood_12.jpg", ""],
-            ["Drained", "systems/pf2e/icons/skills/affliction_01.jpg", ""],
-            ["Dying", "systems/pf2e/icons/skills/yellow_32.jpg", ""],
-            ["Encumbered", "systems/pf2e/icons/skills/gray_05.jpg", ""],
-            ["Enfeebled", "systems/pf2e/icons/skills/violet_28.jpg", ""],
-            ["Fascinated", "systems/pf2e/icons/skills/violet_17.jpg", ""],
-            ["Fatigued", "systems/pf2e/icons/skills/red_33.jpg", ""],
-            ["Flat-Footed", "systems/pf2e/icons/skills/weapon_17.jpg", ""],
-            ["Fleeing", "systems/pf2e/icons/skills/beast_01.jpg", ""],
-            ["Frightened", "systems/pf2e/icons/skills/shadow_01.jpg", ""],
-            ["Grabbed", "systems/pf2e/icons/skills/yellow_08.jpg", ""],
-            ["Hidden", "systems/pf2e/icons/skills/shadow_17.jpg", ""],
-            ["Immobilized", "systems/pf2e/icons/skills/green_16.jpg", ""],
-            ["Invisible", "systems/pf2e/icons/skills/water_07.jpg", ""],
-            ["Observed", "systems/pf2e/icons/skills/light_02.jpg", ""],
-            ["Paralyzed", "systems/pf2e/icons/skills/ice_03.jpg", ""],
-            ["Persistent Damage", "systems/pf2e/icons/skills/blood_03.jpg", ""],
-            ["Petrified", "systems/pf2e/icons/skills/affliction_09.jpg", ""],
-            ["Prone", "systems/pf2e/icons/skills/yellow_19.jpg", ""],
-            ["Quickened", "systems/pf2e/icons/skills/blue_35.jpg", ""],
-            ["Restrained", "systems/pf2e/icons/skills/red_06.jpg", ""],
-            ["Sickened", "systems/pf2e/icons/skills/affliction_13.jpg", ""],
-            ["Slowed", "systems/pf2e/icons/skills/blue_04.jpg", ""],
-            ["Stunned", "systems/pf2e/icons/skills/affliction_02.jpg", ""],
-            ["Stupefied", "systems/pf2e/icons/skills/violet_03.jpg", ""],
-            ["Unconscious", "systems/pf2e/icons/skills/light_01.jpg", ""],
-            ["Undetected", "systems/pf2e/icons/skills/emerald_07.jpg", ""],
-            ["Unnoticed", "systems/pf2e/icons/skills/green_18.jpg", ""],
-            ["Wounded", "systems/pf2e/icons/skills/blood_04.jpg", ""],
-        ];
-
-        const wfrp4eMap = [];
-        const archmageMap = [];
-        const otherMap = [];
-
-        return {
-            "dnd5e": dnd5eMap,
-            "pf1e": pf1eMap,
-            "pf2e": pf2eMap,
-            "wfrp4e": wfrp4eMap,
-            "archmage": archmageMap,
-            "other": otherMap,
-        };
-    }
-
-    /**
-     * Defines the metadata for the gadget's settings
-     */
-    get SETTINGS_META() {
-        return {
-            
-    }
-
-    /**
-     * Gets the default game system names stored in the constants butler class
-     */
-    get systemChoices() {
-        const systemIds = Object.getOwnPropertyNames(CUBButler.DEFAULT_GAME_SYSTEMS);
-        let result = {};
-
-        for (let i of systemIds) {
-            result[i] = CUBButler.DEFAULT_GAME_SYSTEMS[i].name;
+        if (!fp.files.length) {
+            return;
         }
-        return result;
+
+        for (const file of fp.files) {
+            const jsonFile = await fetch(fp);
+            const json = await jsonFile.json();
+            const map = JSON.parse(json);
+
+            if (map) {
+                defaultMaps.push(map);
+            }
+        }
+        return defaultMaps;
     }
+
+    static getDefaultMap(system) {
+        if (!game.cub.enhancedConditions.defaultMaps) {
+            game.cub.enhancedConditions.defaultsMaps = EnhancedConditions.getDefaultMaps(BUTLER.DEFAULT_CONFIG.enhancedConditions.conditionMapsPath)
+        }
+
+        return game.cub.enhancedConditions.defaultMaps[system];
+    }
+
 
     /**
      * Retrieve the statusEffect icons from the Foundry CONFIG
@@ -136,7 +63,7 @@ class CUBEnhancedConditions {
      * @param {String} condition - the condition being evaluated
      */
     static async _createJournalEntry(condition) {
-        let entry;
+        let entry = null;
 
         try {
             entry = await JournalEntry.create({
@@ -150,7 +77,7 @@ class CUBEnhancedConditions {
         } catch (e) {
             //console.log(e);
         } finally {
-            return await entry;
+            return entry;
         }
 
     }
@@ -158,7 +85,7 @@ class CUBEnhancedConditions {
     /**
      * Updates the core CONFIG.statusEffects with the new icons
      */
-    _updateStatusIcons(conditionMap) {
+    static _updateStatusIcons(conditionMap) {
         const map = conditionMap || this.settings.maps[this.settings.system];
         let entries;
 
@@ -240,26 +167,20 @@ class CUBEnhancedConditions {
      * Creates a div for the module and button for the Condition Lab
      * @param {Object} html the html element where the button will be created
      */
-    static _createSidebarButton(html) {
-        const cubDiv = $(
-            `<div id="combat-utility-belt">
-                    <h4>Combat Utility Belt</h4>
-                </div>`
-        );
+    static _createLabButton(html) {
+        const cubDiv = html.find("#combat-utility-belt");
 
         const labButton = $(
             `<button id="condition-lab" data-action="condition-lab">
-                    <i class="fas fa-flask"></i> ${CUBEnhancedConditionsConfig.defaultOptions.title}
+                    <i class="fas fa-flask"></i> ${BUTLER.DEFAULT_CONFIG.enhancedConditions.conditionLab.title}
                 </button>`
         );
 
         cubDiv.append(labButton);
 
-        const setupButton = html.find("button[data-action='setup']");
-        setupButton.after(cubDiv);
 
         labButton.click(ev => {
-            new CUBEnhancedConditionsConfig().render(true);
+            new ConditionLab().render(true);
         });
 
         
@@ -271,18 +192,18 @@ class CUBEnhancedConditions {
      * @param {Boolean} display 
      * @todo: extract to helper in sidekick class?
      */
-    _toggleSidebarButtonDisplay(display) {
-        let sidebarButton = document.getElementById("combat-utility-belt");
+    static _toggleLabButtonVisibility(display) {
+        if (!game.settings.isGM) {
+            return;
+        }
 
-        if (game.user.isGM && display && sidebarButton) {
-            sidebarButton.style.display = "block";
+        let labButton = document.getElementById("condition-lab");
+
+        if (display && !labButton) {
+            labButton.style.display = "block";
         } else if (sidebarButton && (!game.user.isGM || !display)) {
             sidebarButton.style.display = "none";
         }
-    }
-
-    get system() {
-        return this.settings.system;
     }
 
     /**

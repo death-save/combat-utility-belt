@@ -1,4 +1,11 @@
+import * as BUTLER from "butler.js";
+import { Sidekick } from "sidekick.js";
+
 /**
+ * 
+ */
+export class PanSelect {
+    /**
      * Determines if a panning workflow should begin
      * @param {Object} combat
      * @param {Object} update 
@@ -9,7 +16,7 @@
         }
 
         const combatant = combat.combatant;
-        const temporary = hasProperty(combatant, "flags." + CUBButler.MODULE_NAME + "." + CUBCombatTracker.prototype.GADGET_NAME + "(temporaryCombatant)");
+        const temporary = hasProperty(combatant, `flags.${BUTLER.MODULE_NAME}.${BUTLER.DEFAULT_CONFIG.temporaryCombatants.flags.temporaryCombatant}`);
 
         if (temporary) {
             return;
@@ -124,7 +131,7 @@
         }
 
         const combatant = combat.combatant;
-        const temporary = hasProperty(combatant, "flags." + CUBButler.MODULE_NAME + "." + CUBCombatTracker.prototype.GADGET_NAME + "(temporaryCombatant)");
+        const temporary = hasProperty(combatant, `flags.${BUTLER.MODULE_NAME}.${BUTLER.DEFAULT_CONFIG.temporaryCombatants.flags.temporaryCombatant}`);
 
         if (temporary) {
             return;
@@ -137,7 +144,7 @@
             return;
         }
 
-        if (game.user.isGM && this.settings.selectOnNextTurn && this.settings.selectGM !== CUBSidekick.getKeyByValue(this.DEFAULT_CONFIG.panGM, this.DEFAULT_CONFIG.panGM.none)) {
+        if (game.user.isGM && this.settings.selectOnNextTurn && this.settings.selectGM !== Sidekick.getKeyByValue(this.DEFAULT_CONFIG.panGM, this.DEFAULT_CONFIG.panGM.none)) {
             return this._checkGMSelect(token);
         }
 
@@ -217,3 +224,4 @@
             return canvas.tokens.releaseAll();
         }
     }
+}

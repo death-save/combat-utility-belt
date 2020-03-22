@@ -1,344 +1,344 @@
 import * as BUTLER from "./butler.js";
+import { EnhancedConditions } from "./enhanced-conditions/enhanced-conditions.js";
+import { Sidekick } from "./sidekick.js";
+import { TokenUtility } from "./utils/token.js";
 
 export const SETTINGS_METADATA = {
-    enhancedConditions: {
-        name: this.SETTINGS_DESCRIPTORS.EnhancedConditionsN,
-        hint: this.SETTINGS_DESCRIPTORS.EnhancedConditionsH,
+
+    /* -------------------------------------------- */
+    /*              EnhancedConditions              */
+    /* -------------------------------------------- */
+
+    [BUTLER.SETTING_KEYS.enhancedConditions.enable]: {
+        name: "SETTINGS.EnhancedConditions.EnableN",
+        hint: "SETTINGS.EnhancedConditions.EnableH",
         scope: "world",
         type: Boolean,
         default: false,
         config: true,
         onChange: s => {
-            this.settings.enhancedConditions = s;
-            this._toggleSidebarButtonDisplay(s);
-            this._updateStatusIcons();
+            EnhancedConditions._toggleLabButtonVisibility(s);
+            EnhancedConditions._updateStatusIcons();
         }
     },
-
-    system: {
-        name: this.SETTINGS_DESCRIPTORS.SystemN,
-        hint: this.SETTINGS_DESCRIPTORS.SystemH,
+    [BUTLER.SETTING_KEYS.enhancedConditions.system]: {
+        name: "SETTINGS.EnhancedConditions.SystemN",
+        hint: "SETTINGS.EnhancedConditions.SystemH",
         scope: "world",
         type: String,
-        default: (BUTLER.DEFAULT_GAME_SYSTEMS[game.system.id] != null) ? BUTLER.DEFAULT_GAME_SYSTEMS[game.system.id].id : BUTLER.DEFAULT_GAME_SYSTEMS.other.id,
-        choices: this.systemChoices,
+        default: BUTLER.DEFAULT_GAME_SYSTEMS[game.system.id] !== null ? BUTLER.DEFAULT_GAME_SYSTEMS[game.system.id].id : BUTLER.DEFAULT_GAME_SYSTEMS.other.id,
+        choices: Sidekick.getSystemChoices(),
         config: true,
-        onChange: s => {
-            this.settings.system = s;
-        }
+        onChange: s => {}
     },
-
-    maps: {
-        name: this.SETTINGS_DESCRIPTORS.MapsN,
-        hint: this.SETTINGS_DESCRIPTORS.MapsH,
+    [BUTLER.SETTING_KEYS.enhancedConditions.map]: {
+        name: "SETTINGS.EnhancedConditions.ActiveConditionMapN",
+        hint: "SETTINGS.EnhancedConditions.ActiveConditionMapH",
         scope: "world",
         type: Object,
-        default: this.DEFAULT_MAPS,
+        default: EnhancedConditions.getDefaultMap(),
         onChange: s => {
-            this.settings.maps = s;
-            this._updateStatusIcons(s[this.settings.system]);
+            EnhancedConditions._updateStatusIcons(s[this.settings.system]);
         }
     },
-
-    outputChat: {
-        name: this.SETTINGS_DESCRIPTORS.OutputChatN,
-        hint: this.SETTINGS_DESCRIPTORS.OutputChatH,
+    [BUTLER.SETTING_KEYS.enhancedConditions.maps]: {
+        name: "SETTINGS.EnhancedConditions.ConditionMapsN",
+        hint: "SETTINGS.EnhancedConditions.ConditionMapsH",
         scope: "world",
-        type: Boolean,
-        config: false,
-        default: this.DEFAULT_CONFIG.outputChat,
+        type: Object,
+        default: EnhancedConditions.getDefaultMaps(BUTLER.DEFAULT_CONFIG.enhancedConditions.conditionMapsPath),
         onChange: s => {
-            this.settings.output = s;
+            EnhancedConditions._updateStatusIcons(s[this.settings.system]);
         }
     },
-
-    removeDefaultEffects: {
-        name: this.SETTINGS_DESCRIPTORS.RemoveDefaultEffectsN,
-        hint: this.SETTINGS_DESCRIPTORS.RemoveDefaultEffectsH,
+    [BUTLER.SETTING_KEYS.enhancedConditions.output]: {
+        name: "SETTINGS.EnhancedConditions.OutputChatN",
+        hint: "SETTINGS.EnhancedConditions.OutputChatH",
         scope: "world",
         type: Boolean,
         config: true,
-        default: false,
+        default: BUTLER.DEFAULT_CONFIG.enhancedConditions.outputChat,
+        onChange: s => {}
+    },
+    [BUTLER.SETTING_KEYS.enhancedConditions.removeDefaultEffects]: {
+        name: "SETTINGS.EnhancedConditions.RemoveDefaultEffectsN",
+        hint: "SETTINGS.EnhancedConditions.RemoveDefaultEffectsH",
+        scope: "world",
+        type: Boolean,
+        config: true,
+        default: BUTLER.DEFAULT_CONFIG.enhancedConditions.removeDefaultEffects,
         onChange: s => {
-            this.settings.removeDefaultEffects = s;
-            this._updateStatusIcons();
+            EnhancedConditions._updateStatusIcons();
         }
     },
 
-    mightySummoner: {
-        name: CUBTokenUtility.SETTINGS_DESCRIPTORS.MightySummonerN,
-        hint: CUBTokenUtility.SETTINGS_DESCRIPTORS.MightySummonerH,
-        default: CUBTokenUtility.DEFAULT_CONFIG.mightySummoner,
+    /* -------------------------------------------- */
+    /*                 TokenUtility                 */
+    /* -------------------------------------------- */
+
+    [BUTLER.SETTING_KEYS.tokenUtility.mightySummoner]: {
+        name: "SETTINGS.TokenUtility.MightySummonerN",
+        hint: "SETTINGS.TokenUtility.MightySummonerH",
+        default: BUTLER.DEFAULT_CONFIG.tokenUtility.mightySummoner,
         scope: "world",
         type: Boolean,
         config: true,
-        onChange: s => {
-            this.settings.mightySummoner = s;
-        }
+        onChange: s => {}
     },
-    autoRollHostileHp: {
-        name: CUBTokenUtility.SETTINGS_DESCRIPTORS.AutoRollHostileHpN,
-        hint: CUBTokenUtility.SETTINGS_DESCRIPTORS.AutoRollHostileHpH,
-        default: CUBTokenUtility.DEFAULT_CONFIG.autoRollHostileHp,
+    [BUTLER.SETTING_KEYS.tokenUtility.autoRollHostileHP]: {
+        name: "SETTINGS.TokenUtility.AutoRollHostileHpN",
+        hint: "SETTINGS.TokenUtility.AutoRollHostileHpH",
+        default: BUTLER.DEFAULT_CONFIG.autoRollHostileHp,
         scope: "world",
         type: Boolean,
         config: true,
-        onChange: s => {
-            this.settings.autoRollHostileHp = s;
-        }
+        onChange: s => {}
     },
-    tokenEffectSize: {
-        name: CUBTokenUtility.SETTINGS_DESCRIPTORS.TokenEffectSizeN,
-        hint: CUBTokenUtility.SETTINGS_DESCRIPTORS.TokenEffectSizeH,
-        default: CUBSidekick.getKeyByValue(CUBTokenUtility.DEFAULT_CONFIG.tokenEffectSizeChoices, CUBTokenUtility.DEFAULT_CONFIG.tokenEffectSizeChoices.small),
+    [BUTLER.SETTING_KEYS.tokenUtility.effectSize]: {
+        name: "SETTINGS.TokenUtility.TokenEffectSizeN",
+        hint: "SETTINGS.TokenUtility.TokenEffectSizeH",
+        default: Sidekick.getKeyByValue(BUTLER.DEFAULT_CONFIG.tokenUtility.tokenEffectSizeChoices, BUTLER.DEFAULT_CONFIG.tokenUtility.tokenEffectSizeChoices.small),
         scope: "client",
         type: String,
-        choices: CUBTokenUtility.DEFAULT_CONFIG.tokenEffectSizeChoices,
+        choices: BUTLER.DEFAULT_CONFIG.tokenUtility.tokenEffectSizeChoices,
         config: true,
         onChange: s => {
-            this.settings.tokenEffectSize = s;
-            Token.prototype.drawEffects = CUBTokenUtility._patchDrawEffects;
+            Token.prototype.drawEffects = TokenUtility._patchDrawEffects;
             canvas.draw();
         }
     },
-    panOnNextTurn: {
-        name: this.SETTINGS_DESCRIPTORS.PanOnNextTurnN,
-        hint: this.SETTINGS_DESCRIPTORS.PanOnNextTurnH,
-        default: this.DEFAULT_CONFIG.panOnNextTurn,
-        scope: "world",
-        type: Boolean,
-        config: true,
-        onChange: s => {
-            this.settings.panOnNextTurn = s;
-        }
-    },
-    panGM: {
-        name: this.SETTINGS_DESCRIPTORS.PanGMN,
-        hint: this.SETTINGS_DESCRIPTORS.PanGMH,
-        default: CUBSidekick.getKeyByValue(this.DEFAULT_CONFIG.panGM, this.DEFAULT_CONFIG.panGM.none),
-        scope: "world",
-        type: String,
-        choices: this.DEFAULT_CONFIG.panGM,
-        config: true,
-        onChange: s => {
-            this.settings.panGM = s;
-        }
-    },
-    panPlayers: {
-        name: this.SETTINGS_DESCRIPTORS.PanPlayersN,
-        hint: this.SETTINGS_DESCRIPTORS.PanPlayersH,
-        default: CUBSidekick.getKeyByValue(this.DEFAULT_CONFIG.panPlayers, this.DEFAULT_CONFIG.panPlayers.none),
-        scope: "world",
-        type: String,
-        choices: this.DEFAULT_CONFIG.panPlayers,
-        config: true,
-        onChange: s => {
-            this.settings.panPlayers = s;
-        }
-    },
-    selectOnNextTurn: {
-        name: this.SETTINGS_DESCRIPTORS.SelectOnNextTurnN,
-        hint: this.SETTINGS_DESCRIPTORS.SelectOnNextTurnH,
-        default: this.DEFAULT_CONFIG.selectOnNextTurn,
-        scope: "world",
-        type: Boolean,
-        config: true,
-        onChange: s => {
-            this.settings.selectOnNextTurn = s;
-        }
-    },
-    selectGM: {
-        name: this.SETTINGS_DESCRIPTORS.SelectGMN,
-        hint: this.SETTINGS_DESCRIPTORS.SelectGMH,
-        default: CUBSidekick.getKeyByValue(this.DEFAULT_CONFIG.panGM, this.DEFAULT_CONFIG.panGM.none),
-        scope: "world",
-        type: String,
-        choices: this.DEFAULT_CONFIG.panGM, //uses same options as Pan GM
-        config: true,
-        onChange: s => {
-            this.settings.selectGM = s;
-        }
-    },
-    selectPlayers: {
-        name: this.SETTINGS_DESCRIPTORS.SelectPlayersN,
-        hint: this.SETTINGS_DESCRIPTORS.SelectPlayersH,
-        default: this.DEFAULT_CONFIG.selectPlayers,
-        scope: "world",
-        type: Boolean,
-        config: true,
-        onChange: s => {
-            this.settings.selectPlayers = s;
-        }
-    },
-    observerDeselect: {
-        name: this.SETTINGS_DESCRIPTORS.ObserverDeselectN,
-        hint: this.SETTINGS_DESCRIPTORS.ObserverDeselectH,
-        default: this.DEFAULT_CONFIG.observerDeselect,
-        scope: "world",
-        type: Boolean,
-        config: true,
-        onChange: s => {
-            this.settings.observerDeselect = s;
-        }
-    },
-    tempCombatants: {
-        name: this.SETTINGS_DESCRIPTORS.TempCombatantsN,
-        hint: this.SETTINGS_DESCRIPTORS.TempCombatantsH,
-        default: this.DEFAULT_CONFIG.tempCombatants,
-        scope: "world",
-        type: Boolean,
-        config: true,
-        onChange: s => {
-            this.settings.tempCombatants = s;
-            ui.combat.render();
-        }
-    },
-    trackerConfigSettings: {
-        name: this.SETTINGS_DESCRIPTORS.TrackerConfigSettingsN,
-        hint: this.SETTINGS_DESCRIPTORS.TrackerConfigSettingsH,
-        default: {},
-        scope: "world",
-        type: Object,
-        config: false,
-        onChange: s => {
-            this.settings.trackerConfigSettings = s;
-            ui.combat.render();
-        }
-    },
-    xpModule: {
-        name: this.SETTINGS_DESCRIPTORS.XPModuleN,
-        hint: this.SETTINGS_DESCRIPTORS.XPModuleH,
-        default: this.DEFAULT_CONFIG.xpModule,
-        scope: "world",
-        type: Boolean,
-        config: true,
-        onChange: s => {
-            this.settings.xpModule = s;
-        }
-    },
-    concentrating: {
-        name: this.SETTINGS_DESCRIPTORS.ConcentratingN,
-        hint: this.SETTINGS_DESCRIPTORS.ConcentratingH,
-        default: this.DEFAULT_CONFIG.concentrating,
-        scope: "world",
-        type: Boolean,
-        config: true,
-        onChange: s => {
-            this.settings.concentrating = s;
-        }
-    },
-    concentratingIcon: {
-        name: this.SETTINGS_DESCRIPTORS.ConcentratingIconN,
-        hint: this.SETTINGS_DESCRIPTORS.ConcentratingIconH,
-        default: this.DEFAULT_CONFIG.concentratingIcon,
-        scope: "world",
-        type: String,
-        config: true,
-        onChange: s => {
-            this.settings.concentratingIcon = s;
-        }
-    },
-    healthAttribute: {
-        name: this.SETTINGS_DESCRIPTORS.HealthAttributeN,
-        hint: this.SETTINGS_DESCRIPTORS.HealthAttributeH,
-        default: (CUBButler.DEFAULT_GAME_SYSTEMS[game.system.id] != null) ? CUBButler.DEFAULT_GAME_SYSTEMS[game.system.id].healthAttribute : CUBButler.DEFAULT_GAME_SYSTEMS.other.healthAttribute,
-        scope: "world",
-        type: String,
-        config: true,
-        onChange: s => {
-            this.settings.healthAttribute = s;
-        }
-    },
-    displayChat: {
-        name: this.SETTINGS_DESCRIPTORS.ConcentratingChatMessageN,
-        hint: this.SETTINGS_DESCRIPTORS.ConcentratingChatMessageH,
-        default: (CUBButler.DEFAULT_GAME_SYSTEMS[game.system.id] != null) ? CUBButler.DEFAULT_GAME_SYSTEMS[game.system.id].healthAttribute : CUBButler.DEFAULT_GAME_SYSTEMS.other.healthAttribute,
-        scope: "world",
-        type: Boolean,
-        config: true,
-        onChange: s => {
-            this.settings.displayChat = s;
-        }
-    },
-    rollRequest: {
-        name: this.SETTINGS_DESCRIPTORS.ConcentratingRollRequestN,
-        hint: this.SETTINGS_DESCRIPTORS.ConcentratingRollRequestH,
-        default: (CUBButler.DEFAULT_GAME_SYSTEMS[game.system.id] != null) ? CUBButler.DEFAULT_GAME_SYSTEMS[game.system.id].healthAttribute : CUBButler.DEFAULT_GAME_SYSTEMS.other.healthAttribute,
-        scope: "world",
-        type: Boolean,
-        config: true,
-        onChange: s => {
-            this.settings.rollRequest = s;
-        }
-    },
-    autoConcentrate: {
-        name: this.SETTINGS_DESCRIPTORS.ConcentratingAutoStatusN,
-        hint: this.SETTINGS_DESCRIPTORS.ConcentratingAutoStatusH,
-        default: false,
-        scope: "world",
-        type: Boolean,
-        config: true,
-        onChange: s => {
-            this.settings.autoConcentrate = s;
-        }
-    },
-    notifyDoubleConcentration: {
-        name: this.SETTINGS_DESCRIPTORS.ConcentratingNotifyDoubleN,
-        hint: this.SETTINGS_DESCRIPTORS.ConcentratingNotifyDoubleH,
-        default: "None",
-        scope: "world",
-        type: String,
-        choices: ["None", "GM Only", "Everyone"],
-        config: true,
-        onChange: s => {
-            this.settings.notifyDoubleConcentration = s;
-        }
-    },
-    hideNames: {
-        name: this.SETTINGS_DESCRIPTORS.HideNamesN,
-        hint: this.SETTINGS_DESCRIPTORS.HideNamesH,
-        scope: "world",
-        type: Boolean,
-        default: this.DEFAULT_CONFIG.hideNames,
-        config: true,
-        onChange: s => {
-            this.settings.hideNames = s;
 
+    /* -------------------------------------------- */
+    /*                   PanSelect                  */
+    /* -------------------------------------------- */
+
+    [BUTLER.SETTING_KEYS.panSelect.enablePan]: {
+        name: "SETTINGS.PanSelect.EnablePanN",
+        hint: "SETTINGS.PanSelect.EnablePanH",
+        default: BUTLER.DEFAULT_CONFIG.panSelect.enablePan,
+        scope: "world",
+        type: Boolean,
+        config: true,
+        onChange: s => {}
+    },
+    [BUTLER.SETTING_KEYS.panSelect.panGM]: {
+        name: "SETTINGS.PanSelect.PanGMN",
+        hint: "SETTINGS.PanSelect.PanGMH",
+        default: Sidekick.getKeyByValue(BUTLER.DEFAULT_CONFIG.panSelect.panGM, BUTLER.DEFAULT_CONFIG.panSelect.panGM.none),
+        scope: "world",
+        type: String,
+        choices: BUTLER.DEFAULT_CONFIG.panSelect.panGM,
+        config: true,
+        onChange: s => {}
+    },
+    [BUTLER.SETTING_KEYS.panSelect.panPlayers]: {
+        name: "SETTINGS.PanSelect.PanPlayersN",
+        hint: "SETTINGS.PanSelect.PanPlayersH",
+        default: Sidekick.getKeyByValue(BUTLER.DEFAULT_CONFIG.panSelect.panPlayers, BUTLER.DEFAULT_CONFIG.panSelect.panPlayers.none),
+        scope: "world",
+        type: String,
+        choices: BUTLER.DEFAULT_CONFIG.panSelect.panPlayers,
+        config: true,
+        onChange: s => {}
+    },
+    [BUTLER.SETTING_KEYS.panSelect.enableSelect]: {
+        name: "SETTINGS.PanSelect.EnableSelectN",
+        hint: "SETTINGS.PanSelect.EnableSelectH",
+        default: BUTLER.DEFAULT_CONFIG.panSelect.enableSelect,
+        scope: "world",
+        type: Boolean,
+        config: true,
+        onChange: s => {}
+    },
+    [BUTLER.SETTING_KEYS.panSelect.selectGM]: {
+        name: "SETTINGS.PanSelect.SelectGMN",
+        hint: "SETTINGS.PanSelect.SelectGMH",
+        default: Sidekick.getKeyByValue(BUTLER.DEFAULT_CONFIG.panSelect.panGM, BUTLER.DEFAULT_CONFIG.panSelect.panGM.none),
+        scope: "world",
+        type: String,
+        choices: BUTLER.DEFAULT_CONFIG.panSelect.panGM, //uses same options as Pan GM
+        config: true,
+        onChange: s => {}
+    },
+    [BUTLER.SETTING_KEYS.panSelect.selectPlayers]: {
+        name: "SETTINGS.PanSelect.SelectPlayersN",
+        hint: "SETTINGS.PanSelect.SelectPlayersH",
+        default: BUTLER.DEFAULT_CONFIG.panSelect.selectPlayers,
+        scope: "world",
+        type: Boolean,
+        config: true,
+        onChange: s => {}
+    },
+    [BUTLER.SETTING_KEYS.panSelect.observerDeselect]: {
+        name: "SETTINGS.PanSelect.ObserverDeselectN",
+        hint: "SETTINGS.PanSelect.ObserverDeselectH",
+        default: BUTLER.DEFAULT_CONFIG.panSelect.observerDeselect,
+        scope: "world",
+        type: Boolean,
+        config: true,
+        onChange: s => {}
+    },
+
+    /* -------------------------------------------- */
+    /*              TemporaryCombatants             */
+    /* -------------------------------------------- */
+
+    [BUTLER.SETTING_KEYS.temporaryCombatants.enable]: {
+        name: "SETTINGS.TemporaryCombatants.EnableN",
+        hint: "SETTINGS.TemporaryCombatants.EnableH",
+        default: BUTLER.DEFAULT_CONFIG.tempCombatants.enable,
+        scope: "world",
+        type: Boolean,
+        config: true,
+        onChange: s => {
+            ui.combat.render();
+        }
+    },
+
+    /* -------------------------------------------- */
+    /*             CombatTrackerUtility             */
+    /* -------------------------------------------- */
+
+    [BUTLER.SETTING_KEYS.trackerUtility.enableGiveXP]: {
+        name: "SETTINGS.TrackerUtility.XPModuleN",
+        hint: "SETTINGS.TrackerUtility.XPModuleH",
+        default: BUTLER.DEFAULT_CONFIG.trackerUtility.enableGiveXP,
+        scope: "world",
+        type: Boolean,
+        config: true,
+        onChange: s => {}
+    },
+
+    /* -------------------------------------------- */
+    /*                 Concentrator                 */
+    /* -------------------------------------------- */
+
+    [BUTLER.SETTING_KEYS.concentrator.enable]: {
+        name: "SETTINGS.Concentrator.EnableN",
+        hint: "SETTINGS.Concentrator.EnableH",
+        default: BUTLER.DEFAULT_CONFIG.concentrator.enable,
+        scope: "world",
+        type: Boolean,
+        config: true,
+        onChange: s => {}
+    },
+    [BUTLER.SETTING_KEYS.concentrator.icon]: {
+        name: "SETTINGS.Concentrator.IconN",
+        hint: "SETTINGS.Concentrator.IconH",
+        default: BUTLER.DEFAULT_CONFIG.concentrator.icon,
+        scope: "world",
+        type: String,
+        config: true,
+        onChange: s => {}
+    },
+    [BUTLER.SETTING_KEYS.concentrator.concentrationAttribute]: {
+        name: "SETTINGS.Concentrator.ConcentrationAttributeN",
+        hint: "SETTINGS.Concentrator.ConcentrationAttributeH",
+        default: BUTLER.DEFAULT_GAME_SYSTEMS[game.system.id] !== null ? BUTLER.DEFAULT_GAME_SYSTEMS[game.system.id].concentrationAttribute : BUTLER.DEFAULT_GAME_SYSTEMS.other.concentrationAttribute,
+        scope: "world",
+        type: String,
+        config: true,
+        onChange: s => {}
+    },
+    [BUTLER.SETTING_KEYS.concentrator.healthAttribute]: {
+        name: "SETTINGS.Concentrator.HealthAttributeN",
+        hint: "SETTINGS.Concentrator.HealthAttributeH",
+        default: BUTLER.DEFAULT_GAME_SYSTEMS[game.system.id] !== null ? BUTLER.DEFAULT_GAME_SYSTEMS[game.system.id].healthAttribute : BUTLER.DEFAULT_GAME_SYSTEMS.other.healthAttribute,
+        scope: "world",
+        type: String,
+        config: true,
+        onChange: s => {}
+    },
+    [BUTLER.SETTING_KEYS.concentrator.outputChat]: {
+        name: "SETTINGS.Concentrator.OutputToChatN",
+        hint: "SETTINGS.Concentrator.OutputToChatH",
+        default: BUTLER.DEFAULT_CONFIG.concentrator.outputChat,
+        scope: "world",
+        type: Boolean,
+        config: true,
+        onChange: s => {}
+    },
+    [BUTLER.SETTING_KEYS.concentrator.prompt]: {
+        name: "SETTINGS.Concentrator.PromptRollN",
+        hint: "SETTINGS.Concentrator.PromptRollH",
+        default: BUTLER.DEFAULT_CONFIG.concentrator.promptRoll,
+        scope: "world",
+        type: Boolean,
+        config: true,
+        onChange: s => {}
+    },
+    [BUTLER.SETTING_KEYS.concentrator.autoConcentrate]: {
+        name: "SETTINGS.Concentrator.AutoConcentrateN",
+        hint: "SETTINGS.Concentrator.AutoConcentrateH",
+        default: BUTLER.DEFAULT_CONFIG.concentrator.autoConcentrate,
+        scope: "world",
+        type: Boolean,
+        config: true,
+        onChange: s => {}
+    },
+    [BUTLER.SETTING_KEYS.concentrator.notifyDouble]: {
+        name: "SETTINGS.Concentrator.ConcentratingNotifyDoubleN",
+        hint: "SETTINGS.Concentrator.ConcentratingNotifyDoubleH",
+        default: Sidekick.getKeyByValue(BUTLER.DEFAULT_CONFIG.concentrator.notifyDouble, BUTLER.DEFAULT_CONFIG.concentrator.notifyDouble.none),
+        scope: "world",
+        type: String,
+        choices: BUTLER.DEFAULT_CONFIG.concentrator.notifyDouble,
+        config: true,
+        onChange: s => {}
+    },
+
+    /* -------------------------------------------- */
+    /*                 HideNPCNames                 */
+    /* -------------------------------------------- */
+
+    [BUTLER.SETTING_KEYS.hideNames.enable]: {
+        name: "SETTINGS.HideNames.EnableN",
+        hint: "SETTINGS.HideNames.EnableH",
+        scope: "world",
+        type: Boolean,
+        default: BUTLER.DEFAULT_CONFIG.hideNames.enable,
+        config: true,
+        onChange: s => {
             ui.combat.render();
             ui.chat.render();
         }
     },
-    unknownCreatureString: {
-        name: this.SETTINGS_DESCRIPTORS.UnknownCreatureN,
-        hint: this.SETTINGS_DESCRIPTORS.UnknownCreatureH,
+    [BUTLER.SETTING_KEYS.hideNames.replacementString]: {
+        name: "SETTINGS.HideNames.ReplacementStringN",
+        hint: "SETTINGS.HideNames.ReplacementStringH",
         scope: "world",
         type: String,
-        default: this.DEFAULT_CONFIG.unknownCreatureString,
+        default: BUTLER.DEFAULT_CONFIG.hideNames.replacementString,
         config: true,
         onChange: s => {
-            this.settings.unknownCreatureString = s;
-            if (this.settings.hideNames) {
+            const enable = Sidekick.getSetting(BUTLER.SETTING_KEYS.hideNames.enable);
+
+            if (enable) {
                 ui.combat.render();
                 ui.chat.render();
             }
         }
     },
-    hideFooter: {
-        name: this.SETTINGS_DESCRIPTORS.HideFooterN,
-        hint: this.SETTINGS_DESCRIPTORS.HideFooterH,
+    [BUTLER.SETTING_KEYS.hideNames.hideFooter]: {
+        name: "SETTINGS.HideNames.HideFooterN",
+        hint: "SETTINGS.HideNames.HideFooterH",
         scope: "world",
         type: Boolean,
-        default: this.DEFAULT_CONFIG.hideFooter,
+        default: BUTLER.DEFAULT_CONFIG.hideNames.hideFooter,
         config: true,
         onChange: s => {
-            this.settings.hideFooter = s;
             ui.chat.render();
         }
     },
-    injured: {
-        name: this.SETTINGS_DESCRIPTORS.InjuredN,
-        hint: this.SETTINGS_DESCRIPTORS.InjuredH,
-        default: this.DEFAULT_CONFIG.injured,
+
+    /* -------------------------------------------- */
+    /*              MarkInjuredDead                 */
+    /* -------------------------------------------- */
+
+    [BUTLER.SETTING_KEYS.injuredDead.enableInjured]: {
+        name: "SETTINGS.InjuredDead.EnableInjuredN",
+        hint: "SETTINGS.InjuredDead.EnableInjuredH",
+        default: BUTLER.DEFAULT_CONFIG.injuredDead.enableInjured,
         scope: "world",
         type: Boolean,
         config: true,
@@ -346,167 +346,109 @@ export const SETTINGS_METADATA = {
             this.settings.injured = s;
         }
     },
-    injuredIcon: {
-        name: this.SETTINGS_DESCRIPTORS.InjuredIconN,
-        hint: this.SETTINGS_DESCRIPTORS.InjuredIconH,
-        default: this.DEFAULT_CONFIG.injuredIcon,
+    [BUTLER.SETTING_KEYS.injuredDead.injuredIcon]: {
+        name: "SETTINGS.InjuredDead.InjuredIconN",
+        hint: "SETTINGS.InjuredDead.InjuredIconH",
+        default: BUTLER.DEFAULT_CONFIG.injuredDead.injuredIcon,
         scope: "world",
         type: String,
         config: true,
-        onChange: s => {
-            this.settings.injuredIcon = s;
-        }
+        onChange: s => {}
     },
-    threshold: {
-        name: this.SETTINGS_DESCRIPTORS.ThresholdN,
-        hint: this.SETTINGS_DESCRIPTORS.ThresholdH,
-        default: this.DEFAULT_CONFIG.threshold,
+    [BUTLER.SETTING_KEYS.injuredDead.threshold]: {
+        name: "SETTINGS.InjuredDead.ThresholdN",
+        hint: "SETTINGS.InjuredDead.ThresholdH",
+        default: BUTLER.DEFAULT_CONFIG.injuredDead.threshold,
         scope: "world",
         type: Number,
         config: true,
-        onChange: s => {
-            this.settings.threshold = s;
-        }
+        onChange: s => {}
     },
-    dead: {
-        name: this.SETTINGS_DESCRIPTORS.DeadN,
-        hint: this.SETTINGS_DESCRIPTORS.DeadH,
-        default: this.DEFAULT_CONFIG.dead,
+    [BUTLER.SETTING_KEYS.injuredDead.enableDead]: {
+        name: "SETTINGS.InjuredDead.EnableDeadN",
+        hint: "SETTINGS.InjuredDead.EnableDeadH",
+        default: BUTLER.DEFAULT_CONFIG.injuredDead.enableDead,
         scope: "world",
         type: Boolean,
         config: true,
-        onChange: s => {
-            this.settings.dead = s;
-        }
+        onChange: s => {}
     },
-    deadIcon: {
-        name: this.SETTINGS_DESCRIPTORS.DeadIconN,
-        hint: this.SETTINGS_DESCRIPTORS.DeadIconH,
-        default: this.DEFAULT_CONFIG.deadIcon,
+    [BUTLER.SETTING_KEYS.injuredDead.deadIcon]: {
+        name: "SETTINGS.InjuredDead.DeadIconN",
+        hint: "SETTINGS.InjuredDead.DeadIconH",
+        default: BUTLER.DEFAULT_CONFIG.injuredDead.deadIcon,
         scope: "world",
         type: String,
         config: true,
-        onChange: s => {
-            this.settings.deadIcon = s;
-        }
+        onChange: s => {}
     },
-    healthAttribute: {
-        name: this.SETTINGS_DESCRIPTORS.HealthAttributeN,
-        hint: this.SETTINGS_DESCRIPTORS.HealthAttributeH,
-        default: (CUBButler.DEFAULT_GAME_SYSTEMS[game.system.id] != null) ? CUBButler.DEFAULT_GAME_SYSTEMS[game.system.id].healthAttribute : CUBButler.DEFAULT_GAME_SYSTEMS.other.healthAttribute,
+    [BUTLER.SETTING_KEYS.injuredDead.healthAttribute]: {
+        name: "SETTINGS.InjuredDead.HealthAttributeN",
+        hint: "SETTINGS.InjuredDead.HealthAttributeH",
+        default: BUTLER.DEFAULT_GAME_SYSTEMS[game.system.id] !== null ? BUTLER.DEFAULT_GAME_SYSTEMS[game.system.id].healthAttribute : BUTLER.DEFAULT_GAME_SYSTEMS.other.healthAttribute,
         scope: "world",
         type: String,
         config: true,
-        onChange: s => {
-            this.settings.healthAttribute = s;
-        }
+        onChange: s => {}
     },
-    combatTrackDead: {
-        name: this.SETTINGS_DESCRIPTORS.CombatTrackDeadN,
-        hint: this.SETTINGS_DESCRIPTORS.CombatTrackDeadH,
-        default: this.DEFAULT_CONFIG.combatTrackDead,
+    [BUTLER.SETTING_KEYS.injuredDead.markDefeated]: {
+        name: "SETTINGS.InjuredDead.MarkDefeatedN",
+        hint: "SETTINGS.InjuredDead.MarkDefeatedH",
+        default: BUTLER.DEFAULT_CONFIG.injuredDead.markDefeated,
         scope: "world",
         type: Boolean,
         config: true,
-        onChange: s => {
-            this.settings.combatTrackDead = s;
-        }
+        onChange: s => {}
     },
-    unconscious: {
-        name: this.SETTINGS_DESCRIPTORS.UnconsciousN,
-        hint: this.SETTINGS_DESCRIPTORS.UnconsciousH,
-        default: this.DEFAULT_CONFIG.unconscious,
+    [BUTLER.SETTING_KEYS.injuredDead.enableUnconscious]: {
+        name: "SETTINGS.InjuredDead.EnableUnconsciousN",
+        hint: "SETTINGS.InjuredDead.EnableUnconsciousH",
+        default: BUTLER.DEFAULT_CONFIG.injuredDead.enableUnconscious,
         scope: "world",
         type: Boolean,
         config: true,
-        onChange: s => {
-            this.settings.unconscious = s;
-        }
+        onChange: s => {}
     },
-    unconsciousActorType: {
-        name: this.SETTINGS_DESCRIPTORS.UnconsciousActorTypeN,
-        hint: this.SETTINGS_DESCRIPTORS.UnconsciousActorTypeH,
-        default: this.DEFAULT_CONFIG.unconsciousActorType,
+    [BUTLER.SETTING_KEYS.injuredDead.unconsciousActorType]: {
+        name: "SETTINGS.InjuredDead.UnconsciousActorTypeN",
+        hint: "SETTINGS.InjuredDead.UnconsciousActorTypeH",
+        default: BUTLER.DEFAULT_CONFIG.injuredDead.unconsciousActorType,
         scope: "world",
         type: String,
-        choices: game.system.entityTypes.Actor,
+        choices: game.system.entityTypes.Actor || [],
         config: true,
-        onChange: s => {
-            this.settings.unconsciousActorType = s;
-        }
+        onChange: s => {}
     },
-    unconsciousIcon: {
-        name: this.SETTINGS_DESCRIPTORS.UnconsciousIconN,
-        hint: this.SETTINGS_DESCRIPTORS.UnconsciousIconH,
-        default: this.DEFAULT_CONFIG.unconsciousIcon,
+    [BUTLER.SETTING_KEYS.injuredDead.unconsciousIcon]: {
+        name: "SETTINGS.InjuredDead.UnconsciousIconN",
+        hint: "SETTINGS.InjuredDead.UnconsciousIconH",
+        default: BUTLER.DEFAULT_CONFIG.injuredDead.unconsciousIcon,
         scope: "world",
         type: String,
         config: true,
-        onChange: s => {
-            this.settings.unconsciousIcon = s;
-        }
+        onChange: s => {}
     },
-    enableReroll: {
-        name: this.SETTINGS_DESCRIPTORS.RerollN,
-        hint: this.SETTINGS_DESCRIPTORS.RerollH,
+
+    /* -------------------------------------------- */
+    /*               RerollInitiative               */
+    /* -------------------------------------------- */
+
+    [BUTLER.SETTING_KEYS.rerollInitiative.enable]: {
+        name: "SETTINGS.RerollInitiative.EnableN",
+        hint: "SETTINGS.RerollInitiative.EnableH",
         scope: "world",
         type: Boolean,
-        default: this.DEFAULT_CONFIG.reroll,
+        default: BUTLER.DEFAULT_CONFIG.rerollInitiative.enable,
         config: true,
-        onChange: s => {
-            this.settings.reroll = s;
-        }
+        onChange: s => {}
     },
-    includeTempCombatants: {
-        name: this.SETTINGS_DESCRIPTORS.RerollTempCombatantsN,
-        hint: this.SETTINGS_DESCRIPTORS.RerollTempCombatantsH,
+    [BUTLER.SETTING_KEYS.rerollInitiative.rerollTemp]: {
+        name: "SETTINGS.RerollInitiative.RerollTempCombatantsN",
+        hint: "SETTINGS.RerollInitiative.RerollTempCombatantsH",
         scope: "world",
         type: Boolean,
-        default: this.DEFAULT_CONFIG.rerollTempCombatants,
+        default: BUTLER.DEFAULT_CONFIG.rerollInitiative.rerollTempCombatants,
         config: true,
-        onChange: s => {
-            this.settings.rerollTempCombatants = s;
-        }
+        onChange: s => {}
     }
-
-    /* future features
-    createEntries: {
-        name: this.SETTINGS_DESCRIPTORS.CreateEntriesN,
-        hint: this.SETTINGS_DESCRIPTORS.CreateEntriesH,
-        scope: "world",
-        type: Boolean,
-        default: this.DEFAULT_CONFIG.createEntries,
-        config: true,
-        onChange: s => {
-            this.settings.createEntries = s;
-        }
-    },
-
-    folderType: {
-        name: this.SETTINGS_DESCRIPTORS.FolderTypeN,
-        hint: this.SETTINGS_DESCRIPTORS.FolderTypeH,
-        scope: "world",
-        type: String,
-        default: this.DEFAULT_CONFIG.folderTypes.journal,
-        choices: this.DEFAULT_CONFIG.folderTypes,
-        config: true,
-        onChange: s => {
-            this.settings.folderType = s;
-        }
-
-    },
-
-    compendium: {
-        name: this.SETTINGS_DESCRIPTORS.CompendiumN,
-        hint: this.SETTINGS_DESCRIPTORS.CompendiumH,
-        scope: "world",
-        type: String,
-        default: game.packs.find(p => p.metadata.name == "conditions" + game.system.id),
-        choices: this.compendiumChoices,
-        config: true,
-        onChange: s => {
-            this.settings.compendium = s;
-        }
-    }
-    */
 };

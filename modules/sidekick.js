@@ -3,23 +3,44 @@ import * as BUTLER from "./butler.js";
  * Provides helper methods for use elsewhere in the module (and has your back in a melee)
  */
 export class Sidekick {
+    static createCUBDiv(html) {
 
-    static getSetting(key) {
-        return game.settings.get(BUTLER.MODULE_NAME, key);
+        const cubDiv = $(
+            `<div id="combat-utility-belt">
+                    <h4>Combat Utility Belt</h4>
+                </div>`
+        );
+
+        const setupButton = html.find("button[data-action='setup']");
+        setupButton.after(cubDiv);
+
     }
 
-    static async setSetting(key, value, awaitResult = false) {
+    static getSetting(key) {
+        return game.settings.get(BUTLER.SHORTNAME, key);
+    }
+
+    static async setSetting(key, value, awaitResult=false) {
         return awaitResult ? 
-            await game.settings.set(BUTLER.MODULE_NAME, key, value) : 
-            game.settings.set(BUTLER.MODULE_NAME, key, value);
+            await game.settings.set(BUTLER.SHORTNAME, key, value) : 
+            game.settings.set(BUTLER.SHORTNAME, key, value);
     }
 
     static registerSetting(key, metadata) {
-        return game.settings.register(BUTLER.MODULE_NAME, key, metadata);
+        return game.settings.register(BUTLER.SHORTNAME, key, metadata);
     }
 
     static registerAllSettings(settingsData) {
         return Object.keys(settingsData).forEach((key) => Sidekick.registerSetting(key, settingsData[key]));
+    }
+
+    /**
+     * Gets the default game system names stored in the constants butler class
+     */
+    static getSystemChoices() {
+        const systemIds = Object.getOwnPropertyNames(BUTLER.DEFAULT_GAME_SYSTEMS);
+        const result = systemIds.forEach(i => BUTLER.DEFAULT_GAME_SYSTEMS[i].name);
+        return result;
     }
 
     /**

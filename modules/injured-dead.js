@@ -1,7 +1,7 @@
 /**
  * Mark a token injured or dead based on threshold
  */
-class CUBInjuredAndDead {
+export class InjuredAndDead {
 
     constructor() {
         this.settings = {
@@ -50,15 +50,7 @@ class CUBInjuredAndDead {
 
     get DEFAULT_CONFIG() {
         return {
-            injured: false,
-            injuredIcon: "icons/svg/blood.svg",
-            threshold: 50,
-            dead: false,
-            deadIcon: "icons/svg/skull.svg",
-            combatTrackDead: false,
-            unconscious: false,
-            unconsciousActorType: "",
-            unconsciousIcon: "icons/svg/unconscious.svg"
+ 
         };
     }
 

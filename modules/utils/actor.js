@@ -1,4 +1,4 @@
-class CUBActorUtility {
+export class ActorUtility {
     constructor() {
         this.actor = null;
     }

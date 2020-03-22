@@ -1,4 +1,4 @@
-class CUBCombatTracker {
+class CombatTracker {
     constructor() {
         this.settings = {
             panOnNextTurn: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.PanOnNextTurnN + ")", this.SETTINGS_META.panOnNextTurn),
@@ -47,21 +47,7 @@ class CUBCombatTracker {
 
     get DEFAULT_CONFIG() {
         return {
-            panOnNextTurn: false,
-            selectOnNextTurn: false,
-            panGM: {
-                none: "None",
-                npc: "NPC",
-                all: "All"
-            },
-            panPlayers: {
-                none: "None",
-                owner: "Owner",
-                observer: "Observer",
-                all: "All"
-            },
-            selectPlayers: false,
-            observerDeselect: false,
+            
             tempCombatants: false,
             xpModule: false
         };

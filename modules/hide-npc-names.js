@@ -1,7 +1,7 @@
 /**
  * Hides NPC names in the combat tracker
  */
-class CUBHideNPCNames {
+export class HideNPCNames {
     constructor() {
         this.settings = {
             hideNames: CUBSidekick.initGadgetSetting(

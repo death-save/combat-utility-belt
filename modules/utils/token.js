@@ -1,4 +1,4 @@
-class CUBTokenUtility {
+export class TokenUtility {
     constructor() {
         this.settings = {
             mightySummoner: CUBSidekick.initGadgetSetting(CUBTokenUtility.GADGET_NAME + "(" + CUBTokenUtility.SETTINGS_DESCRIPTORS.MightySummonerN + ")", this.SETTINGS_META.mightySummoner),
@@ -26,25 +26,7 @@ class CUBTokenUtility {
         return {
             mightySummoner: false,
             AutoRollHostileHp: false,
-            tokenEffectSize: {
-                large: {
-                    multiplier: 4,
-                    divisor: 2
-                },
-                medium: {
-                    multiplier: 3,
-                    divisor: 3
-                },
-                small: {
-                    multiplier: 2,
-                    divisor: 5
-                }
-            },
-            tokenEffectSizeChoices: {
-                large: "Large",
-                medium: "Medium",
-                small: "Small"
-            }
+            
         };
     }
 

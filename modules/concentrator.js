@@ -1,58 +1,12 @@
+import { Sidekick } from "./sidekick.js";
+import { SETTING_KEYS } from "./butler.js";
+
 /**
  * Request a roll or display concentration checks when damage is taken.
  * @author JacobMcAuley
  * @todo Supply DC
  */
-class CUBConcentrator {
-    constructor(){
-        this.settings = {
-            concentrating: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.ConcentratingN + ")", this.SETTINGS_META.concentrating),
-            concentratingIcon: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.ConcentratingIconN + ")", this.SETTINGS_META.concentratingIcon),
-            healthAttribute: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.HealthAttributeN + ")", this.SETTINGS_META.healthAttribute),
-            displayChat: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.ConcentratingChatPromptN + ")", this.SETTINGS_META.displayChat),
-            rollRequest: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.ConcentratingRollRequestN + ")", this.SETTINGS_META.rollRequest),
-            ability: "con", //change to a setting later maybe?
-            autoConcentrate: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.ConcentratingAutoStatusN + ")", this.SETTINGS_META.autoConcentrate),
-            notifyDoubleConcentration: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.ConcentratingNotifyDoubleN + ")", this.SETTINGS_META.notifyDoubleConcentration)   
-        }
-    }
-
-    get GADGET_NAME() {
-        return "concentrator"
-    }
-
-    get SETTINGS_DESCRIPTORS(){
-        return {
-            ConcentratingN: "--Force Concentration Checks--",
-            ConcentratingH: "Requires concentration checks on tokens with the concentrating status effect when they take damage (D&D 5e only)",
-            ConcentratingIconN: "Concentration Status Icon",
-            ConcentratingIconH: "Path to the icon to use for Concentration",
-            ConcentratingChatMessageN: "Notify Chat",
-            ConcentratingChatMessageH: "Display a message in chat whenever concentration is threatened",
-            ConcentratingRollRequestN: "Prompt Player",
-            ConcentratingRollRequestH: "Prompt the player to make the check or not",
-            HealthAttributeN: "Health Attribute",
-            HealthAttributeH: "Health/HP attribute name as defined by game system",
-            ConcentratingAutoStatusN: "Automatically Set Concentrating Status",
-            ConcentratingAutoStatusH: "When a Concentration spell is cast, automatically set the Concentrating status",
-            ConcentratingNotifyDoubleN: "Notify on Double Concentration",
-            ConcentratingNotifyDoubleH: "Send a message when a Concentration spell is cast while another spell is being Concentrated on"
-        }
-    }
-
-    get DEFAULT_CONFIG(){
-        return {
-            concentrating: false,
-            concentratingIcon: "modules/combat-utility-belt/icons/concentrating.svg",
-            concentrator: "CUB: Concentrator"
-        };
-    }
-
-    get SETTINGS_META(){
-        return {
-            
-        };
-    }
+export class Concentrator {
 
     /**
      * Determines if health has been reduced 
@@ -93,7 +47,8 @@ class CUBConcentrator {
      * @param {*} data 
      */
     _onRenderChatMessage(app, html, data) {
-        if (!game.user.isGM || app.data.timestamp + 500 < Date.now() || !this.settings.autoConcentrate) {
+        const autoConcentrate = Sidekick.getSetting(SETTING_KEYS.concentrator.autoConcentrate);
+        if (!game.user.isGM || app.data.timestamp + 500 < Date.now() || !autoConcentrate) {
             return;
         }
 
@@ -131,18 +86,18 @@ class CUBConcentrator {
             }
 
             const tokenEffects = getProperty(t, "data.effects");
-            const isAlreadyConcentrating = !!tokenEffects.find(e => e === this.settings.concentratingIcon);
+            const isAlreadyConcentrating = !!tokenEffects.find(e => e === Sidekick.getSetting(SETTING_KEYS.concentrator.concentrateIcon));
 
             if (isAlreadyConcentrating) {
 
-                if (this.settings.notifyDoubleConcentration !== "None") {
+                if (Sidekick.getSetting(SETTING_KEYS.concentrator.notifyDouble) !== "None") {
                     this._notifyDoubleConcentration(t);
                 }
 
                 continue;
             }
 
-            t.toggleEffect(this.settings.concentratingIcon);
+            t.toggleEffect(Sidekick.getSetting(SETTING_KEYS.concentrator.icon));
         }  
     }
 
@@ -157,14 +112,15 @@ class CUBConcentrator {
         const token = canvas.tokens.get(update._id);
         const actorId = getProperty(token, "data.actorId");
         const current = getProperty(token, "actor");
+        const enable = Sidekick.getSetting(SETTING_KEYS.concentrator.enable);
 
         // Return early if basic requirements not met
-        if (!game.user.isGM || !current || !this.settings.concentrating || token.actorLink || !actorId) {
+        if (!game.user.isGM || !current || !enable || token.actorLink || !actorId) {
             return;
         }
 
-        const newHealth = getProperty(update, "actorData.data." + this.settings.healthAttribute + ".value");
-        const oldHealth = getProperty(current, "data.data." + this.settings.healthAttribute + ".value");
+        const newHealth = getProperty(update, "actorData.data." + Sidekick.getSetting(SETTING_KEYS.concentrator.healthAttribute) + ".value");
+        const oldHealth = getProperty(current, "data.data." + Sidekick.getSetting(SETTING_KEYS.concentrator.healthAttribute) + ".value");
         const isConcentrating = this._isConcentrating(token);
         const damageTaken = this._wasDamageTaken(newHealth, oldHealth);
 
@@ -175,11 +131,11 @@ class CUBConcentrator {
 
         const damageAmount = this._calculateDamage(newHealth, oldHealth)
 
-        if(this.settings.displayChat) {
+        if(Sidekick.getSetting(SETTING_KEYS.concentrator.outputChat)) {
             this._displayChat(token, damageAmount);
         }
                 
-        if(this.settings.rollRequest) {
+        if(Sidekick.getSetting(SETTING_KEYS.concentrator.prompt)) {
             const actor = game.actors.get(actorId);
 
             if (!actor) {
@@ -200,8 +156,8 @@ class CUBConcentrator {
     _hookOnPreUpdateActor(actor, update, options) {
         const tokens = actor.getActiveTokens();
         const actorId = update._id;
-        const newHealth = getProperty(update, "data." + this.settings.healthAttribute + ".value");
-        const oldHealth = getProperty(actor, "data.data." + this.settings.healthAttribute + ".value");
+        const newHealth = getProperty(update, "data." + Sidekick.getSetting(SETTING_KEYS.concentrator.healthAttribute) + ".value");
+        const oldHealth = getProperty(actor, "data.data." + Sidekick.getSetting(SETTING_KEYS.concentrator.healthAttribute) + ".value");
         const owners = game.users.entities.filter(user => actor.hasPerm(user, "OWNER") && !user.isGM);
 
         if (owners.length == 0) {
@@ -220,14 +176,14 @@ class CUBConcentrator {
 
         const damageAmount = this._calculateDamage(newHealth, oldHealth);
 
-        if(this.settings.displayChat) {
+        if(Sidekick.getSetting(SETTING_KEYS.concentrator.outputChat)) {
             for (const t of tokens) {
                 this._displayChat(t, damageAmount);
             } 
         }
                     
                 
-        if(this.settings.rollRequest && actorId) {
+        if(Sidekick.getSetting(SETTING_KEYS.concentrator.prompt) && actorId) {
             options['affectedUsers'] = {'actorId' : actorId, 'owners': owners};
         }
     }
@@ -317,7 +273,7 @@ class CUBConcentrator {
      */
     _displayPrompt(actorId, userId){
         const actor = game.actors.get(actorId);
-        const ability = this.settings.ability;
+        const ability = Sidekick.getSetting(SETTING_KEYS.concentrator.concentrationAttribute);
 
         if (!actor || game.userId !== userId) {
             return;
@@ -351,7 +307,7 @@ class CUBConcentrator {
      * @param {*} token 
      */
     _notifyDoubleConcentration(token) {
-        const isWhisper = this.settings.notifyDoubleConcentration === "GM Only";
+        const isWhisper = Sidekick.getSetting(SETTING_KEYS.concentrator.notifyDouble) === "GM Only";
         const speaker = ChatMessage.getSpeaker({token});
         //speaker.alias = CUBConcentrator.prototype.DEFAULT_CONFIG.concentrator;
 
