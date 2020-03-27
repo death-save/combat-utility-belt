@@ -1,4 +1,4 @@
-import { EnhancedConditions } from "./enhanced-conditions/enhanced-conditions";
+import { EnhancedConditions } from "./enhanced-conditions/enhanced-conditions.js";
 
 export const NAME = "combat-utility-belt";
 

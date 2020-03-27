@@ -1,4 +1,4 @@
-class CombatTracker {
+export class TrackerUtility {
     constructor() {
         this.settings = {
             panOnNextTurn: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.PanOnNextTurnN + ")", this.SETTINGS_META.panOnNextTurn),
@@ -135,7 +135,7 @@ class CombatTracker {
             this._replaceResourceElement(html);
         }
 
-/**
+    /**
      * Replaces the default token resource span with a text input
      * @param {*} html 
      */

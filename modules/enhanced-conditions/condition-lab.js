@@ -1,17 +1,21 @@
+import { cub } from "../../combat-utility-belt.js";
+import * as BUTLER from "../butler.js";
+import { Sidekick } from "../sidekick.js";
+
 /**
  * Form application for managing mapping of Conditions to Icons and JournalEntries
  */
 export class ConditionLab extends FormApplication {
-    constructor() {
-        super();
-        this.data = CUB.enhancedConditions;
+    constructor(object, options={}) {
+        super(object, options);
+        this.data = cub.enhancedConditions;
     }
 
     static get defaultOptions() {
         return mergeObject(super.defaultOptions, {
             id: "cub-condition-lab",
-            title: "Condition Lab",
-            template: "modules/combat-utility-belt/templates/cub-conditions.html",
+            title: BUTLER.DEFAULT_CONFIG.enhancedConditions.conditionLab.title,
+            template: `${BUTLER.PATH}/templates/cub-conditions.html`,
             classes: ["sheet"],
             width: 500,
             height: "auto",
@@ -20,11 +24,9 @@ export class ConditionLab extends FormApplication {
     }
 
     getData() {
-        let entries = {};
-
-        for (let e of game.journal.entities) {
-            entries[e.id] = e.name;
-        }
+        const entries = game.journal.entities.sort((a, b) => a.sort - b.sort).map(e => {
+            return [e.id, e.name]
+        });
 
         const formData = {
             conditionmap: this.data.map,
@@ -42,15 +44,10 @@ export class ConditionLab extends FormApplication {
      * @param {Object} formdata 
      */
     _updateObject(event, formdata) {
-        //console.log(event,formdata);
         let conditions = [];
         let icons = [];
         let entries = [];
-        //let oldMapsSetting = CUBSidekick.getGadgetSetting(CUBEnhancedConditions.GADGET_NAME + "(" + CUBEnhancedConditions.SETTINGS_DESCRIPTORS.MapsN + ")");
         let newMap = [];
-        //const system = CUBSidekick.getGadgetSetting(this.data.GADGET_NAME + "(" + this.data.SETTINGS_DESCRIPTORS.SystemNameN + ")");
-        //let oldMap = oldMapsSetting[system];
-        //let mergeMapsSetting = {};
 
         //need to tighten these up to check for the existence of digits after the word
         const conditionRegex = new RegExp("condition", "i");
@@ -74,12 +71,16 @@ export class ConditionLab extends FormApplication {
             newMap.push([conditions[i], icons[i], entries[i]]);
         }
 
-        CUBSidekick.setGadgetSetting(this.data.GADGET_NAME + "(" + this.data.SETTINGS_DESCRIPTORS.MapsN + ")" + "." + this.data.system, newMap);
+        Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.map, newMap);
 
         //not sure what to do about this yet, probably nothing
         console.assert(conditions.length === icons.length, "There are unmapped conditions");
     }
 
+    /**
+     * 
+     * @param {*} html 
+     */
     activateListeners(html) {
         super.activateListeners(html);
         let newSystem;
@@ -98,13 +99,13 @@ export class ConditionLab extends FormApplication {
             newSystem = selection.val();
 
             //set the enhanced conditions system to the new value
-            await CUBSidekick.setGadgetSetting(this.data.GADGET_NAME + "(" + this.data.SETTINGS_DESCRIPTORS.SystemN + ")", newSystem);
+            await Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.system, newSystem);
 
             //if there's no mapping for the newsystem, create one
             if (!this.data.settings.maps[newSystem]) {
                 const newMap = [];
 
-                await CUBSidekick.setGadgetSetting(this.data.GADGET_NAME + "(" + this.data.SETTINGS_DESCRIPTORS.MapsN + ")" + "." + newSystem, newMap);
+                await Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.map, newMap);
             }
 
             //rerender the form to get the correct condition mapping template
@@ -113,18 +114,19 @@ export class ConditionLab extends FormApplication {
 
         addRowButton.click(async ev => {
             ev.preventDefault();
-            CUB.enhancedConditions.settings.maps[this.data.system].push(["", ""]);
+            cub.enhancedConditions.settings.maps[this.data.system].push(["", ""]);
             this.render(true);
         });
 
         removeRowButton.click(async ev => {
+            const activeMap = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.map);
             //console.log(ev);
             const splitName = ev.currentTarget.name.split("-");
             const row = splitName[splitName.length - 1];
 
             //console.log("row", row);
             ev.preventDefault();
-            CUB.enhancedConditions.settings.maps[this.data.system].splice(row, 1);
+            activeMap.splice(row, 1);
             this.render(true);
         });
 
@@ -140,9 +142,11 @@ export class ConditionLab extends FormApplication {
         });
 
         restoreDefaultsButton.click(async ev => {
+            const system = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.system);
+            const defaultMaps = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.maps);
             ev.preventDefault();
             //console.log("restore defaults clicked", ev);
-            CUB.enhancedConditions.settings.maps[this.data.system] = CUB.enhancedConditions.DEFAULT_MAPS[this.data.system] ? CUB.enhancedConditions.DEFAULT_MAPS[this.data.system] : [];
+            Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.map, defaultMaps[system]);
             this.render(true);
         });
     }

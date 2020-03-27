@@ -1,4 +1,4 @@
-import * as BUTLER from "butler.js";
+import * as BUTLER from "../butler.js";
 import { ConditionLab } from "./condition-lab.js";
 /**
  * Builds a mapping between status icons and journal entries that represent conditions

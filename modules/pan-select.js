@@ -1,5 +1,5 @@
-import * as BUTLER from "butler.js";
-import { Sidekick } from "sidekick.js";
+import * as BUTLER from "./butler.js";
+import { Sidekick } from "./sidekick.js";
 
 /**
  * 

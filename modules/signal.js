@@ -8,16 +8,16 @@ import { SETTINGS_METADATA } from "./settings.js";
 
 /* ------------------ Gadgets ----------------- */
 
-import { Concentrator } from "concentrator.js";
-import { EnhancedConditions } from "enhanced-conditions/enhanced-conditions.js";
-import { HideNPCNames } from "hide-npc-names.js";
-import { InjuredAndDead} from "injured-dead.js";
-import { RerollInitiative } from "reroll-initiative.js";
-import { PanSelect } from "pan-select.js";
+import { Concentrator } from "./concentrator.js";
+import { EnhancedConditions } from "./enhanced-conditions/enhanced-conditions.js";
+import { HideNPCNames } from "./hide-npc-names.js";
+import { InjuredAndDead} from "./injured-dead.js";
+import { RerollInitiative } from "./reroll-initiative.js";
+import { PanSelect } from "./pan-select.js";
 
 /* ------------------- Utils ------------------ */
 
-import { Sidekick } from "sidekick.js"
+import { Sidekick } from "./sidekick.js"
 import { TokenUtility } from "./utils/token.js";
 import { ActorUtility } from "./utils/actor.js";
 import { TrackerUtility } from "./utils/combat-tracker.js";
@@ -44,6 +44,7 @@ export class Signal {
             cub.enhancedConditions = new EnhancedConditions();
             cub.hideNPCNames = new HideNPCNames();
             cub.injuredAndDead = new InjuredAndDead();
+            cub.panSelect = new PanSelect();
             cub.rerollInitiative = new RerollInitiative();
 
             // Instantiate utility classes

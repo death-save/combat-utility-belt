@@ -1,5 +1,5 @@
-import { SHORTNAME, FLAGS, SETTING_KEYS } from "butler.js";
-import { Sidekick } from "sidekick.js";
+import { SHORTNAME, FLAGS, SETTING_KEYS } from "./butler.js";
+import { Sidekick } from "./sidekick.js";
 
 /**
  * Rerolls initiative for all combatants
