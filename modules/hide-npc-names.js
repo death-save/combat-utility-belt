@@ -1,61 +1,20 @@
+import { Sidekick } from "./sidekick.js";
+import { SETTING_KEYS } from "./butler.js";
+
 /**
  * Hides NPC names in the combat tracker
  */
 export class HideNPCNames {
-    constructor() {
-        this.settings = {
-            hideNames: CUBSidekick.initGadgetSetting(
-                this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.HideNamesN + ")", 
-                this.SETTINGS_META.hideNames
-            ),
-            unknownCreatureString: CUBSidekick.initGadgetSetting(
-                this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.UnknownCreatureN + ")",
-                this.SETTINGS_META.unknownCreatureString
-            ),
-            hideFooter: CUBSidekick.initGadgetSetting(
-                this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.HideFooterN + ")",
-                this.SETTINGS_META.hideFooter
-            )
-        };
-    }
-
-    get GADGET_NAME() {
-        return "hide-npc-names";
-    }
-
-    get SETTINGS_DESCRIPTORS() {
-        return {
-            HideNamesN: "--Hide NPC Names--",
-            HideNamesH: "Hides NPC names in the Combat Tracker",
-            UnknownCreatureN: "Unknown Creature Name",
-            UnknownCreatureH: "Text to display for hidden NPC names",
-            HideFooterN: "Hide Chat Card Footer",
-            HideFooterH: "When NPC names are hidden, also hide the chat card footer which can contain sensitive information"
-        };
-    }
-
-    get DEFAULT_CONFIG() {
-        return {
-            hideNames: false,
-            unknownCreatureString: "Unknown Creature",
-            hideFooter: false
-        };
-    }
-
-    get SETTINGS_META() {
-        return {
-            
-        };
-    }
-
     /**
      * Hooks on the Combat Tracker render to replace the NPC names
      * @param {Object} app - the Application instance
      * @param {Object} html - jQuery html object
      * @todo refactor required
      */
-    _hookOnRenderCombatTracker(app, html) {
-        if (game.user.isGM || !this.settings.hideNames) {
+    static _hookOnRenderCombatTracker(app, html) {
+        const enable = Sidekick.getSetting(SETTING_KEYS.hideNames.enable);
+
+        if (game.user.isGM || !enable) {
             return;
         }
         
@@ -74,7 +33,7 @@ export class HideNPCNames {
             return;
         }
 
-        const replacement = this.settings.unknownCreatureString || " ";
+        const replacement = Sidekick.getSetting(SETTING_KEYS.hideNames.replacementString) || " ";
 
         $(npcElements).find(".token-name").text(replacement);
         $(npcElements).find(".token-image").attr("title", replacement);
@@ -84,8 +43,10 @@ export class HideNPCNames {
      * Replaces instances of hidden NPC name in chat
      * @todo: If a player owns the message speaker - reveal the message
      */
-    _hookOnRenderChatMessage(message, html, data) {
-        if (game.user.isGM || !this.settings.hideNames) {
+    static _hookOnRenderChatMessage(message, html, data) {
+        const enable = Sidekick.getSetting(SETTING_KEYS.hideNames.enable);
+
+        if (game.user.isGM || !enable) {
             return;
         }
 
@@ -97,15 +58,17 @@ export class HideNPCNames {
             return;
         }
 
-        const replacement = this.settings.unknownCreatureString || " ";
-        const matchString = data.alias.includes(" ") ? CUBSidekick.getTerms(data.alias.trim().split(" ")).map(e => CUBSidekick.escapeRegExp(e)).join("|") : CUBSidekick.escapeRegExp(data.alias);
+        const replacement = Sidekick.getSetting(SETTING_KEYS.hideNames.replacementString) || " ";
+        const matchString = data.alias.includes(" ") ? Sidekick.getTerms(data.alias.trim().split(" ")).map(e => Sidekick.escapeRegExp(e)).join("|") : Sidekick.escapeRegExp(data.alias);
         const regex = matchString + "(?=[\\W]|s|'s)";
             
         html.each((i, el) => {
             el.innerHTML = el.innerHTML.replace(new RegExp(regex, "gim"), replacement);
         });
 
-        if (!this.settings.hideFooter) {
+        const hideFooter = Sidekick.getSetting(SETTING_KEYS.hideNames.hideFooter);
+
+        if (!hideFooter) {
             return;
         }
 
@@ -119,8 +82,10 @@ export class HideNPCNames {
      * @param {*} html 
      * @param {*} data 
      */
-    _onRenderImagePopout(app, html, data) {
-        if (game.user.isGM || app.options.entity.type !== "Actor" || !this.settings.hideNames) {
+    static _onRenderImagePopout(app, html, data) {
+        const enable = Sidekick.getSetting(SETTING_KEYS.hideNames.enable);
+
+        if (game.user.isGM || app.options.entity.type !== "Actor" || !enable) {
             return;
         }
 
@@ -131,7 +96,7 @@ export class HideNPCNames {
         }
 
         const windowTitle = html.find(".window-title");
-        const replacement = this.settings.unknownCreatureString || " ";
+        const replacement = Sidekick.getSetting(SETTING_KEYS.hideNames.replacementString) || " ";
 
         if (windowTitle.length === 0) {
             return;

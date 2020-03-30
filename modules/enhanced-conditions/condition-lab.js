@@ -8,7 +8,7 @@ import { Sidekick } from "../sidekick.js";
 export class ConditionLab extends FormApplication {
     constructor(object, options={}) {
         super(object, options);
-        this.data = cub.enhancedConditions;
+        this.data = game.cub.enhancedConditions;
     }
 
     static get defaultOptions() {
@@ -114,7 +114,7 @@ export class ConditionLab extends FormApplication {
 
         addRowButton.click(async ev => {
             ev.preventDefault();
-            cub.enhancedConditions.settings.maps[this.data.system].push(["", ""]);
+            game.cub.enhancedConditions.settings.maps[this.data.system].push(["", ""]);
             this.render(true);
         });
 

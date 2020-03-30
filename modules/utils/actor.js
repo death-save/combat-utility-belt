@@ -1,10 +1,12 @@
 export class ActorUtility {
-    constructor() {
-        this.actor = null;
-    }
-
-    _onRenderActorSheet(app, html, data) {
-        this.actor = app.entity;
+    /**
+     * 
+     * @param {*} app 
+     * @param {*} html 
+     * @param {*} data 
+     */
+    static _onRenderActorSheet(app, html, data) {
+        const actor = app.entity;
         const initiative = html.find(".initiative");
 
         if (initiative.length === 0) {
@@ -21,11 +23,16 @@ export class ActorUtility {
 
         heading.on("click", event => {
 
-            this._onClickInitiative(event);
+            this._onClickInitiative(actor, event);
         });
     }
-
-    async _onClickInitiative(event) {
+    
+    /**
+     * 
+     * @param {*} actor 
+     * @param {*} event 
+     */
+    static async _onClickInitiative(actor, event) {
         if ( !game.combat ) {
             if ( game.user.isGM ) {
                 await Combat.create({scene: canvas.scene._id, active: true});
@@ -34,7 +41,7 @@ export class ActorUtility {
             }
         } 
 
-        const tokens = this.actor.getActiveTokens();
+        const tokens = actor.getActiveTokens();
 
         if (!tokens) {
             return;

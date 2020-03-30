@@ -1,86 +1,36 @@
+import { HEALTH_STATES, SETTING_KEYS } from "./butler.js";
+import { Sidekick } from "./sidekick.js";
+import { EnhancedConditions } from "./enhanced-conditions/enhanced-conditions.js";
+
 /**
  * Mark a token injured or dead based on threshold
  */
 export class InjuredAndDead {
-
-    constructor() {
-        this.settings = {
-            injured: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.InjuredN + ")", this.SETTINGS_META.injured),
-            healthAttribute: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.HealthAttributeN + ")", this.SETTINGS_META.healthAttribute),
-            threshold: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.ThresholdN + ")", this.SETTINGS_META.threshold),
-            injuredIcon: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.InjuredIconN + ")", this.SETTINGS_META.injuredIcon),
-            dead: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.DeadN + ")", this.SETTINGS_META.dead),
-            deadIcon: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.DeadIconN + ")", this.SETTINGS_META.deadIcon),
-            unconscious: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.UnconsciousN + ")", this.SETTINGS_META.unconscious),
-            unconsciousActorType: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.UnconsciousActorTypeN + ")", this.SETTINGS_META.unconsciousActorType),
-            unconsciousIcon: CUBSidekick.initGadgetSetting(this.GADGET_NAME +  "(" + this.SETTINGS_DESCRIPTORS.UnconsciousIconN + ")", this.SETTINGS_META.unconsciousIcon), 
-            combatTrackDead: CUBSidekick.initGadgetSetting(this.GADGET_NAME + "(" + this.SETTINGS_DESCRIPTORS.CombatTrackDeadN + ")", this.SETTINGS_META.combatTrackDead)
-        };
-        this.callingUser = "";
-    }
-
-    get GADGET_NAME() {
-        return "injured-and-dead";
-    }
-
-    get SETTINGS_DESCRIPTORS() {
-        return {
-            InjuredN: "--Mark Injured Tokens--",
-            InjuredH: "Sets a status marker on tokens that meet the threshold below",
-            InjuredIconN: "Injured Status Marker",
-            InjuredIconH: "Path to the status marker to display for Injured Tokens",
-            ThresholdN: "Injured Token Threshold",
-            ThresholdH: "Enter the percentage of health remaining when a token should be marked injured",
-            DeadN: "--Mark Dead Tokens--",
-            DeadH: "Sets a status marker on tokens that reach 0 health",
-            CombatTrackDeadN: "Mark Dead in Combat Tracker",
-            CombatTrackDeadH: "Sets the token that reaches 0 health to dead status in the combat tracker. This will also mark tokens dead regardless of mark dead settings.",
-            DeadIconN: "Dead Status Marker",
-            DeadIconH: "Path to the status marker to display for Dead Tokens",
-            HealthAttributeN: "Health Attribute",
-            HealthAttributeH: "Health/HP attribute name as defined by game system",
-            UnconsciousN: "--Mark Unconscious--",
-            UnconsciousH: "Sets a unconscious (instead of dead) status marker on a certain Actor type when they reach 0 health",
-            UnconsciousActorTypeN: "Unconscious Actor Type",
-            UnconsciousActorTypeH: "Select the Actor Type to mark unconscious instead of dead",
-            UnconsciousIconN: "Unconscious Status Marker",
-            UnconsciousIconH: "Path to the status marker to display for Unconscious Tokens"
-        };
-    }
-
-    get DEFAULT_CONFIG() {
-        return {
- 
-        };
-    }
-
-    get SETTINGS_META() {
-        return {
-            
-        };
-
-    }
-
     /**
      * Checks the health state of a token using the update supplied from a Hook
      * @param {Object} token 
      * @param {Object} update 
      */
-    _checkTokenHealthState(token, update) {
-        const currentHealth = getProperty(token, "actor.data.data." + this.settings.healthAttribute + ".value");
-        const updateHealth = getProperty(update, "actorData.data." + this.settings.healthAttribute + ".value");
-        const maxHealth = getProperty(token, "actor.data.data." + this.settings.healthAttribute + ".max");
-        const isDead = this._checkForDead(currentHealth);
-        const isInjured = this._checkForInjured(currentHealth, maxHealth);
-        const markUnconscious = (this.settings.unconscious && token.actor.data.type === this.settings.unconsciousActorType) ? true : false;
+    static _checkTokenHealthState(token, update) {
+        const healthAttribute = Sidekick.getSetting(SETTING_KEYS.injuredDead.healthAttribute);
+        const enableUnconscious = Sidekick.getSetting(SETTING_KEYS.injuredDead.enableUnconscious);
+        const unconsciousActorType = Sidekick.getSetting(SETTING_KEYS.injuredDead.unconsciousActorType);
+
+        const currentHealth = getProperty(token, `actor.data.data.${healthAttribute}.value`);
+        const updateHealth = getProperty(update, `actorData.data.${healthAttribute}.value`);
+        const maxHealth = getProperty(token, `actor.data.data.${healthAttribute}.max`);
+
+        const isDead = InjuredAndDead._checkForDead(currentHealth);
+        const isInjured = InjuredAndDead._checkForInjured(currentHealth, maxHealth);
+        const markUnconscious = (enableUnconscious && token.actor.data.type === unconsciousActorType) ? true : false;
 
         if (isDead) {
             if (markUnconscious) {
-                return CUBButler.HEALTH_STATES.UNCONSCIOUS;
+                return HEALTH_STATES.UNCONSCIOUS;
             }
-            return CUBButler.HEALTH_STATES.DEAD;
+            return HEALTH_STATES.DEAD;
         } else if (isInjured) {
-            return CUBButler.HEALTH_STATES.INJURED;
+            return HEALTH_STATES.INJURED;
         }
 
         return;
@@ -91,21 +41,26 @@ export class InjuredAndDead {
      * @param {Object} actor 
      * @param {Object} update 
      */
-    _checkActorHealthState(actor, update) {
-        const currentHealth = getProperty(actor, "data.data." + this.settings.healthAttribute + ".value");
-        const updateHealth = getProperty(update, "data." + this.settings.healthAttribute + ".value");
-        const maxHealth = getProperty(actor, "data.data." + this.settings.healthAttribute + ".max");
-        const isDead = this._checkForDead(currentHealth);
-        const isInjured = this._checkForInjured(currentHealth, maxHealth);
-        const markUnconscious = (this.settings.unconscious && actor.data.type === this.unconsciousActorType) ? true : false;
+    static _checkActorHealthState(actor, update) {
+        const healthAttribute = Sidekick.getSetting(SETTING_KEYS.injuredDead.healthAttribute);
+        const enableUnconscious = Sidekick.getSetting(SETTING_KEYS.injuredDead.enableUnconscious);
+        const unconsciousActorType = Sidekick.getSetting(SETTING_KEYS.injuredDead.unconsciousActorType);
+
+        const currentHealth = getProperty(actor, `data.data.${healthAttribute}.value`);
+        const updateHealth = getProperty(update, `data.${healthAttribute}.value`);
+        const maxHealth = getProperty(actor, `data.data.${healthAttribute}.max`);
+
+        const isDead = InjuredAndDead._checkForDead(currentHealth);
+        const isInjured = InjuredAndDead._checkForInjured(currentHealth, maxHealth);
+        const markUnconscious = (enableUnconscious && actor.data.type === unconsciousActorType) ? true : false;
 
         if (isDead) {
             if (markUnconscious) {
-                return CUBButler.HEALTH_STATES.UNCONSCIOUS;
+                return HEALTH_STATES.UNCONSCIOUS;
             }
-            return CUBButler.HEALTH_STATES.DEAD;
+            return HEALTH_STATES.DEAD;
         } else if (isInjured) {
-            return CUBButler.HEALTH_STATES.INJURED;
+            return HEALTH_STATES.INJURED;
         }
 
         return;
@@ -116,7 +71,7 @@ export class InjuredAndDead {
      * @param {Number} value 
      * @returns {Boolean}
      */
-    _checkForDead(value) {
+    static checkForDead(value) {
         return value === 0 ? true : false;
     }
 
@@ -126,17 +81,19 @@ export class InjuredAndDead {
      * @param {Number} max
      * @returns {Boolean}
      */
-    _checkForInjured(value, max) {
-        return (value < max * (this.settings.threshold / 100)) ?  true : false;
+    static checkForInjured(value, max) {
+        const threshold = Sidekick.getSetting(SETTING_KEYS.injuredDead.threshold);
+        return (value < max * (threshold / 100)) ?  true : false;
     }
 
     /**
      * Retrieves an Actor type based on the index stored in the setting
      * @returns {String}
      */
-    get unconsciousActorType() {
+    static getUnconsciousActorType() {
         try {
-            return game.system.entityTypes.Actor[this.settings.unconsciousActorType];
+            const unconsciousActorType = Sidekick.getSetting(SETTING_KEYS.injuredDead.unconsciousActorType);
+            return game.system.entityTypes.Actor[unconsciousActorType];
         } catch(e) {
             console.warn(e);
             return;
@@ -147,25 +104,30 @@ export class InjuredAndDead {
      * Removes injury and dead effects/overlay on a token
      * @param {Object} token 
      */
-    _markHealthy(token) {
+    static _markHealthy(token) {
+        const injuredIcon = Sidekick.getSetting(SETTING_KEYS.injuredDead.injuredIcon);
+        const deadIcon = Sidekick.getSetting(SETTING_KEYS.injuredDead.deadIcon);
+        const unconsciousIcon = Sidekick.getSetting(SETTING_KEYS.injuredDead.unconsciousIcon);
+
         const tokenEffects = getProperty(token, "data.effects");
         const tokenOverlay = getProperty(token, "data.overlayEffect");
         const hasOverlay = getProperty(token, "data.overlayEffect") != null;
         const hasEffects = getProperty(token, "data.effects.length") > 0;
-        const wasInjured = Boolean(tokenEffects && tokenEffects.find(e => e == this.settings.injuredIcon)) || false;
-        const wasDead = Boolean(tokenOverlay === this.settings.deadIcon);
-        const wasUnconscious = Boolean(tokenOverlay === this.settings.unconsciousIcon);
+
+        const wasInjured = Boolean(tokenEffects && tokenEffects.find(e => e == injuredIcon)) || false;
+        const wasDead = Boolean(tokenOverlay === deadIcon);
+        const wasUnconscious = Boolean(tokenOverlay === unconsciousIcon);
 
         if (hasEffects && wasInjured) {
-            return token.toggleEffect(this.settings.injuredIcon);
+            return token.toggleEffect(injuredIcon);
         }
 
         if (hasOverlay && wasDead) {
-            return token.toggleOverlay(this.settings.deadIcon);
+            return token.toggleOverlay(deadIcon);
         }
 
         if (hasOverlay && wasUnconscious) {
-            return token.toggleOverlay(this.settings.unconsciousIcon);
+            return token.toggleOverlay(unconsciousIcon);
         }
     }
 
@@ -173,25 +135,30 @@ export class InjuredAndDead {
      * Sets an injured effect on a token, removes dead overlay
      * @param {Object} token 
      */
-    _markInjured(token) {
+    static _markInjured(token) {
+        const injuredIcon = Sidekick.getSetting(SETTING_KEYS.injuredDead.injuredIcon);
+        const deadIcon = Sidekick.getSetting(SETTING_KEYS.injuredDead.deadIcon);
+        const unconsciousIcon = Sidekick.getSetting(SETTING_KEYS.injuredDead.unconsciousIcon);
+
         const tokenEffects = getProperty(token, "data.effects");
         const tokenOverlay = getProperty(token, "data.overlayEffect");
         const hasOverlay = getProperty(token, "data.overlayEffect") != null;
         const hasEffects = getProperty(token, "data.effects.length") > 0;
-        const isInjured = Boolean(tokenEffects.find(e => e == this.settings.injuredIcon)) || false;
-        const wasDead = Boolean(tokenOverlay == this.settings.deadIcon);
-        const wasUnconscious = Boolean(tokenOverlay === this.settings.unconsciousIcon);
+
+        const isInjured = Boolean(tokenEffects.find(e => e == injuredIcon)) || false;
+        const wasDead = Boolean(tokenOverlay == deadIcon);
+        const wasUnconscious = Boolean(tokenOverlay === unconsciousIcon);
 
         if (!isInjured) {
-            token.toggleEffect(this.settings.injuredIcon);
+            token.toggleEffect(injuredIcon);
         }
 
         if (wasDead) {
-            token.toggleOverlay(this.settings.deadIcon);
+            token.toggleOverlay(deadIcon);
         }
 
         if (wasUnconscious) {
-            token.toggleOverlay(this.settings.unconsciousIcon);
+            token.toggleOverlay(unconsciousIcon);
         }
     }
 
@@ -199,25 +166,36 @@ export class InjuredAndDead {
      * Set a dead overlay on a token, removes all effects
      * @param {Object} token 
      */
-    async _markDead(token) {
+    static async _markDead(token) {
+        const enableUnconscious = Sidekick.getSetting(SETTING_KEYS.injuredDead.enableUnconscious);
+        const unconsciousActorType = Sidekick.getSetting(SETTING_KEYS.injuredDead.unconsciousActorType);
+
+        const injuredIcon = Sidekick.getSetting(SETTING_KEYS.injuredDead.injuredIcon);
+        const deadIcon = Sidekick.getSetting(SETTING_KEYS.injuredDead.deadIcon);
+        const unconsciousIcon = Sidekick.getSetting(SETTING_KEYS.injuredDead.unconsciousIcon);
+
         const tokenEffects = getProperty(token, "data.effects");
         const hasEffects = getProperty(token, "data.effects.length") > 0;
         const tokenOverlay = getProperty(token, "data.overlayEffect");
-        const isDead = (tokenOverlay === this.settings.deadIcon) ? true : false;
-        const isInjured = Boolean(tokenEffects.find(e => e == this.settings.injuredIcon)) || false;
-        const isUnconscious = (tokenOverlay === this.settings.unconsciousIcon) ? true : false;
-        const markUnconscious = (this.settings.unconscious && token.actor.data.type === this.unconsciousActorType) ? true : false;
+
+        const isDead = (tokenOverlay === deadIcon) ? true : false;
+        const isInjured = Boolean(tokenEffects.find(e => e == injuredIcon)) || false;
+        const isUnconscious = (tokenOverlay === unconsciousIcon) ? true : false;
+        const markUnconscious = (enableUnconscious && token.actor.data.type === unconsciousActorType) ? true : false;
 
         if (!isUnconscious && markUnconscious) {
             if (hasEffects && isInjured) {
-                token.toggleEffect(this.settings.injuredIcon);
+                token.toggleEffect(injuredIcon);
             }
-            await token.toggleOverlay(this.settings.unconsciousIcon);
-            if (CUB.enhancedConditions && CUB.enhancedConditions.settings.enhancedConditions) {
-                CUB.enhancedConditions.currentToken = token;
-                const effects = tokenEffects.concat(token.data.overlayEffect);
+            await token.toggleOverlay(unconsciousIcon);
 
-                CUB.enhancedConditions.lookupEntryMapping(effects);
+            const enhancedConditions = Sidekick.getSetting(SETTING_KEYS.enhancedConditions.enable);
+            if (enhancedConditions) {
+                const effects = tokenEffects.concat(token.data.overlayEffect);
+                const map = Sidekick.getSetting(SETTING_KEYS.enhancedConditions.map);
+                // lookup entry mapping
+                // output to chat
+                return EnhancedConditions.lookupEntryMapping(token, map, effects);
             }
 
             return;
@@ -230,7 +208,7 @@ export class InjuredAndDead {
         }
 
         if (!isDead) {
-            return token.toggleOverlay(this.settings.deadIcon);
+            return token.toggleOverlay(deadIcon);
         }
     }
 
@@ -238,7 +216,7 @@ export class InjuredAndDead {
      * Toggles the combat tracker death status based on token hp
      * @param {Object} token 
      */
-    async _toggleTrackerDead(token) {
+    static async toggleTrackerDefeated(token) {
         if (!token.scene.active || !game.user.isGM) {
             return;
         }
@@ -250,7 +228,7 @@ export class InjuredAndDead {
             if (combatant) {
                 await combat.updateCombatant({
                     _id: combatant._id,
-                    defeated: (tokenHp == 0)
+                    defeated: (tokenHp === 0)
                 });
             }
         }
@@ -264,41 +242,64 @@ export class InjuredAndDead {
      * @param {String} sceneId
      * @param {Object} update
      */
-    async _hookOnUpdateToken(scene, sceneID, update, options, userId) {
-        if (!this.settings.dead && !this.settings.injured && !this.settings.unconscious) {
+    static async _hookOnUpdateToken(scene, sceneID, update, options, userId) {
+        const enableDead = Sidekick.getSetting(SETTING_KEYS.injuredDead.enableDead);
+        const enableInjured = Sidekick.getSetting(SETTING_KEYS.injuredDead.enableInjured);
+        const enableUnconscious = Sidekick.getSetting(SETTING_KEYS.injuredDead.enableUnconscious);
+        
+        if ((!enableDead && !enableInjured && !enableUnconscious) || !game.user.isGM) {
             return;
         }
 
-        let token = canvas.tokens.get(update._id);
-        const healthUpdate = getProperty(update, "actorData.data." + this.settings.healthAttribute + ".value");
+        const healthAttribute = Sidekick.getSetting(SETTING_KEYS.injuredDead.healthAttribute);
+
+        const token = canvas.tokens.get(update._id);
+        const healthUpdate = getProperty(update, `actorData.data.${healthAttribute}.value`);
+
         if (game.userId != userId || healthUpdate == undefined || token.actorLink) {
             return;
         }
 
-        let tokenHealthState;
+        const tokenHealthState = InjuredAndDead._checkTokenHealthState(token, update);
+        InjuredAndDead.markToken(token, tokenHealthState);
+        
+    }
 
-        if (this.settings.injured || this.settings.dead || this.settings.unconscious || this.settings.combatTrackDead) {
-            tokenHealthState = this._checkTokenHealthState(token, update);
+    /**
+     * Marks a token based on its health state
+     * @param {*} token 
+     * @param {*} healthState
+     */
+    static markToken(token, healthState) {
+        const enableDead = Sidekick.getSetting(SETTING_KEYS.injuredDead.enableDead);
+        const enableInjured = Sidekick.getSetting(SETTING_KEYS.injuredDead.enableInjured);
+        const enableUnconscious = Sidekick.getSetting(SETTING_KEYS.injuredDead.enableUnconscious);
+        const markDefeated = Sidekick.getSetting(SETTING_KEYS.injuredDead.markDefeated);
 
-            if ((tokenHealthState === CUBButler.HEALTH_STATES.DEAD || tokenHealthState === CUBButler.HEALTH_STATES.UNCONSCIOUS) && (this.settings.dead || this.settings.combatTrackDead)) {
-                if (this.settings.combatTrackDead) {
-                    await this._toggleTrackerDead(token);
+        // Mark the token based on its health state and optionally toggle defeated in tracker
+        switch (healthState) {
+            case HEALTH_STATES.DEAD && enableDead:
+            case HEALTH_STATES.UNCONSCIOUS && enableUnconscious:
+                InjuredAndDead._markDead(token);
+                if (markDefeated) {
+                    InjuredAndDead.toggleTrackerDefeated(token);
                 }
-                this._markDead(token);
-            } else if (tokenHealthState === CUBButler.HEALTH_STATES.INJURED && this.settings.injured) {
-                this._markInjured(token);
-                if (this.settings.combatTrackDead) {
-                    this._toggleTrackerDead(token);
+                break;
+
+            case HEALTH_STATES.INJURED && enableInjured:
+                InjuredAndDead._markInjured(token);
+                if (markDefeated) {
+                    InjuredAndDead.toggleTrackerDefeated(token);
                 }
-            } else {
-                this._markHealthy(token);
-                if (this.settings.combatTrackDead) {
-                    this._toggleTrackerDead(token);
+                break;
+
+            default:
+                InjuredAndDead._markHealthy(token);
+                if (markDefeated) {
+                    InjuredAndDead.toggleTrackerDefeated(token);
                 }
-            }
+                break;
         }
-        this.callingUser = "";
-        return;
     }
 
     /**
@@ -310,45 +311,26 @@ export class InjuredAndDead {
      * @param {Object} update
      * @todo refactor as updateMany
      */
-    _hookOnUpdateActor(actor, update, userId) {
-        if ((!this.settings.dead && !this.settings.injured && !this.settings.unconscious) || !game.user.isGM) {
+    static _hookOnUpdateActor(actor, update, options, userId) {
+        const enableDead = Sidekick.getSetting(SETTING_KEYS.injuredDead.enableDead);
+        const enableInjured = Sidekick.getSetting(SETTING_KEYS.injuredDead.enableInjured);
+        const enableUnconscious = Sidekick.getSetting(SETTING_KEYS.injuredDead.enableUnconscious);
+
+        if ((!enableDead && !enableInjured && !enableUnconscious) || !game.user.isGM) {
             return;
         }
 
-        const healthUpdate = getProperty(update, "data." + this.settings.healthAttribute + ".value");
+        const healthAttribute = Sidekick.getSetting(SETTING_KEYS.injuredDead.healthAttribute);
+
+        const healthUpdate = getProperty(update, `data.${healthAttribute}.value`);
         const activeTokens = actor.getActiveTokens();
 
         if (healthUpdate === undefined || !activeTokens.length) {
             return;
         }
 
-        const healthState = this._checkActorHealthState(actor, update);
+        const healthState = InjuredAndDead._checkActorHealthState(actor, update);
 
-        for (let t of activeTokens) {
-            switch (healthState) {
-                case CUBButler.HEALTH_STATES.DEAD:
-                case CUBButler.HEALTH_STATES.UNCONSCIOUS:
-                    this._markDead(t);
-                    if (this.settings.combatTrackDead) {
-                        this._toggleTrackerDead(t);
-                    }
-                    break;
-
-                case CUBButler.HEALTH_STATES.INJURED:
-                    this._markInjured(t);
-                    if (this.settings.combatTrackDead) {
-                        this._toggleTrackerDead(t);
-                    }
-                    break;
-
-                default:
-                    this._markHealthy(t);
-                    if (this.settings.combatTrackDead) {
-                        this._toggleTrackerDead(t);
-                    }
-                    break;
-                
-            }
-        }
+        activeTokens.forEach(t => InjuredAndDead.markToken(t, healthState));
     }
 }

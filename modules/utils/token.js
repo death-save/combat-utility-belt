@@ -1,133 +1,39 @@
+import { Sidekick } from "../sidekick.js";
+import { SETTING_KEYS, DEFAULT_CONFIG } from "../butler.js";
+import { MightySummoner } from "../mighty-summoner.js";
+
 export class TokenUtility {
-    constructor() {
-        this.settings = {
-            mightySummoner: CUBSidekick.initGadgetSetting(CUBTokenUtility.GADGET_NAME + "(" + CUBTokenUtility.SETTINGS_DESCRIPTORS.MightySummonerN + ")", this.SETTINGS_META.mightySummoner),
-            autoRollHostileHp: CUBSidekick.initGadgetSetting(CUBTokenUtility.GADGET_NAME + "(" + CUBTokenUtility.SETTINGS_DESCRIPTORS.AutoRollHostileHpN + ")", this.SETTINGS_META.autoRollHostileHp),
-            tokenEffectSize: CUBSidekick.initGadgetSetting(CUBTokenUtility.GADGET_NAME + "(" + CUBTokenUtility.SETTINGS_DESCRIPTORS.TokenEffectSizeN + ")", this.SETTINGS_META.tokenEffectSize)
-        };
-    }
-
-    static get GADGET_NAME() {
-        return "token-utility";
-    }
-
-    static get SETTINGS_DESCRIPTORS() {
-        return {
-            MightySummonerN: "--Mighty Summoner--",
-            MightySummonerH: "Automatically check to see if token owner of NEUTRAL actor also owns an actor with the Mighty Summoner feat. Automatically calculates and adds new HP formula and rolls HP for token on canvas drop",
-            AutoRollHostileHpN: "--Auto Roll Hostile--",
-            AutoRollHostileHpH: "Automatically roll hp for hostile tokens on canvas drop",
-            TokenEffectSizeN: "--Token Effect Size--",
-            TokenEffectSizeH: "Sets the size for token effects when drawn on the token. Default: Small"
-        };
-    }
-
-    static get DEFAULT_CONFIG() {
-        return {
-            mightySummoner: false,
-            AutoRollHostileHp: false,
-            
-        };
-    }
-
     /**
-     * 
-     * @param {*} token 
-     * @param {*} sceneId 
+     * Hook on token create
+     * @param {Object} token 
+     * @param {String} sceneId 
+     * @param {Object} update 
+     * @todo move this to a preCreate hook to avoid a duplicate call to the db
      */
-    _summonerFeats(token, scene) {
-        if (!game.user.isGM) {
-            return;
-        }
+    static _hookOnCreateToken(scene, sceneId, tokenData, options, userId) {
+        const token = new Token(tokenData);
+        const autoRollHP = Sidekick.getSetting(SETTING_KEYS.tokenUtility.autoRollHP);
+        const mightySummoner = Sidekick.getSetting(SETTING_KEYS.mightySummoner.enable);
 
-        // If the token actor doesn't have the feat, check the other actors owned by the token's owner
-        if (token.actor && !this._actorHasFeat(token.actor)) {
-            //console.log("Summoner feats "); console.log(token)
-            
-            const owners = Object.keys(token.actor.data.permission).filter(p => p !== "default" && token.actor.data.permission[p] === CONST.ENTITY_PERMISSIONS.OWNER);
-
-            if (!owners) {
-                return;
-            }
-
-            let actors;
-
-            owners.forEach(owner => {
-                const owned = game.actors.entities.filter(actor => hasProperty(actor, "data.permission." + owner));
-                if (actors === undefined) {
-                    actors = owned;
-                } else {
-                    actors.push(owned);
-                }
-            });
-
-            if (!actors) {
-                return;
-            }
-
-            const summoners = actors.find(actor => this._actorHasFeat(actor));
-
-            if (!summoners) {
-                return;
-            }
-
-            new Dialog({
-                title: "Feat Summoning",
-                content: "<p>Mighty Summoner found. Is this monster being summoned?</p>",
-                buttons: {
-                    yes: {
-                        icon: `<i class="fas fa-check"></i>`,
-                        label: "Yes",
-                        callback: () => {
-                            let actor = token.actor;
-                            let formula = actor.data.data.attributes.hp.formula;
-                            const match = formula.match(/\d+/)[0];
-                            if (match !== undefined) {
-                                formula += " + " + (match * 2);
-                                actor.data.data.attributes.hp.formula = formula;
-                                token.actorData = {
-                                    data: {
-                                        attributes: {
-                                            hp: {
-                                                formula: formula,
-                                            }
-                                        }
-                                    }
-                                };
-                                this._rerollTokenHp(token, scene);
-                            }
-                        }
-                    },
-                    no: {
-                        icon: `<i class="fas fa-times"></i>`,
-                        label: "No"
-                    }
-                },
-                default: "yes"
-            }).render(true);
+        if (tokenData.disposition === -1 && autoRollHP && token.actor && !token.actor.isPC) {
+            TokenUtility.rollTokenHp(token);
+        } else if (mightySummoner) {
+            MightySummoner._checkForFeat(token);
         }
     }
 
     /**
-     * 
-     * @param {*} actor 
+     * Rolls a token's hp formula and returns an update payload with the result
+     * @param {*} token
+     * @todo refactor to just return the result instead of an update
      */
-    _actorHasFeat(actor) {
-        return !!actor.items.find(i => i.type === "feat" && i.name.includes("Mighty Summoner"));
-    }
-
-    /**
-     * 
-     * @param {*} token 
-     * @param {*} sceneId 
-     */
-    _rerollTokenHp(token, scene) {
+    static rollTokenHp(token) {
         const formula = token.actor.data.data.attributes.hp.formula;
-
+    
         let r = new Roll(formula);
         r.roll();
         const hp = r.total;
-
+    
         const update = {
             _id: token.id,
             actorData: {
@@ -141,35 +47,19 @@ export class TokenUtility {
                 }
             }
         };
-
-        scene.updateEmbeddedEntity("Token", update);
+    
+        return update;
     }
 
     /**
-     * Hook on token create
-     * @param {Object} token 
-     * @param {String} sceneId 
-     * @param {Object} update 
-     * @todo move this to a preCreate hook to avoid a duplicate call to the db
-     */
-    _hookOnCreateToken(scene, sceneId, tokenData, options, userId) {
-        const token = new Token(tokenData);
-
-        if (tokenData.disposition === -1 && this.settings.autoRollHostileHp && token.actor && !token.actor.isPC) {
-            this._rerollTokenHp(token, scene);
-        } else if (this.settings.mightySummoner) {
-            this._summonerFeats(token, scene);
-        }
-    }
-
-    /**
-     * 
+     * Patch the core draw effects so that effects are resizable
+     * Errors related to lexical "this" can be ignored due to the fact this method is used as a monkeypatch
      */
     static _patchDrawEffects() {
         let effectSize; 
         
         try {
-            effectSize = CUBSidekick.getGadgetSetting(CUBTokenUtility.GADGET_NAME + "(" + CUBTokenUtility.SETTINGS_DESCRIPTORS.TokenEffectSizeN + ")") 
+            effectSize = Sidekick.getSetting(SETTING_KEYS.tokenUtility.effectSize); 
         } catch (e) {
             console.warn(e);
             effectSize = null;
@@ -177,8 +67,8 @@ export class TokenUtility {
 
 
         // Use the default values if no setting found
-        const multiplier = effectSize ? CUBTokenUtility.DEFAULT_CONFIG.tokenEffectSize[effectSize].multiplier : 2;
-        const divisor = effectSize ? CUBTokenUtility.DEFAULT_CONFIG.tokenEffectSize[effectSize].divisor : 5;
+        const multiplier = effectSize ? DEFAULT_CONFIG.tokenUtility.effectSize[effectSize].multiplier : 2;
+        const divisor = effectSize ? DEFAULT_CONFIG.tokenUtility.effectSize[effectSize].divisor : 5;
 
         this.effects.removeChildren().forEach(c => c.destroy());
 

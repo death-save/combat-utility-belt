@@ -14,7 +14,7 @@ export class Concentrator {
      * @param {*} current 
      * @returns {Boolean}
      */
-    _wasDamageTaken(newHealth, oldHealth) {
+    static _wasDamageTaken(newHealth, oldHealth) {
         return newHealth < oldHealth || false;
     }
 
@@ -23,9 +23,11 @@ export class Concentrator {
      * @param {*} token
      * @returns {Boolean}
      */
-    _isConcentrating(token) {
+    static _isConcentrating(token) {
         const tokenEffects = getProperty(token, "data.effects");
-        const _isConcentrating = Boolean(tokenEffects && tokenEffects.find(e => e == this.settings.concentratingIcon)) || false;
+        const concentratingIcon = Sidekick.getSetting(SETTING_KEYS.concentrator.icon);
+
+        const _isConcentrating = Boolean(tokenEffects && tokenEffects.find(e => e === concentratingIcon)) || false;
 
         return _isConcentrating;
     }
@@ -36,7 +38,7 @@ export class Concentrator {
      * @param {*} oldHealth
      * @returns {Number}
      */
-    _calculateDamage(newHealth, oldHealth) {
+    static _calculateDamage(newHealth, oldHealth) {
         return oldHealth - newHealth || 0;
     }
 
@@ -46,7 +48,7 @@ export class Concentrator {
      * @param {*} html 
      * @param {*} data 
      */
-    _onRenderChatMessage(app, html, data) {
+    static _onRenderChatMessage(app, html, data) {
         const autoConcentrate = Sidekick.getSetting(SETTING_KEYS.concentrator.autoConcentrate);
         if (!game.user.isGM || app.data.timestamp + 500 < Date.now() || !autoConcentrate) {
             return;
@@ -86,12 +88,12 @@ export class Concentrator {
             }
 
             const tokenEffects = getProperty(t, "data.effects");
-            const isAlreadyConcentrating = !!tokenEffects.find(e => e === Sidekick.getSetting(SETTING_KEYS.concentrator.concentrateIcon));
+            const isAlreadyConcentrating = !!tokenEffects.find(e => e === Sidekick.getSetting(SETTING_KEYS.concentrator.icon));
 
             if (isAlreadyConcentrating) {
 
                 if (Sidekick.getSetting(SETTING_KEYS.concentrator.notifyDouble) !== "None") {
-                    this._notifyDoubleConcentration(t);
+                    Concentrator._notifyDoubleConcentration(t);
                 }
 
                 continue;
@@ -108,7 +110,7 @@ export class Concentrator {
      * @param {*} update 
      * @param {*} options 
      */
-    _hookOnPreUpdateToken(scene, sceneID, update, options){
+    static _hookOnPreUpdateToken(scene, sceneID, update, options){
         const token = canvas.tokens.get(update._id);
         const actorId = getProperty(token, "data.actorId");
         const current = getProperty(token, "actor");
@@ -119,20 +121,20 @@ export class Concentrator {
             return;
         }
 
-        const newHealth = getProperty(update, "actorData.data." + Sidekick.getSetting(SETTING_KEYS.concentrator.healthAttribute) + ".value");
-        const oldHealth = getProperty(current, "data.data." + Sidekick.getSetting(SETTING_KEYS.concentrator.healthAttribute) + ".value");
-        const isConcentrating = this._isConcentrating(token);
-        const damageTaken = this._wasDamageTaken(newHealth, oldHealth);
+        const newHealth = getProperty(update, `actorData.data.${Sidekick.getSetting(SETTING_KEYS.concentrator.healthAttribute)}.value`);
+        const oldHealth = getProperty(current, `data.data.${Sidekick.getSetting(SETTING_KEYS.concentrator.healthAttribute)}.value`);
+        const isConcentrating = Concentrator._isConcentrating(token);
+        const damageTaken = Concentrator._wasDamageTaken(newHealth, oldHealth);
 
         // Return early if damage wasn't taken or the token wasn't concentrating
         if (!isConcentrating || !damageTaken) {
             return;
         }
 
-        const damageAmount = this._calculateDamage(newHealth, oldHealth)
+        const damageAmount = Concentrator._calculateDamage(newHealth, oldHealth)
 
         if(Sidekick.getSetting(SETTING_KEYS.concentrator.outputChat)) {
-            this._displayChat(token, damageAmount);
+            Concentrator._displayChat(token, damageAmount);
         }
                 
         if(Sidekick.getSetting(SETTING_KEYS.concentrator.prompt)) {
@@ -153,11 +155,11 @@ export class Concentrator {
      * @param {*} update 
      * @param {*} options 
      */
-    _hookOnPreUpdateActor(actor, update, options) {
+    static _hookOnPreUpdateActor(actor, update, options) {
         const tokens = actor.getActiveTokens();
         const actorId = update._id;
-        const newHealth = getProperty(update, "data." + Sidekick.getSetting(SETTING_KEYS.concentrator.healthAttribute) + ".value");
-        const oldHealth = getProperty(actor, "data.data." + Sidekick.getSetting(SETTING_KEYS.concentrator.healthAttribute) + ".value");
+        const newHealth = getProperty(update, `data.${Sidekick.getSetting(SETTING_KEYS.concentrator.healthAttribute)}.value`);
+        const oldHealth = getProperty(actor, `data.data.${Sidekick.getSetting(SETTING_KEYS.concentrator.healthAttribute)}.value`);
         const owners = game.users.entities.filter(user => actor.hasPerm(user, "OWNER") && !user.isGM);
 
         if (owners.length == 0) {
@@ -168,17 +170,17 @@ export class Concentrator {
             return;
         }
         
-        const concentratingTokens = tokens.filter(t => this._isConcentrating(t) && this._wasDamageTaken(newHealth, oldHealth));
+        const concentratingTokens = tokens.filter(t => Concentrator._isConcentrating(t) && Concentrator._wasDamageTaken(newHealth, oldHealth));
 
         if (!concentratingTokens.length) {
             return;
         }
 
-        const damageAmount = this._calculateDamage(newHealth, oldHealth);
+        const damageAmount = Concentrator._calculateDamage(newHealth, oldHealth);
 
         if(Sidekick.getSetting(SETTING_KEYS.concentrator.outputChat)) {
             for (const t of tokens) {
-                this._displayChat(t, damageAmount);
+                Concentrator._displayChat(t, damageAmount);
             } 
         }
                     
@@ -194,8 +196,8 @@ export class Concentrator {
      * @param {*} update 
      * @param {*} options 
      */
-    _hookOnUpdateActor(actor, update, options){
-        this._determineDisplayedUsers(options);
+    static _hookOnUpdateActor(actor, update, options){
+        Concentrator._determineDisplayedUsers(options);
     }
 
     /**
@@ -206,15 +208,15 @@ export class Concentrator {
      * @param {*} options 
      * @param {*} userId 
      */
-    _hookOnUpdateToken(scene, sceneID, update, options, userId){
-        this._determineDisplayedUsers(options);
+    static _hookOnUpdateToken(scene, sceneID, update, options, userId){
+        Concentrator._determineDisplayedUsers(options);
     }
 
     /**
      * Distributes concentration prompts to affected users
      * @param {*} options 
      */
-    _determineDisplayedUsers(options){
+    static _determineDisplayedUsers(options){
         const owners = getProperty(options, 'affectedUsers.owners');
         const actorId = getProperty(options, 'affectedUsers.actorId');
 
@@ -223,12 +225,12 @@ export class Concentrator {
         }
 
         if (owners.length > 0) {
-            return this._distributePrompts(actorId, owners);
+            return Concentrator._distributePrompts(actorId, owners);
         }
 
         if (owners.length === 0 && game.user.isGM) {
             owners.push(game.userId);
-            return this._distributePrompts(actorId, owners);
+            return Concentrator._distributePrompts(actorId, owners);
         }
     }
 
@@ -237,7 +239,7 @@ export class Concentrator {
      * @param {*} name
      * @param {*} damage
      */
-    _displayChat(token, damage){
+    static _displayChat(token, damage){
         if (!game.user.isGM) {
             return;
         }
@@ -260,9 +262,9 @@ export class Concentrator {
      * @param {*} actorId 
      * @param {*} users 
      */
-    _distributePrompts(actorId, users){
+    static _distributePrompts(actorId, users){
         for (const u of users) {
-            this._displayPrompt(actorId, u._id);
+            Concentrator._displayPrompt(actorId, u._id);
         }
     }
 
@@ -271,7 +273,7 @@ export class Concentrator {
      * @param {*} actorId 
      * @param {*} userId 
      */
-    _displayPrompt(actorId, userId){
+    static _displayPrompt(actorId, userId){
         const actor = game.actors.get(actorId);
         const ability = Sidekick.getSetting(SETTING_KEYS.concentrator.concentrationAttribute);
 
@@ -306,7 +308,7 @@ export class Concentrator {
      * Displays a chat message to GMs if a Concentration spell is cast while already concentrating
      * @param {*} token 
      */
-    _notifyDoubleConcentration(token) {
+    static _notifyDoubleConcentration(token) {
         const isWhisper = Sidekick.getSetting(SETTING_KEYS.concentrator.notifyDouble) === "GM Only";
         const speaker = ChatMessage.getSpeaker({token});
         //speaker.alias = CUBConcentrator.prototype.DEFAULT_CONFIG.concentrator;

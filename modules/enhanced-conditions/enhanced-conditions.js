@@ -1,13 +1,13 @@
 import * as BUTLER from "../butler.js";
 import { ConditionLab } from "./condition-lab.js";
+import { Sidekick } from "../sidekick.js";
 /**
  * Builds a mapping between status icons and journal entries that represent conditions
  */
 export class EnhancedConditions {
     constructor() {
-        this.coreStatusIcons = this.coreStatusIcons || this._backupCoreStatusIcons();
-        this._updateStatusIcons();
-        this.currentToken = {};
+        this.coreStatusIcons = this.coreStatusIcons || EnhancedConditions._backupCoreStatusIcons();
+        EnhancedConditions._updateStatusIcons();
     }
 
     /**
@@ -38,19 +38,21 @@ export class EnhancedConditions {
         return defaultMaps;
     }
 
+    /**
+     * Returns the default condition map for a given system
+     * @param {*} system 
+     */
     static getDefaultMap(system) {
-        if (!game.cub.enhancedConditions.defaultMaps) {
-            game.cub.enhancedConditions.defaultsMaps = EnhancedConditions.getDefaultMaps(BUTLER.DEFAULT_CONFIG.enhancedConditions.conditionMapsPath)
-        }
+        const defaultMaps = EnhancedConditions.getDefaultMaps(BUTLER.DEFAULT_CONFIG.enhancedConditions.conditionMapsPath);
 
-        return game.cub.enhancedConditions.defaultMaps[system];
+        return defaultMaps[system];
     }
 
 
     /**
      * Retrieve the statusEffect icons from the Foundry CONFIG
      */
-    _backupCoreStatusIcons() {
+    static _backupCoreStatusIcons() {
         CONFIG.defaultStatusEffects = CONFIG.defaultStatusEffects || duplicate(CONFIG.statusEffects);
         if (!Object.isFrozen(CONFIG.defaultStatusEffects)) {
             Object.freeze(CONFIG.defaultStatusEffects);
@@ -86,81 +88,59 @@ export class EnhancedConditions {
      * Updates the core CONFIG.statusEffects with the new icons
      */
     static _updateStatusIcons(conditionMap) {
-        const map = conditionMap || this.settings.maps[this.settings.system];
+        const enable = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.enable);
+
+        if (!enable) {
+            // maybe restore the core icons?
+            return;
+        }
+
+        const map = conditionMap || Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.map);
         let entries;
 
         //save the original icons
         if (!this.coreStatusIcons) {
-            this.coreStatusIcons = this._backupCoreStatusIcons();
+            this.coreStatusIcons = EnhancedConditions._backupCoreStatusIcons();
         }
-        /*
-        if(!CONFIG.defaultStatusEffects) {
-            CONFIG.defaultStatusEffects = duplicate(CONFIG.statusEffects);
-            Object.freeze(CONFIG.defaultStatusEffects);
-        }
-       */
 
-        //console.log(this.settings.maps);
-        //killswitch for further execution of the function
-        if (this.settings.enhancedConditions) {
-            if (this.settings.removeDefaultEffects) {
-                CONFIG.statusEffects = this.settings.maps[this.settings.system] ? this.icons : [];
-            } else {
-                if (map instanceof Map) {
-                    entries = map.entries();
-                    for (let [k, v] of entries) {
-                        CONFIG.statusEffects.push(v);
-                        //console.log(k,v);
-                    }
-                } else if (map instanceof Array) {
-                    //add the icons from the condition map to the status effects array
-                    CONFIG.statusEffects = this.coreStatusIcons.concat(this.icons);
-                } else {
-                    entries = [];
-                }
-            }
+        const removeDefaultEffects = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.removeDefaultEffects);
+        const activeConditionMap = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.map);
+        const icons = EnhancedConditions.getConditionIcons(activeConditionMap);
+
+        if (removeDefaultEffects) {
+            CONFIG.statusEffects = activeConditionMap ? icons : [];
         } else {
-            CONFIG.statusEffects = this.coreStatusIcons;
+            if (map instanceof Map) {
+                entries = map.entries();
+                for (let [k, v] of entries) {
+                    CONFIG.statusEffects.push(v);
+                    //console.log(k,v);
+                }
+            } else if (map instanceof Array) {
+                //add the icons from the condition map to the status effects array
+                CONFIG.statusEffects = this.coreStatusIcons.concat(icons);
+            } else {
+                entries = [];
+            }
         }
-    }
-
-    /**
-     * Displays the condition map for the selected system
-     */
-    get map() {
-        return this.settings.maps[this.settings.system];
-    }
-
-    /**
-     * Inverts the key and value in the map
-     * @todo: rework
-     */
-    get inverseMap() {
-        let newMap = new Map();
-        for (let [k, v] of this.map) {
-            newMap.set(v, k);
-        }
-        return newMap;
     }
 
     /**
      * Returns just the icon side of the map
      */
-    get icons() {
-        if (this.map instanceof Map) {
-            return Array.from((this.settings.maps[this.settings.system]).values());
-        } else if (this.map instanceof Array && this.map[0] instanceof Array) {
-            let iconArray = [];
-            this.map.forEach((value, index, array) => {
-                iconArray.push(value[1]);
-            });
-
-            return iconArray;
-        } else if (this.map instanceof Array) {
-            return this.map;
-        } else {
-            return [];
+    static getConditionIcons(conditionMap) {
+        if (!conditionMap) {
+            //maybe log an error?
+            return;
         }
+
+        if (conditionMap instanceof Map) {
+            return Array.from(conditionMap.values());            
+        } else if (conditionMap instanceof Array) {
+            return conditionMap[0] instanceof Array ? conditionMap.map(value => value[1]) : conditionMap;
+        }
+
+        return [];
     }
 
     /**
@@ -175,16 +155,12 @@ export class EnhancedConditions {
                     <i class="fas fa-flask"></i> ${BUTLER.DEFAULT_CONFIG.enhancedConditions.conditionLab.title}
                 </button>`
         );
-
+        
         cubDiv.append(labButton);
-
 
         labButton.click(ev => {
             new ConditionLab().render(true);
         });
-
-        
-
     }
 
     /**
@@ -201,16 +177,18 @@ export class EnhancedConditions {
 
         if (display && !labButton) {
             labButton.style.display = "block";
-        } else if (sidebarButton && (!game.user.isGM || !display)) {
-            sidebarButton.style.display = "none";
+        } else if (labButton && (!game.user.isGM || !display)) {
+            labButton.style.display = "none";
         }
     }
 
     /**
      * Hooks on token updates. If the update includes effects, calls the journal entry lookup
      */
-    _hookOnUpdateToken(scene, sceneID, update, options, userId) {
-        if (!this.settings.enhancedConditions || !game.user.isGM || (game.users.get(userId).isGM && !game.userId === userId)) {
+    static _hookOnUpdateToken(scene, sceneID, update, options, userId) {
+        const enable = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.enable);
+
+        if (!enable || !game.user.isGM || (game.users.get(userId).isGM && !game.userId === userId)) {
             return;
         }
 
@@ -222,15 +200,18 @@ export class EnhancedConditions {
         }
 
         //If the update has effects in it, lookup mapping and set the current token
-        this.currentToken = canvas.tokens.get(update._id);
-        return this.lookupEntryMapping(effects);
+        const token = canvas.tokens.get(update._id);
+        const map = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.map);
+        return EnhancedConditions.lookupEntryMapping(token, map, effects);
     }
 
     /**
      * Hooks on token updates. If the update includes effects, calls the journal entry lookup
      */
-    _hookOnPreUpdateToken(scene, sceneID, update, options) {
-        if (!this.settings.enhancedConditions) {
+    static _hookOnPreUpdateToken(scene, sceneID, update, options) {
+        const enable = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.enable);
+
+        if (!enable) {
             return;
         }
 
@@ -242,36 +223,40 @@ export class EnhancedConditions {
         }
 
         //If the update has effects in it, lookup mapping and set the current token
-        this.currentToken = canvas.tokens.get(update._id);
-        return this.lookupEntryMapping(effects);
+        const token = canvas.tokens.get(update._id);
+        const map = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.map);
+        return EnhancedConditions.lookupEntryMapping(token, map, effects);
     }
 
     /**
      * Adds a title/tooltip with the matched Condition name
      */
-    _hookOnRenderTokenHUD(app, html, data) {
-        const conditionIcons = this.icons;
-        let statusIcons = html.find("img.effect-control");
+    static _hookOnRenderTokenHUD(app, html, data) {
+        const enable = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.enable);
 
-        //console.log(app,html);
-        //killswitch for further execution of function
-        if (this.settings.enhancedConditions) {
-            for (let i of statusIcons) {
-                const src = i.attributes.src.value;
-
-                if (conditionIcons.includes(src)) {
-                    i.setAttribute("title", this.inverseMap.get(src));
-                }
-            }
+        if (!enable) {
+            return;
         }
+
+        const map = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.map);
+        const conditionIcons = EnhancedConditions.getConditionIcons(map);
+        const effectIcons = html.find("img.effect-control");
+        const enhancedIcons = effectIcons.filter(i => {
+            const src = i.attributes.src.value;
+            if (conditionIcons.includes(src)) {
+                return true;
+            }
+        });
+
+        return enhancedIcons.forEach(i => i.setAttribute("title", Sidekick.getKeyByValue(map, i)));
     }
 
     /**
      * Checks statusEffect icons against mapping and returns matching journal entries
      * @param {Array} icons 
      */
-    async lookupEntryMapping(icons) {
-        const conditionEntries = this.map.filter(row => {
+    static async lookupEntryMapping(token, map, icons) {
+        const conditionEntries = map.filter(row => {
             const [c, i, j] = row;
             return icons.includes(i) ? true : false;
         });
@@ -280,15 +265,15 @@ export class EnhancedConditions {
             return;
         }
 
-        return this.outputChatMessage(conditionEntries);
+        return EnhancedConditions.outputChatMessage(token, conditionEntries);
     }
 
     /**
      * Output condition entries to chat
      */
-    async outputChatMessage(entries) {
+    static async outputChatMessage(token, entries) {
         const chatUser = game.userId;
-        const token = this.currentToken;
+        //const token = token || this.currentToken;
         const chatType = CONST.CHAT_MESSAGE_TYPES.OTHER;
 
         let tokenSpeaker = ChatMessage.getSpeaker({token});

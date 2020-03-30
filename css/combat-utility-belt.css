@@ -3,6 +3,15 @@ ul.chat-message.condition-list {
     padding: 0;
 }
 
+label.checkbox {
+    flex: 2;
+    font-weight: bold;
+    margin: 0;
+    line-height: 20px;
+    font-size: 11px;
+    text-align: right;
+}
+
 img.icon {
     width: 50px;
     background-color:rgba(0,0,0,0.5);

@@ -10,7 +10,7 @@ export const PATH = "modules/combat-utility-belt";
 
 export const GADGET_NAMES = {
     enhancedConditions: "enhancedConditions",
-    hideNPCNames: "hideNPCNames",
+    hideNames: "hideNames",
     rerollInitiative: "rerollInitiative",
     concentrator: "concentrator"
 }
@@ -86,6 +86,9 @@ export const DEFAULT_CONFIG = {
         },
         title: "CUB: Enhanced Conditions"
     },
+    giveXP: {
+        enable: false
+    },
     hideNames: {
         enable: false,
         hideFooter: false,
@@ -101,6 +104,9 @@ export const DEFAULT_CONFIG = {
         markDefeated: false,
         unconsciousActorType: "",
         unconsciousIcon: "icons/svg/unconscious.svg"
+    },
+    mightySummoner: {
+        enable: false
     },
     panSelect: {
         enablePan: false,
@@ -124,13 +130,12 @@ export const DEFAULT_CONFIG = {
         enable: false,
         rerollTempCombatants: false
     },
-    temporaryCombatants: {
+    tempCombatants: {
         enable: false
     },
     tokenUtility: {
-        mightySummoner: false,
-        autoRollHostileHP: false,
-        tokenEffectSize: {
+        autoRollHP: false,
+        effectSize: {
             large: {
                 multiplier: 4,
                 divisor: 2
@@ -144,7 +149,7 @@ export const DEFAULT_CONFIG = {
                 divisor: 5
             }
         },
-        tokenEffectSizeChoices: {
+        effectSizeChoices: {
             large: "Large",
             medium: "Medium",
             small: "Small"
@@ -163,25 +168,28 @@ export const FLAGS = {
 
 export const SETTING_KEYS = {
     concentrator: {
-        enable: "enable",
+        enable: "enableConcentrator",
         icon: "modules/combat-utility-belt/icons/concentrating.svg",
-        outputChat: "outputToChat",
+        outputChat: "concentratorOutputToChat",
         autoConcentrate: "autoConcentrate",
         concentrationAttribute: "concentrationAttribute",
-        notifyDouble: "notifyDouble",
-        healthAttribute: "healthAttribute", //validate necessity
-        prompt: "promptPlayer"
+        notifyDouble: "notifyDoubleConcentration",
+        healthAttribute: "concentratorHealthAttribute", //validate necessity
+        prompt: "concentratorPromptPlayer"
     },
     enhancedConditions: {
-        enable: "enable",
+        enable: "enableEnhancedConditions",
         system: "activeSystem",
         map: "activeConditionMap",
         maps: "conditionMaps",
         removeDefaultEffects: "removeDefaultEffects",
-        output: "outputToChat"
+        output: "conditionsOutputToChat"
+    },
+    giveXP: {
+        enable: "enableGiveXP"
     },
     hideNames: {
-        enable: "enable",
+        enable: "enableHideNames",
         replacementString: "replacementString",
         hideFooter: "hideFooter"
     },
@@ -197,6 +205,9 @@ export const SETTING_KEYS = {
         markDefeated: "markDefeated",
         unconsciousActorType: "unconsciousActorType"
     },
+    mightySummoner: {
+        enable: "enableMightySummoner"
+    },
     panSelect: {
         enablePan: "enablePan",
         panGM: "panGM",
@@ -211,18 +222,14 @@ export const SETTING_KEYS = {
         rerollTemp: "rerollTempCombatants"
     },
    
-    temporaryCombatants: {
-        enable: "enable",
+    tempCombatants: {
+        enable: "enableTempCombatants",
 
     },
     tokenUtility: {
         mightySummoner: "enableMightySummoner",
         autoRollHP: "autoRollHP",
         effectSize: "effectSize"
-
-    },
-    trackerUtility: {
-        enableGiveXP: "enableGiveXP",
-    }   
+    } 
 }
 

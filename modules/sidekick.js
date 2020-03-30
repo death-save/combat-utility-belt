@@ -17,17 +17,17 @@ export class Sidekick {
     }
 
     static getSetting(key) {
-        return game.settings.get(BUTLER.SHORTNAME, key);
+        return game.settings.get(BUTLER.NAME, key);
     }
 
     static async setSetting(key, value, awaitResult=false) {
         return awaitResult ? 
-            await game.settings.set(BUTLER.SHORTNAME, key, value) : 
-            game.settings.set(BUTLER.SHORTNAME, key, value);
+            await game.settings.set(BUTLER.NAME, key, value) : 
+            game.settings.set(BUTLER.NAME, key, value);
     }
 
     static registerSetting(key, metadata) {
-        return game.settings.register(BUTLER.SHORTNAME, key, metadata);
+        return game.settings.register(BUTLER.NAME, key, metadata);
     }
 
     static registerAllSettings(settingsData) {
@@ -67,6 +67,18 @@ export class Sidekick {
      */
     static getKeyByValue(object, value) {
         return Object.keys(object).find(key => object[key] === value);
+    }
+
+    /**
+     * Inverts the key and value in the map
+     * @todo: rework
+     */
+    static getInverseMap(map) {
+        let newMap = new Map();
+        for (let [k, v] of map) {
+            newMap.set(v, k);
+        }
+        return newMap;
     }
 
     /**
