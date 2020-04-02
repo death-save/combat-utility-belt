@@ -1,4 +1,4 @@
-import { SHORTNAME, FLAGS, SETTING_KEYS } from "./butler.js";
+import { NAME, FLAGS, SETTING_KEYS } from "./butler.js";
 import { Sidekick } from "./sidekick.js";
 
 /**
@@ -15,7 +15,7 @@ export class RerollInitiative {
      * @param {*} userId 
      */
     static async _onUpdateCombat(combat, update, options={}, userId) {
-        const reroll = Sidekick.getSetting(SETTING_KEYS.rerollInitiative.reroll);
+        const reroll = Sidekick.getSetting(SETTING_KEYS.rerollInitiative.enable);
         const rerollTemp = Sidekick.getSetting(SETTING_KEYS.rerollInitiative.rerollTemp);
 
         // Return early if we are NOT a GM OR we are not the player that triggered the update AND that player IS a GM
@@ -41,7 +41,7 @@ export class RerollInitiative {
 
         const combatantIds = rerollTemp ? 
             combat.combatants.map(c => c._id) : 
-            combat.combatants.filter(c => !hasProperty(c, `flags.${SHORTNAME}.${FLAGS.temporaryCombatants.temporaryCombatant}`)).map(c => c._id);
+            combat.combatants.filter(c => !hasProperty(c, `flags.${NAME}.${FLAGS.temporaryCombatants.temporaryCombatant}`)).map(c => c._id);
 
         await combat.rollInitiative(combatantIds);
         await combat.update({turn: 0});

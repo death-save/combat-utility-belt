@@ -342,9 +342,7 @@ export function SETTINGS_METADATA() {
             scope: "world",
             type: Boolean,
             config: true,
-            onChange: s => {
-                this.settings.injured = s;
-            }
+            onChange: s => {}
         },
         [BUTLER.SETTING_KEYS.injuredDead.injuredIcon]: {
             name: "SETTINGS.InjuredDead.InjuredIconN",

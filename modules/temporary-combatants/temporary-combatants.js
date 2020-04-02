@@ -1,5 +1,6 @@
 import { Sidekick } from "../sidekick.js";
 import { SETTING_KEYS } from "../butler.js";
+import { TemporaryCombatantForm } from "./form.js";
 
 export class TemporaryCombatants {
     /**
@@ -37,7 +38,7 @@ export class TemporaryCombatants {
      */
     static _onAddTemporaryCombatant(event) {
         // spawn a form to enter details
-        const temporaryCombatantForm = new CUBTemporaryCombatantForm().render(true);
+        const temporaryCombatantForm = new TemporaryCombatantForm({}).render(true);
     }
 
     /**

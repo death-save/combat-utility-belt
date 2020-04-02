@@ -1,7 +1,9 @@
+import { NAME, FLAGS } from "../butler.js";
+
 /**
  * 
  */
-class CUBTemporaryCombatantForm extends FormApplication {
+export class TemporaryCombatantForm extends FormApplication {
     constructor(object, options) {
         super(object, options);
     }
@@ -20,6 +22,9 @@ class CUBTemporaryCombatantForm extends FormApplication {
 
     async _updateObject(event, formData) {
         const folderName = "Temporary Combatants";
+        const flags = {
+            [`${NAME}.${FLAGS.temporaryCombatants.temporaryCombatant}`]: true
+        }
         let folder = game.folders.entities.find(f => f.name === folderName);
         if (!folder) {
             folder = await Folder.create({name: "Temporary Combatants", type: "Actor", parent: null}, {displaySheet: false});
@@ -30,9 +35,7 @@ class CUBTemporaryCombatantForm extends FormApplication {
             type:"npc",
             img: formData.icon,
             folder: folder.id,
-            flags: {
-                [CUBButler.MODULE_NAME + "." + CUB.combatTracker.GADGET_NAME + "(temporaryCombatant)"]: true
-            }
+            flags
         },{displaySheet: false});
 
         const tokenData = duplicate(actor.data.token);
@@ -40,15 +43,13 @@ class CUBTemporaryCombatantForm extends FormApplication {
         tokenData.y = 0;
         tokenData.disposition = 0;
         tokenData.img = formData.icon;
-        const token = await Token.create(game.scenes.active._id, tokenData);
+        const token = await Token.create(tokenData);
 
         const combatant = await game.combat.createEmbeddedEntity("Combatant", {
             tokenId: token._id, 
             hidden: formData.hidden, 
             initiative: formData.init,
-            flags: {
-                [CUBButler.MODULE_NAME + "." + CUB.combatTracker.GADGET_NAME + "(temporaryCombatant)"]: true
-            }
+            flags
         });
         
     }

@@ -91,6 +91,7 @@ export class Signal {
 
     static hookOnRenderSettings() {
         Hooks.on("renderSettings", (app, html) => {
+            Sidekick.createCUBDiv(html);
             EnhancedConditions._createLabButton(html);
             EnhancedConditions._toggleLabButtonVisibility(Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.enable));
         });
