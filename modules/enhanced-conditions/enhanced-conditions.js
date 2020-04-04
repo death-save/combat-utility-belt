@@ -15,7 +15,7 @@ export class EnhancedConditions {
      * @todo: needs a redesign -- change to arrays of objects?
      * @todo: map to entryId and then rebuild on import
      */
-    static async getDefaultMaps(path, extensions=["json"]) {
+    static async getDefaultMaps(path, extensions=[".json"]) {
         // get the json files
         // for each fetch and parse the json
         // add the result to a variable -- CUB.enhancedConditions.maps ???
@@ -27,11 +27,13 @@ export class EnhancedConditions {
         }
 
         for (const file of fp.files) {
-            const jsonFile = await fetch(fp);
-            const json = await jsonFile.json();
-            const map = JSON.parse(json);
+            if (file.includes("template")) {
+                continue;
+            }
+            const jsonFile = await fetch(file);
+            const map = await jsonFile.json();
 
-            if (map) {
+            if (map instanceof Object) {
                 defaultMaps.push(map);
             }
         }
@@ -42,8 +44,8 @@ export class EnhancedConditions {
      * Returns the default condition map for a given system
      * @param {*} system 
      */
-    static getDefaultMap(system) {
-        const defaultMaps = EnhancedConditions.getDefaultMaps(BUTLER.DEFAULT_CONFIG.enhancedConditions.conditionMapsPath);
+    static async getDefaultMap(system) {
+        const defaultMaps = await EnhancedConditions.getDefaultMaps(BUTLER.DEFAULT_CONFIG.enhancedConditions.conditionMapsPath);
 
         return defaultMaps[system];
     }
@@ -144,6 +146,21 @@ export class EnhancedConditions {
     }
 
     /**
+     * 
+     */
+    static prepareData() {
+        const data = {
+            systems: Sidekick.getSystemChoices(),
+            system: Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.system),
+            conditionMap: Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.map),
+            entries: game.journal.entities.sort((a, b) => a.sort - b.sort).map(e => {
+                return [e.id, e.name]
+            })
+        }
+        return data;
+    }
+
+    /**
      * Creates a div for the module and button for the Condition Lab
      * @param {Object} html the html element where the button will be created
      */
@@ -159,7 +176,8 @@ export class EnhancedConditions {
         cubDiv.append(labButton);
 
         labButton.click(ev => {
-            new ConditionLab().render(true);
+            const data = EnhancedConditions.prepareData();
+            new ConditionLab(data).render(true);
         });
     }
 

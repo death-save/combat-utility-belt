@@ -1,37 +1,187 @@
-["Blinded", "systems/pf2e/icons/skills/light_03.jpg", ""],
-            ["Broken", "systems/pf2e/icons/skills/red_16.jpg", ""],
-            ["Clumsy", "systems/pf2e/icons/skills/light_05.jpg", ""],
-            ["Concealed", "systems/pf2e/icons/skills/shadow_14.jpg", ""],
-            ["Confused", "systems/pf2e/icons/skills/red_01.jpg", ""],
-            ["Controlled", "systems/pf2e/icons/skills/red_05.jpg", ""],
-            ["Dazzled", "systems/pf2e/icons/skills/shadow_12.jpg", ""],
-            ["Deafened", "systems/pf2e/icons/skills/red_10.jpg", ""],
-            ["Doomed", "systems/pf2e/icons/skills/blood_12.jpg", ""],
-            ["Drained", "systems/pf2e/icons/skills/affliction_01.jpg", ""],
-            ["Dying", "systems/pf2e/icons/skills/yellow_32.jpg", ""],
-            ["Encumbered", "systems/pf2e/icons/skills/gray_05.jpg", ""],
-            ["Enfeebled", "systems/pf2e/icons/skills/violet_28.jpg", ""],
-            ["Fascinated", "systems/pf2e/icons/skills/violet_17.jpg", ""],
-            ["Fatigued", "systems/pf2e/icons/skills/red_33.jpg", ""],
-            ["Flat-Footed", "systems/pf2e/icons/skills/weapon_17.jpg", ""],
-            ["Fleeing", "systems/pf2e/icons/skills/beast_01.jpg", ""],
-            ["Frightened", "systems/pf2e/icons/skills/shadow_01.jpg", ""],
-            ["Grabbed", "systems/pf2e/icons/skills/yellow_08.jpg", ""],
-            ["Hidden", "systems/pf2e/icons/skills/shadow_17.jpg", ""],
-            ["Immobilized", "systems/pf2e/icons/skills/green_16.jpg", ""],
-            ["Invisible", "systems/pf2e/icons/skills/water_07.jpg", ""],
-            ["Observed", "systems/pf2e/icons/skills/light_02.jpg", ""],
-            ["Paralyzed", "systems/pf2e/icons/skills/ice_03.jpg", ""],
-            ["Persistent Damage", "systems/pf2e/icons/skills/blood_03.jpg", ""],
-            ["Petrified", "systems/pf2e/icons/skills/affliction_09.jpg", ""],
-            ["Prone", "systems/pf2e/icons/skills/yellow_19.jpg", ""],
-            ["Quickened", "systems/pf2e/icons/skills/blue_35.jpg", ""],
-            ["Restrained", "systems/pf2e/icons/skills/red_06.jpg", ""],
-            ["Sickened", "systems/pf2e/icons/skills/affliction_13.jpg", ""],
-            ["Slowed", "systems/pf2e/icons/skills/blue_04.jpg", ""],
-            ["Stunned", "systems/pf2e/icons/skills/affliction_02.jpg", ""],
-            ["Stupefied", "systems/pf2e/icons/skills/violet_03.jpg", ""],
-            ["Unconscious", "systems/pf2e/icons/skills/light_01.jpg", ""],
-            ["Undetected", "systems/pf2e/icons/skills/emerald_07.jpg", ""],
-            ["Unnoticed", "systems/pf2e/icons/skills/green_18.jpg", ""],
-            ["Wounded", "systems/pf2e/icons/skills/blood_04.jpg", ""],
+{
+    "blinded": {
+        "name": "Blinded",
+        "icon": "systems/pf2e/icons/skills/light_03.jpg",
+        "journalId": ""
+    },
+    "broken": {
+        "name": "Broken",
+        "icon": "systems/pf2e/icons/skills/red_16.jpg",
+        "journalId": ""
+    },
+    "clumsy": {
+        "name": "Clumsy",
+        "icon": "systems/pf2e/icons/skills/light_05.jpg",
+        "journalId": ""
+    },
+    "concealed": {
+        "name": "Concealed",
+        "icon": "systems/pf2e/icons/skills/shadow_14.jpg",
+        "journalId": ""
+    },
+    "confused": {
+        "name": "Confused",
+        "icon": "systems/pf2e/icons/skills/red_01.jpg",
+        "journalId": ""
+    },
+    "controlled": {
+        "name": "Controlled",
+        "icon": "systems/pf2e/icons/skills/red_05.jpg",
+        "journalId": ""
+    },
+    "dazzled": {
+        "name": "Dazzled",
+        "icon": "systems/pf2e/icons/skills/shadow_12.jpg",
+        "journalId": ""
+    },
+    "deafened": {
+        "name": "Deafened",
+        "icon": "systems/pf2e/icons/skills/red_10.jpg",
+        "journalId": ""
+    },
+    "doomed": {
+        "name": "Doomed",
+        "icon": "systems/pf2e/icons/skills/blood_12.jpg",
+        "journalId": ""
+    },
+    "drained": {
+        "name": "Drained",
+        "icon": "systems/pf2e/icons/skills/affliction_01.jpg",
+        "journalId": ""
+    },
+    "dying": {
+        "name": "Dying",
+        "icon": "systems/pf2e/icons/skills/yellow_32.jpg",
+        "journalId": ""
+    },
+    "encumbered": {
+        "name": "Encumbered",
+        "icon": "systems/pf2e/icons/skills/gray_05.jpg",
+        "journalId": ""
+    },
+    "enfeebled": {
+        "name": "Enfeebled",
+        "icon": "systems/pf2e/icons/skills/violet_28.jpg",
+        "journalId": ""
+    },
+    "fascinated": {
+        "name": "Fascinated",
+        "icon": "systems/pf2e/icons/skills/violet_17.jpg",
+        "journalId": ""
+    },
+    "fatigued": {
+        "name": "Fatigued",
+        "icon": "systems/pf2e/icons/skills/red_33.jpg",
+        "journalId": ""
+    },
+    "flat-footed": {
+        "name": "Flat-Footed",
+        "icon": "systems/pf2e/icons/skills/weapon_17.jpg",
+        "journalId": ""
+    },
+    "fleeing": {
+        "name": "Fleeing",
+        "icon": "systems/pf2e/icons/skills/beast_01.jpg",
+        "journalId": ""
+    },
+    "frightened": {
+        "name": "Frightened",
+        "icon": "systems/pf2e/icons/skills/shadow_01.jpg",
+        "journalId": ""
+    },
+    "grabbed": {
+        "name": "Grabbed",
+        "icon": "systems/pf2e/icons/skills/yellow_08.jpg",
+        "journalId": ""
+    },
+    "hidden": {
+        "name": "Hidden",
+        "icon": "systems/pf2e/icons/skills/shadow_17.jpg",
+        "journalId": ""
+    },
+    "immobilized": {
+        "name": "Immobilized",
+        "icon": "systems/pf2e/icons/skills/green_16.jpg",
+        "journalId": ""
+    },
+    "invisible": {
+        "name": "Invisible",
+        "icon": "systems/pf2e/icons/skills/water_07.jpg",
+        "journalId": ""
+    },
+    "observed": {
+        "name": "Observed",
+        "icon": "systems/pf2e/icons/skills/light_02.jpg",
+        "journalId": ""
+    },
+    "paralyzed": {
+        "name": "Paralyzed",
+        "icon": "systems/pf2e/icons/skills/ice_03.jpg",
+        "journalId": ""
+    },
+    "persistentDamage": {
+        "name": "Persistent Damage",
+        "icon": "systems/pf2e/icons/skills/blood_03.jpg",
+        "journalId": ""
+    },
+    "petrified": {
+        "name": "Petrified",
+        "icon": "systems/pf2e/icons/skills/affliction_09.jpg",
+        "journalId": ""
+    },
+    "prone": {
+        "name": "Prone",
+        "icon": "systems/pf2e/icons/skills/yellow_19.jpg",
+        "journalId": ""
+    },
+    "quickened": {
+        "name": "Quickened",
+        "icon": "systems/pf2e/icons/skills/blue_35.jpg",
+        "journalId": ""
+    },
+    "restrained": {
+        "name": "Restrained",
+        "icon": "systems/pf2e/icons/skills/red_06.jpg",
+        "journalId": ""
+    },
+    "sickened": {
+        "name": "Sickened",
+        "icon": "systems/pf2e/icons/skills/affliction_13.jpg",
+        "journalId": ""
+    },
+    "slowed": {
+        "name": "Slowed",
+        "icon": "systems/pf2e/icons/skills/blue_04.jpg",
+        "journalId": ""
+    },
+    "stunned": {
+        "name": "Stunned",
+        "icon": "systems/pf2e/icons/skills/affliction_02.jpg",
+        "journalId": ""
+    },
+    "stupefied": {
+        "name": "Stupefied",
+        "icon": "systems/pf2e/icons/skills/violet_03.jpg",
+        "journalId": ""
+    },
+    "unconscious": {
+        "name": "Unconscious",
+        "icon": "systems/pf2e/icons/skills/light_01.jpg",
+        "journalId": ""
+    },
+    "undetected": {
+        "name": "Undetected",
+        "icon": "systems/pf2e/icons/skills/emerald_07.jpg",
+        "journalId": ""
+    },
+    "unnoticed": {
+        "name": "Unnoticed",
+        "icon": "systems/pf2e/icons/skills/green_18.jpg",
+        "journalId": ""
+    },
+    "wounded": {
+        "name": "Wounded",
+        "icon": "systems/pf2e/icons/skills/blood_04.jpg",
+        "journalId": ""
+    }
+}

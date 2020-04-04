@@ -39,7 +39,11 @@ export class Sidekick {
      */
     static getSystemChoices() {
         const systemIds = Object.getOwnPropertyNames(BUTLER.DEFAULT_GAME_SYSTEMS);
-        const result = systemIds.forEach(i => BUTLER.DEFAULT_GAME_SYSTEMS[i].name);
+        const result = {};
+
+        for (let i of systemIds) {
+            result[i] = BUTLER.DEFAULT_GAME_SYSTEMS[i].name;
+        }
         return result;
     }
 

@@ -3,25 +3,25 @@
 /* -------------------------------------------- */
 import { cub } from "../combat-utility-belt.js"
 import * as BUTLER from "./butler.js";
-import { SETTINGS_METADATA } from "./settings.js";
+import { Sidekick } from "./sidekick.js";
+import { registerSettings } from "./settings.js";
 
 /* ------------------ Gadgets ----------------- */
 
 import { Concentrator } from "./concentrator.js";
 import { EnhancedConditions } from "./enhanced-conditions/enhanced-conditions.js";
+import { GiveXP } from "./give-xp.js";
 import { HideNPCNames } from "./hide-npc-names.js";
 import { InjuredAndDead} from "./injured-dead.js";
-import { RerollInitiative } from "./reroll-initiative.js";
 import { PanSelect } from "./pan-select.js";
+import { RerollInitiative } from "./reroll-initiative.js";
 import { TemporaryCombatants } from "./temporary-combatants/temporary-combatants.js"
 
 /* ------------------- Utils ------------------ */
 
-import { Sidekick } from "./sidekick.js"
 import { TokenUtility } from "./utils/token.js";
 import { ActorUtility } from "./utils/actor.js";
 import { TrackerUtility } from "./utils/combat-tracker.js";
-import { GiveXP } from "./give-xp.js";
 
 /* -------------------------------------------- */
 /*                     Class                    */
@@ -46,7 +46,7 @@ export class Signal {
             // Execute housekeeping
             Sidekick.handlebarsHelpers();
             Sidekick.jQueryHelpers();
-            Sidekick.registerAllSettings(SETTINGS_METADATA());
+            registerSettings();
 
             // Instantiate gadget classes
             game.cub.concentrator = new Concentrator();

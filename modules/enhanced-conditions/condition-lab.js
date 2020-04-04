@@ -1,6 +1,7 @@
 import { cub } from "../../combat-utility-belt.js";
 import * as BUTLER from "../butler.js";
 import { Sidekick } from "../sidekick.js";
+import { EnhancedConditions } from "./enhanced-conditions.js";
 
 /**
  * Form application for managing mapping of Conditions to Icons and JournalEntries
@@ -8,7 +9,7 @@ import { Sidekick } from "../sidekick.js";
 export class ConditionLab extends FormApplication {
     constructor(object, options={}) {
         super(object, options);
-        this.data = game.cub.enhancedConditions;
+        this.data = object;
     }
 
     static get defaultOptions() {
@@ -24,18 +25,7 @@ export class ConditionLab extends FormApplication {
     }
 
     getData() {
-        const entries = game.journal.entities.sort((a, b) => a.sort - b.sort).map(e => {
-            return [e.id, e.name]
-        });
-
-        const formData = {
-            conditionmap: this.data.map,
-            systems: this.data.systemChoices,
-            system: this.data.system,
-            entries: entries
-        };
-
-        return formData;
+        return this.data || {};
     }
 
     /**
@@ -96,15 +86,14 @@ export class ConditionLab extends FormApplication {
             const selection = $(ev.target).find("option:selected");
 
             //capture the value of the selected option
-            newSystem = selection.val();
+            const newSystem = selection.val();
 
             //set the enhanced conditions system to the new value
-            await Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.system, newSystem);
+            const systemSetting = await Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.system, newSystem);
+            let newMap = EnhancedConditions.getDefaultMap(newSystem) || [];
 
             //if there's no mapping for the newsystem, create one
-            if (!this.data.settings.maps[newSystem]) {
-                const newMap = [];
-
+            if (newMap.length === 0) {
                 await Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.map, newMap);
             }
 
@@ -114,6 +103,7 @@ export class ConditionLab extends FormApplication {
 
         addRowButton.click(async ev => {
             ev.preventDefault();
+            const map = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.map);
             game.cub.enhancedConditions.settings.maps[this.data.system].push(["", ""]);
             this.render(true);
         });

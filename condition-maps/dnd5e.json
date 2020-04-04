@@ -1,23 +1,23 @@
 {
-   "blinded": {
-       "name":"Blinded", 
-       "icon": "../icons/blinded.svg",
-       "journalId": ""
+    "blinded": {
+        "name":"Blinded", 
+        "icon": "../icons/blinded.svg",
+        "journalId": ""
+        },
+    "charmed": {
+        "name":"Charmed",
+        "icon": "../icons/charmed.svg", 
+        "journalId": ""
+        },
+    "concentrating": {
+        "name": "Concentrating",
+        "icon": "../icons/concentrating.svg",
+        "journalId": ""
     },
-   "charmed": {
-       "name":"Charmed",
-       "icon": "../icons/charmed.svg", 
-       "journalId": ""
-    },
-   "concentrating": {
-       "name": "Concentrating",
-       "icon": "../icons/concentrating.svg",
-       "journalId": ""
-   },
-   "deafened": {
-       "name": "Deafened", 
-       "icon": "../icons/deafened.svg", 
-       "journalId" : ""
+    "deafened": {
+        "name": "Deafened", 
+        "icon": "../icons/deafened.svg", 
+        "journalId" : ""
     },
     "exhaustion1": {
         "name":"Exhaustion 1",
