@@ -48,6 +48,31 @@ export class Sidekick {
     }
 
     /**
+     * Use FilePicker to browse then Fetch one or more JSONs and return them
+     * @param {*} source
+     * @param {*} path 
+     */
+    static async fetchJsons(source, path) {
+        const extensions = [".json"];
+        const fp = await FilePicker.browse(source, path, {extensions});
+
+        if (!fp.files.length) {
+            return;
+        }
+
+        const jsons = [];
+
+        for (let file of fp.files) {
+            const jsonFile = await fetch(file);
+            const json = await jsonFile.json();
+
+            json instanceof Object ? jsons.push(json) : console.warn("not a valid json:", json);
+        }
+        
+        return jsons;
+    }
+
+    /**
      * Validate that an object is actually an object
      * @param {Object} object 
      * @returns {Boolean}

@@ -7,37 +7,40 @@ import { Sidekick } from "../sidekick.js";
 export class EnhancedConditions {
     constructor() {
         this.coreStatusIcons = this.coreStatusIcons || EnhancedConditions._backupCoreStatusIcons();
-        EnhancedConditions._updateStatusIcons();
+        this.system = this.system || Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.system);
+        this.maps = this.maps || EnhancedConditions.getDefaultMaps();
+        this.map = this.map || EnhancedConditions.getDefaultMap(this.system);
+        //EnhancedConditions._updateStatusIcons();
     }
 
     /**
-     * Defines the maps used in the gadget
+     * Returns the default maps supplied with the module
      * @todo: needs a redesign -- change to arrays of objects?
      * @todo: map to entryId and then rebuild on import
      */
-    static async getDefaultMaps(path, extensions=[".json"]) {
-        // get the json files
-        // for each fetch and parse the json
-        // add the result to a variable -- CUB.enhancedConditions.maps ???
-        const defaultMaps = [];
-        const fp = await FilePicker.browse("data", path, {extensions});
+    static async getDefaultMaps() {
+        const source = "data";
+        const path = BUTLER.DEFAULT_CONFIG.enhancedConditions.conditionMapsPath;
+        const jsons = await Sidekick.fetchJsons(source, path);
 
-        if (!fp.files.length) {
-            return;
-        }
+        const defaultMaps = jsons.filter(j => !j.system.includes("example")).reduce((obj, current) => {
+            obj[current.system] = current.map;
+            return obj;
+        },{});
 
-        for (const file of fp.files) {
-            if (file.includes("template")) {
-                continue;
-            }
-            const jsonFile = await fetch(file);
-            const map = await jsonFile.json();
-
-            if (map instanceof Object) {
-                defaultMaps.push(map);
-            }
-        }
         return defaultMaps;
+    }
+
+    /**
+     * Parses a condition map JSON and returns a map
+     * @param {*} json 
+     */
+    static parseJson(json) {
+        const map = {
+            [json.system]: json.map
+        };
+
+        return map;
     }
 
     /**
@@ -45,7 +48,7 @@ export class EnhancedConditions {
      * @param {*} system 
      */
     static async getDefaultMap(system) {
-        const defaultMaps = await EnhancedConditions.getDefaultMaps(BUTLER.DEFAULT_CONFIG.enhancedConditions.conditionMapsPath);
+        const defaultMaps = await EnhancedConditions.getDefaultMaps();
 
         return defaultMaps[system];
     }
@@ -146,21 +149,6 @@ export class EnhancedConditions {
     }
 
     /**
-     * 
-     */
-    static prepareData() {
-        const data = {
-            systems: Sidekick.getSystemChoices(),
-            system: Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.system),
-            conditionMap: Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.map),
-            entries: game.journal.entities.sort((a, b) => a.sort - b.sort).map(e => {
-                return [e.id, e.name]
-            })
-        }
-        return data;
-    }
-
-    /**
      * Creates a div for the module and button for the Condition Lab
      * @param {Object} html the html element where the button will be created
      */
@@ -176,8 +164,7 @@ export class EnhancedConditions {
         cubDiv.append(labButton);
 
         labButton.click(ev => {
-            const data = EnhancedConditions.prepareData();
-            new ConditionLab(data).render(true);
+            new ConditionLab().render(true);
         });
     }
 

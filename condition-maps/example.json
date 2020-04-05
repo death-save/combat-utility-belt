@@ -1,0 +1,15 @@
+{
+    "system": "example",
+    "map": [
+        {
+            "name": "Condition 1 Name",
+            "icon": "./path/to/icon",
+            "journalId": "journalId"
+        },
+        {
+            "name": "Condition 2 Name",
+            "icon": "./path/to/icon",
+            "journalId": "journalId"
+        }
+    ]
+}

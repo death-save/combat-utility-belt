@@ -37,7 +37,7 @@ export function registerSettings() {
         hint: "SETTINGS.EnhancedConditions.ConditionMapsH",
         scope: "world",
         type: Object,
-        default: EnhancedConditions.getDefaultMaps(BUTLER.DEFAULT_CONFIG.enhancedConditions.conditionMapsPath),
+        default: {},
         onChange: s => {
             EnhancedConditions._updateStatusIcons(s[Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.system)]);
         }
@@ -48,7 +48,7 @@ export function registerSettings() {
         hint: "SETTINGS.EnhancedConditions.ActiveConditionMapH",
         scope: "world",
         type: Object,
-        default: EnhancedConditions.getDefaultMap(Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.system)),
+        default: {},
         onChange: s => {
             EnhancedConditions._updateStatusIcons(s[Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.system)]);
         }
