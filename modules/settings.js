@@ -21,6 +21,16 @@ export function registerSettings() {
         }
     });
 
+    Sidekick.registerSetting(BUTLER.SETTING_KEYS.enhancedConditions.coreIcons, {
+        name: "SETTINGS.EnhancedConditions.CoreIconsN",
+        hint: "SETTINGS.EnhancedConditions.CoreIconsH",
+        scope: "world",
+        type: Object,
+        default: [],
+        config: false,
+        onChange: s => {}
+    });
+
     Sidekick.registerSetting(BUTLER.SETTING_KEYS.enhancedConditions.system, {
         name: "SETTINGS.EnhancedConditions.SystemN",
         hint: "SETTINGS.EnhancedConditions.SystemH",
@@ -33,14 +43,12 @@ export function registerSettings() {
     });
 
     Sidekick.registerSetting(BUTLER.SETTING_KEYS.enhancedConditions.maps, {
-        name: "SETTINGS.EnhancedConditions.ConditionMapsN",
-        hint: "SETTINGS.EnhancedConditions.ConditionMapsH",
+        name: "SETTINGS.EnhancedConditions.DefaultConditionMapsN",
+        hint: "SETTINGS.EnhancedConditions.DefaultConditionMapsH",
         scope: "world",
         type: Object,
         default: {},
-        onChange: s => {
-            EnhancedConditions._updateStatusIcons(s[Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.system)]);
-        }
+        onChange: s => {}
     });
 
     Sidekick.registerSetting(BUTLER.SETTING_KEYS.enhancedConditions.map, {
@@ -50,7 +58,7 @@ export function registerSettings() {
         type: Object,
         default: {},
         onChange: s => {
-            EnhancedConditions._updateStatusIcons(s[Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.system)]);
+            EnhancedConditions._updateStatusIcons(s);
         }
     });
 

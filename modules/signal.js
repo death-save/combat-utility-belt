@@ -85,7 +85,7 @@ export class Signal {
      */
     static hookOnReady() {
         Hooks.on("ready", () => {
-            
+            EnhancedConditions._onReady();            
         });
     }
 

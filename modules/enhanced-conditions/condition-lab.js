@@ -9,9 +9,10 @@ import { EnhancedConditions } from "./enhanced-conditions.js";
 export class ConditionLab extends FormApplication {
     constructor(object, options={}) {
         super(object, options);
-        this.data = object || this.prepareData();
-        this.system = null;
-        this.map = [];
+        this.data = object;
+        this.system = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.system);
+        this.map = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.map);
+        this.maps = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.maps);
     }
 
     static get defaultOptions() {
@@ -32,20 +33,20 @@ export class ConditionLab extends FormApplication {
     async prepareData() {
         const systems = Sidekick.getSystemChoices();
         
-        this.system = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.system);
-        this.map = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.map);
+        const system = this.system || Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.system) || game.system.id;
+        let conditionMap = this.map || Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.map);
         const entries = game.journal.entities.sort((a, b) => a.sort - b.sort).map(e => {
                 return [e.id, e.name]
         });
 
-        if (Object.entries(this.map).length === 0) {
-            this.map = await EnhancedConditions.getDefaultMap(this.system);
+        if (!conditionMap || (conditionMap instanceof Object && Object.entries(conditionMap).length === 0)) {
+            conditionMap = this.map = EnhancedConditions.getDefaultMap(system);
         }
 
         const data = {
             systems,
-            system: this.system,
-            conditionMap: this.map,
+            system,
+            conditionMap,
             entries
         }
 
@@ -118,9 +119,9 @@ export class ConditionLab extends FormApplication {
         systemSelector.change(async ev => {
             const selection = $(ev.target).find("option:selected");
             const newSystem = selection.val();
-            const systemSetting = await Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.system, newSystem);
+            const systemSetting = this.system = await Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.system, newSystem);
 
-            let newMap = await EnhancedConditions.getDefaultMap(newSystem) || {};
+            let newMap = this.map = await EnhancedConditions.getDefaultMap(newSystem) || {};
             const mapSetting = await Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.map, newMap);
 
             this.render(true);
@@ -133,7 +134,7 @@ export class ConditionLab extends FormApplication {
             //const mapSetting = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.map);
             // need to add an index here...
             const existingNewConditions = map.filter(m => m.name.includes("newCondition"));
-            const newConditionIndex = existingNewConditions ? Math.max(existingNewConditions.forEach(m => m.name.match(`\\d+`).matches[0])) + 1 : 1;
+            const newConditionIndex = existingNewConditions.length ? Math.max(existingNewConditions.forEach(m => m.name.match(`\\d+`).matches[0])) + 1 : 1;
             const newMap = map.concat({
                 name: `newCondition${newConditionIndex}`,
                 icon: "",
@@ -172,12 +173,13 @@ export class ConditionLab extends FormApplication {
         });
 
         restoreDefaultsButton.click(async ev => {
-            const system = this.system;
-            //const system = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.system);
-            const defaultMaps = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.maps);
             ev.preventDefault();
+
+            const system = this.system;
+            const defaultMaps = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.maps);
+            
             //console.log("restore defaults clicked", ev);
-            Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.map, defaultMaps.system);
+            this.map = await Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.map, defaultMaps[system]);
             this.render(true);
         });
     }

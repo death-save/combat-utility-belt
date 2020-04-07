@@ -31,8 +31,8 @@
                                 <select name="journal-{{@index}}" class="journal" title="Condition Journal Entry" data-dtype="String">
                                     {{#select condition.journalId}}
                                     <option value=" "></option>
-                                    {{#each ../entries as |title id|}}
-                                        <option value="{{id}}">{{title}}</option>
+                                    {{#each ../entries}}
+                                        <option value="{{this.[0]}}">{{this.[1]}}</option>
                                     {{/each}}
                                     {{/select}}
                             </select>

@@ -179,6 +179,7 @@ export const SETTING_KEYS = {
     },
     enhancedConditions: {
         enable: "enableEnhancedConditions",
+        coreIcons: "coreStatusIcons",
         system: "activeSystem",
         map: "activeConditionMap",
         maps: "conditionMaps",

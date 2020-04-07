@@ -5,20 +5,24 @@ import { Sidekick } from "../sidekick.js";
  * Builds a mapping between status icons and journal entries that represent conditions
  */
 export class EnhancedConditions {
-    constructor() {
-        this.coreStatusIcons = this.coreStatusIcons || EnhancedConditions._backupCoreStatusIcons();
-        this.system = this.system || Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.system);
-        this.maps = this.maps || EnhancedConditions.getDefaultMaps();
-        this.map = this.map || EnhancedConditions.getDefaultMap(this.system);
-        //EnhancedConditions._updateStatusIcons();
+    /**
+     * Ready Hook handler
+     */
+    static async _onReady() {
+        const setting = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.maps);
+
+        if (!setting || (setting instanceof Object && Object.entries(setting).length === 0)) {
+            const defaultMaps = await EnhancedConditions.loadDefaultMaps();
+            Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.maps, defaultMaps);
+        }
     }
 
     /**
      * Returns the default maps supplied with the module
-     * @todo: needs a redesign -- change to arrays of objects?
+     * 
      * @todo: map to entryId and then rebuild on import
      */
-    static async getDefaultMaps() {
+    static async loadDefaultMaps() {
         const source = "data";
         const path = BUTLER.DEFAULT_CONFIG.enhancedConditions.conditionMapsPath;
         const jsons = await Sidekick.fetchJsons(source, path);
@@ -47,22 +51,21 @@ export class EnhancedConditions {
      * Returns the default condition map for a given system
      * @param {*} system 
      */
-    static async getDefaultMap(system) {
-        const defaultMaps = await EnhancedConditions.getDefaultMaps();
-
-        return defaultMaps[system];
+    static getDefaultMap(system) {
+        const defaultMaps = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.maps);
+        return defaultMaps[system] ? defaultMaps[system] : [];
     }
 
 
     /**
-     * Retrieve the statusEffect icons from the Foundry CONFIG
+     * Duplicate the core status icons, freeze the duplicate then store a copy in settings
      */
-    static _backupCoreStatusIcons() {
+    static _backupCoreIcons() {
         CONFIG.defaultStatusEffects = CONFIG.defaultStatusEffects || duplicate(CONFIG.statusEffects);
         if (!Object.isFrozen(CONFIG.defaultStatusEffects)) {
             Object.freeze(CONFIG.defaultStatusEffects);
         }
-        return CONFIG.defaultStatusEffects;
+        Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.coreIcons, CONFIG.defaultStatusEffects);
     }
 
     /**
@@ -102,10 +105,11 @@ export class EnhancedConditions {
 
         const map = conditionMap || Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.map);
         let entries;
+        const coreIconSetting = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.coreIcons);
 
         //save the original icons
-        if (!this.coreStatusIcons) {
-            this.coreStatusIcons = EnhancedConditions._backupCoreStatusIcons();
+        if (!coreIconSetting) {
+            EnhancedConditions._backupCoreIcons();
         }
 
         const removeDefaultEffects = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.removeDefaultEffects);
@@ -115,15 +119,10 @@ export class EnhancedConditions {
         if (removeDefaultEffects) {
             CONFIG.statusEffects = activeConditionMap ? icons : [];
         } else {
-            if (map instanceof Map) {
-                entries = map.entries();
-                for (let [k, v] of entries) {
-                    CONFIG.statusEffects.push(v);
-                    //console.log(k,v);
-                }
-            } else if (map instanceof Array) {
+            if (map instanceof Array) {
                 //add the icons from the condition map to the status effects array
-                CONFIG.statusEffects = this.coreStatusIcons.concat(icons);
+                const coreIcons = CONFIG.defaultStatusEffects || Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.coreIcons);
+                CONFIG.statusEffects = coreIcons.concat(icons);
             } else {
                 entries = [];
             }
@@ -137,12 +136,10 @@ export class EnhancedConditions {
         if (!conditionMap) {
             //maybe log an error?
             return;
-        }
-
-        if (conditionMap instanceof Map) {
-            return Array.from(conditionMap.values());            
-        } else if (conditionMap instanceof Array) {
-            return conditionMap[0] instanceof Array ? conditionMap.map(value => value[1]) : conditionMap;
+        }          
+        
+        if (conditionMap instanceof Array) {
+            return conditionMap.map(value => value[1]);
         }
 
         return [];
