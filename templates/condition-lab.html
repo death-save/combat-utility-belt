@@ -35,7 +35,7 @@
                                 </div>
                                 <select name="journal-{{@index}}" class="journal" title="Condition Journal Entry" data-dtype="String" {{#if ../isDefault}}disabled{{/if}}>
                                     {{#select condition.journalEntry}}
-                                    <option value=" ">No Journal Entry mapped</option>
+                                    <option value="">No Journal Entry mapped</option>
                                     {{#each ../entries}}
                                         <option value="{{this.[0]}}">{{this.[1]}}</option>
                                     {{/each}}
@@ -56,7 +56,7 @@
                             </div>
                             <select name="trigger-{{@index}}" title="trigger" {{#if ../isDefault}}disabled{{/if}}>
                                 {{#select condition.trigger}}
-                                <option value=" ">No Trigger Set</option>
+                                <option value="">No Trigger Set</option>
                                 {{#each ../triggers}}
                                     <option value="{{this.[0]}}">{{this.[1]}}</option>
                                 {{/each}}

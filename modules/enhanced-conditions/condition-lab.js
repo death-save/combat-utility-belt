@@ -2,7 +2,7 @@ import { cub } from "../../combat-utility-belt.js";
 import * as BUTLER from "../butler.js";
 import { Sidekick } from "../sidekick.js";
 import { EnhancedConditions } from "./enhanced-conditions.js";
-import { TriggerForm } from "../apps/trigger-form.js";
+import { TrigglerForm } from "../triggler/triggler-form.js";
 
 /**
  * Form application for managing mapping of Conditions to Icons and JournalEntries
@@ -43,7 +43,7 @@ export class ConditionLab extends FormApplication {
         const entries = game.journal.entities.sort((a, b) => a.sort - b.sort).map(e => {
                 return [e.id, e.name]
         });
-        const triggers = Sidekick.getSetting(BUTLER.SETTING_KEYS.trigger.triggers).map(t => {
+        const triggers = Sidekick.getSetting(BUTLER.SETTING_KEYS.triggler.triggers).map(t => {
             return [t.id, t.text]
         });
 
@@ -176,7 +176,7 @@ export class ConditionLab extends FormApplication {
         triggerAnchor.on("click", event => {
             event.preventDefault();
             const anchor = event.currentTarget;
-            const select = anchor.nextElementSibling;
+            const select = anchor.parentElement.nextElementSibling;
             const id = select.value;
             const row = select.name.split("-", 2)[1];
 
@@ -185,7 +185,7 @@ export class ConditionLab extends FormApplication {
                 row
             }
             //get the row context
-            new TriggerForm(data).render(true);
+            new TrigglerForm(data).render(true);
         });
 
         addRowAnchor.click(async ev => {
@@ -199,7 +199,8 @@ export class ConditionLab extends FormApplication {
             const newMap = map.concat({
                 name: `newCondition${newConditionIndex}`,
                 icon: "",
-                journalId: ""
+                journalId: "",
+                trigger: ""
             });
 
             this.map = await Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.map, newMap);

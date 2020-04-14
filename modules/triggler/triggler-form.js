@@ -1,7 +1,7 @@
 import { DEFAULT_CONFIG, PATH, SETTING_KEYS } from "../butler.js";
 import { Sidekick } from "../sidekick.js";
 
-export class TriggerForm extends FormApplication {
+export class TrigglerForm extends FormApplication {
     constructor(object, options) {
         super(object, options);
         this.data = object || {};
@@ -12,9 +12,9 @@ export class TriggerForm extends FormApplication {
      */
     static get defaultOptions() {
         return mergeObject(super.defaultOptions, {
-            id: "cub-trigger-form",
-            title: DEFAULT_CONFIG.enhancedConditions.conditionLab.title,
-            template: `${PATH}/templates/trigger-form.html`,
+            id: "cub-triggler-form",
+            title: DEFAULT_CONFIG.triggler.form.title,
+            template: `${PATH}/templates/triggler-form.html`,
             classes: ["sheet"],
             width: "auto",
             height: "auto",
@@ -27,7 +27,7 @@ export class TriggerForm extends FormApplication {
      */
     getData() {
         const id = this.data.id;
-        const data = id ? Sidekick.getSetting(SETTING_KEYS.trigger.triggers) : null;
+        const data = id ? Sidekick.getSetting(SETTING_KEYS.triggler.triggers) : null;
         
         if (data) {
             const trigger = data.find(t => t.id === id);
@@ -45,8 +45,8 @@ export class TriggerForm extends FormApplication {
         const categories = Object.keys(game.system.template.Actor.templates.common);
         const attributes = category ? Object.keys(game.system.template.Actor.templates.common[category]) : null;
         const properties = category && attribute ? Object.keys(game.system.template.Actor.templates.common[category][attribute]) : null;
-        const operators = DEFAULT_CONFIG.trigger.operators;
-        const options = DEFAULT_CONFIG.trigger.options;
+        const operators = DEFAULT_CONFIG.triggler.operators;
+        const options = DEFAULT_CONFIG.triggler.options;
 
 
         return {
@@ -92,11 +92,11 @@ export class TriggerForm extends FormApplication {
     /**
      * 
      */
-    _updateObject(event, formData) {
+    async _updateObject(event, formData) {
         const conditionLab = Object.values(ui.windows).find(v => v.id === DEFAULT_CONFIG.enhancedConditions.conditionLab.id);
         let id = this.data.id;
         const row = this.data.row;
-        const triggers = Sidekick.getSetting(SETTING_KEYS.trigger.triggers);
+        const triggers = Sidekick.getSetting(SETTING_KEYS.triggler.triggers);
         const existingIds = triggers ? triggers.map(t => t.id) : null;
         const text = this._constructString(formData);
 
@@ -118,9 +118,9 @@ export class TriggerForm extends FormApplication {
         }
         const updateLength = update.push(newTrigger);
 
-        Sidekick.setSetting(SETTING_KEYS.trigger.triggers, update);
+        await Sidekick.setSetting(SETTING_KEYS.triggler.triggers, update);
 
-        conditionLab.map[row].trigger = newTrigger;
+        conditionLab.map[row].trigger = newTrigger.id;
 
         conditionLab.render(true);
     }
@@ -130,8 +130,8 @@ export class TriggerForm extends FormApplication {
      * @param {*} parts 
      */
     _constructString(parts) {
-        const operatorText = DEFAULT_CONFIG.trigger.operators[parts.operator];
-        const optionText = DEFAULT_CONFIG.trigger.options[parts.option];
+        const operatorText = DEFAULT_CONFIG.triggler.operators[parts.operator];
+        const optionText = DEFAULT_CONFIG.triggler.options[parts.option];
         const string = `${parts.category}.${parts.attribute}.${parts.property} ${operatorText} ${parts.value} ${optionText}`;
         return string;
     }

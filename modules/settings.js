@@ -503,9 +503,9 @@ export function registerSettings() {
     /*                    Trigger                   */
     /* -------------------------------------------- */ 
 
-    Sidekick.registerSetting(BUTLER.SETTING_KEYS.trigger.triggers, {
-        name: "SETTINGS.Trigger.TriggersN",
-        hint: "SETTINGS.Trigger.TriggersH",
+    Sidekick.registerSetting(BUTLER.SETTING_KEYS.triggler.triggers, {
+        name: "SETTINGS.Triggler.TriggersN",
+        hint: "SETTINGS.Triggler.TriggersH",
         scope: "world",
         type: Object,
         default: [],

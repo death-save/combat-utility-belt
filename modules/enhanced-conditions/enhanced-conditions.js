@@ -322,6 +322,42 @@ export class EnhancedConditions {
         return actor;
     }
 
+    /**
+     * Applies the named condition to the token
+     * @param {*} tokenId
+     * @param {*} conditionName
+     */
+    static applyCondition(tokenId, conditionName) {
+        const token = canvas.tokens.get(tokenId);
+
+        if (!token) {
+            console.log("Could not find token with id: ", tokenId);
+            return;
+        }
+
+        const map = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.map);
+        const condition = map.find(c => c.name === condition);
+
+        if (!condition) {
+            console.log("Coult not find condition with name: ", conditionName);
+            return;
+        }
+
+        const effect = condition ? condition.icon : null;
+        
+        if (!effect) {
+            console.log("No icon is setup for condition: ", conditionName);
+            return;
+        }
+
+        if (token.data.effects.includes(effect)) {
+            console.log(`Condition ${conditionName} is already active on token.`);
+            return;
+        }
+
+        token.toggleEffect(effect);
+    }
+
     /* future features
     get compendiumChoices() {
         const compendiums = game.packs;

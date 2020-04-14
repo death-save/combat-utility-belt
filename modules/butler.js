@@ -169,7 +169,10 @@ export const DEFAULT_CONFIG = {
     trackerUtility: {
         enableGiveXP: false,
     },
-    trigger: {
+    triggler: {
+        form: {
+            title: "Triggler"
+        },
         operators: {
             eq: "=",
             lt: "<",
@@ -259,7 +262,7 @@ export const SETTING_KEYS = {
         autoRollHP: "autoRollHP",
         effectSize: "effectSize"
     },
-    trigger: {
+    triggler: {
         triggers: "storedTriggers"
     }
 }
