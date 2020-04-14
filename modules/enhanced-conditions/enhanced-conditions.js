@@ -161,7 +161,7 @@ export class EnhancedConditions {
         cubDiv.append(labButton);
 
         labButton.click(ev => {
-            new ConditionLab().render(true);
+            game.cub.conditionLab = new ConditionLab().render(true);
         });
     }
 

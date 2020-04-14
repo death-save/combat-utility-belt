@@ -36,8 +36,19 @@ export function registerSettings() {
         hint: "SETTINGS.EnhancedConditions.SystemH",
         scope: "world",
         type: String,
-        default: BUTLER.DEFAULT_GAME_SYSTEMS[game.system.id] !== null ? BUTLER.DEFAULT_GAME_SYSTEMS[game.system.id].id : BUTLER.DEFAULT_GAME_SYSTEMS.other.id,
+        default: BUTLER.KNOWN_GAME_SYSTEMS[game.system.id] !== null ? BUTLER.KNOWN_GAME_SYSTEMS[game.system.id].id : BUTLER.KNOWN_GAME_SYSTEMS.other.id,
         choices: Sidekick.getSystemChoices(),
+        config: true,
+        onChange: s => {}
+    });
+
+    Sidekick.registerSetting(BUTLER.SETTING_KEYS.enhancedConditions.mapType, {
+        name: "SETTINGS.EnhancedConditions.MapTypeN",
+        hint: "SETTINGS.EnhancedConditions.MapTypeH",
+        scope: "world",
+        type: String,
+        default: BUTLER.KNOWN_GAME_SYSTEMS[game.system.id] !== null ? "default" : "other",
+        choices: BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes,
         config: true,
         onChange: s => {}
     });
@@ -256,7 +267,7 @@ export function registerSettings() {
     Sidekick.registerSetting(BUTLER.SETTING_KEYS.concentrator.concentrationAttribute, {
         name: "SETTINGS.Concentrator.ConcentrationAttributeN",
         hint: "SETTINGS.Concentrator.ConcentrationAttributeH",
-        default: BUTLER.DEFAULT_GAME_SYSTEMS[game.system.id] !== null ? BUTLER.DEFAULT_GAME_SYSTEMS[game.system.id].concentrationAttribute : BUTLER.DEFAULT_GAME_SYSTEMS.other.concentrationAttribute,
+        default: BUTLER.KNOWN_GAME_SYSTEMS[game.system.id] !== null ? BUTLER.KNOWN_GAME_SYSTEMS[game.system.id].concentrationAttribute : BUTLER.KNOWN_GAME_SYSTEMS.other.concentrationAttribute,
         scope: "world",
         type: String,
         config: true,
@@ -266,7 +277,7 @@ export function registerSettings() {
     Sidekick.registerSetting(BUTLER.SETTING_KEYS.concentrator.healthAttribute, {
         name: "SETTINGS.Concentrator.HealthAttributeN",
         hint: "SETTINGS.Concentrator.HealthAttributeH",
-        default: BUTLER.DEFAULT_GAME_SYSTEMS[game.system.id] !== null ? BUTLER.DEFAULT_GAME_SYSTEMS[game.system.id].healthAttribute : BUTLER.DEFAULT_GAME_SYSTEMS.other.healthAttribute,
+        default: BUTLER.KNOWN_GAME_SYSTEMS[game.system.id] !== null ? BUTLER.KNOWN_GAME_SYSTEMS[game.system.id].healthAttribute : BUTLER.KNOWN_GAME_SYSTEMS.other.healthAttribute,
         scope: "world",
         type: String,
         config: true,
@@ -417,7 +428,7 @@ export function registerSettings() {
     Sidekick.registerSetting(BUTLER.SETTING_KEYS.injuredDead.healthAttribute, {
         name: "SETTINGS.InjuredDead.HealthAttributeN",
         hint: "SETTINGS.InjuredDead.HealthAttributeH",
-        default: BUTLER.DEFAULT_GAME_SYSTEMS[game.system.id] !== null ? BUTLER.DEFAULT_GAME_SYSTEMS[game.system.id].healthAttribute : BUTLER.DEFAULT_GAME_SYSTEMS.other.healthAttribute,
+        default: BUTLER.KNOWN_GAME_SYSTEMS[game.system.id] !== null ? BUTLER.KNOWN_GAME_SYSTEMS[game.system.id].healthAttribute : BUTLER.KNOWN_GAME_SYSTEMS.other.healthAttribute,
         scope: "world",
         type: String,
         config: true,
@@ -487,4 +498,18 @@ export function registerSettings() {
         config: true,
         onChange: s => {}
     });
+
+    /* -------------------------------------------- */
+    /*                    Trigger                   */
+    /* -------------------------------------------- */ 
+
+    Sidekick.registerSetting(BUTLER.SETTING_KEYS.trigger.triggers, {
+        name: "SETTINGS.Trigger.TriggersN",
+        hint: "SETTINGS.Trigger.TriggersH",
+        scope: "world",
+        type: Object,
+        default: [],
+        onChange: s => {}
+    });
+
 }

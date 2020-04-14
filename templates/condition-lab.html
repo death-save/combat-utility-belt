@@ -1,21 +1,23 @@
 <form autocomplete="off" onsubmit="event.preventDefault();">
+    <h2><i class="fas fa-flask"></i> Condition Lab</h2>
     <div class="form-group">
-        <label>Game System</label>
-        <select name="system" class="system" title="Game system to use as a template for mapping">
-            {{#select system}}
-            {{#each systems as |label name|}}
+        <label>Mapping Type</label>
+        <select name="map-type" class="map-type" title="">
+            {{#select mapType}}
+            {{#each mapTypeChoices as |label name|}}
                 <option value="{{name}}">{{label}}</option>
             {{/each}}
             {{/select}}
         </select>
     </div>
-    {{log conditionMap}}
+    <hr />
     <ol class="condition-map-list">
         {{#each conditionMap as |condition key|}}
-        {{log condition}}
         <li class="condition-map-item">
             <div class="flexrow condition-lab">
-
+                <span class="condition-lab grabber">
+                    <i class="fas fa-bars"></i>
+                </span>
                 <div class="flexcol condition-lab icon">
                     <img name="icon-{{@index}}" src="{{condition.icon}}" title="Status Icon" class="icon" />
                 </div>
@@ -23,44 +25,71 @@
                 <div class="flexcol condition-lab text-entry">
                     <div class="flexrow condition-lab text-entry">
                         <div class="flexcol condition-lab text-entry condition">
-                            <input type="text" name="condition-{{@index}}" title="Condition" value="{{condition.name}}" class="condition" placeholder="Blinded" data-dtype="String">
+                            <input type="text" name="condition-{{@index}}" title="Condition" value="{{condition.name}}" class="condition" placeholder="Icon Path" data-dtype="String" {{#if ../isDefault}}disabled{{/if}}>
                         </div>
-                        <div class="flexcol condition-lab text-entry journal">
-                            <span>
-                                <i class="fas fa-book-open"></i>
-                                <select name="journal-{{@index}}" class="journal" title="Condition Journal Entry" data-dtype="String">
-                                    {{#select condition.journalId}}
-                                    <option value=" "></option>
+                        <div class="flexrow condition-lab text-entry journal">
+                                <div class="journal-icon">
+                                    <a class="journal" title="Create a new journal entry">
+                                        <i class="fas fa-book-open"></i>
+                                    </a>
+                                </div>
+                                <select name="journal-{{@index}}" class="journal" title="Condition Journal Entry" data-dtype="String" {{#if ../isDefault}}disabled{{/if}}>
+                                    {{#select condition.journalEntry}}
+                                    <option value=" ">No Journal Entry mapped</option>
                                     {{#each ../entries}}
                                         <option value="{{this.[0]}}">{{this.[1]}}</option>
                                     {{/each}}
                                     {{/select}}
                             </select>
-                            </span>
-                            
                         </div>
                     </div>
-                    <div class="flexrow condition-lab text-entry icon">
-                        <input type="text" name="icon-{{@index}}" title="Status Icon Path" class="icon-path" value="{{condition.icon}}" placeholder="/icons/example.svg" data-dtype="String">
-                        <button type="button" name="file-picker-{{@index}}" class="file-picker" data-type="image" data-target="icon-{{@index}}" title="Browse Files" tabindex="-1">
-                            <i class="fas fa-file-import fa-fw"></i>
-                        </button>
-                    </div>
+                    <div class="flexrow condition-lab text-entry">
+                        <div class="flexrow condition-lab text-entry path">
+                            <input type="text" name="icon-{{@index}}" title="Status Icon Path" class="icon-path" value="{{condition.icon}}" placeholder="/icons/example.svg" data-dtype="String" {{#if ../isDefault}}disabled{{/if}}>
+                            <button type="button" name="file-picker-{{@index}}" class="file-picker" data-type="image" data-target="icon-{{@index}}" title="Browse Files" tabindex="-1" {{#if ../isDefault}}hidden{{/if}}>
+                                <i class="fas fa-file-import fa-fw"></i>
+                            </button>
+                        </div>
+                        <div class="flexrow condition-lab text-entry trigger">
+                            <div class="trigger-icon">
+                                <a class="trigger" title="Create/Edit Trigger"><i class="fas fa-angle-double-right"></i></a>
+                            </div>
+                            <select name="trigger-{{@index}}" title="trigger" {{#if ../isDefault}}disabled{{/if}}>
+                                {{#select condition.trigger}}
+                                <option value=" ">No Trigger Set</option>
+                                {{#each ../triggers}}
+                                    <option value="{{this.[0]}}">{{this.[1]}}</option>
+                                {{/each}}
+                                {{/select}}
+                            </select>                            
+                        </div>
+                    </div>                    
                 </div>
-
+                {{#if ../isDefault}}
+                {{else}}
                 <div class="flexcol condition-lab trash">
-                    <button type="button" name="remove-row-{{@index}}" class="remove-row" title="Remove the condition mapping row">
+                    <a name="remove-row-{{@index}}" class="remove-row" title="Delete Row">
                         <i class="fas fa-trash"></i>
-                    </button>
+                    </a>
                 </div>
-
+                {{/if}}
             </div>    
         </li>
         {{/each}}
-        <button type="button" class="add-row" name="add-row" title="Add condition mapping row">
-            <i class="fas fa-plus"></i> Add Row
-        </button>
+        <div class="flexrow condition-lab add-row">
+            <a name="add-row" title="Add Row">
+                <i class="fas fa-plus"></i> {{#if isDefault}}Switch to "System - Custom" and Add Row{{else}}Add Row{{/if}}
+            </a>
+        </div>
     </ol>
+    <div class="flexrow" width="50%">
+        <button type="button" name="import" title="Import a Condition Mapping file">
+            <i class="fas fa-file-import"></i> Import
+        </button>
+        <button type="button" name="export" title="Export your current Condition Mapping to a file">
+            <i class="fas fa-file-export"></i> Export
+        </button>
+    </div>
     <footer class="flexrow">
         <button type="submit" name="submit" title="Save mapping form values">
             <i class="far fa-save"></i> Save Mapping

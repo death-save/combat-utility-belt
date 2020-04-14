@@ -8,7 +8,10 @@
   "url": "https://github.com/death-save/combat-utility-belt",
   "manifest": "https://raw.githubusercontent.com/death-save/combat-utility-belt/master/module.json",
   "download": "https://github.com/death-save/combat-utility-belt/archive/master.zip",
-  "scripts": ["./slick/slick.min.js"],
+  "scripts": [
+    "./slick/slick.min.js", 
+    "greensock/dist/TweenMax.min.js"
+  ],
   "esmodules": ["./combat-utility-belt.js"],
   "packs": [
     {

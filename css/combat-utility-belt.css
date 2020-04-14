@@ -38,6 +38,11 @@ a.add-temporary {
 
 .condition-map-list {
     list-style:none;
+    overflow-y: auto;
+    overflow-x: hidden;
+    max-height: 570px;
+    margin: 0px;
+    padding: 0px;
 }
 
 .condition-map-item {
@@ -49,20 +54,82 @@ a.add-temporary {
 }
 
 .flexcol.condition-lab.text-entry {
-    flex: 7;
+    flex: 8;
 }
 
 .flexcol.condition-lab.text-entry.condition {
+    flex: 1;
     margin: 0px 3px 3px 0px;
 }
 
 .flexcol.condition-lab.text-entry.journal {
+    flex: 2;
+    margin: 0px 0px 3px 0px;
+}
+
+.flexcol.condition-lab.text-entry.trigger {
+    flex: 2;
+    margin: 0px 0px 3px 0px;
+}
+
+.flexcol.condition-lab.flexcol.condition-lab.text-entry.icon {
     margin: 0px 0px 3px 0px;
 }
 
 .flexrow.condition-lab {
     justify-content: space-around;
 }
+
+.condition-lab a.trash {
+    flex: none;
+    margin: 6px 3px 3px 3px;
+}
+
+.condition-lab div.journal-icon {
+    flex: 0 0 25px;
+    text-align: center;
+    line-height: 26px;
+}
+
+.condition-lab div.trigger-icon {
+    flex: 0 0 25px;
+    text-align: center;
+    line-height: 26px;
+    margin: 0 2px 0 0;
+    padding: 0 0 0 3px;
+}
+
+.condition-lab.trash {
+    flex: 0 0 20px;
+    line-height: 60px;
+    text-align: center;
+}
+
+.condition-lab.add-row {
+    border-style: dotted;
+    line-height: 25px;
+    margin: 5px 2px;
+    padding: 2px;
+}
+
+.condition-lab.icon {
+    flex: 0 0 50px;
+}
+
+.condition-lab.trash button {
+    flex: 0 0 30px;
+    width: 30px;
+    line-height: 60px;
+}
+
+.condition-lab.grabber {
+    flex: 0;
+    cursor: grab;
+    line-height: 60px;
+    opacity: 0.5;
+}
+
+/* COMBAT CAROUSEL */
 
 .combat-carousel.wrapper {
     z-index: 30;

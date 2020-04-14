@@ -91,7 +91,7 @@ export class DraggableList {
 		item.addEventListener('dragenter', ev => this._onDragEnter(ev), false);
 
 		item.style.position = "relative";
-		// gsap.TweenLite.set(item, {top: idx * this.options.rowHeight + 'px'})
+		// TweenLite.set(item, {top: idx * this.options.rowHeight + 'px'})
 	}
 
 	_stopEvent(ev) {
@@ -107,7 +107,7 @@ export class DraggableList {
 	 */
 	_onDragStart(ev, idx) {
 		if (typeof(this.options.onDragStart) === "function")
-			this.options.onDragStart(ev);
+			this.options.onDragStart(ev, idx);
 		this.draggedIdx = idx;
 		ev.currentTarget.dataset.grabbed = true;
 
@@ -174,7 +174,7 @@ export class DraggableList {
 	}
 
 	_hideEl(el) {
-		gsap.TweenLite.to(el, 0.2, {
+		TweenLite.to(el, 0.2, {
 			opacity: 0,
 			height: 0,
 			onComplete:  () => this.layout()
@@ -182,10 +182,10 @@ export class DraggableList {
 	}
 
 	_showEl(el) {
-		gsap.TweenLite.set(el, {
+		TweenLite.set(el, {
 			clearProps: "opacity,height"
 		})
-		gsap.TweenLite.from(el, 0.2, {
+		TweenLite.from(el, 0.2, {
 			opacity: 0,
 			height: 0
 		});
@@ -221,10 +221,10 @@ export class DraggableList {
 				this._showEl(this.items[i]);
 				this.draggedIdx = i;
 			} else {
-				gsap.TweenLite.to(this.items[i], time, {top: 0})
+				TweenLite.to(this.items[i], time, {top: 0})
 			}
 		}
-		gsap.TweenLite.to(this.container, time, {clearProps: 'height'})
+		TweenLite.to(this.container, time, {clearProps: 'height'})
 	}
 
 	/**
@@ -248,13 +248,13 @@ export class DraggableList {
 				foundDragged = true;
 				this._hideEl(item);
 			} else if (foundDragged === true) {
-				gsap.TweenLite.to(item, time, {top: rowHeight});	
+				TweenLite.to(item, time, {top: rowHeight});	
 			} else
-				gsap.TweenLite.to(item, time, {top: 0});	
+				TweenLite.to(item, time, {top: 0});	
 		}
 		if (foundDragged === true)
 			height += rowHeight;
 		if (height > 0)
-			gsap.TweenLite.to(this.container, time, {height: height});
+			TweenLite.to(this.container, time, {height: height});
 	}
 }

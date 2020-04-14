@@ -28,22 +28,22 @@
         },
         {
             "name":"Exhaustion 2",
-            "icon":"modules/combat-utility-belt/icons/exhaustion1.svg",
+            "icon":"modules/combat-utility-belt/icons/exhaustion2.svg",
             "journalId": ""
         },
         {
             "name":"Exhaustion 3",
-            "icon":"modules/combat-utility-belt/icons/exhaustion1.svg",
+            "icon":"modules/combat-utility-belt/icons/exhaustion3.svg",
             "journalId": ""
         },
         {
             "name":"Exhaustion 4",
-            "icon":"modules/combat-utility-belt/icons/exhaustion1.svg",
+            "icon":"modules/combat-utility-belt/icons/exhaustion4.svg",
             "journalId": ""
         },
         {
             "name":"Exhaustion 5",
-            "icon":"modules/combat-utility-belt/icons/exhaustion1.svg",
+            "icon":"modules/combat-utility-belt/icons/exhaustion5.svg",
             "journalId": ""
         },
         {
@@ -99,6 +99,16 @@
         {
             "name":"Unconscious",
             "icon":"icons/svg/unconscious.svg",
+            "journalId": ""
+        },
+        {
+            "name":"Injured",
+            "icon":"icons/svg/blood.svg",
+            "journalId": ""
+        },
+        {
+            "name":"Dead",
+            "icon":"icons/svg/skull.svg",
             "journalId": ""
         }
     ]

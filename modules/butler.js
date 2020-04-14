@@ -17,41 +17,46 @@ export const GADGET_NAMES = {
 /**
  * Stores information about well known game systems. All other systems will resolve to "other"
  */
-export const DEFAULT_GAME_SYSTEMS = {
+export const KNOWN_GAME_SYSTEMS = {
     dnd5e: {
         id: "dnd5e",
         name: "Dungeons & Dragons 5th Edition",
         concentrationAttribute: "con",
         healthAttribute: "attributes.hp",
-        initiative: "attributes.initiative"
+        initiative: "attributes.initiative",
+        conditionMap: true
     },
     pf2e: {
         id: "pf2e",
         name: "Pathfinder 2nd Edition",
         concentrationAttribute: "",
         healthAttribute: "attributes.hp",
-        initiative: "attributes.perception"
+        initiative: "attributes.perception",
+        conditionMap: true
     },
     wfrp4e: {
         id: "wfrp4e",
         name: "Warhammer Fantasy Roleplaying Game 4th Edition",
         concentrationAttribute: "",
         healthAttribute: "status.wounds",
-        initiative: "characteristics.i"
+        initiative: "characteristics.i",
+        conditionMap: false
     },
     archmage: {
         id: "archmage",
         name: "13th Age",
         concentrationAttribute: "",
         healthAttribute: "attributes.hp",
-        initiative: "attributes.init.mod"
+        initiative: "attributes.init.mod",
+        conditionMap: false
     },
     other: {
         id: "other",
         name: "Custom/Other",
         concentrationAttribute: "con",
         healthAttribute: "health",
-        initiative: "initiative"
+        initiative: "initiative",
+        conditionMap: false
     }
 } 
      
@@ -82,9 +87,15 @@ export const DEFAULT_CONFIG = {
         outputChat: false,
         removeDefaultEffects: false,
         conditionLab: {
+            id: "cub-condition-lab",
             title: "CUB: Condition Lab",
         },
-        title: "CUB: Enhanced Conditions"
+        title: "CUB: Enhanced Conditions",
+        mapTypes: {
+            default: "System - Default",
+            custom: "System - Custom",
+            other: "Other"
+        }
     },
     giveXP: {
         enable: false
@@ -157,6 +168,21 @@ export const DEFAULT_CONFIG = {
     },
     trackerUtility: {
         enableGiveXP: false,
+    },
+    trigger: {
+        operators: {
+            eq: "=",
+            lt: "<",
+            ne: "!=",
+            lteq: "<=",
+            gt: ">",
+            gteq: ">="
+        },
+        options: {
+            percent: "%"
+        }
+
+        
     }
 }
 
@@ -182,7 +208,8 @@ export const SETTING_KEYS = {
         coreIcons: "coreStatusIcons",
         system: "activeSystem",
         map: "activeConditionMap",
-        maps: "conditionMaps",
+        maps: "defaultConditionMaps",
+        mapType: "conditionMapType",
         removeDefaultEffects: "removeDefaultEffects",
         output: "conditionsOutputToChat"
     },
@@ -231,6 +258,9 @@ export const SETTING_KEYS = {
         mightySummoner: "enableMightySummoner",
         autoRollHP: "autoRollHP",
         effectSize: "effectSize"
-    } 
+    },
+    trigger: {
+        triggers: "storedTriggers"
+    }
 }
 

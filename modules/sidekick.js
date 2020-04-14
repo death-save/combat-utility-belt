@@ -38,11 +38,11 @@ export class Sidekick {
      * Gets the default game system names stored in the constants butler class
      */
     static getSystemChoices() {
-        const systemIds = Object.getOwnPropertyNames(BUTLER.DEFAULT_GAME_SYSTEMS);
+        const systemIds = Object.getOwnPropertyNames(BUTLER.KNOWN_GAME_SYSTEMS);
         const result = {};
 
         for (let i of systemIds) {
-            result[i] = BUTLER.DEFAULT_GAME_SYSTEMS[i].name;
+            result[i] = BUTLER.KNOWN_GAME_SYSTEMS[i].name;
         }
         return result;
     }

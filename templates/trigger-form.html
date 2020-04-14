@@ -1,0 +1,58 @@
+<form onsubmit="event.preventDefault()" autocomplete="off">
+    <h3>Trigger</h3>
+    <div class="flexrow">
+        <span>Category</span>
+        <span>Attribute</span>
+        <span>Property</span>
+        <span>Operator</span>
+        <span>Value</span>
+        <span>Option</span>
+    </div>
+    <div class="flexrow">
+        <select name="category">
+            {{#select category}}
+            <option value=" ">--Category--</option>
+            {{#each categories}}
+                <option value="{{this}}">{{this}}</option>
+            {{/each}}
+            {{/select}}
+        </select>
+        <select name="attribute">
+            {{#select attribute}}
+            <option value=" ">--Attribute--</option>
+            {{#each attributes}}
+                <option value="{{this}}">{{this}}</option>
+            {{/each}}
+            {{/select}}
+        </select>
+        <select name="property">
+            {{#select property}}
+            <option value=" ">--Property--</option>
+            {{#each properties}}
+                <option value="{{this}}">{{this}}</option>
+            {{/each}}
+            {{/select}}
+        </select>
+        <select name="operator">
+            {{#select operator}}
+            <option value=" ">--Operator--</option>
+            {{#each operators as |name key|}}
+                <option value="{{key}}">{{name}}</option>
+            {{/each}}
+            {{/select}}
+        </select>
+        <input type="text" name="value" class="value" placeholder="--Value--" value="{{value}}"/>
+        <select name="option">
+            {{#select option}}
+            <option value=" ">--Option--</option>
+            {{#each options as |name key|}}
+                <option value="{{key}}">{{name}}</option>
+            {{/each}}
+            {{/select}}
+        </select>
+    </div>
+    <footer class="flexrow">
+        <button type="submit" name="save"><i class="fas fa-save"></i> Save</button>
+        <button type="button" name="cancel"><i class="fas fa-times"></i> Cancel</button>
+    </footer>
+</form>
