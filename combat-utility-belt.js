@@ -3169,7 +3169,7 @@ class CUBTemporaryCombatantForm extends FormApplication {
         tokenData.y = 0;
         tokenData.disposition = 0;
         tokenData.img = formData.icon;
-        const token = await Token.create(game.scenes.active._id, tokenData);
+        const token = await Token.create(tokenData);
 
         const combatant = await game.combat.createEmbeddedEntity("Combatant", {
             tokenId: token._id, 
