@@ -179,7 +179,7 @@ export class EnhancedConditions {
      * @todo: extract to helper in sidekick class?
      */
     static _toggleLabButtonVisibility(display) {
-        if (!game.settings.isGM) {
+        if (!game.user.isGM) {
             return;
         }
 
@@ -338,20 +338,6 @@ export class EnhancedConditions {
             type: chatType,
             user: chatUser
         });
-    }
-
-    /**
-     * looks up the corresponding actor entity for the token
-     * @param {String} id 
-     * @returns {Actor} actor
-     */
-    async lookupTokenActor(id) {
-        let actor = {};
-        if (id) {
-            actor = await game.actors.entities.find(a => a._id === id);
-        }
-        //console.log("found actor: ",actor)
-        return actor;
     }
 
     /**

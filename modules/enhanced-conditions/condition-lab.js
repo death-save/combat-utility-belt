@@ -389,13 +389,13 @@ export class ConditionLab extends FormApplication {
         });
 
         referenceAnchor.on("click", event => {
-            ev.preventDefault();
+            event.preventDefault();
             //console.log("change", ev, this);
             const splitName = event.target.name.split("-");
             const row = splitName[splitName.length - 1];
 
             let icon = $(this.form).find("img[name='icon-" + row);
-            icon.attr("src", ev.target.value); 
+            icon.attr("src", event.target.value); 
         });
 
         /*

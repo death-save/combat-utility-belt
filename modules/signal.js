@@ -12,7 +12,6 @@ import { Concentrator } from "./concentrator.js";
 import { EnhancedConditions } from "./enhanced-conditions/enhanced-conditions.js";
 import { GiveXP } from "./give-xp.js";
 import { HideNPCNames } from "./hide-npc-names.js";
-import { InjuredAndDead} from "./injured-dead.js";
 import { PanSelect } from "./pan-select.js";
 import { RerollInitiative } from "./reroll-initiative.js";
 import { TemporaryCombatants } from "./temporary-combatants/temporary-combatants.js"
@@ -56,7 +55,6 @@ export class Signal {
             game.cub.enhancedConditions = new EnhancedConditions();
             game.cub.giveXP = new GiveXP();
             game.cub.hideNames = new HideNPCNames();
-            game.cub.injuredAndDead = new InjuredAndDead();
             game.cub.panSelect = new PanSelect();
             game.cub.rerollInitiative = new RerollInitiative();
             game.cub.tempCombatants = new TemporaryCombatants();
@@ -135,7 +133,6 @@ export class Signal {
     static hookOnUpdateToken() {
         Hooks.on("updateToken", (scene, sceneId, update, options, userId) => {
             EnhancedConditions._hookOnUpdateToken(scene, sceneId, update, options, userId);
-            InjuredAndDead._hookOnUpdateToken(scene, sceneId, update, options, userId);
             Concentrator._hookOnUpdateToken(scene, sceneId, update, options, userId);
             Triggler._onUpdateToken(scene, sceneId, update, options, userId);
         });
@@ -154,7 +151,6 @@ export class Signal {
                 actor = actor.entities.find(a => a._id === update._id);
             }
             Concentrator._hookOnUpdateActor(actor, update, options, userId);
-            InjuredAndDead._hookOnUpdateActor(actor, update, options, userId);
         });
     }
 

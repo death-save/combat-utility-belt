@@ -11,7 +11,7 @@ export class HideNPCNames {
      * @param {Object} html - jQuery html object
      * @todo refactor required
      */
-    static _hookOnRenderCombatTracker(app, html) {
+    static _hookOnRenderCombatTracker(app, html, data) {
         const enable = Sidekick.getSetting(SETTING_KEYS.hideNames.enable);
 
         if (game.user.isGM || !enable) {

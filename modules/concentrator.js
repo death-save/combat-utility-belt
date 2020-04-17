@@ -10,8 +10,8 @@ export class Concentrator {
 
     /**
      * Determines if health has been reduced 
-     * @param {*} update 
-     * @param {*} current 
+     * @param {*} newHealth 
+     * @param {*} oldHealth 
      * @returns {Boolean}
      */
     static _wasDamageTaken(newHealth, oldHealth) {
@@ -196,7 +196,7 @@ export class Concentrator {
      * @param {*} update 
      * @param {*} options 
      */
-    static _hookOnUpdateActor(actor, update, options){
+    static _hookOnUpdateActor(actor, update, options, userId){
         Concentrator._determineDisplayedUsers(options);
     }
 
@@ -236,7 +236,7 @@ export class Concentrator {
 
     /**
      * Displays a chat message for concentration checks
-     * @param {*} name
+     * @param {*} token
      * @param {*} damage
      */
     static _displayChat(token, damage){
