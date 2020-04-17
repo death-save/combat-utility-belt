@@ -18,8 +18,8 @@ img.icon {
 }
 
 img.icon.chat-message {
-    height: 16px;
-    width: 16px;
+    height: 20px;
+    width: 20px;
 }
 
 .token-resource input[name="resource"] {
@@ -67,6 +67,19 @@ a.add-temporary {
     margin: 0px 0px 3px 0px;
 }
 
+.condition-lab .reference-type {
+    flex: 1;
+}
+
+.condition-lab .reference-item {
+    flex: 2;
+}
+
+.flexcol.condition-lab.text-entry.reference {
+    flex: 1;
+    margin: 0px 0px 3px 0px;
+}
+
 .flexcol.condition-lab.text-entry.trigger {
     flex: 2;
     margin: 0px 0px 3px 0px;
@@ -78,6 +91,14 @@ a.add-temporary {
 
 .flexrow.condition-lab {
     justify-content: space-around;
+}
+
+.condition-lab a.macro {
+    border: none;
+}
+
+.condition-lab img.macro {
+    background-color: black;
 }
 
 .condition-lab a.trash {

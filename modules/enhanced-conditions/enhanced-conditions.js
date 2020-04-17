@@ -10,11 +10,19 @@ export class EnhancedConditions {
      */
     static async _onReady() {
         const setting = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.maps);
+        const enable = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.enable);
 
         if (!setting || (setting instanceof Object && Object.entries(setting).length === 0)) {
             const defaultMaps = await EnhancedConditions.loadDefaultMaps();
             Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.maps, defaultMaps);
         }
+
+        const conditionMap = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.map);
+
+        if (enable) {
+            EnhancedConditions._updateStatusIcons(conditionMap);
+        }
+
     }
 
     /**
@@ -139,14 +147,14 @@ export class EnhancedConditions {
         }          
         
         if (conditionMap instanceof Array) {
-            return conditionMap.map(value => value[1]);
+            return conditionMap.map(mapEntry => mapEntry.icon);
         }
 
         return [];
     }
 
     /**
-     * Creates a div for the module and button for the Condition Lab
+     * Creates a button for the Condition Lab
      * @param {Object} html the html element where the button will be created
      */
     static _createLabButton(html) {
@@ -240,28 +248,53 @@ export class EnhancedConditions {
             return;
         }
 
+        // array of objects: {name, icon, journalId, trigger}
         const map = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.map);
         const conditionIcons = EnhancedConditions.getConditionIcons(map);
         const effectIcons = html.find("img.effect-control");
-        const enhancedIcons = effectIcons.filter(i => {
+        // jquery .filter()
+        const enhancedIcons = jQuery.makeArray(effectIcons).filter(i => {
             const src = i.attributes.src.value;
             if (conditionIcons.includes(src)) {
                 return true;
             }
-        });
+        })
 
-        return enhancedIcons.forEach(i => i.setAttribute("title", Sidekick.getKeyByValue(map, i)));
+        return enhancedIcons.forEach(i => {
+            const src = i.attributes.src.value;
+            const matchedCondition = map.find(m => m.icon === src);
+            i.setAttribute("title", matchedCondition.name);
+        });
+    }
+
+    static _onRenderChatMessage(app, html, data) {
+        if (data.message.content && !data.message.content.match("enhanced-conditions")) {
+            return;
+        }
+
+        const removeConditionAnchor = html.find("a[name='remove-row']");
+
+        removeConditionAnchor.on("click", event => {
+            const li = event.target.closest("li");
+            const conditionName = li.dataset.conditionName;
+            const contentDiv = event.target.closest("div.content");
+            const tokenId = contentDiv.dataset.tokenId;
+            const token = canvas.tokens.get(tokenId);
+
+            if (!token) {
+                return;
+            }
+
+            EnhancedConditions.removeCondition(token, conditionName);
+        });
     }
 
     /**
-     * Checks statusEffect icons against mapping and returns matching journal entries
+     * Checks statusEffect icons against map and returns matching condition mappings
      * @param {Array} icons 
      */
     static async lookupEntryMapping(token, map, icons) {
-        const conditionEntries = map.filter(row => {
-            const [c, i, j] = row;
-            return icons.includes(i) ? true : false;
-        });
+        const conditionEntries = map.filter(row => icons.includes(row.icon));
 
         if (conditionEntries.length === 0) {
             return;
@@ -279,26 +312,25 @@ export class EnhancedConditions {
         const chatType = CONST.CHAT_MESSAGE_TYPES.OTHER;
 
         let tokenSpeaker = ChatMessage.getSpeaker({token});
-        let chatContent;
 
         if (entries.length === 0) {
             return;
         }
 
-        //create some boiler text for prepending to the conditions array
-        chatContent = `<h3>${this.DEFAULT_CONFIG.enhancedConditions}</h3><p>${tokenSpeaker.alias} is:</p><ul class="chat-message condition-list">`;
+        // iterate over the entries and mark any with references for use in the template
+        entries.forEach((v, i, a) => {
+            if (v.referenceId) {
+                a[i].hasReference = true;
+            }
+        });
 
-        const chatConditions = entries.map(row => {
-            const [condition, icon, journalId] = row;
-            return `<li>${icon ? `<img src="${icon}" class="icon chat-message" title="${condition}">` : ""}${journalId.trim() ? `@JournalEntry[${journalId}]` : ` ${condition}`}</li>`
-        })
+        const templateData = {
+            tokenId: token.id,
+            alias: tokenSpeaker.alias,
+            conditions: entries
+        };
 
-        if (chatConditions.length === 0) {
-            return;
-        }
-
-        //add the conditions to the boiler text
-        chatContent += `${chatConditions.join("")}</ul>`;
+        const chatContent = await renderTemplate(BUTLER.DEFAULT_CONFIG.enhancedConditions.templates.chatOutput, templateData);
 
         return await ChatMessage.create({
             speaker: tokenSpeaker,
@@ -323,20 +355,18 @@ export class EnhancedConditions {
     }
 
     /**
-     * Applies the named condition to the token
-     * @param {*} tokenId
+     * Applies the named condition to the provided tokens
+     * @param {*} tokens
      * @param {*} conditionName
      */
-    static applyCondition(tokenId, conditionName) {
-        const token = canvas.tokens.get(tokenId);
-
-        if (!token) {
-            console.log("Could not find token with id: ", tokenId);
+    static applyCondition(tokens, conditionName) {
+        if (!tokens) {
+            console.log("No token provided");
             return;
         }
 
         const map = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.map);
-        const condition = map.find(c => c.name === condition);
+        const condition = map.find(c => c.name === conditionName);
 
         if (!condition) {
             console.log("Coult not find condition with name: ", conditionName);
@@ -349,13 +379,61 @@ export class EnhancedConditions {
             console.log("No icon is setup for condition: ", conditionName);
             return;
         }
+        
+        if (tokens && !(tokens instanceof Array)) {
+            tokens = [tokens];
+        }
 
-        if (token.data.effects.includes(effect)) {
-            console.log(`Condition ${conditionName} is already active on token.`);
+        for (let token of tokens) {
+            if (token.data.effects.includes(effect)) {
+                console.log(`Condition ${conditionName} is already active on token.`);
+                return;
+            }
+
+            token.toggleEffect(effect);
+        }
+        
+    }
+
+    /**
+     * Removes the named condition from a token or tokens
+     * @param {*} tokens 
+     * @param {*} conditionName 
+     */
+    static removeCondition(tokens, conditionName) {
+        // iterate tokens removing conditions
+        if (!tokens) {
+            console.log("No token provided");
             return;
         }
 
-        token.toggleEffect(effect);
+        const map = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.map);
+        const condition = map.find(c => c.name === conditionName);
+
+        if (!condition) {
+            console.log("Coult not find condition with name: ", conditionName);
+            return;
+        }
+
+        const effect = condition ? condition.icon : null;
+        
+        if (!effect) {
+            console.log("No icon is setup for condition: ", conditionName);
+            return;
+        }
+        
+        if (tokens && !(tokens instanceof Array)) {
+            tokens = [tokens];
+        }
+
+        for (let token of tokens) {
+            if (!token.data.effects.includes(effect)) {
+                console.log(`Condition ${conditionName} is not active on token.`);
+                return;
+            }
+
+            token.toggleEffect(effect);
+        }
     }
 
     /* future features

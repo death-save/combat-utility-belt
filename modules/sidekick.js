@@ -163,5 +163,46 @@ export class Sidekick {
         return string.replace(/[.*+\-?^${}()|[\]\\]/g, '\\$&');
     }
 
+    /**
+     * Attempts to coerce a target value into the exemplar's type
+     * @param {*} target 
+     * @param {*} type
+     * @returns {*} coercedValue 
+     */
+    static coerceType(value, type) {
+        switch (type) {
+            case "number":
+                return value * 1;
+                
+            case "string":
+                return value.toString();
 
+            case "boolean":
+                return value.toString().toLowerCase() === "true" ? true : value.toString().toLowerCase() === "false" ? false : value;
+
+            default:
+                return value;
+        }
+    }
+
+    /**
+     * Builds a FD returned from _getFormData into a formData array
+     * Borrowed from foundry.js
+     * @param {*} FD 
+     */
+    static buildFormData(FD) {
+        const dtypes = FD._dtypes;
+
+        // Construct update data object by casting form data
+        let formData = Array.from(FD).reduce((obj, [k, v]) => {
+        let dt = dtypes[k];
+        if ( dt === "Number" ) obj[k] = v !== "" ? Number(v) : null;
+        else if ( dt === "Boolean" ) obj[k] = v === "true";
+        else if ( dt === "Radio" ) obj[k] = JSON.parse(v);
+        else obj[k] = v;
+        return obj;
+        }, {});
+
+        return formData;
+    }
 }

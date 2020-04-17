@@ -78,6 +78,6 @@
     "UnconsciousActorTypeN": "Unconscious Actor Type",
     "UnconsciousActorTypeH": "Select the Actor Type to mark unconscious instead of dead",
     "UnconsciousIconN": "Unconscious Status Marker",
-    "UnconsciousIconH": "Path to the status marker to display for Unconscious Tokens"
-        
+    "UnconsciousIconH": "Path to the status marker to display for Unconscious Tokens",
+    "TEMPLATES.EnhancedConditions.ChatCardTitle": "CUB: Enhanced Conditions"
 }

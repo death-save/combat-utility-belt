@@ -37,10 +37,11 @@ export class TrigglerForm extends FormApplication {
         // rework this section -- use the this.data first, then the data payload
         const category = this.data.category || null;
         const attribute = this.data.attribute || null;
-        const property = this.data.property || null;
+        const property1 = this.data.property1 || null;
         const operator = this.data.operator || null;
         const value = this.data.value || null;
-        const option = this.data.option || null;
+        const property2 = this.data.property2 || null;
+        const pcOnly = this.data.pcOnly || null;
 
         const categories = Object.keys(game.system.template.Actor.templates.common);
         const attributes = category ? Object.keys(game.system.template.Actor.templates.common[category]) : null;
@@ -54,13 +55,13 @@ export class TrigglerForm extends FormApplication {
             categories,
             attribute,
             attributes,
-            property,
+            property1,
             properties,
             operator,
             operators,
             value,
-            option,
-            options
+            property2,
+            pcOnly
         }
     }
 
@@ -72,9 +73,10 @@ export class TrigglerForm extends FormApplication {
 
         const categorySelect = html.find("select[name='category']");
         const attributeSelect = html.find("select[name='attribute']");
-        const propertySelect = html.find("select[name='property']");
+        const property1Select = html.find("select[name='property1']");
         const operatorSelect = html.find("select[name='operator']");
         const optionSelect = html.find("select[name='option']");
+        const property2Select = html.find("select[name='property2']");
 
         categorySelect.on("change", event => {
             this.data.category = event.target.value;
@@ -131,8 +133,7 @@ export class TrigglerForm extends FormApplication {
      */
     _constructString(parts) {
         const operatorText = DEFAULT_CONFIG.triggler.operators[parts.operator];
-        const optionText = DEFAULT_CONFIG.triggler.options[parts.option];
-        const string = `${parts.category}.${parts.attribute}.${parts.property} ${operatorText} ${parts.value} ${optionText}`;
+        const string = `${parts.category}.${parts.attribute}.${parts.property1} ${operatorText} ${parts.value}${` ${parts.category}.${parts.attribute}.${parts.property2 ? parts.property2 : null}`}`;
         return string;
     }
 }

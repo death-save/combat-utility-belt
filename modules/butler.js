@@ -88,13 +88,38 @@ export const DEFAULT_CONFIG = {
         removeDefaultEffects: false,
         conditionLab: {
             id: "cub-condition-lab",
-            title: "CUB: Condition Lab",
+            title: "Condition Lab",
         },
         title: "CUB: Enhanced Conditions",
         mapTypes: {
             default: "System - Default",
             custom: "System - Custom",
             other: "Other"
+        },
+        referenceTypes: [
+            {
+                id: "journalEntry",
+                name: "Journal",
+                icon: `fas fa-book-open`
+            },
+            {
+                id: "compendium.journalEntry",
+                name: "Journal (C)",
+                icon: `fas fa-atlas`
+            },
+            {
+                id: "item",
+                name: "Item",
+                icon: `fas fa-suitcase`
+            },
+            {
+                id: "compendium.item",
+                name: "Item (C)",
+                icon: `fas fa-suitcase`
+            }
+        ],
+        templates: {
+            chatOutput: `${PATH}/templates/chat-conditions.html`
         }
     },
     giveXP: {
@@ -173,6 +198,9 @@ export const DEFAULT_CONFIG = {
         form: {
             title: "Triggler"
         },
+        flags: {
+            macro: "macroTrigger"
+        },
         operators: {
             eq: "=",
             lt: "<",
@@ -183,8 +211,10 @@ export const DEFAULT_CONFIG = {
         },
         options: {
             percent: "%"
+        },
+        templatePaths: {
+            macroTriggerSelect: `${PATH}/templates/trigger-select.html`
         }
-
         
     }
 }

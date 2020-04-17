@@ -24,6 +24,7 @@ import { ActorUtility } from "./utils/actor.js";
 import { TrackerUtility } from "./utils/combat-tracker.js";
 import { DraggableList } from "./utils/draggable-list.js";
 import { ConditionLab } from "./enhanced-conditions/condition-lab.js";
+import { Triggler } from "./triggler/triggler.js";
 
 /* -------------------------------------------- */
 /*                     Class                    */
@@ -96,6 +97,7 @@ export class Signal {
             Sidekick.createCUBDiv(html);
             EnhancedConditions._createLabButton(html);
             EnhancedConditions._toggleLabButtonVisibility(Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.enable));
+            Triggler._createTrigglerButton(html);
         });
     }
 
@@ -131,10 +133,11 @@ export class Signal {
     }
 
     static hookOnUpdateToken() {
-        Hooks.on("updateToken", (scene, sceneID, update, options, userId) => {
-            EnhancedConditions._hookOnUpdateToken(scene, sceneID, update, options, userId);
-            InjuredAndDead._hookOnUpdateToken(scene, sceneID, update, options, userId);
-            Concentrator._hookOnUpdateToken(scene, sceneID, update, options, userId);
+        Hooks.on("updateToken", (scene, sceneId, update, options, userId) => {
+            EnhancedConditions._hookOnUpdateToken(scene, sceneId, update, options, userId);
+            InjuredAndDead._hookOnUpdateToken(scene, sceneId, update, options, userId);
+            Concentrator._hookOnUpdateToken(scene, sceneId, update, options, userId);
+            Triggler._onUpdateToken(scene, sceneId, update, options, userId);
         });
     }
 
@@ -196,9 +199,10 @@ export class Signal {
     }
 
     static hookOnRenderChatMessage() {
-        Hooks.on("renderChatMessage", (message, html, data) => {
-            HideNPCNames._hookOnRenderChatMessage(message, html, data);
-            Concentrator._onRenderChatMessage(message, html, data);
+        Hooks.on("renderChatMessage", (app, html, data) => {
+            HideNPCNames._hookOnRenderChatMessage(app, html, data);
+            Concentrator._onRenderChatMessage(app, html, data);
+            EnhancedConditions._onRenderChatMessage(app, html, data);
         });
     }
 
@@ -225,6 +229,12 @@ export class Signal {
         });
     }
 
+    static hookOnRenderMacroConfig () {
+        Hooks.on("renderMacroConfig", (app, html, data) => {
+            Triggler._onRenderMacroConfig(app, html, data);
+        });
+    }
+
     static lightUp() {
         Signal.hookOnInit();
         Signal.hookOnCanvasInit();
@@ -247,5 +257,6 @@ export class Signal {
         Signal.hookOnRenderChatMessage();
         Signal.hookOnRenderDialog();
         Signal.hookOnRenderConditionLab();
+        Signal.hookOnRenderMacroConfig();
     }
 }
