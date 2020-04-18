@@ -47,10 +47,12 @@ export class EnhancedConditions {
      * Parses a condition map JSON and returns a map
      * @param {*} json 
      */
-    static parseJson(json) {
-        const map = {
-            [json.system]: json.map
-        };
+    static mapFromJson(json) {
+        if (json.system !== game.system.id) {
+            ui.notifications.warn("This map does not match your game system and may not work as expected.")
+        }
+        
+        const map = json.map;
 
         return map;
     }

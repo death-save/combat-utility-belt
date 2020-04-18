@@ -119,7 +119,8 @@ export const DEFAULT_CONFIG = {
             }
         ],
         templates: {
-            chatOutput: `${PATH}/templates/chat-conditions.html`
+            chatOutput: `${PATH}/templates/chat-conditions.html`,
+            importDialog: `${PATH}/templates/import-conditions.html`
         }
     },
     giveXP: {

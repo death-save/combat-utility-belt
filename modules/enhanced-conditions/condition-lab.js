@@ -26,8 +26,8 @@ export class ConditionLab extends FormApplication {
             template: `${BUTLER.PATH}/templates/condition-lab.html`,
             classes: ["sheet"],
             width: 820,
-            height: 750,
-            //resizable: true
+            height: 720,
+            resizable: true
         });
     }
 
@@ -189,6 +189,19 @@ export class ConditionLab extends FormApplication {
         return newMap;
     }
 
+    async _restoreDefaults() {
+        const system = this.system;
+        let defaultMaps = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.maps);
+
+        if (this.mapType === Sidekick.getKeyByValue(BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes, BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes.default)) {
+            defaultMaps = await EnhancedConditions.loadDefaultMaps();
+        }
+        
+        //console.log("restore defaults clicked", ev);
+        this.map = await Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.map, defaultMaps[system]);
+        this.render(true);
+    }
+
     /**
      * Take the new map and write it back to settings, overwriting existing
      * @param {Object} event 
@@ -202,26 +215,109 @@ export class ConditionLab extends FormApplication {
         Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.mapType, mapType);
     }
 
+    _exportToJSON() {
+        const map = duplicate(this.map);
+        const data = {
+            system: game.system.id,
+            map
+        }
+
+        // Trigger file save procedure
+        const filename = `cub-${game.system.id}-condition-map.json`;
+        saveDataToFile(JSON.stringify(data, null, 2), "text/json", filename);
+    }
+    
+
+    /**
+     * Borrowed from foundry.js Entity class
+     */
+    async _importFromJSONDialog() {
+        new Dialog({
+            title: `Import Condition Map`,
+            content: await renderTemplate(BUTLER.DEFAULT_CONFIG.enhancedConditions.templates.importDialog, {}),
+            buttons: {
+                import: {
+                    icon: '<i class="fas fa-file-import"></i>',
+                    label: "Import",
+                    callback: html => {
+                        this._processImport(html);
+                    }
+                },
+                no: {
+                    icon: '<i class="fas fa-times"></i>',
+                    label: "Cancel"
+                }
+            },
+            default: "import"
+        }).render(true);
+    }
+
+    async _processImport(html) {
+        const form = html.find("form")[0];
+
+        if ( !form.data.files.length ) {
+            return ui.notifications.error("You did not upload a data file!");
+        }
+
+        const jsonFile = await readTextFromFile(form.data.files[0]);
+        const json = JSON.parse(jsonFile);
+        const map = EnhancedConditions.mapFromJson(json);
+
+        if (!map) {
+            return;
+        }
+
+        this.mapType = Sidekick.getKeyByValue(BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes, BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes.other);
+        this.map = map;
+        this.render();
+    }
+
+    _getHeaderButtons() {
+        let buttons = super._getHeaderButtons();
+        
+        buttons.unshift(
+            {
+                label: "Import",
+                class: "import",
+                icon: "fas fa-file-import",
+                onclick: async ev => {
+                    this._importFromJSONDialog();
+                }
+            },
+            {
+                label: "Export",
+                class: "export",
+                icon: "fas fa-file-export",
+                onclick: async ev => {
+                    this._exportToJSON();
+                }
+            }
+        );
+
+        return buttons
+      }
+
     /**
      * 
      * @param {*} html 
      */
     activateListeners(html) {
         super.activateListeners(html);
-        let newSystem;
-        const systemSelector = html.find("select[class='system']");
+
         const mapTypeSelector = html.find("select[class='map-type']");
         const triggerAnchor = html.find("a[class='trigger']");
-        const triggerSelector = html.find("select[class='trigger]'");
-        const addRowButton = html.find("button[class='add-row']");
         const addRowAnchor = html.find("a[name='add-row']");
-        const removeRowButton = html.find("button[class='remove-row']");
         const removeRowAnchor = html.find("a[class='remove-row']");
         const iconPath = html.find("input[class='icon-path']");
         const restoreDefaultsButton = html.find("button[class='restore-defaults']");
         const resetFormButton = html.find("button[name='reset']");
-        const referenceAnchor = html.find("a.reference-type");
         const referenceTypeSelector = html.find("select[name^='reference-type']");
+        const importButton = html.find("button[name^='import']");
+        const exportButton = html.find("button[name^='export']");
+
+        importButton.on("click", event => {
+            this._importFromJSONDialog();
+        });
 
         mapTypeSelector.change(ev => {
             ev.preventDefault();
@@ -244,17 +340,6 @@ export class ConditionLab extends FormApplication {
             }
 
             this.map = newMap;
-
-            this.render(true);
-        });
-
-        systemSelector.change(async ev => {
-            const selection = $(ev.target).find("option:selected");
-            const newSystem = selection.val();
-            const systemSetting = this.system = await Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.system, newSystem);
-
-            let newMap = this.map = await EnhancedConditions.getDefaultMap(newSystem) || {};
-            const mapSetting = await Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.map, newMap);
 
             this.render(true);
         });
@@ -358,12 +443,12 @@ export class ConditionLab extends FormApplication {
                     yes: {
                         icon: `<i class="fas fa-check"></i>`,
                         label: "Yes",
-                        callback: () => confirm = true
+                        callback: () => this._restoreDefaults()
                     },
                     no: {
                         icon: `<i class="fas fa-times"></i>`,
                         label: "No",
-                        callback: () => confirm = false
+                        callback: () => {}
                     }
                 },
                 default: "no",
@@ -371,31 +456,6 @@ export class ConditionLab extends FormApplication {
             });
 
             confirmationDialog.render(true);
-
-            if (!confirm) {
-                return;
-            }
-
-            const system = this.system;
-            let defaultMaps = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.maps);
-
-            if (this.mapType === Sidekick.getKeyByValue(BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes, BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes.default)) {
-                defaultMaps = await EnhancedConditions.loadDefaultMaps();
-            }
-            
-            //console.log("restore defaults clicked", ev);
-            this.map = await Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.map, defaultMaps[system]);
-            this.render(true);
-        });
-
-        referenceAnchor.on("click", event => {
-            event.preventDefault();
-            //console.log("change", ev, this);
-            const splitName = event.target.name.split("-");
-            const row = splitName[splitName.length - 1];
-
-            let icon = $(this.form).find("img[name='icon-" + row);
-            icon.attr("src", event.target.value); 
         });
 
         /*

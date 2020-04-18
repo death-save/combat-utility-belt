@@ -47,12 +47,28 @@ export class ActorUtility {
             return;
         }
 
-        const tokensToAdd = tokens.filter(t => t.inCombat === false);
-        const createData = tokensToAdd.map(t => {return {tokenId: t.id, hidden: t.data.hidden}});
+        const combatants = tokens.filter(t => t.inCombat).map(t => {
+            return game.combat.combatants.find(c => c.tokenId === t.id);
+        });
 
-        const combatants = await game.combat.createManyEmbeddedEntities("Combatant", createData);
+        const createData = tokens.filter(t => !t.inCombat).map(t => {
+            return {
+                tokenId: t.id,
+                hidden: t.data.hidden
+            };
+        });
 
-        if (!combatants) {
+        const newCombatants = await game.combat.createManyEmbeddedEntities("Combatant", createData);
+
+        if (newCombatants.length) {
+            combatants.concat(newCombatants);
+        }
+
+        if (newCombatants instanceof Object) {
+            combatants.push(newCombatants);
+        }
+
+        if (!combatants.length) {
             return;
         }
 

@@ -123,6 +123,76 @@
             "options": {
                 "overlay": true
             }
+        },
+        {
+            "name":"Injured",
+            "icon":"icons/svg/blood.svg",
+            "referenceId": "",
+            "referenceType": "compendium.journalEntry"
+        },
+        {
+            "name":"Dead",
+            "icon":"icons/svg/skull.svg",
+            "referenceId": "",
+            "referenceType": "compendium.journalEntry",
+            "options": {
+                "overlay": true,
+                "removeOthers": true
+            }
+        },
+        {
+            "name":"Aid",
+            "icon":"systems/dnd5e/icons/spells/heal-sky-1.jpg",
+            "referenceId": "@Compendium[dnd5e.spells.Opwh2PdX4runSBlm]",
+            "referenceType": "compendium.item"
+        },
+        {
+            "name":"Bless",
+            "icon":"systems/dnd5e/icons/spells/haste-sky-1.jpg",
+            "referenceId": "@Compendium[dnd5e.spells.8dzaICjGy6mTUaUr]",
+            "referenceType": "compendium.item"
+        },
+        {
+            "name":"Bane",
+            "icon":"systems/dnd5e/icons/spells/rip-magenta-2.jpg",
+            "referenceId": "@Compendium[dnd5e.spells.95K2aUhAGV9qXjnf]",
+            "referenceType": "compendium.item"
+        },
+        {
+            "name":"Rage",
+            "icon":"systems/dnd5e/icons/skills/red_10.jpg",
+            "referenceId": "@Compendium[dnd5e.classfeatures.VoR0SUrNX5EJVPIO]",
+            "referenceType": "compendium.item"
+        },
+        {
+            "name":"Hex",
+            "icon":"",
+            "referenceId": "@Compendium[dnd5e.spells.",
+            "referenceType": "compendium.item"
+        },
+        {
+            "name":"Hexblade's Curse",
+            "icon":"",
+            "referenceId": "",
+            "referenceType": "compendium.item"
+        },
+        {
+            "name":"Hunter's Mark",
+            "icon":"systems/dnd5e/icons/spells/evil-eye-red-1.jpg",
+            "referenceId": "@Compendium[dnd5e.spells.0xmXiPiuYws1OGcX]",
+            "referenceType": "compendium.item"
+        },
+        {
+            "name":"Bardic Inspiration",
+            "icon":"systems/dnd5e/icons/skills/yellow_08.jpg",
+            "referenceId": "@Compendium[dnd5e.classfeatures.EeGafsa17CapsH2j]",
+            "referenceType": "compendium.item"
+        },
+        {
+            "name":"Patient Defense",
+            "icon":"systems/dnd5e/icons/skills/blue_18.jpg",
+            "referenceId": "@Compendium[dnd5e.classfeatures.TDglPcxIVEzvVSgK]",
+            "referenceType": "compendium.item"
         }
     ]
 }

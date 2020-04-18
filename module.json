@@ -16,6 +16,13 @@
   "esmodules": [
     "./combat-utility-belt.js"
   ],
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json"
+    }
+  ], 
   "packs": [
     {
       "name": "conditionsdnd5e",

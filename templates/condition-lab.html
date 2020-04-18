@@ -103,7 +103,18 @@
                             {{/each}}
                             {{/select}}
                         </select>                            
-                    </div>                   
+                    </div> 
+                    <div class="flexrow condition-lab options">
+                        <p>Options:</p>
+                        <div class="formgroup" title="Condition is an overlay">
+                            <input type="checkbox" name="options-overlay-{{@index}}" {{checked condition.options.overlay}} {{#if ../isDefault}}disabled{{/if}}>
+                            <label>Overlay</label>
+                        </div>
+                        <div class="formgroup" title="Remove other conditions when this one is applied">
+                            <input type="checkbox" name="options-remove-others-{{@index}}" {{checked condition.options.removeOthers}} {{#if ../isDefault}}disabled{{/if}}>
+                            <label>Remove Others</label>
+                        </div>
+                    </div>                  
                 </div>
                 <!--delete row-->
                 {{#if ../isDefault}}
@@ -120,18 +131,10 @@
         {{/each}}
         <div class="flexrow condition-lab add-row">
             <a name="add-row" title="Add Row">
-                <i class="fas fa-plus"></i> {{#if isDefault}}Switch to "System - Custom" and Add Row{{else}}Add Row{{/if}}
+                <i class="fas fa-plus"></i> {{#if isDefault}}Add Row (switch to System - Custom){{else}}Add Row{{/if}}
             </a>
         </div>
     </ol>
-    <div class="flexrow" width="50%">
-        <button type="button" name="import" title="Import a Condition Mapping file">
-            <i class="fas fa-file-import"></i> Import
-        </button>
-        <button type="button" name="export" title="Export your current Condition Mapping to a file">
-            <i class="fas fa-file-export"></i> Export
-        </button>
-    </div>
     <footer class="flexrow">
         <button type="submit" name="submit" title="Save mapping form values">
             <i class="far fa-save"></i> Save Mapping

@@ -55,8 +55,7 @@ export class TrackerUtility {
      * @param {*} combatantId 
      * @param {*} options 
      */
-    static _hookOnDeleteCombatant(combat, combatId, combatantId, options) {
-        const combatant = combat.combatants.find(c => c._id === combatantId);
+    static _hookOnDeleteCombatant(combat, combatant, options, userId) {
         const tokenData = combatant.token.data || null;
 
         if (hasProperty(tokenData, `flags.${BUTLER.FLAGS.temporaryCombatants.temporaryCombatant}`)) {

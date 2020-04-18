@@ -16,7 +16,8 @@ export class TemporaryCombatantForm extends FormApplication {
             classes: ["sheet"],
             width: 500,
             height: "auto",
-            resizable: true
+            resizable: true,
+            submitOnClose: false
         });
     }
 
@@ -46,11 +47,23 @@ export class TemporaryCombatantForm extends FormApplication {
         const token = await Token.create(tokenData);
 
         const combatant = await game.combat.createEmbeddedEntity("Combatant", {
-            tokenId: token._id, 
+            tokenId: token.id, 
             hidden: formData.hidden, 
             initiative: formData.init,
             flags
         });
         
+    }
+
+    /**
+     * 
+     * @param {*} html 
+     */
+    activateListeners(html) {
+        const cancelButton = html.find("button[name='cancel'");
+
+        cancelButton.on("click", event => {
+            this.close();
+        });
     }
 }
