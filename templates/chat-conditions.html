@@ -4,7 +4,7 @@
 <div class="enhanced-conditions content" data-token-id="{{tokenId}}">
     <ul class="chat-message condition-list">
         {{#each conditions as |condition key|}}
-        <li class="flexrow" data-condition-name="{{condition.name}}">
+        <li class="flexrow" id="condition-{{@index}}" data-condition-name="{{condition.name}}">
             <div class="icon" style="flex: 0 0 24px; margin: 0px 6px 0px 0px">
                 <img src="{{condition.icon}}" class="icon chat-message" title="{{condition.name}}">
             </div>

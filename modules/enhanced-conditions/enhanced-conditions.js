@@ -197,7 +197,7 @@ export class EnhancedConditions {
     /**
      * Hooks on token updates. If the update includes effects, calls the journal entry lookup
      */
-    static _hookOnUpdateToken(scene, sceneID, update, options, userId) {
+    static _onUpdateToken(scene, tokenData, update, options, userId) {
         const enable = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.enable);
 
         if (!enable || !game.user.isGM || (game.users.get(userId).isGM && !game.userId === userId)) {
@@ -212,7 +212,7 @@ export class EnhancedConditions {
         }
 
         //If the update has effects in it, lookup mapping and set the current token
-        const token = canvas.tokens.get(update._id);
+        const token = new Token(tokenData);
         const map = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.map);
         return EnhancedConditions.lookupEntryMapping(token, map, effects);
     }
@@ -220,7 +220,7 @@ export class EnhancedConditions {
     /**
      * Hooks on token updates. If the update includes effects, calls the journal entry lookup
      */
-    static _hookOnPreUpdateToken(scene, sceneID, update, options) {
+    static _onPreUpdateToken(scene, token, update, options, userId) {
         const enable = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.enable);
 
         if (!enable) {
@@ -235,7 +235,7 @@ export class EnhancedConditions {
         }
 
         //If the update has effects in it, lookup mapping and set the current token
-        const token = canvas.tokens.get(update._id);
+        //const token = canvas.tokens.get(update._id);
         const map = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.map);
         return EnhancedConditions.lookupEntryMapping(token, map, effects);
     }
@@ -243,7 +243,7 @@ export class EnhancedConditions {
     /**
      * Adds a title/tooltip with the matched Condition name
      */
-    static _hookOnRenderTokenHUD(app, html, data) {
+    static _onRenderTokenHUD(app, html, data) {
         const enable = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.enable);
 
         if (!enable) {
@@ -273,21 +273,40 @@ export class EnhancedConditions {
         if (data.message.content && !data.message.content.match("enhanced-conditions")) {
             return;
         }
-
+        const contentDiv = html.find("div.content");
+        const messageDiv = contentDiv.closest("li.message");
+        const messageId = messageDiv.data().messageId;
+        const tokenId = contentDiv.data().tokenId;
+        const token = canvas.tokens.get(tokenId);
+        const message = game.messages.get(messageId);
         const removeConditionAnchor = html.find("a[name='remove-row']");
 
+        if (!token || (token && !game.user.isGM)) {
+            removeConditionAnchor.parent().hide();
+        }
+
+        /**
+         * @todo move to chatlog listener instead
+         */
         removeConditionAnchor.on("click", event => {
             const li = event.target.closest("li");
-            const conditionName = li.dataset.conditionName;
-            const contentDiv = event.target.closest("div.content");
+            const contentDiv = li.closest("div.content");
             const tokenId = contentDiv.dataset.tokenId;
             const token = canvas.tokens.get(tokenId);
-
+            const conditionName = li.dataset.conditionName;
+            
             if (!token) {
                 return;
             }
 
-            EnhancedConditions.removeCondition(token, conditionName);
+            EnhancedConditions.removeCondition(conditionName, token);
+
+            /**
+             * @todo need a solution for dealing with chat log spam -- once chat output is just a diff it will be better
+             */
+            //const newContent = duplicate(message.data.content);
+            //const update = $(newContent).find(li).remove();
+            //message.delete()
         });
     }
 
@@ -329,7 +348,8 @@ export class EnhancedConditions {
         const templateData = {
             tokenId: token.id,
             alias: tokenSpeaker.alias,
-            conditions: entries
+            conditions: entries,
+            isOwner: token.owner
         };
 
         const chatContent = await renderTemplate(BUTLER.DEFAULT_CONFIG.enhancedConditions.templates.chatOutput, templateData);
@@ -346,9 +366,11 @@ export class EnhancedConditions {
      * Applies the named condition to the provided tokens
      * @param {*} tokens
      * @param {*} conditionName
+     * @todo coalesce into a single update
      */
-    static applyCondition(tokens, conditionName) {
+    static applyCondition(conditionName, tokens) {
         if (!tokens) {
+            ui.notifications.error("Apply Condition failed. No token provided");
             console.log("No token provided");
             return;
         }
@@ -357,13 +379,15 @@ export class EnhancedConditions {
         const condition = map.find(c => c.name === conditionName);
 
         if (!condition) {
-            console.log("Coult not find condition with name: ", conditionName);
+            ui.notifications.error("Apply Condition failed. Could not find condition.");
+            console.log("Could not find condition with name: ", conditionName);
             return;
         }
 
         const effect = condition ? condition.icon : null;
         
         if (!effect) {
+            ui.notifications.error("Apply Condition failed. Could not find icon.");
             console.log("No icon is setup for condition: ", conditionName);
             return;
         }
@@ -373,12 +397,17 @@ export class EnhancedConditions {
         }
 
         for (let token of tokens) {
-            if (token.data.effects.includes(effect)) {
+            if ((!condition.options.overlay && token.data.effects.includes(effect)) || (condition.options.overlay && token.data.overlayEffect === effect)) {
+                ui.notifications.warn("Apply Condition failed. Condition already active.");
                 console.log(`Condition ${conditionName} is already active on token.`);
                 return;
             }
 
-            token.toggleEffect(effect);
+            condition.options.overlay === true ? token.toggleOverlay(effect) : token.toggleEffect(effect);
+
+            if (condition.options.removeOthers) {
+                token.update({effects: []});
+            }
         }
         
     }
@@ -386,11 +415,13 @@ export class EnhancedConditions {
     /**
      * Removes the named condition from a token or tokens
      * @param {*} tokens 
-     * @param {*} conditionName 
+     * @param {*} conditionName
+     * @todo coalesce into a single update
      */
-    static removeCondition(tokens, conditionName) {
+    static removeCondition(conditionName, tokens) {
         // iterate tokens removing conditions
         if (!tokens) {
+            ui.notifications.error("Remove Condition failed. No token provided");
             console.log("No token provided");
             return;
         }
@@ -399,13 +430,15 @@ export class EnhancedConditions {
         const condition = map.find(c => c.name === conditionName);
 
         if (!condition) {
-            console.log("Coult not find condition with name: ", conditionName);
+            ui.notifications.error("Remove Condition failed. Could not find condition.");
+            console.log("Could not find condition with name: ", conditionName);
             return;
         }
 
         const effect = condition ? condition.icon : null;
         
         if (!effect) {
+            ui.notifications.error("Remove Condition failed. Could not find icon");
             console.log("No icon is setup for condition: ", conditionName);
             return;
         }
@@ -415,12 +448,13 @@ export class EnhancedConditions {
         }
 
         for (let token of tokens) {
-            if (!token.data.effects.includes(effect)) {
+            if ((!condition.options.overlay && !token.data.effects.includes(effect)) || (condition.options.overlay && token.data.overlayEffect !== effect)) {
+                ui.notifications.warn("Remove Condition failed. Condition is not active on token");
                 console.log(`Condition ${conditionName} is not active on token.`);
                 return;
             }
 
-            token.toggleEffect(effect);
+            condition.options.overlay === true ? token.toggleOverlay(effect) : token.toggleEffect(effect);
         }
     }
 

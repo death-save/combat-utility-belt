@@ -81,6 +81,10 @@ a.add-temporary {
     margin: 0px 0px 3px 0px;
 }
 
+.reference-item select {
+    width: 100%;
+}
+
 .flexcol.condition-lab.text-entry.trigger {
     flex: 2;
     margin: 0px 0px 3px 0px;
@@ -151,6 +155,16 @@ a.add-temporary {
     cursor: grab;
     line-height: 60px;
     opacity: 0.5;
+}
+
+.condition-lab .options {
+    padding: 0 0 0 26px;
+}
+
+/* TRIGGLER */
+.triggler a.delete {
+    flex: 0 0 16px;
+    margin: 2px 0px 0px 3px;
 }
 
 /* COMBAT CAROUSEL */

@@ -1,7 +1,6 @@
 /* -------------------------------------------- */
 /*                    Imports                   */
 /* -------------------------------------------- */
-import { cub } from "../combat-utility-belt.js"
 import * as BUTLER from "./butler.js";
 import { Sidekick } from "./sidekick.js";
 import { registerSettings } from "./settings.js";
@@ -33,14 +32,17 @@ import { Triggler } from "./triggler/triggler.js";
  * Initiates module classes (and shines a light on the dark night sky)
  */
 export class Signal {
-    /* -------------------------------------------- */
-    /*                     Hooks                    */
-    /* -------------------------------------------- */
-
     /**
-     * Init Hooks
+     * Registers hooks
      */
-    static hookOnInit() {
+    static lightUp() {
+
+        /* -------------------------------------------- */
+        /*                    System                    */
+        /* -------------------------------------------- */
+
+        /* ------------------- Init/Ready ------------------- */
+
         Hooks.on("init", () => {
             // Assign the namespace Object if it already exists or instantiate it as an object if not
             game.cub = game.cub || {};
@@ -69,190 +71,154 @@ export class Signal {
             if (effectSize) {
                 Token.prototype.drawEffects = TokenUtility._patchDrawEffects;
             }
-        });
-    }
 
-    /**
-     * Canvas Init Hook
-     */
-    static hookOnCanvasInit() {
+            game.cub.applyCondition = EnhancedConditions.applyCondition;
+        });
+
         Hooks.on("canvasInit", () => {
            
         });
-    }
 
-    /**
-     * Ready Hook
-     */
-    static hookOnReady() {
         Hooks.on("ready", () => {
             EnhancedConditions._onReady();            
         });
-    }
 
-    static hookOnRenderSettings() {
+        /* -------------------------------------------- */
+        /*                    Entity                    */
+        /* -------------------------------------------- */
+
+        /* ------------------- Actor ------------------ */
+
+        Hooks.on("preUpdateActor", (actor, update, options, userId) => {
+            Concentrator._onPreUpdateActor(actor, update, options, userId);
+        });
+
+        Hooks.on("updateActor", (actor, update, options, userId) => {
+            // Workaround for actor array returned in hook for non triggering clients
+            if (actor instanceof Collection) {
+                actor = actor.entities.find(a => a._id === update._id);
+            }
+            Concentrator._onUpdateActor(actor, update, options, userId);
+            Triggler._onUpdateActor(actor, update, options, userId);
+        });
+
+        /* ------------------- Token ------------------ */
+
+        Hooks.on("preCreateToken", (scene, tokenData, options, userId) => {
+            TokenUtility._onPreCreateToken(scene, tokenData, options, userId);
+        });
+
+        Hooks.on("createToken", (scene, tokenData, options, userId) => {
+            //TokenUtility._onCreateToken(scene, tokenData, options, userId);
+        });
+
+        Hooks.on("preUpdateToken", (scene, token, updateData, options, userId) => {
+            Concentrator._onPreUpdateToken(scene, token, updateData, options, userId);
+        });
+
+        Hooks.on("updateToken", (scene, token, updateData, options, userId) => {
+            EnhancedConditions._onUpdateToken(scene, token, updateData, options, userId);
+            Concentrator._onUpdateToken(scene, token, updateData, options, userId);
+            Triggler._onUpdateToken(scene, token, updateData, options, userId);
+        });
+
+        /* ------------------ Combat ------------------ */
+
+        Hooks.on("preUpdateCombat", (combat, update, options) => {
+            
+        });
+
+        Hooks.on("updateCombat", (combat, update, options, userId) => {
+            RerollInitiative._onUpdateCombat(combat, update, options, userId);
+            TrackerUtility._hookOnUpdateCombat(combat, update);
+        });
+
+        Hooks.on("deleteCombat", (combat, options, userId) => {
+            TrackerUtility._onDeleteCombat(combat, options, userId);
+        });
+        
+        Hooks.on("preDeleteCombatant", (combat, combatant, options, userId) => {
+            TrackerUtility._onDeleteCombatant(combat, combatant, options, userId);
+        });
+
+        /* -------------------------------------------- */
+        /*                    Render                    */
+        /* -------------------------------------------- */
+
+        /* ------------------- Misc ------------------- */
+
         Hooks.on("renderSettings", (app, html) => {
             Sidekick.createCUBDiv(html);
             EnhancedConditions._createLabButton(html);
             EnhancedConditions._toggleLabButtonVisibility(Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.enable));
             Triggler._createTrigglerButton(html);
         });
-    }
 
-    static hookOnRenderTokenHUD() {
-        Hooks.on("renderTokenHUD", (app, html, data) => {
-            EnhancedConditions._hookOnRenderTokenHUD(app, html, data);
-        });
-    }
-
-    static hookOnRenderActorSheet() {
-        Hooks.on("renderActorSheet", (app, html, data) => {
-            ActorUtility._onRenderActorSheet(app, html, data);
-        });
-    }
-
-    static hookOnRenderImagePopout() {
         Hooks.on("renderImagePopout", (app, html, data) => {
             HideNPCNames._onRenderImagePopout(app, html, data);
         });
-    }
 
-    static hookOnCreateToken() {
-        Hooks.on("createToken", (scene, sceneId, tokenData, options, userId) => {
-            TokenUtility._hookOnCreateToken(scene, sceneId, tokenData, options, userId);
+        Hooks.on("renderMacroConfig", (app, html, data) => {
+            Triggler._onRenderMacroConfig(app, html, data);
         });
-    }
 
-    static hookOnPreUpdateToken() {
-        Hooks.on("preUpdateToken", (scene, sceneId, actorData, currentData) => {
-            Concentrator._hookOnPreUpdateToken(scene, sceneId, actorData, currentData);
-            //game.cub.enhancedConditions._hookOnPreUpdateToken(scene, sceneId, actorData, currentData);
+        /* ------------------- Actor ------------------ */
+
+
+        Hooks.on("renderActorSheet", (app, html, data) => {
+            ActorUtility._onRenderActorSheet(app, html, data);
         });
-    }
 
-    static hookOnUpdateToken() {
-        Hooks.on("updateToken", (scene, sceneId, update, options, userId) => {
-            EnhancedConditions._hookOnUpdateToken(scene, sceneId, update, options, userId);
-            Concentrator._hookOnUpdateToken(scene, sceneId, update, options, userId);
-            Triggler._onUpdateToken(scene, sceneId, update, options, userId);
+        /* ------------------- Token ------------------ */
+
+
+        Hooks.on("renderTokenHUD", (app, html, data) => {
+            EnhancedConditions._onRenderTokenHUD(app, html, data);
         });
-    }
 
-    static hookOnPreUpdateActor() {
-        Hooks.on("preUpdateActor", (actor, update, options) => {
-            Concentrator._hookOnPreUpdateActor(actor, update, options);
-        });
-    }
+        /* ------------------- Chat ------------------- */
 
-    static hookOnUpdateActor() {
-        Hooks.on("updateActor", (actor, update, options, userId) => {
-            // Workaround for actor array returned in hook for non triggering clients
-            if (actor instanceof Collection) {
-                actor = actor.entities.find(a => a._id === update._id);
-            }
-            Concentrator._hookOnUpdateActor(actor, update, options, userId);
-        });
-    }
-
-    static hookOnPreUpdateCombat() {
-        Hooks.on("preUpdateCombat", (combat, update, options) => {
-            
-        });
-    }
-
-    static hookOnUpdateCombat() {
-        Hooks.on("updateCombat", (combat, update, options, userId) => {
-            RerollInitiative._onUpdateCombat(combat, update, options, userId);
-            TrackerUtility._hookOnUpdateCombat(combat, update);
-        });
-    }
-
-    static hookOnDeleteCombat() {
-        Hooks.on("deleteCombat", (combat, combatId, options, userId) => {
-            TrackerUtility._hookOnDeleteCombat(combat, combatId, options, userId);
-        });
-    }
-
-    static hookOnDeleteCombatant() {
-        Hooks.on("preDeleteCombatant", (combat, combatId, combatantId, options) => {
-            TrackerUtility._hookOnDeleteCombatant(combat, combatId, combatantId, options);
-        });
-    }
-
-    static hookOnRenderCombatTracker() {
-        Hooks.on("renderCombatTracker", (app, html, data) => {
-            HideNPCNames._hookOnRenderCombatTracker(app, html, data);
-            TrackerUtility._onRenderCombatTracker(app, html, data);
-            TemporaryCombatants._onRenderCombatTracker(app, html, data);
-        });
-    }
-
-    static hookOnRenderCombatTrackerConfig() {
-        Hooks.on("renderCombatTrackerConfig", (app, html, data) => {
-            // Possible future feature
-            //game.cub.combatTracker._onRenderCombatTrackerConfig(app, html, data);
-        });
-    }
-
-    static hookOnRenderChatMessage() {
         Hooks.on("renderChatMessage", (app, html, data) => {
             HideNPCNames._hookOnRenderChatMessage(app, html, data);
             Concentrator._onRenderChatMessage(app, html, data);
             EnhancedConditions._onRenderChatMessage(app, html, data);
         });
-    }
-
-    static hookOnRenderDialog() {
+        
         Hooks.on("renderDialog", (app, html, data) => {
             if (app.title === "End Combat Encounter?") {
                 GiveXP._onRenderDialog(app, html, data);
             }
         });
-    }
+        
+        /* -------------- Combat Tracker -------------- */
 
-    static hookOnRenderConditionLab() {
+        Hooks.on("renderCombatTracker", (app, html, data) => {
+            HideNPCNames._hookOnRenderCombatTracker(app, html, data);
+            TrackerUtility._onRenderCombatTracker(app, html, data);
+            TemporaryCombatants._onRenderCombatTracker(app, html, data);
+        });
+        
+        Hooks.on("renderCombatTrackerConfig", (app, html, data) => {
+            // Possible future feature
+            //game.cub.combatTracker._onRenderCombatTrackerConfig(app, html, data);
+        });
+
+        /* ---------------- Custom Apps --------------- */
+
         Hooks.on("renderConditionLab", (app, html, data) => {
             //const mappingList = html.find("ol[class='condition-map-list']");
             const mappingList = document.getElementsByClassName("condition-map-list")[0];
+            
             if (mappingList) {
                 new DraggableList(mappingList, "li", {
                     boundary: 0, 
-                    rowHeight: 60, 
+                    rowHeight: 100, 
                     onDragStart: ConditionLab.prototype.onDragStart, 
                     onDrop: ConditionLab.prototype.onDrop
                 });
             }
+            
         });
-    }
-
-    static hookOnRenderMacroConfig () {
-        Hooks.on("renderMacroConfig", (app, html, data) => {
-            Triggler._onRenderMacroConfig(app, html, data);
-        });
-    }
-
-    static lightUp() {
-        Signal.hookOnInit();
-        Signal.hookOnCanvasInit();
-        Signal.hookOnReady();
-        Signal.hookOnRenderSettings();
-        Signal.hookOnRenderTokenHUD();
-        Signal.hookOnRenderActorSheet();
-        Signal.hookOnRenderImagePopout();
-        Signal.hookOnCreateToken();
-        Signal.hookOnPreUpdateToken();
-        Signal.hookOnUpdateToken();
-        Signal.hookOnPreUpdateActor();
-        Signal.hookOnUpdateActor();
-        Signal.hookOnPreUpdateCombat();
-        Signal.hookOnUpdateCombat();
-        Signal.hookOnDeleteCombat();
-        Signal.hookOnDeleteCombatant();
-        Signal.hookOnRenderCombatTracker();
-        Signal.hookOnRenderCombatTrackerConfig();
-        Signal.hookOnRenderChatMessage();
-        Signal.hookOnRenderDialog();
-        Signal.hookOnRenderConditionLab();
-        Signal.hookOnRenderMacroConfig();
+        
     }
 }

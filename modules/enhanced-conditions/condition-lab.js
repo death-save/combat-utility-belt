@@ -1,4 +1,3 @@
-import { cub } from "../../combat-utility-belt.js";
 import * as BUTLER from "../butler.js";
 import { Sidekick } from "../sidekick.js";
 import { EnhancedConditions } from "./enhanced-conditions.js";
@@ -14,11 +13,14 @@ export class ConditionLab extends FormApplication {
         this.system = game.system.id;
         this.mapType = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.mapType);
         this.initialMap = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.map);
-        this.map = null;
+        this.map = this.initialMap;
         this.maps = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.maps);
         this.draggedIndex = -1;
     }
 
+    /**
+     * Get options for the form
+     */
     static get defaultOptions() {
         return mergeObject(super.defaultOptions, {
             id: BUTLER.DEFAULT_CONFIG.enhancedConditions.conditionLab.id,
@@ -35,11 +37,12 @@ export class ConditionLab extends FormApplication {
      * 
      */
     async prepareData() {
+        console.time("data-prep");
         const mappedSystems = Object.entries(BUTLER.KNOWN_GAME_SYSTEMS).filter(e => e[1].conditionMap === true);
         const mapTypeChoices = BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes;
         const mapType = this.mapType || Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.mapType) || "other";
         const system = this.system || game.system.id;
-        let conditionMap = this.map ? this.map : this.map = this.initialMap;
+        let conditionMap = this.map ? this.map : this.initialMap;
         const referenceTypes = BUTLER.DEFAULT_CONFIG.enhancedConditions.referenceTypes;
         const journalEntries = game.journal.entities.sort((a, b) => a.sort - b.sort).map(e => {
                 return {
@@ -60,7 +63,6 @@ export class ConditionLab extends FormApplication {
         const itemCompendiaEntries = [];
 
         for (let c of journalCompendia) {
-            console.log(c.collection);
             const index = await c.getIndex();
             const entries = index.map(e => {
                 return {
@@ -72,7 +74,6 @@ export class ConditionLab extends FormApplication {
         }
 
         for (let c of itemCompendia) {
-            console.log(c.collection);
             const index = await c.getIndex();
             const entries = index.map(e => {
                 return {
@@ -124,7 +125,7 @@ export class ConditionLab extends FormApplication {
             triggers,
             isDefault
         }
-
+        console.timeEnd("data-prep");
         return data;
     }
 
@@ -146,6 +147,8 @@ export class ConditionLab extends FormApplication {
         let references = [];
         let applyTriggers = [];
         let removeTriggers = [];
+        let optionsOverlay = [];
+        let optionsRemove = [];
         let newMap = [];
 
         //need to tighten these up to check for the existence of digits after the word
@@ -155,23 +158,36 @@ export class ConditionLab extends FormApplication {
         const referenceRegex = new RegExp("reference", "i");
         const applyTriggerRegex = new RegExp("apply-trigger", "i");
         const removeTriggerRegex = new RegExp("remove-trigger", "i");
-
+        const optionsOverlayRegex = new RegExp("options-overlay", "i");
+        const optionsRemoveRegex = new RegExp("options-remove-others", "i");
+        const rowRegex = new RegExp(/\d+$/);
 
         //write it back to the relevant condition map
         //@todo: maybe switch to a switch
         for (let e in formData) {
+            const rowMatch = e.match(rowRegex);
+            const row = rowMatch ? rowMatch[0] : null;
+
+            if (!row) {
+                continue;
+            }
+
             if (e.match(conditionRegex)) {
-                conditions.push(formData[e]);
+                conditions[row] = formData[e];
             } else if (e.match(iconRegex)) {
-                icons.push(formData[e]);
+                icons[row] = formData[e];
             } else if (e.match(referenceTypeRegex)) {
-                referenceTypes.push(formData[e]);
+                referenceTypes[row] = formData[e];
             } else if (e.match(referenceRegex)) {
-                references.push(formData[e]); 
+                references[row] = formData[e]; 
             } else if (e.match(applyTriggerRegex)) {
-                applyTriggers.push(formData[e]);
+                applyTriggers[row] = formData[e];
             } else if (e.match(removeTriggerRegex)) {
-                removeTriggers.push(formData[e]);
+                removeTriggers[row] = formData[e];
+            } else if (e.match(optionsOverlayRegex)) {
+                optionsOverlay[row] = formData[e];
+            } else if (e.match(optionsRemoveRegex)) {
+                optionsRemove[row] = formData[e];
             }
         }
 
@@ -182,7 +198,11 @@ export class ConditionLab extends FormApplication {
                 referenceType: referenceTypes[i],
                 referenceId: references[i],
                 applyTrigger: applyTriggers[i],
-                removeTrigger: removeTriggers[i]
+                removeTrigger: removeTriggers[i],
+                options: {
+                    overlay: optionsOverlay[i],
+                    removeOthers: optionsRemove[i]
+                }
             });
         }
 
@@ -215,6 +235,9 @@ export class ConditionLab extends FormApplication {
         Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.mapType, mapType);
     }
 
+    /**
+     * Exports the current map to JSON
+     */
     _exportToJSON() {
         const map = duplicate(this.map);
         const data = {
@@ -229,6 +252,7 @@ export class ConditionLab extends FormApplication {
     
 
     /**
+     * Initiates an import via a dialog
      * Borrowed from foundry.js Entity class
      */
     async _importFromJSONDialog() {
@@ -252,6 +276,10 @@ export class ConditionLab extends FormApplication {
         }).render(true);
     }
 
+    /**
+     * Process a Condition Map Import
+     * @param {*} html 
+     */
     async _processImport(html) {
         const form = html.find("form")[0];
 
@@ -272,6 +300,9 @@ export class ConditionLab extends FormApplication {
         this.render();
     }
 
+    /**
+     * Override the header buttons method
+     */
     _getHeaderButtons() {
         let buttons = super._getHeaderButtons();
         
@@ -298,7 +329,7 @@ export class ConditionLab extends FormApplication {
       }
 
     /**
-     * 
+     * Activate app listeners
      * @param {*} html 
      */
     activateListeners(html) {
@@ -312,12 +343,6 @@ export class ConditionLab extends FormApplication {
         const restoreDefaultsButton = html.find("button[class='restore-defaults']");
         const resetFormButton = html.find("button[name='reset']");
         const referenceTypeSelector = html.find("select[name^='reference-type']");
-        const importButton = html.find("button[name^='import']");
-        const exportButton = html.find("button[name^='export']");
-
-        importButton.on("click", event => {
-            this._importFromJSONDialog();
-        });
 
         mapTypeSelector.change(ev => {
             ev.preventDefault();
@@ -349,25 +374,30 @@ export class ConditionLab extends FormApplication {
             const anchor = event.currentTarget;
             const select = anchor.parentElement.nextElementSibling;
             const id = select.value;
-            const row = select.name.split("-", 2)[1];
+            const conditionLabRow = select.name.match(/\d+$/)[0];
 
             const data = {
                 id,
-                row
+                conditionLabRow
             }
-            //get the row context
-            new TrigglerForm(data).render();
+            //this.map = this._processFormData(this._getFormData(this.form));
+            new TrigglerForm(data, {parent: this}).render(true);
         });
 
-        addRowAnchor.click(async ev => {
+        addRowAnchor.on("click", async ev => {
             ev.preventDefault();
-            const map = this.map;
+
+            // Preserve unsaved changes
+            const formData = Sidekick.buildFormData(this._getFormData(this.form));
+            const map = this._processFormData(formData);
+            this.map = map;
 
             //const mapSetting = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.map);
             // need to add an index here...
             const existingNewConditions = map.filter(m => m.name.includes("newCondition"));
             const newConditionIndex = existingNewConditions.length ? Math.max(...existingNewConditions.map(m => m.name.match(/\d+/g)[0])) + 1 : 1;
-            const newMap = map.concat({
+            const newMap = duplicate(map);
+            newMap.push({
                 name: `newCondition${newConditionIndex}`,
                 icon: "",
                 referenceId: "",
@@ -375,25 +405,28 @@ export class ConditionLab extends FormApplication {
                 trigger: ""
             });
 
-            this.map = await Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.map, newMap);
+            //this.map = await Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.map, newMap);
+            this.map = newMap;
             this.render(true);
         });
 
         referenceTypeSelector.on("change", event => {
             const formData = Sidekick.buildFormData(this._getFormData(this.form));
-            const newMap = this._processFormData(formData);
+            const map = this._processFormData(formData);
 
-            this.map = newMap;
+            this.map = map;
             this.render(true);
         });
 
-        removeRowAnchor.click(async ev => {
+        removeRowAnchor.on("click", async ev => {
             ev.preventDefault();
-            const map = this.map;
+            const formData = Sidekick.buildFormData(this._getFormData(this.form));
+            const map = this._processFormData(formData);
+
+            this.map = map;
 
             //const mapSetting = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.map);
-            const splitName = ev.currentTarget.name.split("-");
-            const row = splitName[splitName.length - 1];
+            const row = ev.currentTarget.name.match(/\d+$/)[0];
 
             const dialog = new Dialog({
                 title: "Confirm Row Deletion",
@@ -421,20 +454,23 @@ export class ConditionLab extends FormApplication {
             dialog.render(true);
         });
 
-        iconPath.change(async ev => {
+        iconPath.on("change", async ev => {
             ev.preventDefault();
+
+            const formData = Sidekick.buildFormData(this._getFormData(this.form));
+            const map = this._processFormData(formData);
+
+            this.map = map;
             //console.log("change", ev, this);
-            const splitName = ev.target.name.split("-");
-            const row = splitName[splitName.length - 1];
+            const row = ev.target.name.match(/\d+$/)[0];
 
             //target the icon
             let icon = $(this.form).find("img[name='icon-" + row);
             icon.attr("src", ev.target.value);
         });
 
-        restoreDefaultsButton.click(async ev => {
+        restoreDefaultsButton.on("click", async ev => {
             ev.preventDefault();
-            let confirm;
 
             const confirmationDialog = new Dialog({
                 title: "Restore Defaults?",
@@ -458,7 +494,7 @@ export class ConditionLab extends FormApplication {
             confirmationDialog.render(true);
         });
 
-        /*
+        
         resetFormButton.on("click", event => {
             const dialog = new Dialog({
                 title: "Reset Form?",
@@ -468,8 +504,8 @@ export class ConditionLab extends FormApplication {
                         icon: `<i class="fa fa-check"></i>`,
                         label: " Yes",
                         callback: async event => {
-                            this.map = this.initialMap;
-                            this.render(true);
+                            game.cub.conditionLab.map = this.initialMap;
+                            game.cub.conditionLab.render(true);
                         }
                     },
                     no :{
@@ -482,19 +518,36 @@ export class ConditionLab extends FormApplication {
             });
             
         });
-        */
     }
 
+    /**
+     * 
+     * @param {*} event 
+     * @param {*} index 
+     */
     onDragStart(event, index) {
+
         game.cub.conditionLab.draggedIndex = index;
         // do something?
     }
 
+    /**
+     * 
+     * @param {*} event 
+     * @param {*} object 
+     */
     onDragEnd(event, object) {
         //implement this
         this.draggedIndex = object.draggedIdx;
     }
 
+    /**
+     * 
+     * @param {*} event 
+     * @param {*} draggedIndex 
+     * @param {*} nextItem 
+     * @param {*} container 
+     */
     onDrop(event, draggedIndex, nextItem, container) {
         const oldIndex = game.cub.conditionLab.draggedIndex;
         const newIndex = draggedIndex;
@@ -505,6 +558,5 @@ export class ConditionLab extends FormApplication {
         game.cub.conditionLab.map = newMap;
         game.cub.conditionLab.render();
     }
-
 
 }

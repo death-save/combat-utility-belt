@@ -26,26 +26,42 @@ export class Triggler {
             new TrigglerForm().render(true);
         });
     }
+
     /**
-     * Update token handler
-     * @param {*} scene 
-     * @param {*} sceneId 
-     * @param {*} update 
-     * @param {*} options 
-     * @param {*} userId 
+     * Executes a trigger calling predefined actions
+     * @param {*} trigger 
+     * @param {*} target 
      */
-    static _onUpdateToken(scene, sceneId, update, options, userId) {
-        if (!game.userId === userId) {
+    static _executeTrigger(trigger, target) {
+        const tokens = target instanceof Token ? [target] : target instanceof Actor ? target.getActiveTokens() : null;
+
+        if (!tokens) {
             return;
         }
 
-        if (!hasProperty(update, "actorData.data")) {
-            return;
-        }
-
-        const token = canvas.tokens.get(update._id);
-        const triggers = Sidekick.getSetting(SETTING_KEYS.triggler.triggers);
         const conditionMap = Sidekick.getSetting(SETTING_KEYS.enhancedConditions.map);
+        // check if condition is already active on the token, if it is then skip
+        const matchedApplyConditions = conditionMap.filter(m => m.applyTrigger === trigger.id);
+
+        const matchedRemoveConditions = conditionMap.filter(m => m.removeTrigger === trigger.id);
+
+        const matchedMacros = game.macros.entities.filter(m => m.getFlag(NAME, DEFAULT_CONFIG.triggler.flags.macro) === trigger.id);
+
+        matchedApplyConditions.forEach(m => EnhancedConditions.applyCondition(m.name, tokens));
+        matchedRemoveConditions.forEach(m => EnhancedConditions.removeCondition(m.name, tokens));
+        matchedMacros.forEach(m => m.execute());
+    }
+
+    /**
+     * Processes an entity update and evaluates triggers
+     * @param {*} entity 
+     * @param {*} update 
+     * @param {*} entryPoint1
+     * @param {*} entrypoint2
+     */
+    static _processUpdate(entity, update, entryPoint1, entrypoint2) {
+        const triggers = Sidekick.getSetting(SETTING_KEYS.triggler.triggers);
+        
 
         /**
          * process each trigger in turn, checking for a match in the update payload,
@@ -61,25 +77,38 @@ export class Triggler {
             }
 
             // example : actorData.data.attributes.hp.value
-            const matchString1 = `actorData.data.${trigger.category}.${trigger.attribute}.${trigger.property1}`;
-            const matchString2 = `actor.data.data.${trigger.category}.${trigger.attribute}.${trigger.property2}`;
+            const matchString1 = `${entryPoint1}.${trigger.category}.${trigger.attribute}.${trigger.property1}`;
 
+            // example: actor.data.data.hp.max -- note this is unlikely to be in the update data
+            const matchString2 = `${entrypoint2}.${trigger.category}.${trigger.attribute}.${trigger.property2}`;
+
+            // If the update doesn't have a value that matches the 1st property this trigger should be skipped
             if (!hasProperty(update, matchString1)) {
                 continue;
             }
             
+            // Get a value from the update that matches the 1st property in the trigger
             const updateValue = getProperty(update, matchString1);
-            const property2Value = getProperty(token, matchString2);
+
+            // Get a value from the entity that matches the 2nd property in the trigger (if any)
+            const property2Value = getProperty(entity, matchString2);
+
+            // We need the type later
             const updateValueType = typeof updateValue;
+
             // example: "="
             const operator = DEFAULT_CONFIG.triggler.operators[trigger.operator];
-            // example: "50" -- check if the value can be converted to a number
             
             // percent requires whole different handling
             const isPercent = trigger.value.endsWith("%");
 
+            // example: "50" -- check if the value can be converted to a number
             const triggerValue = isPercent ? trigger.value.replace("%","") * 1 : Sidekick.coerceType(trigger.value, updateValueType);
             
+            /**
+             * Switch on the operator checking it against the predefined operator choices
+             * If it matches, then compare the values using the operator
+             */
             switch (operator) {
                 case DEFAULT_CONFIG.triggler.operators.eq:
                     if (isPercent) {
@@ -87,15 +116,13 @@ export class Triggler {
                         const divisor = (triggerValue / 100);
                         // if property 1 update value = 50% of property 2 value
                         if (updateValue === (property2Value * divisor)) {
-                            const matchedConditions = conditionMap.filter(m => m.trigger === trigger.id);
-                            matchedConditions.forEach(m => EnhancedConditions.applyCondition(token, m.name));
+                            Triggler._executeTrigger(trigger, entity);
                             break;
                         }
                     }
                     if (updateValue === triggerValue) {
                         // execute the trigger's condition mappings
-                        const matchedConditions = conditionMap.filter(m => m.trigger === trigger.id);
-                        matchedConditions.forEach(m => EnhancedConditions.applyCondition(token, m.name));
+                        Triggler._executeTrigger(trigger, entity);
                         break;
                     }
                     break;
@@ -106,15 +133,12 @@ export class Triggler {
                         const divisor = (triggerValue / 100);
                         // if property 1 update value = 50% of property 2 value
                         if (updateValue > (property2Value * divisor)) {
-                            const matchedConditions = conditionMap.filter(m => m.trigger === trigger.id);
-                            matchedConditions.forEach(m => EnhancedConditions.applyCondition(token, m.name));
+                            Triggler._executeTrigger(trigger, entity);
                             break;
                         }
                     }
                     if (updateValue > triggerValue) {
-                        // execute the trigger's condition mappings
-                        const matchedConditions = conditionMap.filter(m => m.trigger === trigger.id);
-                        matchedConditions.forEach(m => EnhancedConditions.applyCondition(token, m.name));
+                        Triggler._executeTrigger(trigger, entity);
                     }
                     break;
 
@@ -124,15 +148,12 @@ export class Triggler {
                         const divisor = (triggerValue / 100);
                         // if property 1 update value = 50% of property 2 value
                         if (updateValue >= (property2Value * divisor)) {
-                            const matchedConditions = conditionMap.filter(m => m.trigger === trigger.id);
-                            matchedConditions.forEach(m => EnhancedConditions.applyCondition(token, m.name));
+                            Triggler._executeTrigger(trigger, entity);
                             break;
                         }
                     }
                     if (updateValue >= triggerValue) {
-                        // execute the trigger's condition mappings
-                        const matchedConditions = conditionMap.filter(m => m.trigger === trigger.id);
-                        matchedConditions.forEach(m => EnhancedConditions.applyCondition(token, m.name));
+                        Triggler._executeTrigger(trigger, entity);
                     }
                     break;
 
@@ -142,18 +163,12 @@ export class Triggler {
                         const divisor = (triggerValue / 100);
                         // if property 1 update value = 50% of property 2 value
                         if (updateValue < (property2Value * divisor)) {
-                            const matchedConditions = conditionMap.filter(m => m.trigger === trigger.id);
-                            matchedConditions.forEach(m => EnhancedConditions.applyCondition(token, m.name));
-
-                            const matchedMacros = game.macros.entities.filter(m => m.getFlag(NAME, DEFAULT_CONFIG.triggler.flags.macro));
-                            matchedMacros.forEach(m => m.execute());
+                            Triggler._executeTrigger(trigger, entity);
                             break;
                         }
                     }
                     if (updateValue < triggerValue) {
-                        // execute the trigger's condition mappings
-                        const matchedConditions = conditionMap.filter(m => m.trigger === trigger.id);
-                        matchedConditions.forEach(m => EnhancedConditions.applyCondition(token, m.name));
+                        Triggler._executeTrigger(trigger, entity);
                     }
                     break;
 
@@ -163,15 +178,12 @@ export class Triggler {
                         const divisor = (triggerValue / 100);
                         // if property 1 update value = 50% of property 2 value
                         if (updateValue <= (property2Value * divisor)) {
-                            const matchedConditions = conditionMap.filter(m => m.trigger === trigger.id);
-                            matchedConditions.forEach(m => EnhancedConditions.applyCondition(token, m.name));
+                            Triggler._executeTrigger(trigger, entity);
                             break;
                         }
                     }
                     if (updateValue <= triggerValue) {
-                        // execute the trigger's condition mappings
-                        const matchedConditions = conditionMap.filter(m => m.trigger === trigger.id);
-                        matchedConditions.forEach(m => EnhancedConditions.applyCondition(token, m.name));
+                        Triggler._executeTrigger(trigger, entity);
                     }
                     break;
                 
@@ -181,15 +193,12 @@ export class Triggler {
                         const divisor = (triggerValue / 100);
                         // if property 1 update value = 50% of property 2 value
                         if (updateValue !== (property2Value * divisor)) {
-                            const matchedConditions = conditionMap.filter(m => m.trigger === trigger.id);
-                            matchedConditions.forEach(m => EnhancedConditions.applyCondition(token, m.name));
+                            Triggler._executeTrigger(trigger, entity);
                             break;
                         }
                     }
                     if (updateValue !== triggerValue) {
-                        // execute the trigger's condition mappings
-                        const matchedConditions = conditionMap.filter(m => m.trigger === trigger.id);
-                        matchedConditions.forEach(m => EnhancedConditions.applyCondition(token, m.name));
+                        Triggler._executeTrigger(trigger, entity);
                     }
                     break;
             
@@ -197,6 +206,48 @@ export class Triggler {
                     break;
             }
         }
+    }
+
+    /**
+     * 
+     * @param {*} actor 
+     * @param {*} update 
+     * @param {*} options 
+     * @param {*} userId 
+     */
+    static _onUpdateActor(actor, update, options, userId) {
+        if (!game.userId === userId) {
+            return;
+        }
+
+        const dataProp = `data`;
+        const dataDataProp = `data.data`;
+
+        Triggler._processUpdate(actor, update, dataProp, dataDataProp);
+    }
+
+    /**
+     * Update token handler
+     * @param {*} scene 
+     * @param {*} sceneId 
+     * @param {*} update 
+     * @param {*} options 
+     * @param {*} userId 
+     */
+    static _onUpdateToken(scene, tokenData, update, options, userId) {
+        if (!game.userId === userId) {
+            return;
+        }
+
+        if (!hasProperty(update, "actorData.data")) {
+            return;
+        }
+
+        const token = new Token(tokenData);
+        const actorDataProp = `actorData.data`;
+        const actorProp = `actor.data.data`;
+        
+        Triggler._processUpdate(token, update, actorDataProp, actorProp);
     }
 
     /**

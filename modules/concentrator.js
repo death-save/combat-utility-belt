@@ -110,8 +110,8 @@ export class Concentrator {
      * @param {*} update 
      * @param {*} options 
      */
-    static _hookOnPreUpdateToken(scene, sceneID, update, options){
-        const token = canvas.tokens.get(update._id);
+    static _onPreUpdateToken(scene, token, update, options, userId){
+        //const token = canvas.tokens.get(update._id);
         const actorId = getProperty(token, "data.actorId");
         const current = getProperty(token, "actor");
         const enable = Sidekick.getSetting(SETTING_KEYS.concentrator.enable);
@@ -155,7 +155,7 @@ export class Concentrator {
      * @param {*} update 
      * @param {*} options 
      */
-    static _hookOnPreUpdateActor(actor, update, options) {
+    static _onPreUpdateActor(actor, update, options, userId) {
         const tokens = actor.getActiveTokens();
         const actorId = update._id;
         const newHealth = getProperty(update, `data.${Sidekick.getSetting(SETTING_KEYS.concentrator.healthAttribute)}.value`);
@@ -196,7 +196,7 @@ export class Concentrator {
      * @param {*} update 
      * @param {*} options 
      */
-    static _hookOnUpdateActor(actor, update, options, userId){
+    static _onUpdateActor(actor, update, options, userId){
         Concentrator._determineDisplayedUsers(options);
     }
 
@@ -208,7 +208,7 @@ export class Concentrator {
      * @param {*} options 
      * @param {*} userId 
      */
-    static _hookOnUpdateToken(scene, sceneID, update, options, userId){
+    static _onUpdateToken(scene, token, update, options, userId){
         Concentrator._determineDisplayedUsers(options);
     }
 

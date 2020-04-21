@@ -9,8 +9,8 @@ export class TrackerUtility {
      * Hook on the combat update,
      * Pans or selects the current token
      */
-    static _hookOnUpdateCombat(combat, update) {
-        let tracker = combat.entities ? combat.entities.find(tr => tr._id === update._id) : combat;
+    static _hookOnUpdateCombat(combat, update, options, userId) {
+        //let tracker = combat.entities ? combat.entities.find(tr => tr._id === update._id) : combat;
 
         if (!game.combat || game.combat.turns.length === 0) {
             return;
@@ -20,22 +20,21 @@ export class TrackerUtility {
         const enableSelect = Sidekick.getSetting(BUTLER.SETTING_KEYS.panSelect.enableSelect);
 
         if (enablePan) {
-            PanSelect._panHandler(tracker, update);
+            PanSelect._panHandler(combat, update);
         }
 
         if (enableSelect) {
-            PanSelect._selectHandler(tracker, update);
+            PanSelect._selectHandler(combat, update);
         }
     }
 
     /**
      * Handler for deleteCombat hook
      * @param {*} combat 
-     * @param {*} combatId 
      * @param {*} options 
      * @param {*} userId 
      */
-    static _hookOnDeleteCombat(combat, combatId, options, userId) {
+    static _onDeleteCombat(combat, options, userId) {
         if (!game.userId === userId) {
             return;
         }
@@ -55,7 +54,7 @@ export class TrackerUtility {
      * @param {*} combatantId 
      * @param {*} options 
      */
-    static _hookOnDeleteCombatant(combat, combatant, options, userId) {
+    static _onDeleteCombatant(combat, combatant, options, userId) {
         const tokenData = combatant.token.data || null;
 
         if (hasProperty(tokenData, `flags.${BUTLER.FLAGS.temporaryCombatants.temporaryCombatant}`)) {

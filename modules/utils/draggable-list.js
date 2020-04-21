@@ -139,7 +139,7 @@ export class DraggableList {
 		
 		// Calculate current index
 		const idx = this._calcIdx(ev.y); 
-		console.log(idx);
+		//console.log(idx);
 
 		this.items = this.items.filter(e => e !== undefined)
 		// reorder the array

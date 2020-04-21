@@ -5,37 +5,79 @@ import { MightySummoner } from "../mighty-summoner.js";
 export class TokenUtility {
     /**
      * Hook on token create
-     * @param {Object} token 
-     * @param {String} sceneId 
-     * @param {Object} update 
+     * @param {Object} scene
+     * @param {Object} tokenData  
+     * @param {Object} options 
+     * @param {String} userId 
      * @todo move this to a preCreate hook to avoid a duplicate call to the db
      */
-    static _hookOnCreateToken(scene, sceneId, tokenData, options, userId) {
-        const token = new Token(tokenData);
+    static _onPreCreateToken(scene, tokenData, options, userId) {
+        //const token = canvas.tokens.get(tokenData._id);
+        const actor = game.actors.get(tokenData.actorId);
         const autoRollHP = Sidekick.getSetting(SETTING_KEYS.tokenUtility.autoRollHP);
         const mightySummoner = Sidekick.getSetting(SETTING_KEYS.mightySummoner.enable);
 
-        if (tokenData.disposition === -1 && autoRollHP && token.actor && !token.actor.isPC) {
-            TokenUtility.rollTokenHp(token);
+        let newHP; 
+
+        if (tokenData.disposition === -1 && autoRollHP && actor && !actor.isPC) {
+            newHP = TokenUtility.rollHP(actor);
         } else if (mightySummoner) {
-            MightySummoner._checkForFeat(token);
+            const hasFeat = MightySummoner._checkForFeat(actor);
+            if (!hasFeat) {
+                return;
+            }
+
+            const isSummon = MightySummoner._createDialog();
+
+            if (!isSummon) {
+                return;
+            }
+            const newFormula = MightySummoner._calculateHPFormula(actor);
+            newHP = TokenUtility.rollHP(actor, newFormula);
         }
+
+        const hpUpdate = TokenUtility._buildHPData(newHP);
+        const newData = mergeObject(tokenData, hpUpdate);
+        return newData;
     }
 
     /**
-     * Rolls a token's hp formula and returns an update payload with the result
-     * @param {*} token
-     * @todo refactor to just return the result instead of an update
+     * 
+     * @param {*} scene 
+     * @param {*} tokenData 
+     * @param {*} options 
+     * @param {*} userId 
      */
-    static rollTokenHp(token) {
-        const formula = token.actor.data.data.attributes.hp.formula;
+    static _onCreateToken(scene, tokenData, options, userId) {
+        
+    }
+
+    
+
+    /**
+     * Rolls an actor's hp formula and returns an update payload with the result
+     * @param {*} actor
+     */
+    static rollHP(actor, newFormula=null) {
+        const formula = newFormula || getProperty(actor, "data.data.attributes.hp.formula");
+
+        if (!formula) {
+            return null;
+        }
     
         let r = new Roll(formula);
         r.roll();
         const hp = r.total;
     
-        const update = {
-            _id: token.id,
+        return hp;
+    }
+
+    /**
+     * For a given hp value, build an object with hp value and max set
+     * @param {*} hp 
+     */
+    static _buildHPData(hp) {
+        return {
             actorData: {
                 data: {
                     attributes: {
@@ -47,8 +89,6 @@ export class TokenUtility {
                 }
             }
         };
-    
-        return update;
     }
 
     /**

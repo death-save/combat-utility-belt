@@ -1,10 +1,12 @@
-import { DEFAULT_CONFIG, PATH, SETTING_KEYS } from "../butler.js";
+import { DEFAULT_CONFIG, PATH, SETTING_KEYS, NAME } from "../butler.js";
 import { Sidekick } from "../sidekick.js";
+import { ConditionLab } from "../enhanced-conditions/condition-lab.js";
 
 export class TrigglerForm extends FormApplication {
-    constructor(object, options) {
+    constructor(object, options={parent: null}) {
         super(object, options);
         this.data = object || {};
+        this.parent = options.parent || null;
     }
 
     /**
@@ -27,10 +29,10 @@ export class TrigglerForm extends FormApplication {
      */
     getData() {
         const id = this.data.id;
-        const data = id ? Sidekick.getSetting(SETTING_KEYS.triggler.triggers) : null;
+        const triggers = Sidekick.getSetting(SETTING_KEYS.triggler.triggers);
         
-        if (data) {
-            const trigger = data.find(t => t.id === id);
+        if (id && triggers) {
+            const trigger = triggers.find(t => t.id === id);
             mergeObject(this.data, trigger);
         }
 
@@ -47,10 +49,13 @@ export class TrigglerForm extends FormApplication {
         const attributes = category ? Object.keys(game.system.template.Actor.templates.common[category]) : null;
         const properties = category && attribute ? Object.keys(game.system.template.Actor.templates.common[category][attribute]) : null;
         const operators = DEFAULT_CONFIG.triggler.operators;
-        const options = DEFAULT_CONFIG.triggler.options;
 
+        const triggerSelected = id && triggers ? true : false;
 
         return {
+            id,
+            triggerSelected,
+            triggers,
             category,
             categories,
             attribute,
@@ -71,40 +76,122 @@ export class TrigglerForm extends FormApplication {
     activateListeners(html) {
         super.activateListeners(html);
 
+        const triggerSelect = html.find("select[name='triggers']");
+        const deleteTrigger = html.find("a.delete");
         const categorySelect = html.find("select[name='category']");
         const attributeSelect = html.find("select[name='attribute']");
         const property1Select = html.find("select[name='property1']");
         const operatorSelect = html.find("select[name='operator']");
         const optionSelect = html.find("select[name='option']");
         const property2Select = html.find("select[name='property2']");
+        
+        triggerSelect.on("change", event => {
+            this.data.id = event.target.value;
+            this.render();
+        });
+
+        deleteTrigger.on("click", async event => {
+            const triggers = Sidekick.getSetting(SETTING_KEYS.triggler.triggers);
+            const triggerIndex = triggers.findIndex(t => t.id === this.data.id);
+            if (triggerIndex === undefined) {
+                return;
+            }
+            const updatedTriggers = duplicate(triggers);
+
+            updatedTriggers.splice(triggerIndex, 1);
+
+            await Sidekick.setSetting(SETTING_KEYS.triggler.triggers, updatedTriggers);
+            this.data.id = null;
+            this.render();
+        });
 
         categorySelect.on("change", event => {
             this.data.category = event.target.value;
+            this.data.attribute = null;
+            this.data.property1 = null;
+            this.data.property2 = null;
 
-            this.render(true);
+            this.render();
         });
 
         attributeSelect.on("change", event => {
             this.data.attribute = event.target.value;
+            this.data.property1 = null;
+            this.data.property2 = null;
 
-            this.render(true);
+            this.render();
         });
+
+
     }
 
     /**
      * 
      */
     async _updateObject(event, formData) {
-        const conditionLab = Object.values(ui.windows).find(v => v.id === DEFAULT_CONFIG.enhancedConditions.conditionLab.id);
-        let id = this.data.id;
-        const row = this.data.row;
+        if (!formData.category) {
+            return;
+        }
+
         const triggers = Sidekick.getSetting(SETTING_KEYS.triggler.triggers);
         const existingIds = triggers ? triggers.map(t => t.id) : null;
         const text = this._constructString(formData);
+        const id = this.data.id;
+        const newData = duplicate(formData);
+        delete newData.triggers;
+        const updatedTriggers = duplicate(triggers);
 
-        if (!id) {
-            id = randomID(16);
+        let updatedTrigger = {}
+        if (id) {
+            const existingTrigger = triggers.find(t => t.id === id);
+            if (existingTrigger) {
+                updatedTrigger = mergeObject(existingTrigger, newData);
+                updatedTriggers[triggers.indexOf(existingTrigger)] = updatedTrigger;
+            }
+            
         }
+
+        let newTrigger = {};
+        if (!id) {
+            newTrigger = {
+                id: this._getId(existingIds),
+                ...newData,
+                text
+            }
+            updatedTriggers.push(newTrigger);
+        }
+
+        await Sidekick.setSetting(SETTING_KEYS.triggler.triggers, updatedTriggers);
+
+        // Determine if ConditionLab is open and push the value back
+        //const conditionLab = Object.values(ui.windows).find(v => v.id === DEFAULT_CONFIG.enhancedConditions.conditionLab.id);
+        const parentApp = this.parent;
+
+        if (!parentApp) {
+            return;
+        }
+
+        /* WIP
+        if (parentApp instanceof ConditionLab) {
+            const conditionLab = parentApp;
+            const row = this.data.conditionLabRow;
+            id ? conditionLab.map[row].trigger = updatedTrigger.id : conditionLab.map[row].trigger = newTrigger.id;
+
+            conditionLab.render(true);
+        }
+        
+        if (parentApp instanceof MacroConfig) {
+            const macroConfig = parentApp;
+
+            macroConfig.setFlag(NAME, DEFAULT_CONFIG.triggler.flags.macro, id);
+            macroConfig.render();
+        }
+        */
+        
+    }
+
+    _getId(existingIds) {
+        let id = randomID(16);
 
         if (existingIds.length) {
             while (existingIds.includes(id)) {
@@ -112,19 +199,7 @@ export class TrigglerForm extends FormApplication {
             }
         }
 
-        const update = duplicate(triggers);
-        const newTrigger = {
-            id,
-            ...formData,
-            text
-        }
-        const updateLength = update.push(newTrigger);
-
-        await Sidekick.setSetting(SETTING_KEYS.triggler.triggers, update);
-
-        conditionLab.map[row].trigger = newTrigger.id;
-
-        conditionLab.render(true);
+        return id;
     }
 
     /**
@@ -133,7 +208,7 @@ export class TrigglerForm extends FormApplication {
      */
     _constructString(parts) {
         const operatorText = DEFAULT_CONFIG.triggler.operators[parts.operator];
-        const string = `${parts.category}.${parts.attribute}.${parts.property1} ${operatorText} ${parts.value}${` ${parts.category}.${parts.attribute}.${parts.property2 ? parts.property2 : null}`}`;
+        const string = `${parts.category}.${parts.attribute}.${parts.property1} ${operatorText} ${parts.value}${parts.property2 ? ` ${parts.category}.${parts.attribute}.${parts.property2}` : ""}`;
         return string;
     }
 }
