@@ -161,6 +161,39 @@ export class EnhancedConditions {
     }
 
     /**
+     * Retrieves a condition icon by its mapped name
+     * @param {*} condition 
+     */
+    static getIconsByCondition(conditionMap, condition) {
+        if (!conditionMap || condition) {
+            return;
+        }
+
+        if (conditionMap instanceof Array) {
+            return conditionMap.filter(c => c.name === condition).map(c => c.icon);
+        }
+
+        return [];
+    }
+
+    /**
+     * Retrieves a condition name by its mapped icon
+     * @param {*} conditionMap 
+     * @param {*} icon 
+     */
+    static getConditionsByIcon(conditionMap, icon) {
+        if (!conditionMap || icon) {
+            return;
+        }
+
+        if (conditionMap instanceof Array) {
+            return conditionMap.filter(c => c.icon === icon).map(c => c.name);
+        }
+
+        return null;
+    }
+
+    /**
      * Creates a button for the Condition Lab
      * @param {Object} html the html element where the button will be created
      */
@@ -207,27 +240,33 @@ export class EnhancedConditions {
     static _onUpdateToken(scene, tokenData, update, options, userId) {
         const enable = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.enable);
 
-        if (!enable || !game.user.isGM || (game.users.get(userId).isGM && !game.userId === userId)) {
+        if (!enable || !game.user.isGM || (game.users.get(userId).isGM && game.userId !== userId)) {
             return;
         }
 
-        //console.log(token,sceneId,update);
-        let effects = update.effects;
-
-        if (!effects || effects.length === 0) {
+        if (!hasProperty(update, "effects") && !hasProperty(update, "overlayEffect")) {
             return;
         }
+
+        const conditions = update.effects ? duplicate(update.effects) : tokenData?.effects?.length ? duplicate(tokenData.effects) : [];
+        update.overlayEffect ? conditions.push(update.overlayEffect) : tokenData.overlayEffect ? conditions.push(tokenData.overlayEffect) : null;
+
+        if (!conditions.length) {
+            return;
+        } 
 
         //If the update has effects in it, lookup mapping and set the current token
-        const token = new Token(tokenData);
+        //const token = new Token(tokenData);
+        const token = canvas.tokens.get(tokenData._id);
         const map = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.map);
-        return EnhancedConditions.lookupEntryMapping(token, map, effects);
+        return EnhancedConditions.lookupEntryMapping(token, map, conditions);
     }
 
     /**
      * Hooks on token updates. If the update includes effects, calls the journal entry lookup
      */
-    static _onPreUpdateToken(scene, token, update, options, userId) {
+    static _onPreUpdateToken(scene, tokenData, update, options, userId) {
+        /* WIP
         const enable = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.enable);
 
         if (!enable) {
@@ -235,16 +274,18 @@ export class EnhancedConditions {
         }
 
         //console.log(token,sceneId,update);
-        let effects = update.effects;
+        const conditions = update.effects ? duplicate(update.effects) : [];
+        update.overlayEffect ? conditions.push(update.overlayEffect) : null;
 
-        if (!effects || effects.length === 0) {
+        if (!conditions.length) {
             return;
-        }
+        } 
 
         //If the update has effects in it, lookup mapping and set the current token
         //const token = canvas.tokens.get(update._id);
         const map = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.map);
-        return EnhancedConditions.lookupEntryMapping(token, map, effects);
+        return EnhancedConditions.lookupEntryMapping(token, map, conditions);
+        */
     }
 
     /**
@@ -463,6 +504,53 @@ export class EnhancedConditions {
 
             condition.options.overlay === true ? token.toggleOverlay(effect) : token.toggleEffect(effect);
         }
+    }
+
+    /**
+     * Removes all conditions from the mapped tokens
+     * @param {*} tokens 
+     */
+    static removeAllConditions(tokens) {
+        if (!tokens) {
+            ui.notifications.error("Remove Condition failed. No token/s provided");
+            console.log("Combat Utility Belt | Remove Condition failed: No token/s provided");
+            return;
+        }
+        const conditionMap = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.map);
+        
+        if (!conditionMap) {
+            ui.notifications.error("Remove conditions failed. There is no active Condition Map");
+            console.log("Combat Utility Belt | Remove Condition failed: No token/s provided");
+            return;
+        }
+
+        const conditionMapIcons = EnhancedConditions.getConditionIcons(conditionMap);
+        const updates = [];
+
+        for (let token of tokens) {
+            const effects = token.data.effects;
+            const overlay = token.data.overlayEffect;
+            const matchedEffects = effects.filter(e => conditionMapIcons.includes(e));
+            const matchedOverlay = conditionMapIcons.includes(overlay) ? overlay : null;
+            const update = {
+                _id: token.id
+            }
+
+            matchedOverlay ? update.overlayEffect = "" : null;
+            matchedEffects.length ? update.effects = [] : null;
+
+            if (hasProperty(update, "overlayEffect") || hasProperty(update, "effects")) {
+                updates.push(update);
+            }
+
+            continue;
+        }
+
+        if (!updates.length) {
+            return;
+        }
+
+        game.scenes.active.updateEmbeddedEntity("Token", updates);
     }
 
     /* future features

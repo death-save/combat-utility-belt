@@ -72,7 +72,11 @@ export class Signal {
                 Token.prototype.drawEffects = TokenUtility._patchDrawEffects;
             }
 
+            // External methods
             game.cub.applyCondition = EnhancedConditions.applyCondition;
+            game.cub.removeCondition = EnhancedConditions.removeCondition;
+            game.cub.removeAllConditions = EnhancedConditions.removeAllConditions;
+
         });
 
         Hooks.on("canvasInit", () => {
