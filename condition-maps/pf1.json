@@ -1,0 +1,173 @@
+{
+    "system": "pf1",
+    "map": [
+        {
+            "name": "Bleeding",
+            "icon": "systems/pf1/icons/skills/red_31.jpg",
+            "referenceId": "@Compendium[pf1.conditions.93aTFy7v8VUq8sNi]",
+            "referenceType": "compendium.journalEntry"
+        },
+        {
+            "name": "Blinded",
+            "icon": "systems/pf1/icons/skills/blood_03.jpg",
+            "referenceId": "@Compendium[pf1.conditions.coxrkb6qUKBZvVxP]",
+            "referenceType": "compendium.journalEntry"
+        },
+        {
+            "name": "Charmed",
+            "icon": "systems/pf1/icons/skills/light_07.jpg",
+            "referenceId": "@Compendium[pf1.spells.NGm0EbjYOhhmkrhy]",
+            "referenceType": "compendium.item"
+        },
+        {
+            "name": "Confused",
+            "icon": "systems/pf1/icons/skills/violet_10.jpg",
+            "referenceId": "@Compendium[pf1.conditions.VbG9W9dMz2jhgfCi]",
+            "referenceType": "compendium.journalEntry"
+        },
+        {
+            "name": "Cowering",
+            "icon": "systems/pf1/icons/skills/red_02.jpg",
+            "referenceId": "@Compendium[pf1.conditions.M9FWe38D2J740wLH]",
+            "referenceType": "compendium.journalEntry"
+        },
+        {
+            "name": "Dazed",
+            "icon": "systems/pf1/icons/skills/green_27.jpg",
+            "referenceId": "@Compendium[pf1.conditions.woFU0s24URgixLm7]",
+            "referenceType": "compendium.journalEntry"
+        },
+        {
+            "name": "Dazzled",
+            "icon": "systems/pf1/icons/skills/light_03.jpg",
+            "referenceId": "@Compendium[pf1.conditions.2pICNUG3g7O4obyu]",
+            "referenceType": "compendium.journalEntry"
+        },
+        {
+            "name": "Deafened",
+            "icon": "systems/pf1/icons/items/inventory/horn-air.jpg",
+            "referenceId": "@Compendium[pf1.conditions.ZTA39rR8AnZcydiu]",
+            "referenceType": "compendium.journalEntry"
+        },
+        {
+            "name": "Entangled",
+            "icon": "systems/pf1/icons/skills/green_16.jpg",
+            "referenceId": "@Compendium[pf1.conditions.WH3Hop5fUDUzVUVg]",
+            "referenceType": "compendium.journalEntry"
+        },
+        {
+            "name": "Fatigued",
+            "icon": "systems/pf1/icons/skills/shadow_11.jpg",
+            "referenceId": "@Compendium[pf1.conditions.nku8mgRBNt0iXqzB]",
+            "referenceType": "compendium.journalEntry"
+        },
+        {
+            "name": "Exhausted",
+            "icon": "systems/pf1/icons/skills/emerald_11.jpg",
+            "referenceId": "@Compendium[pf1.conditions.I1cKXhfBaFIrL9Ix]",
+            "referenceType": "compendium.journalEntry"
+        },
+        {
+            "name": "Grappled",
+            "icon": "systems/pf1/icons/skills/yellow_08.jpg",
+            "referenceId": "@Compendium[pf1.conditions.zemoWcP2SR6FTiS1]",
+            "referenceType": "compendium.journalEntry"
+        },
+        {
+            "name": "Pinned",
+            "icon": "systems/pf1/icons/skills/red_20.jpg",
+            "referenceId": "@Compendium[pf1.conditions.uxkaA2RC6METVN6w]",
+            "referenceType": "compendium.journalEntry"
+        },
+        {
+            "name": "Invisible",
+            "icon": "systems/pf1/icons/skills/blue_35.jpg",
+            "referenceId": "@Compendium[pf1.conditions.L3hNCX9kLGlmoQhc]",
+            "referenceType": "compendium.journalEntry"
+        },
+        {
+            "name": "Petrified",
+            "icon": "systems/pf1/icons/skills/blue_34.jpg",
+            "referenceId": "@Compendium[pf1.conditions.qLQsdbMorUOjOJWJ]",
+            "referenceType": "compendium.journalEntry"
+        },
+        {
+            "name": "Prone",
+            "icon": "systems/pf1/icons/items/inventory/monster-paw.jpg",
+            "referenceId": "@Compendium[pf1.conditions.Av5KcblR1Wd68uWY]",
+            "referenceType": "compendium.journalEntry"
+        },
+        {
+            "name": "Shaken",
+            "icon": "systems/pf1/icons/spells/evil-eye-eerie-1.jpg",
+            "referenceId": "@Compendium[pf1.conditions.07JPXUqIPshVnTCL]",
+            "referenceType": "compendium.journalEntry"
+        },
+        {
+            "name": "Frightened",
+            "icon": "systems/pf1/icons/spells/evil-eye-eerie-2.jpg",
+            "referenceId": "@Compendium[pf1.conditions.07JPXUqIPshVnTCL]",
+            "referenceType": "compendium.journalEntry"
+        },
+        {
+            "name": "Panicked",
+            "icon": "systems/pf1/icons/spells/evil-eye-eerie-3.jpg",
+            "referenceId": "@Compendium[pf1.conditions.07JPXUqIPshVnTCL]",
+            "referenceType": "compendium.journalEntry"
+        },
+        {
+            "name": "Sickened",
+            "icon": "systems/pf1/icons/skills/affliction_24.jpg",
+            "referenceId": "@Compendium[pf1.conditions.0AJZKIpP3lS3FVKa]",
+            "referenceType": "compendium.journalEntry"
+        },
+        {
+            "name": "Nauseated",
+            "icon": "systems/pf1/icons/skills/affliction_13.jpg",
+            "referenceId": "@Compendium[pf1.conditions.1fkE2juoZHXjU90M]",
+            "referenceType": "compendium.journalEntry"
+        },
+        {
+            "name": "Staggered",
+            "icon": "systems/pf1/icons/skills/shadow_03.jpg",
+            "referenceId": "@Compendium[pf1.conditions.6LpiJdKskDFD4zLC]",
+            "referenceType": "compendium.journalEntry"
+        },
+        {
+            "name": "Stunned",
+            "icon": "systems/pf1/icons/skills/blue_15.jpg",
+            "referenceId": "@Compendium[pf1.conditions.assqfdN6G1URo9MZ]",
+            "referenceType": "compendium.journalEntry"
+        },
+        {
+            "name": "Sleep",
+            "icon": "icons/svg/sleep.svg",
+            "referenceId": "@Compendium[pf1.spells.uXpFeevV4jzzOPxi]",
+            "referenceType": "compendium.item",
+            "options": {
+                "overlay": true,
+                "removeOthers": false
+            }
+        },
+        {
+            "name": "Unconscious",
+            "icon": "icons/svg/unconscious.svg",
+            "referenceId": "@Compendium[pf1.conditions.bj36eCfZGJG5AGTQ]",
+            "referenceType": "compendium.journalEntry",
+            "options": {
+                "overlay": true,
+                "removeOthers": false
+            }
+        },
+        {
+            "name": "Dead",
+            "icon": "icons/svg/skull.svg",
+            "referenceId": "@Compendium[pf1.conditions.khxmbfoDQ3LD0de5]",
+            "referenceType": "compendium.journalEntry",
+            "options": {
+                "overlay": true,
+                "removeOthers": true
+            }
+        }
+    ]
+}

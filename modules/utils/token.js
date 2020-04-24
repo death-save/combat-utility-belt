@@ -1,5 +1,5 @@
 import { Sidekick } from "../sidekick.js";
-import { SETTING_KEYS, DEFAULT_CONFIG } from "../butler.js";
+import { NAME, SETTING_KEYS, DEFAULT_CONFIG } from "../butler.js";
 import { MightySummoner } from "../mighty-summoner.js";
 
 export class TokenUtility {
@@ -16,6 +16,11 @@ export class TokenUtility {
         const actor = game.actors.get(tokenData.actorId);
         const autoRollHP = Sidekick.getSetting(SETTING_KEYS.tokenUtility.autoRollHP);
         const mightySummoner = Sidekick.getSetting(SETTING_KEYS.mightySummoner.enable);
+        const mightySummonerFlag = getProperty(tokenData, `flags.${NAME}.${DEFAULT_CONFIG.mightySummoner.flags.mightySummoner}`);
+
+        if (mightySummonerFlag) {
+            return;
+        }
 
         let newHP; 
 
@@ -27,13 +32,8 @@ export class TokenUtility {
                 return;
             }
 
-            const isSummon = MightySummoner._createDialog();
-
-            if (!isSummon) {
-                return;
-            }
-            const newFormula = MightySummoner._calculateHPFormula(actor);
-            newHP = TokenUtility.rollHP(actor, newFormula);
+            MightySummoner._createDialog(tokenData, actor);
+            return false;
         }
 
         const hpUpdate = TokenUtility._buildHPData(newHP);

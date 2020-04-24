@@ -166,13 +166,13 @@
         },
         {
             "name":"Hex",
-            "icon":"",
+            "icon":"systems/dnd5e/icons/spells/evil-eye-eerie-1.jpg",
             "referenceId": "@Compendium[dnd5e.spells.",
             "referenceType": "compendium.item"
         },
         {
             "name":"Hexblade's Curse",
-            "icon":"",
+            "icon":"systems/dnd5e/icons/spells/enchant-eerie-2.jpg",
             "referenceId": "",
             "referenceType": "compendium.item"
         },

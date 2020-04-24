@@ -9,15 +9,20 @@ export class EnhancedConditions {
      * Ready Hook handler
      */
     static async _onReady() {
-        const setting = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.maps);
+        const maps = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.defaultMaps);
         const enable = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.enable);
+        const system = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.system);
+        let conditionMap = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.map);
 
-        if (!setting || (setting instanceof Object && Object.entries(setting).length === 0)) {
+        if (!maps || (maps instanceof Object && Object.entries(maps).length === 0)) {
             const defaultMaps = await EnhancedConditions.loadDefaultMaps();
-            Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.maps, defaultMaps);
+            Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.defaultMaps, defaultMaps);
         }
 
-        const conditionMap = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.map);
+        if (!Object.keys(conditionMap).length) {
+            conditionMap = EnhancedConditions.getDefaultMap(system);
+            Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.map, conditionMap);
+        }
 
         if (enable) {
             EnhancedConditions._updateStatusIcons(conditionMap);
@@ -62,7 +67,7 @@ export class EnhancedConditions {
      * @param {*} system 
      */
     static getDefaultMap(system) {
-        const defaultMaps = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.maps);
+        const defaultMaps = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.defaultMaps);
         return defaultMaps[system] ? defaultMaps[system] : [];
     }
 
@@ -187,10 +192,12 @@ export class EnhancedConditions {
 
         let labButton = document.getElementById("condition-lab");
 
-        if (display && !labButton) {
-            labButton.style.display = "block";
-        } else if (labButton && (!game.user.isGM || !display)) {
-            labButton.style.display = "none";
+        if (display && labButton && labButton.style.display !== "block") {
+            return labButton.style.display = "block";
+        } 
+        
+        if (labButton && !display && labButton.style.display !== "none") {
+            return labButton.style.display = "none";
         }
     }
 

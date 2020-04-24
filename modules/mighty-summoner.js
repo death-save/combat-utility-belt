@@ -1,6 +1,6 @@
-import { Sidekick } from "./sidekick.js";
-import { SETTING_KEYS } from "./butler.js";
+import { NAME, DEFAULT_CONFIG } from "./butler.js";
 import { TokenUtility } from "./utils/token.js";
+import { ActorUtility } from "./utils/actor.js";
 
 export class MightySummoner {
 
@@ -26,14 +26,14 @@ export class MightySummoner {
         const ownedActors = owners.map(owner => {
             const actors = game.actors.entities.filter(a => hasProperty(a, `data.permission.${owner}`));
             return actors;
-        });
+        }).flat();
 
         if (!ownedActors.length) {
             return;
         }
 
         // Look for a single actor that has the feat
-        const featActor = ownedActors.find(actor => MightySummoner.hasFeat(actor, feat));
+        const featActor = ownedActors.find(actor => ActorUtility.hasFeat(actor, feat));
 
         if (!featActor) {
             return;
@@ -45,27 +45,43 @@ export class MightySummoner {
     /**
      * Creates a dialog to determine if the creature is being summoned
      */
-    static _createDialog() {
-        let isSummon = false;
-
+    static async _createDialog(tokenData, actor) {
         new Dialog({
-            title: "Mighty Summoner",
-            content: "<p>Is this monster being summoned?</p>",
-            buttons: {
-                yes: {
-                    icon: `<i class="fas fa-check"></i>`,
-                    label: "Yes",
-                    callback: () => isSummon = true
+                title: "Mighty Summoner",
+                content: "<p>Is this monster being summoned?</p>",
+                buttons: {
+                    yes: {
+                        icon: `<i class="fas fa-check"></i>`,
+                        label: "Yes",
+                        callback: () => MightySummoner._handleSummon(tokenData, actor, true)
+                    },
+                    no: {
+                        icon: `<i class="fas fa-times"></i>`,
+                        label: "No",
+                        callback: () => MightySummoner._handleSummon(tokenData, actor, false)
+                    }
                 },
-                no: {
-                    icon: `<i class="fas fa-times"></i>`,
-                    label: "No"
-                }
-            },
-            default: "yes"
-        }).render(true);
+                default: "yes"
+            }).render(true);
+    }
 
-        return isSummon;
+    /**
+     * Handles summoning with the feat
+     * @param {*} tokenData 
+     * @param {*} actor 
+     * @param {*} isSummon 
+     */
+    static _handleSummon(tokenData, actor, isSummon) {
+        if (!isSummon) {
+            return;
+        }
+
+        const newFormula = MightySummoner._calculateHPFormula(actor);
+        const newHP = TokenUtility.rollHP(actor, newFormula);
+        const hpUpdate = TokenUtility._buildHPData(newHP);
+        const newData = mergeObject(tokenData, hpUpdate);
+        setProperty(newData, `flags.${NAME}.${DEFAULT_CONFIG.mightySummoner.flags.mightySummoner}`, true);
+        Token.create(newData);
     }
 
     /**
@@ -79,16 +95,7 @@ export class MightySummoner {
             return;
         }
 
-        const newFormula = `${formula} + (${match * 2})`;
+        const newFormula = `${formula} + ${match * 2}`;
         return newFormula;
-    }
-
-    /**
-     * Looks for the existence of a named feat in the Actor's items
-     * @param {*} actor 
-     * @param {String} feat
-     */
-    static hasFeat(actor, feat) {
-        return actor.items ? !!actor.items.find(i => i.type === "feat" && i.name.includes(feat)) : false;
     }
 }

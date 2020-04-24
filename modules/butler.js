@@ -26,6 +26,14 @@ export const KNOWN_GAME_SYSTEMS = {
         initiative: "attributes.initiative",
         conditionMap: true
     },
+    pf1: {
+        id: "pf1",
+        name: "Pathfinder",
+        concentrationAttribute: "",
+        healthAttribute: "attributes.hp",
+        initiative: "attributes.init.total",
+        conditionMap: true
+    },
     pf2e: {
         id: "pf2e",
         name: "Pathfinder 2nd Edition",
@@ -143,7 +151,10 @@ export const DEFAULT_CONFIG = {
         unconsciousIcon: "icons/svg/unconscious.svg"
     },
     mightySummoner: {
-        enable: false
+        enable: false,
+        flags: {
+            mightySummoner: "mightySummoner"
+        }
     },
     panSelect: {
         enablePan: false,
@@ -242,7 +253,7 @@ export const SETTING_KEYS = {
         coreIcons: "coreStatusIcons",
         system: "activeSystem",
         map: "activeConditionMap",
-        maps: "defaultConditionMaps",
+        defaultMaps: "defaultConditionMaps",
         mapType: "conditionMapType",
         removeDefaultEffects: "removeDefaultEffects",
         output: "conditionsOutputToChat"

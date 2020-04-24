@@ -13,8 +13,8 @@ export class ConditionLab extends FormApplication {
         this.system = game.system.id;
         this.mapType = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.mapType);
         this.initialMap = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.map);
-        this.map = this.initialMap;
-        this.maps = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.maps);
+        this.map = null;
+        this.maps = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.defaultMaps);
         this.draggedIndex = -1;
     }
 
@@ -28,8 +28,9 @@ export class ConditionLab extends FormApplication {
             template: `${BUTLER.PATH}/templates/condition-lab.html`,
             classes: ["sheet"],
             width: 820,
-            height: 720,
-            resizable: true
+            height: 725,
+            resizable: true,
+            closeOnSubmit: false
         });
     }
 
@@ -42,7 +43,7 @@ export class ConditionLab extends FormApplication {
         const mapTypeChoices = BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes;
         const mapType = this.mapType || Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.mapType) || "other";
         const system = this.system || game.system.id;
-        let conditionMap = this.map ? this.map : this.initialMap;
+        let conditionMap = this.map ? this.map : this.map = this.initialMap;
         const referenceTypes = BUTLER.DEFAULT_CONFIG.enhancedConditions.referenceTypes;
         const journalEntries = game.journal.entities.sort((a, b) => a.sort - b.sort).map(e => {
                 return {
@@ -113,6 +114,7 @@ export class ConditionLab extends FormApplication {
                     break;
             }
         });
+
         const data = {
             mapTypeChoices,
             mapType,
@@ -137,6 +139,22 @@ export class ConditionLab extends FormApplication {
     }
 
     /**
+     * Captures the current state of the form and returns a formData object
+     * @returns {FormData} formData
+     */
+    _captureForm() {
+        // Get a reference to the form via jquery
+        const form = this.element.find("form").first()[0];
+
+        // Use the FormApplication#_getFormData method to parse the form
+        const FD = this._getFormData(form);
+
+        // Build and return useable formData object
+        const formData = Sidekick.buildFormData(FD);
+        return formData;
+    }
+
+    /**
      * 
      * @param {*} formData 
      */
@@ -150,6 +168,8 @@ export class ConditionLab extends FormApplication {
         let optionsOverlay = [];
         let optionsRemove = [];
         let newMap = [];
+        const rows = [];
+
 
         //need to tighten these up to check for the existence of digits after the word
         const conditionRegex = new RegExp("condition", "i");
@@ -172,6 +192,8 @@ export class ConditionLab extends FormApplication {
                 continue;
             }
 
+            rows.push(row);
+
             if (e.match(conditionRegex)) {
                 conditions[row] = formData[e];
             } else if (e.match(iconRegex)) {
@@ -191,7 +213,9 @@ export class ConditionLab extends FormApplication {
             }
         }
 
-        for (let i = 0; i <= conditions.length - 1; i++) {
+        const uniqueRows = [...new Set(rows)];
+
+        for (let i = 0; i <= uniqueRows.length - 1; i++) {
             newMap.push({
                 name: conditions[i],
                 icon: icons[i],
@@ -206,19 +230,24 @@ export class ConditionLab extends FormApplication {
             });
         }
 
+        console.log("after process",newMap);
         return newMap;
     }
 
+    /**
+     * Restore defaults for a mapping
+     */
     async _restoreDefaults() {
         const system = this.system;
-        let defaultMaps = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.maps);
+        let defaultMaps = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.defaultMaps);
+        const defaultMapType = Sidekick.getKeyByValue(BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes, BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes.default);
 
-        if (this.mapType === Sidekick.getKeyByValue(BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes, BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes.default)) {
+        if (this.mapType === defaultMapType) {
             defaultMaps = await EnhancedConditions.loadDefaultMaps();
         }
-        
-        //console.log("restore defaults clicked", ev);
-        this.map = await Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.map, defaultMaps[system]);
+
+        const defaultMap = defaultMaps[system];
+        this.map = await Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.map, defaultMap);
         this.render(true);
     }
 
@@ -227,12 +256,26 @@ export class ConditionLab extends FormApplication {
      * @param {Object} event 
      * @param {Object} formData 
      */
-    _updateObject(event, formData) {
+    async _updateObject(event, formData) {
         const mapType = formData["map-type"];
-        const newMap = this._processFormData(formData);
+        let newMap = this._processFormData(formData);
+        const defaultMapType = Sidekick.getKeyByValue(BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes, BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes.default);
+        console.log("formdata", formData);
+        console.log("before setting", newMap);
+        
+        if (mapType === defaultMapType) {
+            const defaultMap = EnhancedConditions.getDefaultMap(this.system);
+            newMap = mergeObject(newMap, defaultMap);
+        }
+        this.mapType = mapType;
+        this.map = newMap;
+        //this.initialMap = newMap;
 
-        Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.map, newMap);
-        Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.mapType, mapType);
+        Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.mapType, mapType, true);
+        Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.map, newMap, true);
+
+        //this.render();
+        ui.notifications.info("Condition Lab mapping saved!");
     }
 
     /**
@@ -326,15 +369,14 @@ export class ConditionLab extends FormApplication {
         );
 
         return buttons
-      }
+    }
 
     /**
      * Activate app listeners
      * @param {*} html 
      */
     activateListeners(html) {
-        super.activateListeners(html);
-
+        const inputs = html.find("input");
         const mapTypeSelector = html.find("select[class='map-type']");
         const triggerAnchor = html.find("a[class='trigger']");
         const addRowAnchor = html.find("a[name='add-row']");
@@ -343,181 +385,242 @@ export class ConditionLab extends FormApplication {
         const restoreDefaultsButton = html.find("button[class='restore-defaults']");
         const resetFormButton = html.find("button[name='reset']");
         const referenceTypeSelector = html.find("select[name^='reference-type']");
+        const saveCloseButton = html.find("button[name='save-close']");
 
-        mapTypeSelector.change(ev => {
-            ev.preventDefault();
-            const selection = $(ev.target).find("option:selected");
-            const newType = this.mapType = selection.val();
-            let newMap;
+        mapTypeSelector.on("change", event => this._onChangeMapType(event));
+        triggerAnchor.on("click", event => this._onOpenTrigglerForm(event));            
+        addRowAnchor.on("click", async event => this._onAddRow(event));
+        removeRowAnchor.on("click", async event => this._onRemoveRow(event));
+        restoreDefaultsButton.on("click", async event => this._onRestoreDefaults(event));
+        resetFormButton.on("click", event => this._onResetForm(event));
+        saveCloseButton.on("click", event => this._onSaveClose(event));
+        referenceTypeSelector.on("change", event => this._onChangeReferenceType(event));
+        iconPath.on("change", event => this._onChangeIconPath(event));
 
-            switch (newType) {
-                case "default":
-                case "custom":
-                    newMap = EnhancedConditions.getDefaultMap(this.system);
-                    break;
-                
-                case "other":
-                    newMap = [];
-                    break;
+        super.activateListeners(html);     
+    }
+
+    /* -------------------------------------------- */
+    /*                Event Handlers                */
+    /* -------------------------------------------- */
+
+    /**
+     * Change Map Type event handler
+     * @param {*} event 
+     */
+    async _onChangeMapType(event) {
+        event.preventDefault();
+        const selection = $(event.target).find("option:selected");
+        const newType = this.mapType = selection.val();
+        let newMap;
+
+        switch (newType) {
+            case "default":
+            case "custom":
+                newMap = EnhancedConditions.getDefaultMap(this.system);
+                break;
             
-                default:
-                    break;
-            }
-
-            this.map = newMap;
-
-            this.render(true);
-        });
-
-        triggerAnchor.on("click", event => {
-            event.preventDefault();
-            const anchor = event.currentTarget;
-            const select = anchor.parentElement.nextElementSibling;
-            const id = select.value;
-            const conditionLabRow = select.name.match(/\d+$/)[0];
-
-            const data = {
-                id,
-                conditionLabRow
-            }
-            //this.map = this._processFormData(this._getFormData(this.form));
-            new TrigglerForm(data, {parent: this}).render(true);
-        });
-
-        addRowAnchor.on("click", async ev => {
-            ev.preventDefault();
-
-            // Preserve unsaved changes
-            const formData = Sidekick.buildFormData(this._getFormData(this.form));
-            const map = this._processFormData(formData);
-            this.map = map;
-
-            //const mapSetting = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.map);
-            // need to add an index here...
-            const existingNewConditions = map.filter(m => m.name.includes("newCondition"));
-            const newConditionIndex = existingNewConditions.length ? Math.max(...existingNewConditions.map(m => m.name.match(/\d+/g)[0])) + 1 : 1;
-            const newMap = duplicate(map);
-            newMap.push({
-                name: `newCondition${newConditionIndex}`,
-                icon: "",
-                referenceId: "",
-                referenceType: "journalEntry",
-                trigger: ""
-            });
-
-            //this.map = await Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.map, newMap);
-            this.map = newMap;
-            this.render(true);
-        });
-
-        referenceTypeSelector.on("change", event => {
-            const formData = Sidekick.buildFormData(this._getFormData(this.form));
-            const map = this._processFormData(formData);
-
-            this.map = map;
-            this.render(true);
-        });
-
-        removeRowAnchor.on("click", async ev => {
-            ev.preventDefault();
-            const formData = Sidekick.buildFormData(this._getFormData(this.form));
-            const map = this._processFormData(formData);
-
-            this.map = map;
-
-            //const mapSetting = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.map);
-            const row = ev.currentTarget.name.match(/\d+$/)[0];
-
-            const dialog = new Dialog({
-                title: "Confirm Row Deletion",
-                content: "Are you sure you want to delete this row?",
-                buttons: {
-                    yes: {
-                        icon: `<i class="fa fa-check"></i>`,
-                        label: " Yes",
-                        callback: async event => {
-                            const newMap = duplicate(map);
-                            newMap.splice(row, 1);
-                            game.cub.conditionLab.map = newMap;
-                            game.cub.conditionLab.render(true);
-                        }
-                    },
-                    no :{
-                        icon: `<i class="fa fa-times"></i>`,
-                        label: " No",
-                        callback: event => {}
-                    }
-                },
-                default: "no"
-            });
-
-            dialog.render(true);
-        });
-
-        iconPath.on("change", async ev => {
-            ev.preventDefault();
-
-            const formData = Sidekick.buildFormData(this._getFormData(this.form));
-            const map = this._processFormData(formData);
-
-            this.map = map;
-            //console.log("change", ev, this);
-            const row = ev.target.name.match(/\d+$/)[0];
-
-            //target the icon
-            let icon = $(this.form).find("img[name='icon-" + row);
-            icon.attr("src", ev.target.value);
-        });
-
-        restoreDefaultsButton.on("click", async ev => {
-            ev.preventDefault();
-
-            const confirmationDialog = new Dialog({
-                title: "Restore Defaults?",
-                content: "<p>Are you sure you want to restore this mapping to defaults?</p>",
-                buttons: {
-                    yes: {
-                        icon: `<i class="fas fa-check"></i>`,
-                        label: "Yes",
-                        callback: () => this._restoreDefaults()
-                    },
-                    no: {
-                        icon: `<i class="fas fa-times"></i>`,
-                        label: "No",
-                        callback: () => {}
-                    }
-                },
-                default: "no",
-                close: () => {}
-            });
-
-            confirmationDialog.render(true);
-        });
-
+            case "other":
+                newMap = [];
+                break;
         
-        resetFormButton.on("click", event => {
-            const dialog = new Dialog({
-                title: "Reset Form?",
-                content: `<p>Are you sure you want to reset the form?</p><p><strong>You will lose any unsaved changes.</strong></p>`,
-                buttons: {
-                    yes: {
-                        icon: `<i class="fa fa-check"></i>`,
-                        label: " Yes",
-                        callback: async event => {
-                            game.cub.conditionLab.map = this.initialMap;
-                            game.cub.conditionLab.render(true);
-                        }
-                    },
-                    no :{
-                        icon: `<i class="fa fa-times"></i>`,
-                        label: " No",
-                        callback: event => {}
+            default:
+                break;
+        }
+
+        const update = {map: newMap, mapType: newType};
+
+        this.map = newMap;
+
+        //await this.submit(update);
+        this.render();
+    }
+
+    /**
+     * Handle icon path change
+     * @param {*} event 
+     */
+    _onChangeIconPath(event) {
+        event.preventDefault();
+
+        const formData = this._captureForm();
+        this.map = this._processFormData(formData);
+        
+        const row = event.target.name.match(/\d+$/)[0];
+
+        //target the icon
+        const icon = $(this.form).find("img[name='icon-" + row);
+        icon.attr("src", event.target.value);
+    }
+    
+    /**
+     * Handle Reference type change
+     * @param {*} event 
+     */
+    _onChangeReferenceType(event) {
+        const formData = this._captureForm()
+        
+        this.map = this._processFormData(formData);
+        this.render();
+    }
+
+    /**
+     * Open Triggler form event handler
+     * @param {*} event 
+     */
+    _onOpenTrigglerForm(event) {
+        event.preventDefault();
+        const anchor = event.currentTarget;
+        const select = anchor.parentElement.nextElementSibling;
+        const id = select.value;
+        const conditionLabRow = select.name.match(/\d+$/)[0];
+
+        const data = {
+            id,
+            conditionLabRow
+        }
+        //this.map = this._processFormData(this._getFormData(this.form));
+        new TrigglerForm(data, {parent: this}).render(true);
+    }
+
+    /**
+     * Add Row event handler
+     * @param {*} event 
+     */
+    _onAddRow(event) {
+        event.preventDefault();
+
+        const existingNewConditions = this.map.filter(m => m.name.includes("newCondition"));
+        const newConditionIndex = existingNewConditions.length ? Math.max(...existingNewConditions.map(m => m.name.match(/\d+/g)[0])) + 1 : 1;
+        const formData = this._captureForm();
+        this.map = this._processFormData(formData);
+        const newMap = duplicate(this.map);
+        
+        newMap.push({
+            name: `newCondition${newConditionIndex}`,
+            icon: "icons/svg/d20-black.svg",
+            referenceId: "",
+            referenceType: "journalEntry",
+            trigger: ""
+        });
+        
+        const defaultMapType = Sidekick.getKeyByValue(BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes, BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes.default);
+        const customMapType = Sidekick.getKeyByValue(BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes, BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes.custom);
+        const newMapType = this.mapType === defaultMapType ? customMapType : this.mapType; 
+
+        this.mapType = newMapType;
+        this.map = newMap;
+        
+        this.render();
+    }   
+
+    /**
+     * 
+     * @param {*} event 
+     */
+    _onRemoveRow(event) {
+        event.preventDefault();
+
+        const formData = this._captureForm();
+        this.map = this._processFormData(formData);
+
+        //const mapSetting = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.map);
+        const row = event.currentTarget.name.match(/\d+$/)[0];
+
+        const dialog = new Dialog({
+            title: "Confirm Row Deletion",
+            content: "Are you sure you want to delete this row?",
+            buttons: {
+                yes: {
+                    icon: `<i class="fa fa-check"></i>`,
+                    label: " Yes",
+                    callback: async event => {
+                        const newMap = duplicate(this.map);
+                        newMap.splice(row, 1);
+                        this.map = newMap;
+                        this.render();
                     }
                 },
-                default: "no"
-            });
-            
+                no :{
+                    icon: `<i class="fa fa-times"></i>`,
+                    label: " No",
+                    callback: event => {}
+                }
+            },
+            default: "no"
         });
+
+        dialog.render(true);
+    }
+
+    /**
+     * 
+     * @param {*} event 
+     */
+    _onRestoreDefaults(event) {
+        event.preventDefault();
+
+        const confirmationDialog = new Dialog({
+            title: "Restore Defaults?",
+            content: "<p>Are you sure you want to restore this mapping to defaults?</p>",
+            buttons: {
+                yes: {
+                    icon: `<i class="fas fa-check"></i>`,
+                    label: "Yes",
+                    callback: () => this._restoreDefaults()
+                },
+                no: {
+                    icon: `<i class="fas fa-times"></i>`,
+                    label: "No",
+                    callback: () => {}
+                }
+            },
+            default: "no",
+            close: () => {}
+        });
+
+        confirmationDialog.render(true);
+    }
+
+    /**
+     * Reset form handler
+     * @param {*} event 
+     */
+    _onResetForm(event) {
+        const dialog = new Dialog({
+            title: "Reset Form?",
+            content: `<p>Are you sure you want to reset the form?</p><p><strong>You will lose any unsaved changes.</strong></p>`,
+            buttons: {
+                yes: {
+                    icon: `<i class="fa fa-check"></i>`,
+                    label: " Yes",
+                    callback: event => {
+                        this.map = this.initialMap;
+                        this.render();
+                    }
+                },
+                no :{
+                    icon: `<i class="fa fa-times"></i>`,
+                    label: " No",
+                    callback: event => {}
+                }
+            },
+            default: "no"
+        });
+        dialog.render(true);
+    }
+
+    /**
+     * Save and Close handler
+     * @param {*} event 
+     */
+    _onSaveClose(event) {
+        this.submit().then(result => {
+            this.close();
+        }).catch(reject => {
+            ui.notifications.warn("Condition Lab failed to Save and Close");
+        });
+        
     }
 
     /**
@@ -526,7 +629,6 @@ export class ConditionLab extends FormApplication {
      * @param {*} index 
      */
     onDragStart(event, index) {
-
         game.cub.conditionLab.draggedIndex = index;
         // do something?
     }
@@ -558,5 +660,4 @@ export class ConditionLab extends FormApplication {
         game.cub.conditionLab.map = newMap;
         game.cub.conditionLab.render();
     }
-
 }

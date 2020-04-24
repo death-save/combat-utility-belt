@@ -105,7 +105,7 @@ export class Signal {
         /* ------------------- Token ------------------ */
 
         Hooks.on("preCreateToken", (scene, tokenData, options, userId) => {
-            TokenUtility._onPreCreateToken(scene, tokenData, options, userId);
+            return TokenUtility._onPreCreateToken(scene, tokenData, options, userId);
         });
 
         Hooks.on("createToken", (scene, tokenData, options, userId) => {
