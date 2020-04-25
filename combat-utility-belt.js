@@ -1842,7 +1842,7 @@ class CUBInjuredAndDead {
         }
 
         if (hasEffects) {
-            token.update(token.scene.id, {
+            token.update({
                 "effects": []
             });
         }
