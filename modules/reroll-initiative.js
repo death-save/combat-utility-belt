@@ -14,7 +14,7 @@ export class RerollInitiative {
      * @param {*} options 
      * @param {*} userId 
      */
-    static async _onUpdateCombat(combat, update, options={}, userId) {
+    static async _onUpdateCombat(combat, update, options, userId) {
         const reroll = Sidekick.getSetting(SETTING_KEYS.rerollInitiative.enable);
         const rerollTemp = Sidekick.getSetting(SETTING_KEYS.rerollInitiative.rerollTemp);
 

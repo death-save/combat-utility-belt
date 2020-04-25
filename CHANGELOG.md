@@ -1,9 +1,16 @@
 # Changelog
 
 ## [Unreleased]
-- Compendium support for Condition Lab
+- ~~Compendium support for Condition Lab~~
 - Combatant stats in Combat Tracker
 - Refine Hide NPC Names to allow for "known" NPC names/information
+- Attach Macros to Conditions in Condition Lab
+
+## [1.0.0] - 2020-04-24
+### Changed
+
+### Fixed
+- Concentrator no longer tests concentration when HP = 0 and instead simply removes the status icon
 
 ## [0.9.8] - 2020-03-16
 ### Added

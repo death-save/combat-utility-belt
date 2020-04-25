@@ -12,6 +12,10 @@ export class Triggler {
      * @param {Object} html the html element where the button will be created
      */
     static _createTrigglerButton(html) {
+        if (!game.user.isGM) {
+            return;
+        }
+
         const cubDiv = html.find("#combat-utility-belt");
 
         const trigglerButton = $(
@@ -40,15 +44,15 @@ export class Triggler {
         }
 
         const conditionMap = Sidekick.getSetting(SETTING_KEYS.enhancedConditions.map);
-        // check if condition is already active on the token, if it is then skip
+        
         const matchedApplyConditions = conditionMap.filter(m => m.applyTrigger === trigger.id);
 
         const matchedRemoveConditions = conditionMap.filter(m => m.removeTrigger === trigger.id);
 
         const matchedMacros = game.macros.entities.filter(m => m.getFlag(NAME, DEFAULT_CONFIG.triggler.flags.macro) === trigger.id);
 
-        matchedApplyConditions.forEach(m => EnhancedConditions.applyCondition(m.name, tokens));
-        matchedRemoveConditions.forEach(m => EnhancedConditions.removeCondition(m.name, tokens));
+        matchedApplyConditions.forEach(m => EnhancedConditions.applyCondition(m.name, tokens, {warn: false}));
+        matchedRemoveConditions.forEach(m => EnhancedConditions.removeCondition(m.name, tokens, {warn: false}));
         matchedMacros.forEach(m => m.execute());
     }
 
@@ -60,8 +64,18 @@ export class Triggler {
      * @param {*} entrypoint2
      */
     static _processUpdate(entity, update, entryPoint1, entrypoint2) {
-        const triggers = Sidekick.getSetting(SETTING_KEYS.triggler.triggers);
+        if (entryPoint1 && !hasProperty(update, entryPoint1)) {
+            return;
+        }
         
+        const triggers = Sidekick.getSetting(SETTING_KEYS.triggler.triggers);
+        const entityType = entity instanceof Actor ? "Actor" : entity instanceof Token ? "Token" : null;
+
+        if (!entityType) {
+            return;
+        }
+
+        const isPC = !!(entityType === "Actor" ? entity.isPC : entityType === "Token" ? entity.actor.isPC : null);
 
         /**
          * process each trigger in turn, checking for a match in the update payload,
@@ -71,9 +85,14 @@ export class Triggler {
          */
         for (let trigger of triggers) {
             const pcOnly = trigger.pcOnly;
+            const npcOnly = trigger.npcOnly;
 
-            if (pcOnly && !update.data.actorData.isPC) {
-                return;
+            if (pcOnly && !isPC) {
+                continue;
+            }
+
+            if (npcOnly && isPC) {
+                continue;
             }
 
             // example : actorData.data.attributes.hp.value
@@ -243,7 +262,7 @@ export class Triggler {
             return;
         }
 
-        const token = new Token(tokenData);
+        const token = canvas.tokens.get(tokenData._id);
         const actorDataProp = `actorData.data`;
         const actorProp = `actor.data.data`;
         

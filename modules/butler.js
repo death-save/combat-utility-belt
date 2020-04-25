@@ -77,6 +77,7 @@ export const HEALTH_STATES = {
 
 export const DEFAULT_CONFIG = {
     concentrator: {
+        conditionName: "Concentrating",
         enable: false,
         outputChat: false,
         promptRoll: false,

@@ -219,4 +219,23 @@ export class Sidekick {
 
         return formData;
     }
+
+    /**
+    * Get a random unique Id, checking an optional supplied array of ids for a match
+    * @param {*} existingIds 
+    */
+   static createId(existingIds=[], {iterations=10000, length=16}={}) {
+       
+       let i = 0;
+       while(i < iterations) {
+           const id = randomID(length);
+           if (!existingIds.includes(id)) {
+               return id;
+           }
+           i++;
+           console.log(`Sidekick | Id ${id} already exists in the provided list of ids. ${i ? `This is attempt ${i} of ${iterations} `: ""}Trying again...`);
+       }
+
+       throw new Error(`Sidekick | Tried to create a unique id over ${iterations} iterations and failed.`)
+   }
 }

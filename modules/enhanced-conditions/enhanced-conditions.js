@@ -147,11 +147,19 @@ export class EnhancedConditions {
     /**
      * Returns just the icon side of the map
      */
-    static getConditionIcons(conditionMap) {
+    static getConditionIcons(conditionMap={}) {
         if (!conditionMap) {
             //maybe log an error?
             return;
-        }          
+        }
+        
+        if (Object.keys(conditionMap).length === 0) {
+            conditionMap = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.map);
+
+            if (!conditionMap || Object.keys(conditionMap).length === 0) {
+                return [];
+            }
+        }
         
         if (conditionMap instanceof Array) {
             return conditionMap.map(mapEntry => mapEntry.icon);
@@ -164,16 +172,23 @@ export class EnhancedConditions {
      * Retrieves a condition icon by its mapped name
      * @param {*} condition 
      */
-    static getIconsByCondition(conditionMap, condition) {
-        if (!conditionMap || condition) {
+    static getIconsByCondition(condition, {firstOnly=false}={}) {
+        const conditionMap = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.map);
+
+        if (!conditionMap || !condition) {
             return;
         }
 
         if (conditionMap instanceof Array) {
-            return conditionMap.filter(c => c.name === condition).map(c => c.icon);
+            const filteredConditions = conditionMap.filter(c => c.name === condition).map(c => c.icon);
+            if (!filteredConditions.length) {
+                return;
+            }
+
+            return firstOnly ? filteredConditions[0] : filteredConditions;
         }
 
-        return [];
+        return null;
     }
 
     /**
@@ -181,13 +196,19 @@ export class EnhancedConditions {
      * @param {*} conditionMap 
      * @param {*} icon 
      */
-    static getConditionsByIcon(conditionMap, icon) {
-        if (!conditionMap || icon) {
+    static getConditionsByIcon(icon, {firstOnly=false}={}) {
+        const conditionMap = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.map);
+
+        if (!conditionMap || !icon) {
             return;
         }
 
-        if (conditionMap instanceof Array) {
-            return conditionMap.filter(c => c.icon === icon).map(c => c.name);
+        if (conditionMap instanceof Array && conditionMap.length) {
+            const filteredIcons = conditionMap.filter(c => c.icon === icon).map(c => c.name);
+            if (!filteredIcons.length) {
+                return null;
+            }
+            return firstOnly ? filteredIcons[0] : filteredIcons;
         }
 
         return null;
@@ -416,7 +437,7 @@ export class EnhancedConditions {
      * @param {*} conditionName
      * @todo coalesce into a single update
      */
-    static applyCondition(conditionName, tokens) {
+    static async applyCondition(conditionName, tokens, {warn=true}={}) {
         if (!tokens) {
             ui.notifications.error("Apply Condition failed. No token provided");
             console.log("No token provided");
@@ -446,16 +467,20 @@ export class EnhancedConditions {
 
         for (let token of tokens) {
             if ((!condition.options.overlay && token.data.effects.includes(effect)) || (condition.options.overlay && token.data.overlayEffect === effect)) {
-                ui.notifications.warn("Apply Condition failed. Condition already active.");
-                console.log(`Condition ${conditionName} is already active on token.`);
+                if (warn) {
+                    ui.notifications.warn("Apply Condition failed. Condition already active.");
+                    console.log(`Condition ${conditionName} is already active on token.`);
+                }
                 return;
             }
 
-            condition.options.overlay === true ? token.toggleOverlay(effect) : token.toggleEffect(effect);
-
             if (condition.options.removeOthers) {
-                token.update({effects: []});
+                await token.update({effects: []});
             }
+
+            condition.options.overlay === true ? await token.toggleOverlay(effect) : await token.toggleEffect(effect);
+
+            
         }
         
     }
@@ -466,7 +491,7 @@ export class EnhancedConditions {
      * @param {*} conditionName
      * @todo coalesce into a single update
      */
-    static removeCondition(conditionName, tokens) {
+    static removeCondition(conditionName, tokens, {warn=true}={}) {
         // iterate tokens removing conditions
         if (!tokens) {
             ui.notifications.error("Remove Condition failed. No token provided");
@@ -497,8 +522,10 @@ export class EnhancedConditions {
 
         for (let token of tokens) {
             if ((!condition.options.overlay && !token.data.effects.includes(effect)) || (condition.options.overlay && token.data.overlayEffect !== effect)) {
-                ui.notifications.warn("Remove Condition failed. Condition is not active on token");
-                console.log(`Condition ${conditionName} is not active on token.`);
+                if (warn) {
+                    ui.notifications.warn("Remove Condition failed. Condition is not active on token");
+                    console.log(`Condition ${conditionName} is not active on token.`);
+                }
                 return;
             }
 

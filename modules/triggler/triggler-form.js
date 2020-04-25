@@ -44,6 +44,7 @@ export class TrigglerForm extends FormApplication {
         const value = this.data.value || null;
         const property2 = this.data.property2 || null;
         const pcOnly = this.data.pcOnly || null;
+        const npcOnly = this.data.npcOnly || null;
 
         const categories = Object.keys(game.system.template.Actor.templates.common);
         const attributes = category ? Object.keys(game.system.template.Actor.templates.common[category]) : null;
@@ -66,7 +67,8 @@ export class TrigglerForm extends FormApplication {
             operators,
             value,
             property2,
-            pcOnly
+            pcOnly,
+            npcOnly
         }
     }
 
@@ -154,7 +156,7 @@ export class TrigglerForm extends FormApplication {
         let newTrigger = {};
         if (!id) {
             newTrigger = {
-                id: this._getId(existingIds),
+                id: Sidekick.createId(existingIds),
                 ...newData,
                 text
             }
@@ -165,13 +167,14 @@ export class TrigglerForm extends FormApplication {
 
         // Determine if ConditionLab is open and push the value back
         //const conditionLab = Object.values(ui.windows).find(v => v.id === DEFAULT_CONFIG.enhancedConditions.conditionLab.id);
+        
+
+        /* WIP
         const parentApp = this.parent;
 
         if (!parentApp) {
             return;
         }
-
-        /* WIP
         if (parentApp instanceof ConditionLab) {
             const conditionLab = parentApp;
             const row = this.data.conditionLabRow;
@@ -190,25 +193,13 @@ export class TrigglerForm extends FormApplication {
         
     }
 
-    _getId(existingIds) {
-        let id = randomID(16);
-
-        if (existingIds.length) {
-            while (existingIds.includes(id)) {
-                id = randomID(16);
-            }
-        }
-
-        return id;
-    }
-
     /**
      * 
      * @param {*} parts 
      */
     _constructString(parts) {
         const operatorText = DEFAULT_CONFIG.triggler.operators[parts.operator];
-        const string = `${parts.category}.${parts.attribute}.${parts.property1} ${operatorText} ${parts.value}${parts.property2 ? ` ${parts.category}.${parts.attribute}.${parts.property2}` : ""}`;
+        const string = `${parts.category}.${parts.attribute}.${parts.property1} ${operatorText} ${parts.value}${parts.property2 ? ` ${parts.category}.${parts.attribute}.${parts.property2}` : ""}${parts.pcOnly ? ` (PCs Only)` : ""}${parts.npcOnly ? ` (NPCs Only)` : ""}`;
         return string;
     }
 }

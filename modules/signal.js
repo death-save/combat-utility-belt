@@ -116,8 +116,8 @@ export class Signal {
             //TokenUtility._onCreateToken(scene, tokenData, options, userId);
         });
 
-        Hooks.on("preUpdateToken", (scene, token, updateData, options, userId) => {
-            Concentrator._onPreUpdateToken(scene, token, updateData, options, userId);
+        Hooks.on("preUpdateToken", (scene, tokenData, updateData, options, userId) => {
+            Concentrator._onPreUpdateToken(scene, tokenData, updateData, options, userId);
         });
 
         Hooks.on("updateToken", (scene, token, updateData, options, userId) => {

@@ -1,9 +1,11 @@
 import { Sidekick } from "./sidekick.js";
-import { SETTING_KEYS } from "./butler.js";
+import { SETTING_KEYS, DEFAULT_CONFIG } from "./butler.js";
+import { EnhancedConditions } from "./enhanced-conditions/enhanced-conditions.js";
 
 /**
  * Request a roll or display concentration checks when damage is taken.
  * @author JacobMcAuley
+ * @author Evan Clarke
  * @todo Supply DC
  */
 export class Concentrator {
@@ -25,9 +27,14 @@ export class Concentrator {
      */
     static _isConcentrating(token) {
         const tokenEffects = getProperty(token, "data.effects");
-        const concentratingIcon = Sidekick.getSetting(SETTING_KEYS.concentrator.icon);
+        
+        if (!tokenEffects?.length) {
+            return;
+        }
 
-        const _isConcentrating = Boolean(tokenEffects && tokenEffects.find(e => e === concentratingIcon)) || false;
+        const concentratingIcon = EnhancedConditions.getIconsByCondition(DEFAULT_CONFIG.concentrator.conditionName, {firstOnly: true});
+
+        const _isConcentrating = Boolean(tokenEffects.find(e => e === concentratingIcon)) || false;
 
         return _isConcentrating;
     }
@@ -40,6 +47,25 @@ export class Concentrator {
      */
     static _calculateDamage(newHealth, oldHealth) {
         return oldHealth - newHealth || 0;
+    }
+
+    /**
+     * Processes the steps necessary when the concentrating token is dead
+     * @param {*} token 
+     */
+    static _processDeath(token) {
+        const effects = token.data.effects;
+        const newEffects = duplicate(effects);
+        const index = newEffects.findIndex(e => e === EnhancedConditions.getIconsByCondition(DEFAULT_CONFIG.concentrator.conditionName, {firstOnly: true}));
+        newEffects.splice(index, 1);
+
+        // If new effects length is same, nothing was removed
+        if (newEffects.length === effects.length) {
+            return null;
+        }
+
+        Concentrator._displayDeathChat(token);
+        return newEffects;
     }
 
     /**
@@ -99,7 +125,7 @@ export class Concentrator {
                 continue;
             }
 
-            t.toggleEffect(Sidekick.getSetting(SETTING_KEYS.concentrator.icon));
+            EnhancedConditions.applyCondition(DEFAULT_CONFIG.concentrator.conditionName, t);
         }  
     }
 
@@ -110,8 +136,8 @@ export class Concentrator {
      * @param {*} update 
      * @param {*} options 
      */
-    static _onPreUpdateToken(scene, token, update, options, userId){
-        //const token = canvas.tokens.get(update._id);
+    static _onPreUpdateToken(scene, tokenData, update, options, userId){
+        const token = canvas.tokens.get(update._id);
         const actorId = getProperty(token, "data.actorId");
         const current = getProperty(token, "actor");
         const enable = Sidekick.getSetting(SETTING_KEYS.concentrator.enable);
@@ -129,6 +155,11 @@ export class Concentrator {
         // Return early if damage wasn't taken or the token wasn't concentrating
         if (!isConcentrating || !damageTaken) {
             return;
+        }
+
+        if (newHealth === 0) {
+            const newEffects = Concentrator._processDeath(token);
+            return update.effects = newEffects;
         }
 
         const damageAmount = Concentrator._calculateDamage(newHealth, oldHealth)
@@ -166,7 +197,7 @@ export class Concentrator {
             owners.push(game.users.entities.find(user => user.isGM));
         }
             
-        if (!tokens || !newHealth || !oldHealth || !actor) {
+        if (!tokens || !Number.isInteger(newHealth) || !Number.isInteger(oldHealth) || !actor) {
             return;
         }
         
@@ -255,6 +286,19 @@ export class Concentrator {
             content: `<h3>CUB Concentrator</header></h3>${token.name} took damage and their concentration is being tested (DC${dc})!</p>`,
             type: CONST.CHAT_MESSAGE_TYPES.OTHER
         });       
+    }
+
+    /**
+     * Displays a message when a concentrating token dies
+     * @param {*} token 
+     */
+    static _displayDeathChat(token) {
+        ChatMessage.create({
+            user: game.userId,
+            speaker: ChatMessage.getSpeaker({token}),
+            content: `<h3>CUB Concentrator</header></h3>${token.name} is dead and the spell they were concentrating on is lost!</p>`,
+            type: CONST.CHAT_MESSAGE_TYPES.OTHER
+        }); 
     }
 
     /**

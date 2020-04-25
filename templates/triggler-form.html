@@ -14,6 +14,7 @@
         <a class="delete" title="Delete Trigger"><i class="fas fa-trash"></i></a>
         {{/if}}
     </div>
+    <hr>
     <div class="flexrow">
         <span>Category</span>
         <span>Attribute</span>
@@ -65,14 +66,19 @@
             {{/select}}
         </select>
     </div>
-    <div class="flexrow">
-        <div class="form-group">
+    <hr>
+    <div class="flexrow triggler">
+        <div class="form-group options">
             <input type="checkbox" name="pcOnly" {{checked pcOnly}}>
             <label>PCs Only</label>
         </div>
+        <div class="form-group options">
+            <input type="checkbox" name="npcOnly" {{checked npcOnly}}>
+            <label>NPCs Only</label>
+        </div>
     </div>
     <footer class="flexrow">
-        <button type="submit" name="save"><i class="fas fa-save"></i> Save</button>
+        <button type="submit" name="save"><i class="fas fa-save"></i> Save and Close</button>
         <button type="button" name="cancel"><i class="fas fa-times"></i> Cancel</button>
     </footer>
 </form>

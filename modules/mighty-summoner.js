@@ -10,7 +10,7 @@ export class MightySummoner {
      */
     static _checkForFeat(actor) {
         const feat = "Mighty Summoner";
-        const hasFeat = MightySummoner.hasFeat(actor, feat);
+        const hasFeat = ActorUtility.hasFeat(actor, feat);
 
         if (hasFeat) {
             return true;

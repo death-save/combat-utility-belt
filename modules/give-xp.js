@@ -39,7 +39,7 @@ export class GiveXP {
      * Gives XP to the living PCs in the turn tracker based on enemies killed
      * @param {Object} combat -- the combat instance being deleted
      */
-    static async _giveXP(combat) {
+    static _giveXP(combat) {
         const defeatedEnemies = combat.turns.filter(object => (!object.actor.isPC && object.defeated && object.token.disposition === -1));
         const playerCombatants = combat.turns.filter(object => (object.actor.isPC && !object.defeated));
         let experience = 0;
@@ -54,10 +54,10 @@ export class GiveXP {
         let experienceMessage = "<b>Experience Awarded!</b> (" + experience + "xp)<p><b>" + dividedExperience + "xp </b> added to:</br>";
 
         playerCombatants.forEach(async combatant => {
-            const actor = game.actors.entities.find(actor => actor._id === combatant.actor.data._id);
+            const actor = game.actors.entities.find(actor => actor.id === combatant.actor.data._id);
 
-            await GiveXP.applyXP(actor, dividedExperience);
-            experienceMessage += actor.name + "</br>";
+            GiveXP.applyXP(actor, dividedExperience);
+            experienceMessage += actor.name + "<br>";
         });
         experienceMessage += "</p>";
         
