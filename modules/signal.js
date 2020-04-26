@@ -211,7 +211,7 @@ export class Signal {
 
         Hooks.on("renderConditionLab", (app, html, data) => {
             //const mappingList = html.find("ol[class='condition-map-list']");
-            const mappingList = document.getElementsByClassName("condition-map-list")[0];
+            const mappingList = document.getElementsByClassName("condition-lab")[0];
             
             if (mappingList) {
                 new DraggableList(mappingList, "li", {

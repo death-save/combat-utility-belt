@@ -197,8 +197,8 @@ export function registerSettings() {
         default: BUTLER.DEFAULT_CONFIG.hideNames.enable,
         config: true,
         onChange: s => {
-            ui.combat.render(true);
-            ui.chat.render(true);
+            ui.combat.render();
+            ui.chat.render();
         }
     });
 
