@@ -69,6 +69,67 @@ export class Concentrator {
     }
 
     /**
+     * Executes when the module setting is enabled
+     */
+    static _promptEnableEnhancedConditions() {
+        const title = "Enable Enhanced Conditions?";
+        const content = `<p>In order to use Concentrator you must enable Enhanced Conditions.</p><strong>Would you like to enable Enhanced Conditions</strong>`;
+        new Dialog({
+            title,
+            content,
+            buttons: {
+                yes: {
+                    label: "Yes",
+                    icon: `<i class="fas fa-check"></i>`,
+                    callback: async e => {
+                        await Sidekick.setSetting(SETTING_KEYS.enhancedConditions.enable, true, true);
+                        Concentrator._createCondition();
+                        ui.settings.render();
+                    }
+                },
+                no: {
+                    label: "No",
+                    icon: `<i class="fas fa-times"></i>`,
+                    callback: e => {
+                        //maybe whisper the GM to alert them that the player canceled the check?
+                    }
+                }
+            }
+        }).render(true);
+    }
+
+    /**
+     * Creates a condition for Concentrating if none exists
+     * @todo extract to Enhanced Conditions and make it generic
+     */
+    static _createCondition() {
+        const conditionName = "Concentrating";
+        const icon = "icons/svg/d20-black.svg";
+
+        const enhancedConditions = Sidekick.getSetting(SETTING_KEYS.enhancedConditions.enable);
+
+        if (!enhancedConditions) {
+            return;
+        }
+
+        const conditionMap = Sidekick.getSetting(SETTING_KEYS.enhancedConditions.map);
+
+        const concentrating = conditionMap.find(c => c.name === conditionName);
+
+        if (concentrating) {
+            return;
+        }
+
+        const update = duplicate(conditionMap);
+        update.push({
+            name: conditionName,
+            icon
+        });
+
+        Sidekick.setSetting(SETTING_KEYS.enhancedConditions.map, update);
+    }
+
+    /**
      * Handle render ChatMessage
      * @param {*} app 
      * @param {*} html 

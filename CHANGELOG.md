@@ -11,6 +11,16 @@
 - NPC names in Initiative rolls are not hidden
 - Pan/Select fires for Temporary Combatants
 
+## [1.0.1] - 2020-04-26
+## Changed
+- Enabling Concentrator now prompts to enable Enhanced Conditions (if disabled) and creates a Concentrating condition if none exists
+
+## Fixed
+- Fixed issue with regular expression for finding compendia that prevented module loading in Firefox
+- *System - Default* Condition Lab mappings were not loading 
+- *System - Default* Condition Lab mappings were not correctly being set as read-only on first load
+
+
 ## [1.0.0] - 2020-04-25
 ### New
 - Added **Triggler** a trigger management gadget focused on Actor and Token attribute updates. When combined with **Enhanced Conditions**/**Condition Lab** this replaces **Mark Injured/Dead**
