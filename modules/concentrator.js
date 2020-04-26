@@ -114,7 +114,8 @@ export class Concentrator {
             }
 
             const tokenEffects = getProperty(t, "data.effects");
-            const isAlreadyConcentrating = !!tokenEffects.find(e => e === Sidekick.getSetting(SETTING_KEYS.concentrator.icon));
+            const concentratingIcon = EnhancedConditions.getIconsByCondition(DEFAULT_CONFIG.concentrator.conditionName, {firstOnly: true});
+            const isAlreadyConcentrating = !!tokenEffects.find(e => e === concentratingIcon);
 
             if (isAlreadyConcentrating) {
 

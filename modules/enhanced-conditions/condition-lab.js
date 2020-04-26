@@ -27,7 +27,7 @@ export class ConditionLab extends FormApplication {
             title: BUTLER.DEFAULT_CONFIG.enhancedConditions.conditionLab.title,
             template: `${BUTLER.PATH}/templates/condition-lab.html`,
             classes: ["sheet"],
-            width: 820,
+            width: 950,
             height: 725,
             resizable: true,
             closeOnSubmit: false
@@ -39,8 +39,15 @@ export class ConditionLab extends FormApplication {
      */
     async prepareData() {
         console.time("data-prep");
-        const mappedSystems = Object.entries(BUTLER.KNOWN_GAME_SYSTEMS).filter(e => e[1].conditionMap === true);
+        const defaultMaps = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.defaultMaps);
+        const mappedSystems = Object.keys(defaultMaps) || [];
         const mapTypeChoices = BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes;
+
+        // If there's no default map for this system don't provide the "default" choice
+        if (!mappedSystems.includes(game.system.id)) {
+            delete mapTypeChoices.default;
+        }
+
         const mapType = this.mapType || Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.mapType) || "other";
         const system = this.system || game.system.id;
         let conditionMap = this.map ? this.map : this.map = this.initialMap;
@@ -60,6 +67,20 @@ export class ConditionLab extends FormApplication {
         const itemCompendia = game.packs.filter(p => p.entity === "Item");
         const journalCompendia = game.packs.filter(p => p.entity === "JournalEntry");
 
+        const itemCompendiaChoices = itemCompendia.map(p => {
+            return {
+                id: p.collection, 
+                name: p.metadata.label
+            }
+        });
+
+        const journalCompendiaChoices = journalCompendia.map(p => {
+            return {
+                id: p.collection,
+                name: p.metadata.label
+            }
+        });
+
         const journalCompendiaEntries = [];
         const itemCompendiaEntries = [];
 
@@ -68,6 +89,7 @@ export class ConditionLab extends FormApplication {
             const entries = index.map(e => {
                 return {
                     id: `@Compendium[${c.collection}.${e._id}]`,
+                    collection: c.collection,
                     name: e.name
                 }
             });
@@ -79,6 +101,7 @@ export class ConditionLab extends FormApplication {
             const entries = index.map(e => {
                 return {
                     id: `@Compendium[${c.collection}.${e._id}]`,
+                    collection: c.collection,
                     name: e.name
                 }
             })
@@ -90,24 +113,37 @@ export class ConditionLab extends FormApplication {
         });
 
         const isDefault = mapType === "default";
-        conditionMap.forEach((e, i, m) => {
-            const referenceType = e.referenceType || "journalEntry";
-            m[i].referenceTypeIcon = BUTLER.DEFAULT_CONFIG.enhancedConditions.referenceTypes.find(r => r.id === referenceType).icon;
+
+        conditionMap.forEach((entry, index, map) => {
+            const referenceType = entry.referenceType || "journalEntry";
+            const linkRegex = new RegExp(/(?<=\[)(.*?)(?=\])/);
+            const compendium = entry.compendium || null;
+
+            if (!compendium && (referenceType === "compendium.journalEntry" || referenceType === "compendium.item")) {
+                map[index].compendium = entry.referenceId.match(linkRegex) ? entry.referenceId.match(linkRegex)[0].split(".", 2).join(".") : null;
+            }
+            
+            map[index].referenceTypeIcon = BUTLER.DEFAULT_CONFIG.enhancedConditions.referenceTypes.find(r => r.id === referenceType).icon;
+            
             switch (referenceType) {
                 case "journalEntry":
-                    m[i].isJournalReference = true;
+                    map[index].isJournalReference = true;
                     break;
                 
                 case "item":
-                    m[i].isItemReference = true;
+                    map[index].isItemReference = true;
                     break;
 
                 case "compendium.journalEntry":
-                    m[i].isCompendiumJournalReference = true;
+                    map[index].isCompendiumReference = true;
+                    map[index].isJournalCompendium = true;
+                    map[index].compendiumEntries = journalCompendiaEntries.filter(e => e.collection === entry.compendium);
                     break;
 
                 case "compendium.item":
-                    m[i].isCompendiumItemReference = true;
+                    map[index].isCompendiumReference = true;
+                    map[index].isItemCompendium = true;
+                    map[index].compendiumEntries = itemCompendiaEntries.filter(e => e.collection === entry.compendium);
                     break;
 
                 default:
@@ -122,6 +158,8 @@ export class ConditionLab extends FormApplication {
             referenceTypes,
             journalEntries,
             itemEntries,
+            journalCompendiaChoices,
+            itemCompendiaChoices,
             journalCompendiaEntries,
             itemCompendiaEntries,
             triggers,
@@ -163,10 +201,12 @@ export class ConditionLab extends FormApplication {
         let icons = [];
         let referenceTypes = [];
         let references = [];
+        let compendia = [];
         let applyTriggers = [];
         let removeTriggers = [];
         let optionsOverlay = [];
         let optionsRemove = [];
+        let optionsDefeated = [];
         let newMap = [];
         const rows = [];
 
@@ -176,10 +216,12 @@ export class ConditionLab extends FormApplication {
         const iconRegex = new RegExp("icon", "i");
         const referenceTypeRegex = new RegExp("reference-type", "i");
         const referenceRegex = new RegExp("reference", "i");
+        const compendiumRegex = new RegExp("compendium", "i");
         const applyTriggerRegex = new RegExp("apply-trigger", "i");
         const removeTriggerRegex = new RegExp("remove-trigger", "i");
         const optionsOverlayRegex = new RegExp("options-overlay", "i");
         const optionsRemoveRegex = new RegExp("options-remove-others", "i");
+        const optionsDefeatedRegex = new RegExp("options-mark-defeated", "i");
         const rowRegex = new RegExp(/\d+$/);
 
         //write it back to the relevant condition map
@@ -200,6 +242,8 @@ export class ConditionLab extends FormApplication {
                 icons[row] = formData[e];
             } else if (e.match(referenceTypeRegex)) {
                 referenceTypes[row] = formData[e];
+            } else if (e.match(compendiumRegex)) {
+                compendia[row] = formData[e];
             } else if (e.match(referenceRegex)) {
                 references[row] = formData[e]; 
             } else if (e.match(applyTriggerRegex)) {
@@ -210,6 +254,8 @@ export class ConditionLab extends FormApplication {
                 optionsOverlay[row] = formData[e];
             } else if (e.match(optionsRemoveRegex)) {
                 optionsRemove[row] = formData[e];
+            } else if (e.match(optionsDefeatedRegex)) {
+                optionsDefeated[row] = formData[e];
             }
         }
 
@@ -220,12 +266,14 @@ export class ConditionLab extends FormApplication {
                 name: conditions[i],
                 icon: icons[i],
                 referenceType: referenceTypes[i],
+                compendium: compendia[i],
                 referenceId: references[i],
                 applyTrigger: applyTriggers[i],
                 removeTrigger: removeTriggers[i],
                 options: {
                     overlay: optionsOverlay[i],
-                    removeOthers: optionsRemove[i]
+                    removeOthers: optionsRemove[i],
+                    markDefeated: optionsDefeated[i]
                 }
             });
         }
@@ -241,13 +289,15 @@ export class ConditionLab extends FormApplication {
         const system = this.system;
         let defaultMaps = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.defaultMaps);
         const defaultMapType = Sidekick.getKeyByValue(BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes, BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes.default);
+        const otherMapType = Sidekick.getKeyByValue(BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes, BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes.other);
 
         if (this.mapType === defaultMapType) {
             defaultMaps = await EnhancedConditions.loadDefaultMaps();
         }
 
-        const defaultMap = defaultMaps[system];
-        this.map = await Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.map, defaultMap);
+        const defaultMap = defaultMaps[system] || [];
+        // If the mapType is other then the map should be empty, otherwise it's the default map for the system
+        this.map = this.mapType === otherMapType ? [] : await Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.map, defaultMap);
         this.render(true);
     }
 
@@ -385,6 +435,7 @@ export class ConditionLab extends FormApplication {
         const restoreDefaultsButton = html.find("button[class='restore-defaults']");
         const resetFormButton = html.find("button[name='reset']");
         const referenceTypeSelector = html.find("select[name^='reference-type']");
+        const compendiumSelector = html.find("select[name^='compendium']");
         const saveCloseButton = html.find("button[name='save-close']");
 
         mapTypeSelector.on("change", event => this._onChangeMapType(event));
@@ -396,6 +447,7 @@ export class ConditionLab extends FormApplication {
         saveCloseButton.on("click", event => this._onSaveClose(event));
         referenceTypeSelector.on("change", event => this._onChangeReferenceType(event));
         iconPath.on("change", event => this._onChangeIconPath(event));
+        compendiumSelector.on("change", event => this._onChangeCompendium(event));
 
         super.activateListeners(html);     
     }
@@ -465,6 +517,17 @@ export class ConditionLab extends FormApplication {
     }
 
     /**
+     * Handle Compendium change
+     * @param {*} event 
+     */
+    _onChangeCompendium(event) {
+        const formData = this._captureForm()
+        
+        this.map = this._processFormData(formData);
+        this.render();
+    }
+
+    /**
      * Open Triggler form event handler
      * @param {*} event 
      */
@@ -493,7 +556,17 @@ export class ConditionLab extends FormApplication {
         const existingNewConditions = this.map.filter(m => m.name.includes("newCondition"));
         const newConditionIndex = existingNewConditions.length ? Math.max(...existingNewConditions.map(m => m.name.match(/\d+/g)[0])) + 1 : 1;
         const formData = this._captureForm();
-        this.map = this._processFormData(formData);
+        const fdMap = this._processFormData(formData);
+        const defaultMapType = Sidekick.getKeyByValue(BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes, BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes.default);
+        const customMapType = Sidekick.getKeyByValue(BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes, BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes.custom);
+
+        if (this.mapType === defaultMapType) {
+            const defaultMap = EnhancedConditions.getDefaultMap(this.system);
+            this.map = mergeObject(fdMap, defaultMap);
+        } else {
+            this.map = fdMap;
+        }
+        
         const newMap = duplicate(this.map);
         
         newMap.push({
@@ -504,8 +577,6 @@ export class ConditionLab extends FormApplication {
             trigger: ""
         });
         
-        const defaultMapType = Sidekick.getKeyByValue(BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes, BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes.default);
-        const customMapType = Sidekick.getKeyByValue(BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes, BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes.custom);
         const newMapType = this.mapType === defaultMapType ? customMapType : this.mapType; 
 
         this.mapType = newMapType;
@@ -559,10 +630,11 @@ export class ConditionLab extends FormApplication {
      */
     _onRestoreDefaults(event) {
         event.preventDefault();
+        const content = `<p>Are you sure you want to restore this mapping to defaults?</p><strong>If you save, this change will be permanent.</strong>`;
 
         const confirmationDialog = new Dialog({
             title: "Restore Defaults?",
-            content: "<p>Are you sure you want to restore this mapping to defaults?</p>",
+            content,
             buttons: {
                 yes: {
                     icon: `<i class="fas fa-check"></i>`,

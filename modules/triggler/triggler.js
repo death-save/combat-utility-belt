@@ -86,6 +86,7 @@ export class Triggler {
         for (let trigger of triggers) {
             const pcOnly = trigger.pcOnly;
             const npcOnly = trigger.npcOnly;
+            const notZero = trigger.notZero;
 
             if (pcOnly && !isPC) {
                 continue;
@@ -108,6 +109,11 @@ export class Triggler {
             
             // Get a value from the update that matches the 1st property in the trigger
             const updateValue = getProperty(update, matchString1);
+
+            // If the trigger is not allowed to run when value is zero, skip
+            if (updateValue === 0 && notZero) {
+                continue;
+            }
 
             // Get a value from the entity that matches the 2nd property in the trigger (if any)
             const property2Value = getProperty(entity, matchString2);
@@ -235,7 +241,7 @@ export class Triggler {
      * @param {*} userId 
      */
     static _onUpdateActor(actor, update, options, userId) {
-        if (!game.userId === userId) {
+        if (game.userId !== userId) {
             return;
         }
 
@@ -254,7 +260,7 @@ export class Triggler {
      * @param {*} userId 
      */
     static _onUpdateToken(scene, tokenData, update, options, userId) {
-        if (!game.userId === userId) {
+        if (game.userId !== userId) {
             return;
         }
 

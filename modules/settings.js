@@ -21,7 +21,7 @@ export function registerSettings() {
     Sidekick.registerSetting(BUTLER.SETTING_KEYS.concentrator.concentrationAttribute, {
         name: "SETTINGS.Concentrator.ConcentrationAttributeN",
         hint: "SETTINGS.Concentrator.ConcentrationAttributeH",
-        default: BUTLER.KNOWN_GAME_SYSTEMS[game.system.id] !== null ? BUTLER.KNOWN_GAME_SYSTEMS[game.system.id].concentrationAttribute : BUTLER.KNOWN_GAME_SYSTEMS.other.concentrationAttribute,
+        default: BUTLER.KNOWN_GAME_SYSTEMS[game.system.id] ? BUTLER.KNOWN_GAME_SYSTEMS[game.system.id].concentrationAttribute : BUTLER.KNOWN_GAME_SYSTEMS.other.concentrationAttribute,
         scope: "world",
         type: String,
         config: true,
@@ -31,7 +31,7 @@ export function registerSettings() {
     Sidekick.registerSetting(BUTLER.SETTING_KEYS.concentrator.healthAttribute, {
         name: "SETTINGS.Concentrator.HealthAttributeN",
         hint: "SETTINGS.Concentrator.HealthAttributeH",
-        default: BUTLER.KNOWN_GAME_SYSTEMS[game.system.id] !== null ? BUTLER.KNOWN_GAME_SYSTEMS[game.system.id].healthAttribute : BUTLER.KNOWN_GAME_SYSTEMS.other.healthAttribute,
+        default: BUTLER.KNOWN_GAME_SYSTEMS[game.system.id] ? BUTLER.KNOWN_GAME_SYSTEMS[game.system.id].healthAttribute : BUTLER.KNOWN_GAME_SYSTEMS.other.healthAttribute,
         scope: "world",
         type: String,
         config: true,
@@ -122,9 +122,10 @@ export function registerSettings() {
         hint: "SETTINGS.EnhancedConditions.MapTypeH",
         scope: "world",
         type: String,
-        default: BUTLER.KNOWN_GAME_SYSTEMS[game.system.id] !== null ? "default" : "other",
+        //default: BUTLER.KNOWN_GAME_SYSTEMS[game.system.id] !== null ? "default" : "other",
+        default: null,
         choices: BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes,
-        config: true,
+        config: false,
         onChange: s => {}
     });
 
@@ -196,8 +197,8 @@ export function registerSettings() {
         default: BUTLER.DEFAULT_CONFIG.hideNames.enable,
         config: true,
         onChange: s => {
-            ui.combat.render();
-            ui.chat.render();
+            ui.combat.render(true);
+            ui.chat.render(true);
         }
     });
 

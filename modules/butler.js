@@ -23,48 +23,42 @@ export const KNOWN_GAME_SYSTEMS = {
         name: "Dungeons & Dragons 5th Edition",
         concentrationAttribute: "con",
         healthAttribute: "attributes.hp",
-        initiative: "attributes.initiative",
-        conditionMap: true
+        initiative: "attributes.initiative"
     },
     pf1: {
         id: "pf1",
         name: "Pathfinder",
         concentrationAttribute: "",
         healthAttribute: "attributes.hp",
-        initiative: "attributes.init.total",
-        conditionMap: true
+        initiative: "attributes.init.total"
     },
     pf2e: {
         id: "pf2e",
         name: "Pathfinder 2nd Edition",
         concentrationAttribute: "",
         healthAttribute: "attributes.hp",
-        initiative: "attributes.perception",
-        conditionMap: true
+        initiative: "attributes.perception"
     },
     wfrp4e: {
         id: "wfrp4e",
         name: "Warhammer Fantasy Roleplaying Game 4th Edition",
         concentrationAttribute: "",
         healthAttribute: "status.wounds",
-        initiative: "characteristics.i",
-        conditionMap: false
+        initiative: "characteristics.i"
     },
     archmage: {
         id: "archmage",
         name: "13th Age",
         concentrationAttribute: "",
         healthAttribute: "attributes.hp",
-        initiative: "attributes.init.mod",
-        conditionMap: false
+        initiative: "attributes.init.mod"
     },
     other: {
         id: "other",
         name: "Custom/Other",
-        concentrationAttribute: "con",
-        healthAttribute: "health",
-        initiative: "initiative",
-        conditionMap: false
+        concentrationAttribute: "--Unknown--",
+        healthAttribute: "--Unknown--",
+        initiative: "--Unknown--"
     }
 } 
      
@@ -103,7 +97,7 @@ export const DEFAULT_CONFIG = {
         mapTypes: {
             default: "System - Default",
             custom: "System - Custom",
-            other: "Other"
+            other: "Other/Imported"
         },
         referenceTypes: [
             {

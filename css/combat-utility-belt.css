@@ -37,7 +37,9 @@ a.add-temporary {
     margin: 10px;
 }
 
-.condition-map-list {
+/* CONDITION LAB */
+
+ol.condition-lab {
     list-style:none;
     overflow-y: auto;
     overflow-x: hidden;
@@ -46,55 +48,76 @@ a.add-temporary {
     padding: 0px;
 }
 
-.condition-map-item {
+li.condition-lab.row {
     border-bottom: 2px groove beige;
 }
 
-.flexcol.condition-lab {
+.condition-lab.flexcol {
     margin: 3px;
 }
 
-.flexcol.condition-lab.text-entry {
+.condition-lab.flexcol.grabber {
+    flex: 0;
+}
+
+.condition-lab.flexcol.content1 {
+    flex: 4;
+}
+
+.condition-lab.flexcol.content2 {
+    flex: 3;
+}
+
+.condition-lab.flexcol.text-entry {
     flex: 8;
 }
 
-.flexcol.condition-lab.text-entry.condition {
+.condition-lab.flexcol.text-entry .path,
+.condition-lab.flexcol.text-entry .condition {
+    display: flex;
     flex: 1;
     margin: 0px 3px 3px 0px;
 }
 
-.flexcol.condition-lab.text-entry.journal {
+.condition-lab.flexcol.text-entry.journal {
     flex: 2;
     margin: 0px 0px 3px 0px;
 }
 
 .condition-lab .reference-type {
+    flex: 0 0 115px;
+    margin: 0px 3px 0px 0px;
+}
+
+.condition-lab .compendium {
     flex: 1;
+    margin: 0px 3px 0px 0px;
 }
 
 .condition-lab .reference-item {
     flex: 2;
+    margin: 0px 3px 0px 0px;
 }
 
-.flexcol.condition-lab.text-entry.reference {
+.condition-lab.text-entry.reference.flexcol {
     flex: 1;
     margin: 0px 0px 3px 0px;
 }
 
-.reference-item select {
+.condition-lab .reference-item select {
     width: 100%;
 }
 
-.flexcol.condition-lab.text-entry.trigger {
+.condition-lab.text-entry.trigger.flexcol {
     flex: 2;
     margin: 0px 0px 3px 0px;
 }
 
-.flexcol.condition-lab.flexcol.condition-lab.text-entry.icon {
+.condition-lab.flexcol.condition-lab.text-entry.icon.flexcol {
     margin: 0px 0px 3px 0px;
 }
 
-.flexrow.condition-lab {
+.condition-lab.flexrow {
     justify-content: space-around;
 }
 

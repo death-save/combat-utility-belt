@@ -1,6 +1,6 @@
 {
     "SETTINGS.Concentrator.EnableN": "--Force Concentration Checks--",
-    "SETTINGS.Concentrator.EnableH": "Requires concentration checks on tokens with the concentrating status effect when they take damage (D&D 5e only)",
+    "SETTINGS.Concentrator.EnableH": "(Tested in D&D5e only) Requires concentration checks on tokens with the concentrating status effect when they take damage",
     "SETTINGS.Concentrator.OutputToChatN": "Notify Chat",
     "SETTINGS.Concentrator.OutputToChatH": "Display a message in chat whenever concentration is threatened",
     "SETTINGS.Concentrator.PromptRollN": "Prompt Player",
@@ -31,8 +31,8 @@
     "SETTINGS.EnhancedConditions.ActiveConditionMapN": "Active Condition Map",
     "SETTINGS.EnhancedConditions.ActiveConditionMapH": "Stores the active condition map",
     
-    "SETTINGS.GiveXP.EnableN": "--Enable Give XP--",
-    "SETTINGS.GiveXP.EnableH": "REQUIRES REFRESH! Adds an option at the end of combat to automatically distribute xp from the combat to the players",
+    "SETTINGS.GiveXP.EnableN": "--Award XP--",
+    "SETTINGS.GiveXP.EnableH": "Adds an option at the end of combat to automatically distribute xp from the combat to the players",
 
     "SETTINGS.HideNames.EnableN": "--Hide NPC Names--",
     "SETTINGS.HideNames.EnableH": "Hides NPC names in the Combat Tracker",
@@ -42,7 +42,7 @@
     "SETTINGS.HideNames.HideFooterH": "When NPC names are hidden, also hide the chat card footer which can contain sensitive information",   
 
     "SETTINGS.MightySummoner.EnableN": "--Mighty Summoner--",
-    "SETTINGS.MightySummoner.EnableH": "Automatically check to see if token owner of NEUTRAL actor also owns an actor with the Mighty Summoner feat. Automatically calculates and adds new HP formula and rolls HP for token on canvas drop",
+    "SETTINGS.MightySummoner.EnableH": "(Tested in D&D5e only) Automatically check to see if token owner of NEUTRAL actor also owns an actor with the Mighty Summoner feat. Automatically calculates and adds new HP formula and rolls HP for token on canvas drop",
     
     "SETTINGS.PanSelect.EnablePanN": "--Pan to Token--",
     "SETTINGS.PanSelect.EnablePanH": "Enables the following token panning functionality",

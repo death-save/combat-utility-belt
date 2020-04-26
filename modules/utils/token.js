@@ -65,8 +65,9 @@ export class TokenUtility {
             return null;
         }
     
-        let r = new Roll(formula);
-        r.roll();
+        const r = new Roll(formula);
+        const roll = r.roll();
+        roll.toMessage({flavor: `${actor.name} rolls for HP!`});
         const hp = r.total;
     
         return hp;

@@ -137,7 +137,8 @@
             "referenceType": "compendium.journalEntry",
             "options": {
                 "overlay": true,
-                "removeOthers": true
+                "removeOthers": true,
+                "markDefeated": true
             }
         },
         {

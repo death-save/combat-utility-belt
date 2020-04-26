@@ -94,7 +94,7 @@ export class EnhancedConditions {
             entry = await JournalEntry.create({
                 name: condition,
                 permission: {
-                    default: ENTITY_PERMISSIONS.LIMITED
+                    default: CONST.ENTITY_PERMISSIONS.LIMITED
                 }
             }, {
                 displaySheet: false
@@ -118,29 +118,32 @@ export class EnhancedConditions {
             return;
         }
 
-        const map = conditionMap || Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.map);
         let entries;
         const coreIconSetting = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.coreIcons);
 
         //save the original icons
-        if (!coreIconSetting) {
+        if (!coreIconSetting.length) {
             EnhancedConditions._backupCoreIcons();
         }
 
         const removeDefaultEffects = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.removeDefaultEffects);
-        const activeConditionMap = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.map);
+        const activeConditionMap = conditionMap || Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.map);
         const icons = EnhancedConditions.getConditionIcons(activeConditionMap);
+
+        if (!removeDefaultEffects && !activeConditionMap) {
+            return;
+        }
 
         if (removeDefaultEffects) {
             CONFIG.statusEffects = activeConditionMap ? icons : [];
         } else {
-            if (map instanceof Array) {
+            if (activeConditionMap instanceof Array) {
                 //add the icons from the condition map to the status effects array
                 const coreIcons = CONFIG.defaultStatusEffects || Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.coreIcons);
                 CONFIG.statusEffects = coreIcons.concat(icons);
-            } else {
-                entries = [];
             }
+
+            return;
         }
     }
 
@@ -274,12 +277,15 @@ export class EnhancedConditions {
 
         if (!conditions.length) {
             return;
-        } 
+        }
+
+        
 
         //If the update has effects in it, lookup mapping and set the current token
         //const token = new Token(tokenData);
         const token = canvas.tokens.get(tokenData._id);
         const map = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.map);
+
         return EnhancedConditions.lookupEntryMapping(token, map, conditions);
     }
 
@@ -388,6 +394,24 @@ export class EnhancedConditions {
 
         if (conditionEntries.length === 0) {
             return;
+        }
+
+        // If condition marks combatants defeated, look for matching combatant
+        if (conditionEntries.some(c => c.options.markDefeated)) {
+            const combat = game.combat;
+            const combatants = combat ? game.combat?.combatants.filter(c => c.tokenId === token.id) : null;
+            if (!combatants.length) {
+                return;
+            }
+
+            const update = combatants.map(c => {
+                return {
+                    _id: c._id,
+                    defeated: true
+                }
+            });
+
+            combat.updateEmbeddedEntity("Combatant", update);
         }
 
         return EnhancedConditions.outputChatMessage(token, conditionEntries);

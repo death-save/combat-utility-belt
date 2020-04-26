@@ -68,13 +68,17 @@
     </div>
     <hr>
     <div class="flexrow triggler">
-        <div class="form-group options">
+        <div class="form-group options" title="Trigger for player-owned Actors only">
             <input type="checkbox" name="pcOnly" {{checked pcOnly}}>
             <label>PCs Only</label>
         </div>
-        <div class="form-group options">
+        <div class="form-group options" title="Trigger for non-player-owned Actors only">
             <input type="checkbox" name="npcOnly" {{checked npcOnly}}>
             <label>NPCs Only</label>
+        </div>
+        <div class="form-group options" title="Trigger only if Property1 value is not 0">
+            <input type="checkbox" name="notZero" {{checked notZero}}>
+            <label>Property not 0</label>
         </div>
     </div>
     <footer class="flexrow">

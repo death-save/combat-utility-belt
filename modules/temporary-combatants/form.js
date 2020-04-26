@@ -56,7 +56,7 @@ export class TemporaryCombatantForm extends FormApplication {
     }
 
     /**
-     * 
+     * Activate listeners for the form
      * @param {*} html 
      */
     activateListeners(html) {
@@ -65,5 +65,7 @@ export class TemporaryCombatantForm extends FormApplication {
         cancelButton.on("click", event => {
             this.close();
         });
+
+        super.activateListeners(html);
     }
 }

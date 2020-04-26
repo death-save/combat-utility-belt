@@ -25,7 +25,7 @@ export class TrigglerForm extends FormApplication {
     }
 
     /**
-     * 
+     * Get data for the triggler form
      */
     getData() {
         const id = this.data.id;
@@ -45,13 +45,19 @@ export class TrigglerForm extends FormApplication {
         const property2 = this.data.property2 || null;
         const pcOnly = this.data.pcOnly || null;
         const npcOnly = this.data.npcOnly || null;
+        const notZero = this.data.notZero || null;
 
-        const categories = Object.keys(game.system.template.Actor.templates.common);
+        const categories = hasProperty(game, "system.template.Actor.templates.common") ? Object.keys(game.system.template.Actor.templates.common) : null;
         const attributes = category ? Object.keys(game.system.template.Actor.templates.common[category]) : null;
         const properties = category && attribute ? Object.keys(game.system.template.Actor.templates.common[category][attribute]) : null;
         const operators = DEFAULT_CONFIG.triggler.operators;
 
         const triggerSelected = id && triggers ? true : false;
+
+        if (!categories) {
+            ui.notifications.warn("Triggler is not supported in your game system at this time.");
+            return false;
+        }
 
         return {
             id,
@@ -68,7 +74,8 @@ export class TrigglerForm extends FormApplication {
             value,
             property2,
             pcOnly,
-            npcOnly
+            npcOnly,
+            notZero
         }
     }
 
@@ -199,7 +206,7 @@ export class TrigglerForm extends FormApplication {
      */
     _constructString(parts) {
         const operatorText = DEFAULT_CONFIG.triggler.operators[parts.operator];
-        const string = `${parts.category}.${parts.attribute}.${parts.property1} ${operatorText} ${parts.value}${parts.property2 ? ` ${parts.category}.${parts.attribute}.${parts.property2}` : ""}${parts.pcOnly ? ` (PCs Only)` : ""}${parts.npcOnly ? ` (NPCs Only)` : ""}`;
+        const string = `${parts.category}.${parts.attribute}.${parts.property1} ${operatorText} ${parts.value}${parts.property2 ? ` ${parts.category}.${parts.attribute}.${parts.property2}` : ""}${parts.pcOnly ? ` (PCs Only)` : ""}${parts.npcOnly ? ` (NPCs Only)` : ""}${parts.notZero ? ` (Not 0)` : ""}`;
         return string;
     }
 }
