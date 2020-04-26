@@ -1,6 +1,6 @@
 {
     "SETTINGS.Concentrator.EnableN": "--Force Concentration Checks--",
-    "SETTINGS.Concentrator.EnableH": "(Tested in D&D5e only) Requires concentration checks on tokens with the concentrating status effect when they take damage",
+    "SETTINGS.Concentrator.EnableH": "(Tested in D&D5e only)(Requires Enhanced Conditions) Forces concentration checks on tokens with the concentrating status effect when they take damage",
     "SETTINGS.Concentrator.OutputToChatN": "Notify Chat",
     "SETTINGS.Concentrator.OutputToChatH": "Display a message in chat whenever concentration is threatened",
     "SETTINGS.Concentrator.PromptRollN": "Prompt Player",

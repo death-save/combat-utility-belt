@@ -12,17 +12,26 @@ export class EnhancedConditions {
         const maps = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.defaultMaps);
         const enable = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.enable);
         const system = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.system);
+        const mapType = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.mapType);
         let conditionMap = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.map);
 
-        if (!maps || (maps instanceof Object && Object.entries(maps).length === 0)) {
+        if (!maps || (maps instanceof Object && Object.keys(maps).length === 0)) {
             const defaultMaps = await EnhancedConditions.loadDefaultMaps();
             Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.defaultMaps, defaultMaps);
         }
 
-        if (!Object.keys(conditionMap).length) {
+        // If map type is not set and a default map exists for the system, set maptype to default
+        if (!mapType && (maps instanceof Object && Object.keys(maps).includes(system))) {
+            const defaultMapType = Sidekick.getKeyByValue(BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes, BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes.default);
+            Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.mapType, defaultMapType);
+        }
+
+        // If there's no condition map, get the default one
+        if (!conditionMap.length) {
             conditionMap = EnhancedConditions.getDefaultMap(system);
             Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.map, conditionMap);
         }
+
 
         if (enable) {
             EnhancedConditions._updateStatusIcons(conditionMap);

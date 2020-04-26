@@ -112,15 +112,16 @@ export class ConditionLab extends FormApplication {
             return [t.id, t.text]
         });
 
-        const isDefault = mapType === "default";
+        const isDefault = mapType === Sidekick.getKeyByValue(BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes, BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes.default);
 
         conditionMap.forEach((entry, index, map) => {
             const referenceType = entry.referenceType || "journalEntry";
-            const linkRegex = new RegExp(/(?<=\[)(.*?)(?=\])/);
+            const collectionRegex = new RegExp(/\[(.*\..*)(?=\..*])/);
+            
             const compendium = entry.compendium || null;
 
             if (!compendium && (referenceType === "compendium.journalEntry" || referenceType === "compendium.item")) {
-                map[index].compendium = entry.referenceId.match(linkRegex) ? entry.referenceId.match(linkRegex)[0].split(".", 2).join(".") : null;
+                map[index].compendium = entry.referenceId.match(collectionRegex) ? entry.referenceId.match(collectionRegex)[0].substring(1) : null;
             }
             
             map[index].referenceTypeIcon = BUTLER.DEFAULT_CONFIG.enhancedConditions.referenceTypes.find(r => r.id === referenceType).icon;

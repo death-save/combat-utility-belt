@@ -2,6 +2,7 @@ import * as BUTLER from "./butler.js";
 import { EnhancedConditions } from "./enhanced-conditions/enhanced-conditions.js";
 import { Sidekick } from "./sidekick.js";
 import { TokenUtility } from "./utils/token.js";
+import { Concentrator } from "./concentrator.js";
 
 export function registerSettings() {
     /* -------------------------------------------- */
@@ -15,7 +16,13 @@ export function registerSettings() {
         scope: "world",
         type: Boolean,
         config: true,
-        onChange: s => {}
+        onChange: s => {
+            if (s) {
+                const enhancedConditionsEnabled = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.enable);
+
+                enhancedConditionsEnabled ? Concentrator._createCondition() : Concentrator._promptEnableEnhancedConditions();
+            }   
+        }
     });
 
     Sidekick.registerSetting(BUTLER.SETTING_KEYS.concentrator.concentrationAttribute, {
@@ -91,8 +98,11 @@ export function registerSettings() {
         default: false,
         config: true,
         onChange: s => {
+            if (s) {
+                EnhancedConditions._onReady();
+            }
+
             EnhancedConditions._toggleLabButtonVisibility(s);
-            EnhancedConditions._updateStatusIcons();
         }
     });
 
@@ -123,7 +133,7 @@ export function registerSettings() {
         scope: "world",
         type: String,
         //default: BUTLER.KNOWN_GAME_SYSTEMS[game.system.id] !== null ? "default" : "other",
-        default: null,
+        default: "",
         choices: BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes,
         config: false,
         onChange: s => {}
