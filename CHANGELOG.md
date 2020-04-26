@@ -5,12 +5,54 @@
 - Combatant stats in Combat Tracker
 - Refine Hide NPC Names to allow for "known" NPC names/information
 - Attach Macros to Conditions in Condition Lab
+- Macros for: hiding/unhiding NPC names, rerolling initiative
 
-## [1.0.0] - 2020-04-24
+## [Known Issues]
+- NPC names in Initiative rolls are not hidden
+- Pan/Select fires for Temporary Combatants
+
+## [1.0.0] - 2020-04-25
+### New
+- Added **Triggler** a trigger management gadget focused on Actor and Token attribute updates. When combined with **Enhanced Conditions**/**Condition Lab** this replaces **Mark Injured/Dead**
+- Added macros for adding and removing conditions: 
+    - `game.cub.applyCondition(conditionName, token/s, {warn: true/false})`
+    - `game.cub.removeCondition(conditionName, token/s, {warn: true/false})`
+    - `game.cub.removeAllConditions(token/s)`
+- Added the ability to link a Triggler trigger to a macro, executing that macro when the trigger criteria is met
+- Added a Condition Lab map for the **Pathfinder 1** game system thanks to `furyspark`!
+- Added drag and drop resorting to the **Condition Lab**
+- Partial localization support
+
 ### Changed
+- Massive changes to the **Condition Lab** -- **you will need to reconfigure your Condition Lab mapping**
+- Module settings have been revamped. **You will need to reconfigure your settings!**
+- Condition Lab now includes three mapping types:
+    - *System - Default* - the default condition mapping for the current game system (if one exists)
+    - *System - Custom* - an unlocked version of the default mapping
+    - *Other/Imported* - an empty/custom map
+- Condition Lab mappings can be exported and imported
+- Condition lab mappings can now link to the following reference sources:
+    - `JournalEntry`
+    - `Item`
+    - `Compendium.JournalEntry`
+    - `Compendium.Item`
+- Conditions listed in Enhanced Conditions chat output can now be removed
+- Conditions in the Condition Lab have the following additional options:
+    - Overlay - condition is an overlay when applied
+    - Remove Others - condition will remove other conditions when applied
+    - Mark Defeated - when condition is applied, combatants linked to the token will be marked defeated
+- Module completely rebuilt to use es6 modules. This should allow for easier and better future updates
+- Award XP is now a checkbox on the End Combat dialog and does not require a refresh to enable/disable
 
 ### Fixed
-- Concentrator no longer tests concentration when HP = 0 and instead simply removes the status icon
+- **Concentrator** no longer tests concentration when HP = 0 and instead simply removes the status icon
+- **Temporary Combatants** work again following the changes to hooks in Foundry VTT 0.5.2
+- Enhanced Conditions chat output icons have a fixed height
+- Reference entries are sorted alphabetically
+
+## Removed
+- **Mark Injured/Dead** has been removed in favour of a robust and customisable trigger system (**Triggler**) combined with the existing **Condition Lab**
+- Removed Condition Lab mapping for **Pathfinder 2nd Edition** due to condition tracking being added to the game system
 
 ## [0.9.8] - 2020-03-16
 ### Added
