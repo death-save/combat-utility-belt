@@ -1,0 +1,199 @@
+{
+    "system":"dnd5e",
+    "map":[
+        {
+            "name":"Blinded", 
+            "icon": "modules/combat-utility-belt/icons/blinded.svg",
+            "referenceId": "@Compendium[combat-utility-belt.conditionsdnd5e.oScVqOHJt5SQszVl]",
+            "referenceType": "compendium.journalEntry"
+        },
+        {
+            "name":"Charmed",
+            "icon": "modules/combat-utility-belt/icons/charmed.svg", 
+            "referenceId": "@Compendium[combat-utility-belt.conditionsdnd5e.UWlXFfSX95JVWrYs]",
+            "referenceType": "compendium.journalEntry"
+        },
+        {
+            "name": "Concentrating",
+            "icon": "modules/combat-utility-belt/icons/concentrating.svg",
+            "referenceId": "@Compendium[combat-utility-belt.conditionsdnd5e.nSoKejZfahbxfggp]",
+            "referenceType": "compendium.journalEntry"
+        },
+        {
+            "name": "Deafened", 
+            "icon": "modules/combat-utility-belt/icons/deafened.svg", 
+            "referenceId" : "@Compendium[combat-utility-belt.conditionsdnd5e.p9CQYqWS7s4Abwqk]",
+            "referenceType": "compendium.journalEntry"
+        },
+        {
+            "name":"Exhaustion 1",
+            "icon":"modules/combat-utility-belt/icons/exhaustion1.svg",
+            "referenceId": "@Compendium[combat-utility-belt.conditionsdnd5e.4Z1Ins4wHUAWJal2]",
+            "referenceType": "compendium.journalEntry"
+        },
+        {
+            "name":"Exhaustion 2",
+            "icon":"modules/combat-utility-belt/icons/exhaustion2.svg",
+            "referenceId": "@Compendium[combat-utility-belt.conditionsdnd5e.4Z1Ins4wHUAWJal2]",
+            "referenceType": "compendium.journalEntry"
+        },
+        {
+            "name":"Exhaustion 3",
+            "icon":"modules/combat-utility-belt/icons/exhaustion3.svg",
+            "referenceId": "@Compendium[combat-utility-belt.conditionsdnd5e.4Z1Ins4wHUAWJal2]",
+            "referenceType": "compendium.journalEntry"
+        },
+        {
+            "name":"Exhaustion 4",
+            "icon":"modules/combat-utility-belt/icons/exhaustion4.svg",
+            "referenceId": "@Compendium[combat-utility-belt.conditionsdnd5e.4Z1Ins4wHUAWJal2]",
+            "referenceType": "compendium.journalEntry"
+        },
+        {
+            "name":"Exhaustion 5",
+            "icon":"modules/combat-utility-belt/icons/exhaustion5.svg",
+            "referenceId": "@Compendium[combat-utility-belt.conditionsdnd5e.4Z1Ins4wHUAWJal2]",
+            "referenceType": "compendium.journalEntry"
+        },
+        {
+            "name":"Frightened",
+            "icon":"modules/combat-utility-belt/icons/frightened.svg",
+            "referenceId": "@Compendium[combat-utility-belt.conditionsdnd5e.PTANb5kCweCv3Jna]",
+            "referenceType": "compendium.journalEntry"
+        },
+        {
+            "name":"Grappled",
+            "icon":"modules/combat-utility-belt/icons/grappled.svg",
+            "referenceId": "@Compendium[combat-utility-belt.conditionsdnd5e.qKqW3LJEQpJ7T3v8]",
+            "referenceType": "compendium.journalEntry"
+        },
+        {
+            "name":"Incapacitated",
+            "icon":"modules/combat-utility-belt/icons/incapacitated.svg",
+            "referenceId": "@Compendium[combat-utility-belt.conditionsdnd5e.hWk0QM9u7SUpd4BX]",
+            "referenceType": "compendium.journalEntry"
+        },
+        {
+            "name":"Invisible",
+            "icon":"modules/combat-utility-belt/icons/invisible.svg",
+            "referenceId": "@Compendium[combat-utility-belt.conditionsdnd5e.pSvtps6WHVAuWh9l]",
+            "referenceType": "compendium.journalEntry"
+        },
+        {
+            "name":"Paralyzed",
+            "icon":"modules/combat-utility-belt/icons/paralyzed.svg",
+            "referenceId": "@Compendium[combat-utility-belt.conditionsdnd5e.o5oZVdHSWmceeFyx]",
+            "referenceType": "compendium.journalEntry"
+        },
+        {
+            "name":"Petrified",
+            "icon":"modules/combat-utility-belt/icons/petrified.svg",
+            "referenceId": "@Compendium[combat-utility-belt.conditionsdnd5e.KaKNDyLeWRGqpBlc]",
+            "referenceType": "compendium.journalEntry"
+        },
+        {
+            "name":"Poisoned",
+            "icon":"modules/combat-utility-belt/icons/poisoned.svg",
+            "referenceId": "@Compendium[combat-utility-belt.conditionsdnd5e.eJQ3ve6RTdjbNGEz]",
+            "referenceType": "compendium.journalEntry"
+        },
+        {
+            "name":"Prone",
+            "icon":"modules/combat-utility-belt/icons/prone.svg",
+            "referenceId": "@Compendium[combat-utility-belt.conditionsdnd5e.ekm4TUHKT3QUPdPv]",
+            "referenceType": "compendium.journalEntry"
+        },
+        {
+            "name":"Restrained",
+            "icon":"modules/combat-utility-belt/icons/restrained.svg",
+            "referenceId": "@Compendium[combat-utility-belt.conditionsdnd5e.0mkU8eksNfwd1AZY]",
+            "referenceType": "compendium.journalEntry"
+        },
+        {
+            "name":"Stunned",
+            "icon":"modules/combat-utility-belt/icons/stunned.svg",
+            "referenceId": "@Compendium[combat-utility-belt.conditionsdnd5e.IDLJEkgkdcnljtEW]",
+            "referenceType": "compendium.journalEntry"
+        },
+        {
+            "name":"Unconscious",
+            "icon":"icons/svg/unconscious.svg",
+            "referenceId": "@Compendium[combat-utility-belt.conditionsdnd5e.S499QUmXTVx81wk8]",
+            "referenceType": "compendium.journalEntry",
+            "options": {
+                "overlay": true
+            }
+        },
+        {
+            "name":"Injured",
+            "icon":"icons/svg/blood.svg",
+            "referenceId": "",
+            "referenceType": "compendium.journalEntry"
+        },
+        {
+            "name":"Dead",
+            "icon":"icons/svg/skull.svg",
+            "referenceId": "",
+            "referenceType": "compendium.journalEntry",
+            "options": {
+                "overlay": true,
+                "removeOthers": true,
+                "markDefeated": true
+            }
+        },
+        {
+            "name":"Aid",
+            "icon":"systems/dnd5e/icons/spells/heal-sky-1.jpg",
+            "referenceId": "@Compendium[dnd5e.spells.Opwh2PdX4runSBlm]",
+            "referenceType": "compendium.item"
+        },
+        {
+            "name":"Bless",
+            "icon":"systems/dnd5e/icons/spells/haste-sky-1.jpg",
+            "referenceId": "@Compendium[dnd5e.spells.8dzaICjGy6mTUaUr]",
+            "referenceType": "compendium.item"
+        },
+        {
+            "name":"Bane",
+            "icon":"systems/dnd5e/icons/spells/rip-magenta-2.jpg",
+            "referenceId": "@Compendium[dnd5e.spells.95K2aUhAGV9qXjnf]",
+            "referenceType": "compendium.item"
+        },
+        {
+            "name":"Rage",
+            "icon":"systems/dnd5e/icons/skills/red_10.jpg",
+            "referenceId": "@Compendium[dnd5e.classfeatures.VoR0SUrNX5EJVPIO]",
+            "referenceType": "compendium.item"
+        },
+        {
+            "name":"Hex",
+            "icon":"systems/dnd5e/icons/spells/evil-eye-eerie-1.jpg",
+            "referenceId": "@Compendium[dnd5e.spells.",
+            "referenceType": "compendium.item"
+        },
+        {
+            "name":"Hexblade's Curse",
+            "icon":"systems/dnd5e/icons/spells/enchant-eerie-2.jpg",
+            "referenceId": "",
+            "referenceType": "compendium.item"
+        },
+        {
+            "name":"Hunter's Mark",
+            "icon":"systems/dnd5e/icons/spells/evil-eye-red-1.jpg",
+            "referenceId": "@Compendium[dnd5e.spells.0xmXiPiuYws1OGcX]",
+            "referenceType": "compendium.item"
+        },
+        {
+            "name":"Bardic Inspiration",
+            "icon":"systems/dnd5e/icons/skills/yellow_08.jpg",
+            "referenceId": "@Compendium[dnd5e.classfeatures.EeGafsa17CapsH2j]",
+            "referenceType": "compendium.item"
+        },
+        {
+            "name":"Patient Defense",
+            "icon":"systems/dnd5e/icons/skills/blue_18.jpg",
+            "referenceId": "@Compendium[dnd5e.classfeatures.TDglPcxIVEzvVSgK]",
+            "referenceType": "compendium.item"
+        }
+    ]
+}

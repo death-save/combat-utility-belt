@@ -1,0 +1,33 @@
+{
+    "system": "example",
+    "map": [
+        {
+            "name": "Condition 1 Name",
+            "icon": "./path/to/icon",
+            "referenceId": "@JournalEntry[anIdofSoMeKinD]",
+            "referenceType": "journalEntry",
+            "options": {
+                "overlay": true,
+                "removeOthers": true
+            }
+        },
+        {
+            "name": "Condition 2 Name",
+            "icon": "./path/to/icon",
+            "referenceId": "@Item[anIdofSoMeKinD]",
+            "referenceType": "item"
+        },
+        {
+            "name": "Condition 3 Name",
+            "icon": "./path/to/icon",
+            "referenceId": "@Compendium[example.conditions.anIdofSoMeKinD]",
+            "referenceType": "compendium.journalEntry"
+        },
+        {
+            "name": "Condition 4 Name",
+            "icon": "./path/to/icon",
+            "referenceId": "@Compendium[example.features.anIdofSoMeKinD]",
+            "referenceType": "compendium.item"
+        }
+    ]
+}

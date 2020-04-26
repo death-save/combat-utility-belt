@@ -1,0 +1,11 @@
+<div class="form-group">
+    <label>Trigger</label>
+    <select name="flags.combat-utility-belt.macroTrigger" title="Trigger to execute Macro">
+        {{#select flag}}
+        <option value="">--No Trigger Set--</option>
+        {{#each triggers}}
+            <option value="{{this.id}}">{{this.text}}</option>
+        {{/each}}
+        {{/select}}
+    </select>
+</div>

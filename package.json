@@ -1,0 +1,25 @@
+{
+  "name": "combat-utility-belt",
+  "version": "0.9.8",
+  "description": "![https://img.shields.io/badge/Foundry%20VTT-0.4.7%2B-green](https://img.shields.io/badge/Foundry%20VTT-0.4.7%2B-green)",
+  "main": "combat-utility-belt.js",
+  "dependencies": {
+    "eslint": "^6.8.0"
+  },
+  "devDependencies": {
+    "foundry-pc-types": "gitlab:foundry-projects/foundry-pc/foundry-pc-types"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/death-save/combat-utility-belt.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/death-save/combat-utility-belt/issues"
+  },
+  "homepage": "https://github.com/death-save/combat-utility-belt#readme"
+}
