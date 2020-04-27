@@ -11,6 +11,10 @@
 - NPC names in Initiative rolls are not hidden
 - Pan/Select fires for Temporary Combatants
 
+## [1.0.2] - 2020-04-26
+## Fixed
+- Concentration was not being automatically applied when selected
+
 ## [1.0.1] - 2020-04-26
 ## Changed
 - Enabling Concentrator now prompts to enable Enhanced Conditions (if disabled) and creates a Concentrating condition if none exists
