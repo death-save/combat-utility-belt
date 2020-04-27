@@ -406,7 +406,7 @@ export class EnhancedConditions {
         }
 
         // If condition marks combatants defeated, look for matching combatant
-        if (conditionEntries.some(c => c.options.markDefeated)) {
+        if (conditionEntries.some(c => c?.options?.markDefeated)) {
             const combat = game.combat;
             const combatants = combat ? game.combat?.combatants.filter(c => c.tokenId === token.id) : null;
             if (!combatants.length) {
@@ -499,7 +499,7 @@ export class EnhancedConditions {
         }
 
         for (let token of tokens) {
-            if ((!condition.options.overlay && token.data.effects.includes(effect)) || (condition.options.overlay && token.data.overlayEffect === effect)) {
+            if ((!condition?.options?.overlay && token?.data?.effects.includes(effect)) || (condition?.options?.overlay && token?.data?.overlayEffect === effect)) {
                 if (warn) {
                     ui.notifications.warn("Apply Condition failed. Condition already active.");
                     console.log(`Condition ${conditionName} is already active on token.`);
@@ -507,11 +507,11 @@ export class EnhancedConditions {
                 return;
             }
 
-            if (condition.options.removeOthers) {
+            if (condition?.options?.removeOthers) {
                 await token.update({effects: []});
             }
 
-            condition.options.overlay === true ? await token.toggleOverlay(effect) : await token.toggleEffect(effect);
+            condition?.options?.overlay === true ? await token.toggleOverlay(effect) : await token.toggleEffect(effect);
 
             
         }
@@ -554,7 +554,7 @@ export class EnhancedConditions {
         }
 
         for (let token of tokens) {
-            if ((!condition.options.overlay && !token.data.effects.includes(effect)) || (condition.options.overlay && token.data.overlayEffect !== effect)) {
+            if ((!condition?.options?.overlay && !token?.data?.effects.includes(effect)) || (condition?.options?.overlay && token?.data?.overlayEffect !== effect)) {
                 if (warn) {
                     ui.notifications.warn("Remove Condition failed. Condition is not active on token");
                     console.log(`Condition ${conditionName} is not active on token.`);
@@ -562,7 +562,7 @@ export class EnhancedConditions {
                 return;
             }
 
-            condition.options.overlay === true ? token.toggleOverlay(effect) : token.toggleEffect(effect);
+            condition?.options?.overlay === true ? token.toggleOverlay(effect) : token.toggleEffect(effect);
         }
     }
 
