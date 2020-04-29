@@ -194,7 +194,7 @@ export class Concentrator {
     /**
      * Handles preUpdateToken
      * @param {*} scene 
-     * @param {*} sceneID 
+     * @param {*} tokenData
      * @param {*} update 
      * @param {*} options 
      */
@@ -248,7 +248,7 @@ export class Concentrator {
      * @param {*} update 
      * @param {*} options 
      */
-    static _onPreUpdateActor(actor, update, options, userId) {
+    static async _onPreUpdateActor(actor, update, options, userId) {
         const tokens = actor.getActiveTokens();
         const actorId = update._id;
         const newHealth = getProperty(update, `data.${Sidekick.getSetting(SETTING_KEYS.concentrator.healthAttribute)}.value`);
@@ -273,6 +273,12 @@ export class Concentrator {
 
         if(Sidekick.getSetting(SETTING_KEYS.concentrator.outputChat)) {
             for (const t of tokens) {
+                if (newHealth === 0) {
+                    const newEffects = Concentrator._processDeath(t);
+                    await t.update({effects: newEffects});
+                    continue;
+                }
+
                 Concentrator._displayChat(t, damageAmount);
             } 
         }
@@ -296,7 +302,7 @@ export class Concentrator {
     /**
      * Handle update Token
      * @param {*} scene 
-     * @param {*} sceneID 
+     * @param {*} token 
      * @param {*} update 
      * @param {*} options 
      * @param {*} userId 

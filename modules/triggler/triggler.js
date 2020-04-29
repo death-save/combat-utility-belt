@@ -142,13 +142,12 @@ export class Triggler {
                         // if property 1 update value = 50% of property 2 value
                         if (updateValue === (property2Value * divisor)) {
                             Triggler._executeTrigger(trigger, entity);
-                            break;
                         }
+                        break;
                     }
                     if (updateValue === triggerValue) {
                         // execute the trigger's condition mappings
                         Triggler._executeTrigger(trigger, entity);
-                        break;
                     }
                     break;
 
@@ -159,8 +158,8 @@ export class Triggler {
                         // if property 1 update value = 50% of property 2 value
                         if (updateValue > (property2Value * divisor)) {
                             Triggler._executeTrigger(trigger, entity);
-                            break;
                         }
+                        break;
                     }
                     if (updateValue > triggerValue) {
                         Triggler._executeTrigger(trigger, entity);
@@ -174,8 +173,8 @@ export class Triggler {
                         // if property 1 update value = 50% of property 2 value
                         if (updateValue >= (property2Value * divisor)) {
                             Triggler._executeTrigger(trigger, entity);
-                            break;
                         }
+                        break;
                     }
                     if (updateValue >= triggerValue) {
                         Triggler._executeTrigger(trigger, entity);
@@ -189,8 +188,8 @@ export class Triggler {
                         // if property 1 update value = 50% of property 2 value
                         if (updateValue < (property2Value * divisor)) {
                             Triggler._executeTrigger(trigger, entity);
-                            break;
                         }
+                        break;
                     }
                     if (updateValue < triggerValue) {
                         Triggler._executeTrigger(trigger, entity);
@@ -204,8 +203,8 @@ export class Triggler {
                         // if property 1 update value = 50% of property 2 value
                         if (updateValue <= (property2Value * divisor)) {
                             Triggler._executeTrigger(trigger, entity);
-                            break;
                         }
+                        break;
                     }
                     if (updateValue <= triggerValue) {
                         Triggler._executeTrigger(trigger, entity);
@@ -219,8 +218,8 @@ export class Triggler {
                         // if property 1 update value = 50% of property 2 value
                         if (updateValue !== (property2Value * divisor)) {
                             Triggler._executeTrigger(trigger, entity);
-                            break;
                         }
+                        break;
                     }
                     if (updateValue !== triggerValue) {
                         Triggler._executeTrigger(trigger, entity);
@@ -254,7 +253,7 @@ export class Triggler {
     /**
      * Update token handler
      * @param {*} scene 
-     * @param {*} sceneId 
+     * @param {*} tokenData 
      * @param {*} update 
      * @param {*} options 
      * @param {*} userId 

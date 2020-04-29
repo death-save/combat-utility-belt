@@ -1,14 +1,12 @@
 {
   "name": "combat-utility-belt",
-  "version": "0.9.8",
-  "description": "![https://img.shields.io/badge/Foundry%20VTT-0.4.7%2B-green](https://img.shields.io/badge/Foundry%20VTT-0.4.7%2B-green)",
+  "version": "1.0.3",
+  "description": "Combat-focused module for Foundry vtt",
   "main": "combat-utility-belt.js",
   "dependencies": {
-    "eslint": "^6.8.0"
+    "foundry-pc-types": "^0.1.0"
   },
-  "devDependencies": {
-    "foundry-pc-types": "gitlab:foundry-projects/foundry-pc/foundry-pc-types"
-  },
+  "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -16,8 +14,8 @@
     "type": "git",
     "url": "git+https://github.com/death-save/combat-utility-belt.git"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Evan Clarke",
+  "license": "GPL-3.0",
   "bugs": {
     "url": "https://github.com/death-save/combat-utility-belt/issues"
   },
