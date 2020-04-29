@@ -205,7 +205,6 @@ export class EnhancedConditions {
 
     /**
      * Retrieves a condition name by its mapped icon
-     * @param {*} conditionMap 
      * @param {*} icon 
      */
     static getConditionsByIcon(icon, {firstOnly=false}={}) {
@@ -408,7 +407,8 @@ export class EnhancedConditions {
         // If condition marks combatants defeated, look for matching combatant
         if (conditionEntries.some(c => c?.options?.markDefeated)) {
             const combat = game.combat;
-            const combatants = combat ? game.combat?.combatants.filter(c => c.tokenId === token.id) : null;
+            const combatants = combat ? game.combat?.combatants.filter(c => c.tokenId === token.id) : [];
+
             if (!combatants.length) {
                 return;
             }
