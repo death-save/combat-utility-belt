@@ -11,6 +11,11 @@
 - NPC names in Initiative rolls are not hidden
 - Pan/Select fires for Temporary Combatants
 
+## [1.0.3] - 2020-04-28
+## Fixed
+- Triggler no longer incorrectly fires due to bad logic
+- Concentrator now correctly processes death-state for actors 
+
 ## [1.0.2] - 2020-04-26
 ## Fixed
 - Concentration was not being automatically applied when selected
