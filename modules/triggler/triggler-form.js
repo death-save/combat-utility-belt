@@ -130,8 +130,6 @@ export class TrigglerForm extends FormApplication {
 
             this.render();
         });
-
-
     }
 
     /**
@@ -155,6 +153,7 @@ export class TrigglerForm extends FormApplication {
             const existingTrigger = triggers.find(t => t.id === id);
             if (existingTrigger) {
                 updatedTrigger = mergeObject(existingTrigger, newData);
+                updatedTrigger.text = text;
                 updatedTriggers[triggers.indexOf(existingTrigger)] = updatedTrigger;
             }
             
