@@ -38,7 +38,6 @@ export class ConditionLab extends FormApplication {
      * 
      */
     async prepareData() {
-        console.time("data-prep");
         const defaultMaps = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.defaultMaps);
         const mappedSystems = Object.keys(defaultMaps) || [];
         const mapTypeChoices = BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes;
@@ -166,7 +165,7 @@ export class ConditionLab extends FormApplication {
             triggers,
             isDefault
         }
-        console.timeEnd("data-prep");
+        
         return data;
     }
 
@@ -279,7 +278,6 @@ export class ConditionLab extends FormApplication {
             });
         }
 
-        console.log("after process",newMap);
         return newMap;
     }
 
@@ -311,8 +309,6 @@ export class ConditionLab extends FormApplication {
         const mapType = formData["map-type"];
         let newMap = this._processFormData(formData);
         const defaultMapType = Sidekick.getKeyByValue(BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes, BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes.default);
-        console.log("formdata", formData);
-        console.log("before setting", newMap);
         
         if (mapType === defaultMapType) {
             const defaultMap = EnhancedConditions.getDefaultMap(this.system);
@@ -320,12 +316,10 @@ export class ConditionLab extends FormApplication {
         }
         this.mapType = mapType;
         this.map = newMap;
-        //this.initialMap = newMap;
 
         Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.mapType, mapType, true);
         Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.map, newMap, true);
 
-        //this.render();
         ui.notifications.info("Condition Lab mapping saved!");
     }
 
