@@ -1,5 +1,5 @@
 import { Sidekick } from "../sidekick.js";
-import { NAME, SETTING_KEYS, DEFAULT_CONFIG } from "../butler.js";
+import { NAME, SETTING_KEYS, DEFAULT_CONFIG, FLAGS } from "../butler.js";
 import { MightySummoner } from "../mighty-summoner.js";
 
 export class TokenUtility {
@@ -15,27 +15,27 @@ export class TokenUtility {
         //const token = canvas.tokens.get(tokenData._id);
         const actor = game.actors.get(tokenData.actorId);
         const autoRollHP = Sidekick.getSetting(SETTING_KEYS.tokenUtility.autoRollHP);
-        const mightySummoner = Sidekick.getSetting(SETTING_KEYS.mightySummoner.enable);
-        const mightySummonerFlag = getProperty(tokenData, `flags.${NAME}.${DEFAULT_CONFIG.mightySummoner.flags.mightySummoner}`);
+        const mightySummonerSetting = Sidekick.getSetting(SETTING_KEYS.mightySummoner.enable);
+        const mightySummonerFlag = getProperty(tokenData, `flags.${NAME}.${FLAGS.mightySummoner.mightySummoner}`);
+        const tempCombatantSetting = Sidekick.getSetting(SETTING_KEYS.tempCombatants.enable);
+        const tempCombatantFlag = getProperty(tokenData, `flags.${NAME}.${FLAGS.temporaryCombatants.temporaryCombatant}`);
 
-        if (mightySummonerFlag) {
+        // if this token has been handled by the mighty summoner logic then nothing to do
+        if (mightySummonerFlag || (tempCombatantSetting && tempCombatantFlag)) {
             return;
         }
 
-        let newHP; 
-
-        if (tokenData.disposition === -1 && autoRollHP && actor && !actor.isPC) {
-            newHP = TokenUtility.rollHP(actor);
-        } else if (mightySummoner) {
-            const hasFeat = MightySummoner._checkForFeat(actor);
-            if (!hasFeat) {
-                return;
-            }
-
+        if (mightySummonerSetting && MightySummoner._checkForFeat(actor)) {
             MightySummoner._createDialog(tokenData, actor);
             return false;
         }
+        
+        if (tokenData.disposition !== -1 || !autoRollHP || actor?.isPC) {
+            return;
+        }
 
+        const formula = null;
+        const newHP = TokenUtility.rollHP(actor, formula);
         const hpUpdate = TokenUtility._buildHPData(newHP);
         const newData = mergeObject(tokenData, hpUpdate);
         return newData;

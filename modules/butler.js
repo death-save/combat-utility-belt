@@ -1,4 +1,5 @@
 import { EnhancedConditions } from "./enhanced-conditions/enhanced-conditions.js";
+import { MightySummoner } from "./mighty-summoner.js";
 
 export const NAME = "combat-utility-belt";
 
@@ -147,9 +148,6 @@ export const DEFAULT_CONFIG = {
     },
     mightySummoner: {
         enable: false,
-        flags: {
-            mightySummoner: "mightySummoner"
-        }
     },
     panSelect: {
         enablePan: false,
@@ -227,6 +225,9 @@ export const DEFAULT_CONFIG = {
 }
 
 export const FLAGS = {
+    mightySummoner: {
+        mightySummoner: "mightySummoner"
+    },
     temporaryCombatants: {
         temporaryCombatant: "temporaryCombatant"
     }

@@ -1,4 +1,4 @@
-import { NAME, DEFAULT_CONFIG } from "./butler.js";
+import { NAME, FLAGS } from "./butler.js";
 import { TokenUtility } from "./utils/token.js";
 import { ActorUtility } from "./utils/actor.js";
 
@@ -46,23 +46,12 @@ export class MightySummoner {
      * Creates a dialog to determine if the creature is being summoned
      */
     static async _createDialog(tokenData, actor) {
-        new Dialog({
-                title: "Mighty Summoner",
-                content: "<p>Is this monster being summoned?</p>",
-                buttons: {
-                    yes: {
-                        icon: `<i class="fas fa-check"></i>`,
-                        label: "Yes",
-                        callback: () => MightySummoner._handleSummon(tokenData, actor, true)
-                    },
-                    no: {
-                        icon: `<i class="fas fa-times"></i>`,
-                        label: "No",
-                        callback: () => MightySummoner._handleSummon(tokenData, actor, false)
-                    }
-                },
-                default: "yes"
-            }).render(true);
+        const title = "Mighty Summoner";
+        const content = "<p>Is this monster being summoned?</p>";
+        const yes = () => MightySummoner._handleCreate(tokenData, actor, true);
+        const no = () => MightySummoner._handleCreate(tokenData, actor, false);
+        const defaultYes = false;
+        return Dialog.confirm({title, content, yes, no, defaultYes},{});
     }
 
     /**
@@ -70,18 +59,24 @@ export class MightySummoner {
      * @param {*} tokenData 
      * @param {*} actor 
      * @param {*} isSummon 
+     * @todo don't handle creation here: pass the manipulated data back to the precreate hook somehow
+     *       we are setting a flag on every token create where some owned actor has the feat with this code!
      */
-    static _handleSummon(tokenData, actor, isSummon) {
-        if (!isSummon) {
-            return;
+    static _handleCreate(tokenData, actor, isSummon) {
+        let hpUpdate;
+
+        if (isSummon) {
+            const newFormula = MightySummoner._calculateHPFormula(actor);
+            const newHP = TokenUtility.rollHP(actor, newFormula);
+            hpUpdate = TokenUtility._buildHPData(newHP); 
         }
 
-        const newFormula = MightySummoner._calculateHPFormula(actor);
-        const newHP = TokenUtility.rollHP(actor, newFormula);
-        const hpUpdate = TokenUtility._buildHPData(newHP);
-        const newData = mergeObject(tokenData, hpUpdate);
-        setProperty(newData, `flags.${NAME}.${DEFAULT_CONFIG.mightySummoner.flags.mightySummoner}`, true);
-        Token.create(newData);
+        const createData = hpUpdate ? mergeObject(tokenData, hpUpdate) : tokenData;
+        
+        setProperty(createData, `flags.${NAME}.${FLAGS.mightySummoner.mightySummoner}`, true);
+        
+        return Token.create(createData);
+        //return newData;
     }
 
     /**
