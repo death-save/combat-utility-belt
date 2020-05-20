@@ -8,23 +8,38 @@
 - Macros for: hiding/unhiding NPC names, rerolling initiative
 
 ## [Known Issues]
-- NPC names in Initiative rolls are not hidden
+- NPC names in Initiative rolls are not always hidden
 - Pan/Select fires for Temporary Combatants
+- Pan/Select does not deselect currently selected tokens if many are selected
+
+## [1.1.0] - 2020-05-03
+### Added
+- CUBPuter - a settings and information system for Combat Utility Belt! **NOTE:** most module settings have been moved into CUBPuter!
+- Korean translation (thanks to KLO on discord!)
+- 13th Age *System - Default* Condition Map (thanks asacolips)
+- 13th Age Condition compendium
+
+### Fixed
+- Enhanced Conditions Chat Output now respects the user's setting
+- Triggler now correctly saves changes to a trigger in the text representation
+- Mighty Summoner no longer prevents token creation if the token is not being summoned
+- Mighty Summoner no longer causes issues with Temporary Combatants
+- Temporary Combatants are correctly cleaned up when combat ends
 
 ## [1.0.3] - 2020-04-28
-## Fixed
+### Fixed
 - Triggler no longer incorrectly fires due to bad logic
 - Concentrator now correctly processes death-state for actors 
 
 ## [1.0.2] - 2020-04-26
-## Fixed
+### Fixed
 - Concentration was not being automatically applied when selected
 
 ## [1.0.1] - 2020-04-26
-## Changed
+### Changed
 - Enabling Concentrator now prompts to enable Enhanced Conditions (if disabled) and creates a Concentrating condition if none exists
 
-## Fixed
+### Fixed
 - Fixed issue with regular expression for finding compendia that prevented module loading in Firefox
 - *System - Default* Condition Lab mappings were not loading 
 - *System - Default* Condition Lab mappings were not correctly being set as read-only on first load

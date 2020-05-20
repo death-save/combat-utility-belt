@@ -4,6 +4,7 @@
 import * as BUTLER from "./butler.js";
 import { Sidekick } from "./sidekick.js";
 import { registerSettings } from "./settings.js";
+import { createCUBPuterButton } from "./cub-puter.js";
 
 /* ------------------ Gadgets ----------------- */
 
@@ -153,6 +154,7 @@ export class Signal {
 
         Hooks.on("renderSettings", (app, html) => {
             Sidekick.createCUBDiv(html);
+            createCUBPuterButton(html);
             EnhancedConditions._createLabButton(html);
             EnhancedConditions._toggleLabButtonVisibility(Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.enable));
             Triggler._createTrigglerButton(html);

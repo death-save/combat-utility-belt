@@ -20,6 +20,11 @@ export class Sidekick {
         return game.settings.get(BUTLER.NAME, key);
     }
 
+    static getAllSettings() {
+        const settings = [...game.settings.settings].filter((k,v) => String(k).startsWith(BUTLER.NAME));
+        return settings;
+    }
+
     /*
     static async setSetting(key, value, awaitResult=false) {
         return awaitResult ? 
@@ -42,6 +47,10 @@ export class Sidekick {
 
     static registerSetting(key, metadata) {
         return game.settings.register(BUTLER.NAME, key, metadata);
+    }
+
+    static registerMenu(key, metadata) {
+        return game.settings.registerMenu(BUTLER.NAME, key, metadata);
     }
 
     static registerAllSettings(settingsData) {
