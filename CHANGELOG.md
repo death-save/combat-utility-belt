@@ -14,12 +14,16 @@
 
 ## [1.1.0] - 2020-05-03
 ### Added
-- CUBPuter - a settings and information system for Combat Utility Belt! **NOTE:** most module settings have been moved into CUBPuter!
-- Korean translation (thanks to KLO on discord!)
-- 13th Age *System - Default* Condition Map (thanks asacolips)
+- CUBPuter - a settings and information system for Combat Utility Belt! **NOTE:** most module settings have been moved into CUBPuter! **:NOTE**
+- Korean translation (thanks to KLO!)
+- 13th Age *System - Default* Condition Map (thanks asacolips!)
 - 13th Age Condition compendium
 
+### Changed
+- Concentrator condition name is now configurable (in the CUBPuter > Concentrator gadget settings) and no longer hard coded to the word "Concentrating"
+
 ### Fixed
+- Condition Lab now saves the scroll position when making changes to the list
 - Enhanced Conditions Chat Output now respects the user's setting
 - Triggler now correctly saves changes to a trigger in the text representation
 - Mighty Summoner no longer prevents token creation if the token is not being summoned
