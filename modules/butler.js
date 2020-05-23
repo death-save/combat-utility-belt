@@ -31,47 +31,42 @@ export const GADGETS = {
     },
     enhancedConditions: {
         name: "Enhanced Conditions",
-        info: "",
+        info: "Provides the ability to map Conditions to Status Effect icons",
         wiki: `${WIKIPATH}/enhanced-conditions`
     },
     hideNames: {
         name: "Hide NPC Names",
-        info: "",
+        info: "Replaces NPC names with a new name of your choice",
         wiki: `${WIKIPATH}/hide-names`
-    },
-    mightySummoner: {
-        name: "Mighty Summoner",
-        info: "",
-        wiki: `${WIKIPATH}/mighty-summoner`
     },
     panSelect: {
         name: "Pan/Select",
-        info: "",
+        info: "Automatic panning and selection of tokens during combat",
         wiki: `${WIKIPATH}/pan-select`
     },
     rerollInitiative: {
         name: "Reroll Initiative",
-        info: "",
+        info: "Rerolls Initiative on each Combat round change",
         wiki: `${WIKIPATH}/reroll-initiative`
     },
     tempCombatants: {
         name: "Temporary Combatants",
-        info: "",
+        info: "Allows the creation of temporary combatants to track things like environmental or lair actions",
         wiki: `${WIKIPATH}/temporary-combatants`
     },
     triggler: {
         name: "Triggler",
-        info: "",
+        info: "A trigger-management system for token/actor attribute changes",
         wiki: `${WIKIPATH}/triggler`
     },
     actorUtility: {
         name: "Misc Actor",
-        info: "",
+        info: "Miscellaneous Actor enhancements",
         wiki: `${WIKIPATH}/actor-misc`
     },
     tokenUtility: {
         name: "Misc Token",
-        info: "",
+        info: "Miscellaneous Token enhancements",
         wiki: null
     }
 }

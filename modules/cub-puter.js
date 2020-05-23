@@ -19,7 +19,7 @@ export class CUBPuter extends FormApplication {
             title: DEFAULT_CONFIG.cubPuter.title,
             template: `${PATH}/templates/cub-puter.html`,
             classes: ["crt"],
-            width: 700,
+            width: 750,
             height: "auto",
             top: 200,
             left: 400,
