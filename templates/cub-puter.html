@@ -1,0 +1,93 @@
+{{#*inline "settingPartial"}}
+<div class="form-group">
+    <label>{{localize this.name}}</label>
+    <div class="form-fields">
+
+        {{#if this.isCheckbox}}
+        <input type="checkbox" name="{{this.module}}.{{this.key}}" data-dtype="Boolean" {{checked this.value}}/>
+
+        {{else if this.isSelect}}
+        <select name="{{this.module}}.{{this.key}}">
+            {{#select this.value}}
+            {{#each this.choices as |name k|}}
+            <option value="{{k}}">{{localize name}}</option>
+            {{/each}}
+            {{/select}}
+        </select>
+
+        {{else if this.isRange}}
+        <input type="range" name="{{this.module}}.{{this.key}}" data-dtype="Number" value="{{ this.value }}"
+               min="{{ this.range.min }}" max="{{ this.range.max }}" step="{{ this.range.step }}"/>
+        <span class="range-value">{{this.value}}</span>
+
+        {{else}}
+        <input type="text" name="{{this.module}}.{{this.key}}" value="{{this.value}}" data-dtype="{{this.type}}"/>
+        {{/if}}
+    </div>
+
+    <p class="notes">{{localize this.hint}}</p>
+</div>
+{{/inline}}
+
+{{#*inline "menuPartial" }}
+<div class="form-group submenu">
+    <label>{{ localize this.name }}</label>
+    <button type="button" data-key="{{ this.key }}">
+        {{#if this.icon}}<i class="{{ this.icon }}"></i>{{/if}}
+        <label>{{ localize this.label }}</label>
+    </button>
+    {{#if this.hint}}<p class="notes">{{ localize this.hint }}</p>{{/if}}
+</div>
+{{/inline}}
+
+<form autocomplete="off" onsubmit="event.preventDefault()">
+    <div class="container crt-on">
+        <h1 class="terminal"><i class="fas fa-desktop"></i> CUBPuter</h1>
+        <div class="console-panel terminal" {{#if config.terminal}}{{else}}hidden{{/if}}>
+        </div>
+        <div class="gadget-select">
+            <h2 class="terminal">{{currentGadget.name}} <a id="expand-gadgets"><i class="fas fa-angle-right"></i></a></h2>
+            <ul id="gadget-list" class="gadget-list terminal" hidden>
+                {{#each gadgets}}
+                <a id="{{@key}}" title="Switch to gadget: {{this.name}}"><li>{{this.name}}</li></a>
+                {{/each}}
+            </ul>
+        </div>
+        <div class="information-panel terminal" {{#if config.info}}{{else}}hidden{{/if}}>
+            <p>
+                {{#if currentGadget.info}}
+                > {{currentGadget.info}}
+                {{else}}
+                > {{localize "APPS.CUBPuter.NoInfo"}}
+                {{/if}}
+                {{#if currentGadget.wiki}}
+                <!--<a>-->
+                <a id="wiki" title="{{localize "APPS.CUBPuter.WikiLinkTitle"}}"><i class="fas fa-external-link-alt"></i></a>
+                {{/if}}
+            </p>
+        </div>
+        <br />
+        <div class="settings-panel terminal">
+            <h3>{{localize "APPS.CUBPuter.SettingsHeader"}}</h3>
+            {{#each menus}}
+                {{> menuPartial}}
+            {{/each}}
+            {{#each settings}}
+                {{> settingPartial}}
+            {{else}}
+            <p class="notes">{{localize "SETTINGS.None"}}</p>
+            {{/each}}
+        </div>
+    </div>
+    <footer class="sheet-footer flexrow terminal">
+        <button type="button" name="restore">
+            <i class="fas fa-history"></i> {{localize "APPS.CUBPuter.RestoreButton"}}
+        </button>
+        <button type="reset" name="reset">
+            <i class="fas fa-undo"></i> {{localize "APPS.CUBPuter.ResetButton"}}
+        </button>
+        <button type="submit" name="submit" value="1">
+            <i class="far fa-save"></i> {{localize "APPS.CUBPuter.SaveButton"}}
+        </button>
+    </footer>
+</form>

@@ -1,0 +1,62 @@
+{
+  "system":"archmage",
+  "map":[
+    {
+      "name":"Confused",
+      "icon": "icons/svg/stoned.svg",
+      "referenceId": "@Compendium[combat-utility-belt.conditionsarchmage.CZB4vtGqkxYBmQ7P]",
+      "referenceType": "compendium.journalEntry"
+    },
+    {
+      "name":"Dazed",
+      "icon": "icons/svg/daze.svg",
+      "referenceId": "@Compendium[combat-utility-belt.conditionsarchmage.zwyeIeroFh6Yze5x]",
+      "referenceType": "compendium.journalEntry"
+    },
+    {
+      "name":"Fear",
+      "icon": "icons/svg/terror.svg",
+      "referenceId": "@Compendium[combat-utility-belt.conditionsarchmage.I3Kjr3YC8ViNbseA]",
+      "referenceType": "compendium.journalEntry"
+    },
+    {
+      "name":"Hampered",
+      "icon": "modules/combat-utility-belt/icons/paralyzed.svg",
+      "referenceId": "@Compendium[combat-utility-belt.conditionsarchmage.Np1orhugJRd5dYOH]",
+      "referenceType": "compendium.journalEntry"
+    },
+    {
+      "name":"Helpless",
+      "icon": "icons/svg/falling.svg",
+      "referenceId": "@Compendium[combat-utility-belt.conditionsarchmage.KYTRu85eQw1DZKEp]",
+      "referenceType": "compendium.journalEntry",
+      "options": {
+        "overlay": true
+      }
+    },
+    {
+      "name":"Stuck",
+      "icon": "icons/svg/net.svg",
+      "referenceId": "@Compendium[combat-utility-belt.conditionsarchmage.2Bv4szjE4dk8Rmqx]",
+      "referenceType": "compendium.journalEntry"
+    },
+    {
+      "name":"Stunned",
+      "icon": "icons/svg/lightning.svg",
+      "referenceId": "@Compendium[combat-utility-belt.conditionsarchmage.COrwSqgQcw46Athr]",
+      "referenceType": "compendium.journalEntry"
+    },
+    {
+      "name":"Vulnerable",
+      "icon": "modules/combat-utility-belt/icons/incapacitated.svg",
+      "referenceId": "@Compendium[combat-utility-belt.conditionsarchmage.OHt8sh5UnEJF635R]",
+      "referenceType": "compendium.journalEntry"
+    },
+    {
+      "name": "Weakened",
+      "icon": "icons/svg/blood.svg",
+      "referenceId": "@Compendium[combat-utility-belt.conditionsarchmage.OdPEQ7tKjzFybU0K",
+      "referenceType": "compendium.journalEntry"
+    }
+  ]
+}

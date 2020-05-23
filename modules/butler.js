@@ -1,4 +1,5 @@
 import { EnhancedConditions } from "./enhanced-conditions/enhanced-conditions.js";
+import { MightySummoner } from "./mighty-summoner.js";
 
 export const NAME = "combat-utility-belt";
 
@@ -8,11 +9,66 @@ export const SHORTNAME = "cub";
 
 export const PATH = "modules/combat-utility-belt";
 
+export const WIKIPATH = "https://github.com/death-save/combat-utility-belt/wiki"
+
 export const GADGET_NAMES = {
     enhancedConditions: "enhancedConditions",
     hideNames: "hideNames",
     rerollInitiative: "rerollInitiative",
     concentrator: "concentrator"
+}
+
+export const GADGETS = {
+    giveXP: {
+        name: "Award XP",
+        info: "Provides an end of combat prompt to distribute XP from defeated hostile combatants.",
+        wiki: `${WIKIPATH}/award-xp`
+    },
+    concentrator: {
+        name: "Concentrator",
+        info: "Manages Concentration in the dnd5e game system.",
+        wiki: `${WIKIPATH}/award-xp`
+    },
+    enhancedConditions: {
+        name: "Enhanced Conditions",
+        info: "Provides the ability to map Conditions to Status Effect icons",
+        wiki: `${WIKIPATH}/enhanced-conditions`
+    },
+    hideNames: {
+        name: "Hide NPC Names",
+        info: "Replaces NPC names with a new name of your choice",
+        wiki: `${WIKIPATH}/hide-names`
+    },
+    panSelect: {
+        name: "Pan/Select",
+        info: "Automatic panning and selection of tokens during combat",
+        wiki: `${WIKIPATH}/pan-select`
+    },
+    rerollInitiative: {
+        name: "Reroll Initiative",
+        info: "Rerolls Initiative on each Combat round change",
+        wiki: `${WIKIPATH}/reroll-initiative`
+    },
+    tempCombatants: {
+        name: "Temporary Combatants",
+        info: "Allows the creation of temporary combatants to track things like environmental or lair actions",
+        wiki: `${WIKIPATH}/temporary-combatants`
+    },
+    triggler: {
+        name: "Triggler",
+        info: "A trigger-management system for token/actor attribute changes",
+        wiki: `${WIKIPATH}/triggler`
+    },
+    actorUtility: {
+        name: "Misc Actor",
+        info: "Miscellaneous Actor enhancements",
+        wiki: `${WIKIPATH}/actor-misc`
+    },
+    tokenUtility: {
+        name: "Misc Token",
+        info: "Miscellaneous Token enhancements",
+        wiki: null
+    }
 }
 /**
  * Stores information about well known game systems. All other systems will resolve to "other"
@@ -84,6 +140,15 @@ export const DEFAULT_CONFIG = {
         icon: "modules/combat-utility-belt/icons/concentrating.svg",
         alias: "CUB: Concentrator"
     },
+    cubPuter: {
+        id: "cub-puter",
+        title: "CUBPuter",
+        buttonId: "cub-puter-button",
+        config: {
+            greeting: true,
+            instructions: true
+        }
+    },
     enhancedConditions: {
         iconPath: `${PATH}/icons/`,
         conditionMapsPath: `${PATH}/condition-maps`,
@@ -147,9 +212,6 @@ export const DEFAULT_CONFIG = {
     },
     mightySummoner: {
         enable: false,
-        flags: {
-            mightySummoner: "mightySummoner"
-        }
     },
     panSelect: {
         enablePan: false,
@@ -175,6 +237,9 @@ export const DEFAULT_CONFIG = {
     },
     tempCombatants: {
         enable: false
+    },
+    actorUtility: {
+        initiativeFromSheet: false
     },
     tokenUtility: {
         autoRollHP: false,
@@ -227,6 +292,9 @@ export const DEFAULT_CONFIG = {
 }
 
 export const FLAGS = {
+    mightySummoner: {
+        mightySummoner: "mightySummoner"
+    },
     temporaryCombatants: {
         temporaryCombatant: "temporaryCombatant"
     }
@@ -235,13 +303,17 @@ export const FLAGS = {
 export const SETTING_KEYS = {
     concentrator: {
         enable: "enableConcentrator",
-        icon: "modules/combat-utility-belt/icons/concentrating.svg",
+        conditionName: "concentratorConditionName",
         outputChat: "concentratorOutputToChat",
         autoConcentrate: "autoConcentrate",
         concentrationAttribute: "concentrationAttribute",
         notifyDouble: "notifyDoubleConcentration",
         healthAttribute: "concentratorHealthAttribute", //validate necessity
         prompt: "concentratorPromptPlayer"
+    },
+    cubPuter: {
+        menu: "cubPuter",
+        config: "cubPuterConfig"
     },
     enhancedConditions: {
         enable: "enableEnhancedConditions",
@@ -293,6 +365,9 @@ export const SETTING_KEYS = {
     tempCombatants: {
         enable: "enableTempCombatants",
 
+    },
+    actorUtility: {
+        initiativeFromSheet: "initiativeFromSheet"
     },
     tokenUtility: {
         mightySummoner: "enableMightySummoner",

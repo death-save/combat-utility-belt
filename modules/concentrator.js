@@ -32,7 +32,8 @@ export class Concentrator {
             return;
         }
 
-        const concentratingIcon = EnhancedConditions.getIconsByCondition(DEFAULT_CONFIG.concentrator.conditionName, {firstOnly: true});
+        const conditionName = Sidekick.getSetting(SETTING_KEYS.concentrator.conditionName);
+        const concentratingIcon = EnhancedConditions.getIconsByCondition(conditionName, {firstOnly: true});
 
         const _isConcentrating = Boolean(tokenEffects.find(e => e === concentratingIcon)) || false;
 
@@ -56,7 +57,8 @@ export class Concentrator {
     static _processDeath(token) {
         const effects = token.data.effects;
         const newEffects = duplicate(effects);
-        const index = newEffects.findIndex(e => e === EnhancedConditions.getIconsByCondition(DEFAULT_CONFIG.concentrator.conditionName, {firstOnly: true}));
+        const conditionName = Sidekick.getSetting(SETTING_KEYS.concentrator.conditionName);
+        const index = newEffects.findIndex(e => e === EnhancedConditions.getIconsByCondition(conditionName, {firstOnly: true}));
         newEffects.splice(index, 1);
 
         // If new effects length is same, nothing was removed
@@ -103,7 +105,7 @@ export class Concentrator {
      * @todo extract to Enhanced Conditions and make it generic
      */
     static _createCondition() {
-        const conditionName = "Concentrating";
+        const conditionName = Sidekick.getSetting(SETTING_KEYS.concentrator.conditionName);
         const icon = "icons/svg/d20-black.svg";
 
         const enhancedConditions = Sidekick.getSetting(SETTING_KEYS.enhancedConditions.enable);
@@ -175,7 +177,8 @@ export class Concentrator {
             }
 
             const tokenEffects = getProperty(t, "data.effects");
-            const concentratingIcon = EnhancedConditions.getIconsByCondition(DEFAULT_CONFIG.concentrator.conditionName, {firstOnly: true});
+            const conditionName = Sidekick.getSetting(SETTING_KEYS.concentrator.conditionName);
+            const concentratingIcon = EnhancedConditions.getIconsByCondition(conditionName, {firstOnly: true});
             const isAlreadyConcentrating = !!tokenEffects.find(e => e === concentratingIcon);
 
             if (isAlreadyConcentrating) {
@@ -187,7 +190,7 @@ export class Concentrator {
                 continue;
             }
 
-            EnhancedConditions.applyCondition(DEFAULT_CONFIG.concentrator.conditionName, t);
+            EnhancedConditions.applyCondition(conditionName, t);
         }  
     }
 

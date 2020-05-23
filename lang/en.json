@@ -1,6 +1,26 @@
 {
-    "SETTINGS.Concentrator.EnableN": "--Force Concentration Checks--",
+    "NOTIFICATIONS.CUBPuter.RestoreDefaults": "gadget settings restored to defaults!",
+    "NOTIFICATIONS.CUBPuter.SaveSettings": "gadget settings saved!",
+    
+    "APPS.CUBPuter.RestoreButton": "Restore Gadget Defaults",
+    "APPS.CUBPuter.ResetButton": "Reset Settings Form",
+    "APPS.CUBPuter.SaveButton": "Save Gadget Settings",
+    "APPS.CUBPuter.SettingsHeader": "Settings:",
+    "APPS.CUBPuter.WikiLinkText": "Wiki/More Info",
+    "APPS.CUBPuter.WikiLinkTitle": "Wiki/More Info",
+    "APPS.CUBPuter.NoInfo": "No additional info available",
+
+    "APPS.Wiki.Title": "Combat Utility Belt Wiki",
+
+    "DEFAULTCONFIG.Concentrator.ConditionName": "Concentrating",
+
+    "SETTINGS.CUBPuter.ButtonN": "Combat Utility Belt Config",
+    "SETTINGS.CUBPuter.ButtonH": "Provides additional configuration for Combat Utility Belt",
+    
+    "SETTINGS.Concentrator.EnableN": "Enable Concentrator",
     "SETTINGS.Concentrator.EnableH": "(Tested in D&D5e only)(Requires Enhanced Conditions) Forces concentration checks on tokens with the concentrating status effect when they take damage",
+    "SETTINGS.Concentrator.ConditionNameN": "Concentration Condition Name",
+    "SETTINGS.Concentrator.ConditionNameH": "Name of the Condition to use for adding and checking for Concentration",
     "SETTINGS.Concentrator.OutputToChatN": "Notify Chat",
     "SETTINGS.Concentrator.OutputToChatH": "Display a message in chat whenever concentration is threatened",
     "SETTINGS.Concentrator.PromptRollN": "Prompt Player",
@@ -14,7 +34,7 @@
     "SETTINGS.Concentrator.NotifyDoubleN": "Notify on Double Concentration",
     "SETTINGS.Concentrator.NotifyDoubleH": "Send a message when a Concentration spell is cast while another spell is being Concentrated on",
     
-    "SETTINGS.EnhancedConditions.EnableN": "--Enhanced Conditions--",
+    "SETTINGS.EnhancedConditions.EnableN": "Enable Enhanced Conditions",
     "SETTINGS.EnhancedConditions.EnableH": "Links conditions to status icons",
     "SETTINGS.EnhancedConditions.CoreIconsN": "Core Status Icons",
     "SETTINGS.EnhancedConditions.CoreIconsH": "A copy of the core status icons",
@@ -31,26 +51,26 @@
     "SETTINGS.EnhancedConditions.ActiveConditionMapN": "Active Condition Map",
     "SETTINGS.EnhancedConditions.ActiveConditionMapH": "Stores the active condition map",
     
-    "SETTINGS.GiveXP.EnableN": "--Award XP--",
+    "SETTINGS.GiveXP.EnableN": "Enable Award XP",
     "SETTINGS.GiveXP.EnableH": "Adds an option at the end of combat to automatically distribute xp from the combat to the players",
 
-    "SETTINGS.HideNames.EnableN": "--Hide NPC Names--",
+    "SETTINGS.HideNames.EnableN": "Enable Hide NPC Names",
     "SETTINGS.HideNames.EnableH": "Hides NPC names in the Combat Tracker",
     "SETTINGS.HideNames.ReplacementStringN": "Replacement Name",
     "SETTINGS.HideNames.ReplacementStringH": "Text to display for hidden NPC names",
     "SETTINGS.HideNames.HideFooterN": "Hide Chat Card Footer",
     "SETTINGS.HideNames.HideFooterH": "When NPC names are hidden, also hide the chat card footer which can contain sensitive information",   
 
-    "SETTINGS.MightySummoner.EnableN": "--Mighty Summoner--",
+    "SETTINGS.MightySummoner.EnableN": "Enable Mighty Summoner",
     "SETTINGS.MightySummoner.EnableH": "(Tested in D&D5e only) Automatically check to see if token owner of NEUTRAL actor also owns an actor with the Mighty Summoner feat. Automatically calculates and adds new HP formula and rolls HP for token on canvas drop",
     
-    "SETTINGS.PanSelect.EnablePanN": "--Pan to Token--",
+    "SETTINGS.PanSelect.EnablePanN": "Enable Pan to Token",
     "SETTINGS.PanSelect.EnablePanH": "Enables the following token panning functionality",
     "SETTINGS.PanSelect.PanGMN": "Pan GM",
     "SETTINGS.PanSelect.PanGMH": "Pans GM. Options: None (do not pan GM), NPC (pan only to non-player character tokens), All (pan to all tokens)",
     "SETTINGS.PanSelect.PanPlayersN": "Pan Players",
     "SETTINGS.PanSelect.PanPlayersH": "Pans players. Options: None (do not pan players), Owner (pan only to Owned tokens), Observer (pan to Observed AND Owned tokens), All (pan to all tokens)",
-    "SETTINGS.PanSelect.EnableSelectN": "--Select Token--",
+    "SETTINGS.PanSelect.EnableSelectN": "Enable Select Token",
     "SETTINGS.PanSelect.EnableSelectH": "Enables the following token select functionality",
     "SETTINGS.PanSelect.SelectGMN": "Select GM",
     "SETTINGS.PanSelect.SelectGMH": "Selects token based on selected option: None (do not select), NPC (select only non-player character tokens), All (select all tokens)",
@@ -59,18 +79,21 @@
     "SETTINGS.PanSelect.ObserverDeselectN": "Deselect Tokens",
     "SETTINGS.PanSelect.ObserverDeselectH": "Deselect controlled tokens on any non-Owned combatant's turn",
     
-    "SETTINGS.RerollInitiative.EnableN": "--Reroll Initiative--",
+    "SETTINGS.RerollInitiative.EnableN": "Enable Reroll Initiative",
     "SETTINGS.RerollInitiative.EnableH": "Reroll initiative for each combatant every round",
     "SETTINGS.RerollInitiative.RerollTempCombatantsN": "Reroll Temporary Combatants",
     "SETTINGS.RerollInitiative.RerollTempCombatantsH": "Set whether to reroll initiative for Temporary Combatants if they are enabled",
 
-    "SETTINGS.TemporaryCombatants.EnableN": "--Enable Temporary Combatants--",
+    "SETTINGS.TemporaryCombatants.EnableN": "Enable Temporary Combatants",
     "SETTINGS.TemporaryCombatants.EnableH": "Allows the creation of temporary/freeform combatants from the Combat Tracker",
     
-    "SETTINGS.TokenUtility.AutoRollHostileHpN": "--Auto Roll Hostile--",
+    "SETTINGS.ActorUtility.InitiativeFromSheetN": "Enable Roll Initiative from sheet",
+    "SETTINGS.ActorUtility.InitiativeFromSheetH": "Creates a clickable link on the Initiative heading in some Actor sheets",
+    
+    "SETTINGS.TokenUtility.AutoRollHostileHpN": "Enable Auto Roll Hostile Token HP",
     "SETTINGS.TokenUtility.AutoRollHostileHpH": "Automatically roll hp for hostile tokens on canvas drop",
-    "SETTINGS.TokenUtility.TokenEffectSizeN": "--Token Effect Size--",
-    "SETTINGS.TokenUtility.TokenEffectSizeH": "Sets the size for token effects when drawn on the token. Default: Small",
+    "SETTINGS.TokenUtility.TokenEffectSizeN": "Token Effect Icon Size",
+    "SETTINGS.TokenUtility.TokenEffectSizeH": "Sets the size for token effect icons on the token. Default: Small",
     
     "SETTINGS.Triggler.TriggersN": "Triggler Triggers",
     "SETTINGS.Triggler.TriggersH": "Stores saved Triggler Triggers",

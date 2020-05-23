@@ -3,8 +3,32 @@ import { EnhancedConditions } from "./enhanced-conditions/enhanced-conditions.js
 import { Sidekick } from "./sidekick.js";
 import { TokenUtility } from "./utils/token.js";
 import { Concentrator } from "./concentrator.js";
+import { CUBPuter } from "./cub-puter.js";
 
 export function registerSettings() {
+
+    /* -------------------------------------------- */
+    /*                   CUBPuter                   */
+    /* -------------------------------------------- */
+
+    Sidekick.registerMenu(BUTLER.SETTING_KEYS.cubPuter.menu, {
+        name: "SETTINGS.CUBPuter.ButtonN",
+        label: BUTLER.DEFAULT_CONFIG.cubPuter.title,
+        hint: "SETTINGS.CUBPuter.ButtonH",
+        icon: "fas fa-desktop",
+        type: CUBPuter,
+        restricted: true
+    });
+
+    Sidekick.registerSetting(BUTLER.SETTING_KEYS.cubPuter.config, {
+        name: "SETTINGS.CUBPuter.ConfigN",
+        hint: "SETTINGS.CUBPuter.ConfigH",
+        default: BUTLER.DEFAULT_CONFIG.cubPuter.config,
+        scope: "world",
+        type: Object,
+        onChange: s => {}
+    });
+
     /* -------------------------------------------- */
     /*                 Concentrator                 */
     /* -------------------------------------------- */
@@ -25,13 +49,23 @@ export function registerSettings() {
         }
     });
 
+    Sidekick.registerSetting(BUTLER.SETTING_KEYS.concentrator.conditionName, {
+        name: "SETTINGS.Concentrator.ConditionNameN",
+        hint: "SETTINGS.Concentrator.ConditionNameH",
+        default: BUTLER.DEFAULT_CONFIG.concentrator.conditionName,
+        scope: "world",
+        type: String,
+        config: false,
+        onChange: s => {}
+    });
+
     Sidekick.registerSetting(BUTLER.SETTING_KEYS.concentrator.concentrationAttribute, {
         name: "SETTINGS.Concentrator.ConcentrationAttributeN",
         hint: "SETTINGS.Concentrator.ConcentrationAttributeH",
         default: BUTLER.KNOWN_GAME_SYSTEMS[game.system.id] ? BUTLER.KNOWN_GAME_SYSTEMS[game.system.id].concentrationAttribute : BUTLER.KNOWN_GAME_SYSTEMS.other.concentrationAttribute,
         scope: "world",
         type: String,
-        config: true,
+        config: false,
         onChange: s => {}
     });
 
@@ -41,7 +75,7 @@ export function registerSettings() {
         default: BUTLER.KNOWN_GAME_SYSTEMS[game.system.id] ? BUTLER.KNOWN_GAME_SYSTEMS[game.system.id].healthAttribute : BUTLER.KNOWN_GAME_SYSTEMS.other.healthAttribute,
         scope: "world",
         type: String,
-        config: true,
+        config: false,
         onChange: s => {}
     });
 
@@ -51,7 +85,7 @@ export function registerSettings() {
         default: BUTLER.DEFAULT_CONFIG.concentrator.outputChat,
         scope: "world",
         type: Boolean,
-        config: true,
+        config: false,
         onChange: s => {}
     });
 
@@ -61,7 +95,7 @@ export function registerSettings() {
         default: BUTLER.DEFAULT_CONFIG.concentrator.promptRoll,
         scope: "world",
         type: Boolean,
-        config: true,
+        config: false,
         onChange: s => {}
     });
 
@@ -71,7 +105,7 @@ export function registerSettings() {
         default: BUTLER.DEFAULT_CONFIG.concentrator.autoConcentrate,
         scope: "world",
         type: Boolean,
-        config: true,
+        config: false,
         onChange: s => {}
     });
 
@@ -82,7 +116,7 @@ export function registerSettings() {
         scope: "world",
         type: String,
         choices: BUTLER.DEFAULT_CONFIG.concentrator.notifyDouble,
-        config: true,
+        config: false,
         onChange: s => {}
     });
 
@@ -124,6 +158,7 @@ export function registerSettings() {
         default: !!BUTLER.KNOWN_GAME_SYSTEMS[game.system.id] ? BUTLER.KNOWN_GAME_SYSTEMS[game.system.id].id : BUTLER.KNOWN_GAME_SYSTEMS.other.id,
         choices: Sidekick.getSystemChoices(),
         config: false,
+        apiOnly: true,
         onChange: s => {}
     });
 
@@ -136,6 +171,7 @@ export function registerSettings() {
         default: "",
         choices: BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes,
         config: false,
+        apiOnly: true,
         onChange: s => {}
     });
 
@@ -164,7 +200,7 @@ export function registerSettings() {
         hint: "SETTINGS.EnhancedConditions.OutputChatH",
         scope: "world",
         type: Boolean,
-        config: true,
+        config: false,
         default: BUTLER.DEFAULT_CONFIG.enhancedConditions.outputChat,
         onChange: s => {}
     });
@@ -174,7 +210,7 @@ export function registerSettings() {
         hint: "SETTINGS.EnhancedConditions.RemoveDefaultEffectsH",
         scope: "world",
         type: Boolean,
-        config: true,
+        config: false,
         default: BUTLER.DEFAULT_CONFIG.enhancedConditions.removeDefaultEffects,
         onChange: s => {
             EnhancedConditions._updateStatusIcons();
@@ -218,7 +254,7 @@ export function registerSettings() {
         scope: "world",
         type: String,
         default: BUTLER.DEFAULT_CONFIG.hideNames.replacementString,
-        config: true,
+        config: false,
         onChange: s => {
             const enable = Sidekick.getSetting(BUTLER.SETTING_KEYS.hideNames.enable);
 
@@ -235,7 +271,7 @@ export function registerSettings() {
         scope: "world",
         type: Boolean,
         default: BUTLER.DEFAULT_CONFIG.hideNames.hideFooter,
-        config: true,
+        config: false,
         onChange: s => {
             ui.chat.render();
         }
@@ -276,7 +312,7 @@ export function registerSettings() {
         scope: "world",
         type: String,
         choices: BUTLER.DEFAULT_CONFIG.panSelect.panGM,
-        config: true,
+        config: false,
         onChange: s => {}
     });
 
@@ -287,7 +323,7 @@ export function registerSettings() {
         scope: "world",
         type: String,
         choices: BUTLER.DEFAULT_CONFIG.panSelect.panPlayers,
-        config: true,
+        config: false,
         onChange: s => {}
     });
 
@@ -308,7 +344,7 @@ export function registerSettings() {
         scope: "world",
         type: String,
         choices: BUTLER.DEFAULT_CONFIG.panSelect.panGM, //uses same options as Pan GM
-        config: true,
+        config: false,
         onChange: s => {}
     });
 
@@ -318,7 +354,7 @@ export function registerSettings() {
         default: BUTLER.DEFAULT_CONFIG.panSelect.selectPlayers,
         scope: "world",
         type: Boolean,
-        config: true,
+        config: false,
         onChange: s => {}
     });
 
@@ -328,7 +364,7 @@ export function registerSettings() {
         default: BUTLER.DEFAULT_CONFIG.panSelect.observerDeselect,
         scope: "world",
         type: Boolean,
-        config: true,
+        config: false,
         onChange: s => {}
     });
 
@@ -352,7 +388,7 @@ export function registerSettings() {
         scope: "world",
         type: Boolean,
         default: BUTLER.DEFAULT_CONFIG.rerollInitiative.rerollTempCombatants,
-        config: true,
+        config: false,
         onChange: s => {}
     });
 
@@ -373,6 +409,20 @@ export function registerSettings() {
     });
 
     /* -------------------------------------------- */
+    /*                 ActorUtility                 */
+    /* -------------------------------------------- */
+
+    Sidekick.registerSetting(BUTLER.SETTING_KEYS.actorUtility.initiativeFromSheet, {
+        name: "SETTINGS.ActorUtility.InitiativeFromSheetN",
+        hint: "SETTINGS.ActorUtility.InitiativeFromSheetH",
+        default: BUTLER.DEFAULT_CONFIG.actorUtility.initiativeFromSheet,
+        scope: "world",
+        type: Boolean,
+        config: false,
+        onChange: s => {}
+    })
+
+    /* -------------------------------------------- */
     /*                 TokenUtility                 */
     /* -------------------------------------------- */
 
@@ -382,7 +432,7 @@ export function registerSettings() {
         default: BUTLER.DEFAULT_CONFIG.tokenUtility.autoRollHP,
         scope: "world",
         type: Boolean,
-        config: true,
+        config: false,
         onChange: s => {}
     });
 

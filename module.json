@@ -2,15 +2,15 @@
   "name": "combat-utility-belt",
   "title": "Combat Utility Belt",
   "description": "Adds various combat-focused features",
-  "version": "1.0.3",
+  "version": "1.1",
   "author": "Evan Clarke [errational#2007]",
-  "minimumCoreVersion": "0.5.4",
-  "compatibleCoreVersion": "0.5.5",
+  "minimumCoreVersion": "0.5.5",
+  "compatibleCoreVersion": "0.6.0",
   "url": "https://github.com/death-save/combat-utility-belt",
   "manifest": "https://raw.githubusercontent.com/death-save/combat-utility-belt/master/module.json",
   "download": "https://github.com/death-save/combat-utility-belt/archive/master.zip",
   "scripts": [
-    "./slick/slick.min.js", 
+    "./library/typewriterjs/core.js", 
     "greensock/dist/TweenMax.min.js"
   ],
   "esmodules": [
@@ -21,6 +21,11 @@
       "lang": "en",
       "name": "English",
       "path": "lang/en.json"
+    },
+    {
+      "lang": "ko",
+      "name": "한국어",
+      "path": "lang/ko.json"
     }
   ], 
   "packs": [
@@ -30,6 +35,14 @@
       "system": "dnd5e",
       "module": "combat-utility-belt",
       "path": "./packs/conditionsdnd5e.db",
+      "entity": "JournalEntry"
+    },
+    {
+      "name": "conditionsarchmage",
+      "label": "Conditions (13th Age)",
+      "system": "archmage",
+      "module": "combat-utility-belt",
+      "path": "./packs/conditionsarchmage.db",
       "entity": "JournalEntry"
     }
   ],

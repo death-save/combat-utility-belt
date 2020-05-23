@@ -40,7 +40,7 @@ export class TrackerUtility {
         }
 
         const enableTempCombatants = Sidekick.getSetting(BUTLER.SETTING_KEYS.tempCombatants.enable);
-        const tempCombatants = combat.combatants.filter(c => hasProperty(c, `flags.${BUTLER.FLAGS.temporaryCombatants.temporaryCombatant}`));
+        const tempCombatants = combat.combatants.filter(c => hasProperty(c, `flags.${BUTLER.NAME}.${BUTLER.FLAGS.temporaryCombatants.temporaryCombatant}`));
 
         if (enableTempCombatants && tempCombatants.length) {
             TemporaryCombatants._removeTemporaryCombatants(tempCombatants, combat.scene);

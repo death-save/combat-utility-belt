@@ -1,0 +1,25 @@
+<form onsubmit="event.preventDefault()">
+    <div class="form-group">
+        <input type="checkbox" name="terminal" {{checked terminal}}/>
+        <label>Show Terminal</label>
+    </div>
+    <div class="form-group">
+        <input type="checkbox" name="startup" {{checked startup}} {{#if terminal}}{{else}}disabled{{/if}}/>
+        <label>Show Startup</label>
+        <p class="notes">Requires Show Terminal</p>
+    </div>
+    <div class="form-group">
+        <input type="checkbox" name="greeting" {{checked greeting}} {{#if terminal}}{{else}}disabled{{/if}}/>
+        <label>Show Greeting</label>
+        <p class="notes">Requires Show Terminal</p>
+    </div>
+    <div class="form-group">
+        <input type="checkbox" name="instructions" {{checked instructions}} {{#if terminal}}{{else}}disabled{{/if}}/>
+        <label>Show Instructions</label>
+        <p class="notes">Requires Show Terminal</p>
+    </div>
+    <div class="form-group">
+        <input type="checkbox" name="info" {{checked info}}/>
+        <label>Show Gadget Information</label>
+    </div>
+</form>

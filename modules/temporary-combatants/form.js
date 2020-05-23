@@ -24,7 +24,9 @@ export class TemporaryCombatantForm extends FormApplication {
     async _updateObject(event, formData) {
         const folderName = "Temporary Combatants";
         const flags = {
-            [`${NAME}.${FLAGS.temporaryCombatants.temporaryCombatant}`]: true
+            [NAME] : {
+                [FLAGS.temporaryCombatants.temporaryCombatant]: true
+            }
         }
         let folder = game.folders.entities.find(f => f.name === folderName);
         if (!folder) {
@@ -44,6 +46,7 @@ export class TemporaryCombatantForm extends FormApplication {
         tokenData.y = 0;
         tokenData.disposition = 0;
         tokenData.img = formData.icon;
+        tokenData.flags = flags;
         const token = await Token.create(tokenData);
 
         const combatant = await game.combat.createEmbeddedEntity("Combatant", {

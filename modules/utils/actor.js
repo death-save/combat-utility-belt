@@ -68,7 +68,7 @@ export class ActorUtility {
             };
         });
 
-        const newCombatants = await game.combat.createManyEmbeddedEntities("Combatant", createData);
+        const newCombatants = await game.combat.createEmbeddedEntity("Combatant", createData);
 
         if (newCombatants.length) {
             combatants.concat(newCombatants);

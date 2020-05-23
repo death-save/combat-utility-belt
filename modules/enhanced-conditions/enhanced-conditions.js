@@ -423,6 +423,12 @@ export class EnhancedConditions {
             combat.updateEmbeddedEntity("Combatant", update);
         }
 
+        const outputSetting = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.output);
+
+        if (!outputSetting) {
+            return;
+        }
+        
         return EnhancedConditions.outputChatMessage(token, conditionEntries);
     }
 
@@ -587,6 +593,10 @@ export class EnhancedConditions {
         const conditionMapIcons = EnhancedConditions.getConditionIcons(conditionMap);
         const updates = [];
 
+        if (tokens && !(tokens instanceof Array)) {
+            tokens = [tokens];
+        }
+
         for (let token of tokens) {
             const effects = token.data.effects;
             const overlay = token.data.overlayEffect;
@@ -612,18 +622,4 @@ export class EnhancedConditions {
 
         game.scenes.active.updateEmbeddedEntity("Token", updates);
     }
-
-    /* future features
-    get compendiumChoices() {
-        const compendiums = game.packs;
-        let result = {};
-
-        for(let n of compendiums) {
-            result[n.metadata.name] = n.metadata.label; 
-        }
-        
-        return result;
-    }
-    */
-
 }
