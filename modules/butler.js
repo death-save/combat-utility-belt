@@ -308,6 +308,7 @@ export const FLAGS = {
 export const SETTING_KEYS = {
     concentrator: {
         enable: "enableConcentrator",
+        conditionName: "concentratorConditionName",
         outputChat: "concentratorOutputToChat",
         autoConcentrate: "autoConcentrate",
         concentrationAttribute: "concentrationAttribute",

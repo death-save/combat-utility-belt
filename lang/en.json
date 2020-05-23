@@ -12,11 +12,15 @@
 
     "APPS.Wiki.Title": "Combat Utility Belt Wiki",
 
+    "DEFAULTCONFIG.Concentrator.ConditionName": "Concentrating",
+
     "SETTINGS.CUBPuter.ButtonN": "Combat Utility Belt Config",
     "SETTINGS.CUBPuter.ButtonH": "Provides additional configuration for Combat Utility Belt",
     
     "SETTINGS.Concentrator.EnableN": "Enable Concentrator",
     "SETTINGS.Concentrator.EnableH": "(Tested in D&D5e only)(Requires Enhanced Conditions) Forces concentration checks on tokens with the concentrating status effect when they take damage",
+    "SETTINGS.Concentrator.ConditionNameN": "Concentration Condition Name",
+    "SETTINGS.Concentrator.ConditionNameH": "Name of the Condition to use for adding and checking for Concentration",
     "SETTINGS.Concentrator.OutputToChatN": "Notify Chat",
     "SETTINGS.Concentrator.OutputToChatH": "Display a message in chat whenever concentration is threatened",
     "SETTINGS.Concentrator.PromptRollN": "Prompt Player",

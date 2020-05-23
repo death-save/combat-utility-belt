@@ -49,6 +49,16 @@ export function registerSettings() {
         }
     });
 
+    Sidekick.registerSetting(BUTLER.SETTING_KEYS.concentrator.conditionName, {
+        name: "SETTINGS.Concentrator.ConditionNameN",
+        hint: "SETTINGS.Concentrator.ConditionNameH",
+        default: BUTLER.DEFAULT_CONFIG.concentrator.conditionName,
+        scope: "world",
+        type: String,
+        config: false,
+        onChange: s => {}
+    });
+
     Sidekick.registerSetting(BUTLER.SETTING_KEYS.concentrator.concentrationAttribute, {
         name: "SETTINGS.Concentrator.ConcentrationAttributeN",
         hint: "SETTINGS.Concentrator.ConcentrationAttributeH",
@@ -161,6 +171,7 @@ export function registerSettings() {
         default: "",
         choices: BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes,
         config: false,
+        apiOnly: true,
         onChange: s => {}
     });
 
