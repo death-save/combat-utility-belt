@@ -247,4 +247,23 @@ export class Sidekick {
 
        throw new Error(`Sidekick | Tried to create a unique id over ${iterations} iterations and failed.`)
    }
+
+   /**
+    * 
+    * @param {*} text 
+    * @param {*} html 
+    * @param {*} charIndex 
+    * @param {*} speed 
+    */
+    static typeWriter(text, html, charIndex, speed) {
+        
+        if (charIndex < text.length) {
+            html.each((i,el) => {
+                el.innerHTML += text.charAt(charIndex);
+                charIndex++;
+                setTimeout(Sidekick.typeWriter, speed);
+            });
+        }
+    }
+
 }

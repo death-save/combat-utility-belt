@@ -41,47 +41,45 @@
 {{/inline}}
 
 <form autocomplete="off" onsubmit="event.preventDefault()">
-    <h1><i class="fas fa-desktop"></i> CUBPuter</h2>
-    <i id="greeting"></i>
-    <div class="form-group">
-        <label>Gadget</label>
-        <select name="gadget">
-            {{#select currentGadget.id}}
-            {{#each gadgets}}
-            <option value="{{@key}}"><h2>{{this.name}}</h2></option>
+    <div class="container crt-on">
+        <h1 class="terminal"><i class="fas fa-desktop"></i> CUBPuter</h1>
+        <div class="console-panel terminal" {{#if config.terminal}}{{else}}hidden{{/if}}>
+        </div>
+        <div class="gadget-select">
+            <h2 class="terminal">{{currentGadget.name}} <a id="expand-gadgets"><i class="fas fa-angle-right"></i></a></h2>
+            <ul id="gadget-list" class="gadget-list terminal" hidden>
+                {{#each gadgets}}
+                <a id="{{@key}}" title="Switch to gadget: {{this.name}}"><li>{{this.name}}</li></a>
+                {{/each}}
+            </ul>
+        </div>
+        <div class="information-panel terminal" {{#if config.info}}{{else}}hidden{{/if}}>
+            <p>
+                {{#if currentGadget.info}}
+                > {{currentGadget.info}}
+                {{else}}
+                > {{localize "APPS.CUBPuter.NoInfo"}}
+                {{/if}}
+                {{#if currentGadget.wiki}}
+                <!--<a>-->
+                <a id="wiki" title="{{localize "APPS.CUBPuter.WikiLinkTitle"}}"><i class="fas fa-external-link-alt"></i></a>
+                {{/if}}
+            </p>
+        </div>
+        <br />
+        <div class="settings-panel terminal">
+            <h3>{{localize "APPS.CUBPuter.SettingsHeader"}}</h3>
+            {{#each menus}}
+                {{> menuPartial}}
             {{/each}}
-            {{/select}}
-        </select>
-    </div>
-    <h2>{{currentGadget.name}}</h2>
-    <div class="information">
-        <p class="notes">
-            {{#if currentGadget.info}}
-                {{currentGadget.info}}
+            {{#each settings}}
+                {{> settingPartial}}
             {{else}}
-            {{localize "APPS.CUBPuter.NoInfo"}}
-            {{/if}}
-            {{#if currentGadget.wiki}}
-            <!--<a>-->
-            <a id="wiki" title="{{localize "APPS.CUBPuter.WikiLinkTitle"}}"><i class="fas fa-external-link-alt"></i></a>
-            {{/if}}
-        </p>
+            <p class="notes">{{localize "SETTINGS.None"}}</p>
+            {{/each}}
+        </div>
     </div>
-    <br />
-    <div class="settings-panel">
-    <h3>{{localize "APPS.CUBPuter.SettingsHeader"}}</h3>
-        {{#each menus}}
-            {{> menuPartial}}
-        {{/each}}
-            
-        {{#each settings}}
-            {{> settingPartial}}
-        {{else}}
-        <p class="notes">{{localize "SETTINGS.None"}}</p>
-        {{/each}}
-    </div>
-
-    <footer class="sheet-footer flexrow">
+    <footer class="sheet-footer flexrow terminal">
         <button type="button" name="restore">
             <i class="fas fa-history"></i> {{localize "APPS.CUBPuter.RestoreButton"}}
         </button>

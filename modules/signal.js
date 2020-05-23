@@ -4,7 +4,7 @@
 import * as BUTLER from "./butler.js";
 import { Sidekick } from "./sidekick.js";
 import { registerSettings } from "./settings.js";
-import { createCUBPuterButton } from "./cub-puter.js";
+import { createCUBPuterButton, CUBPuter } from "./cub-puter.js";
 
 /* ------------------ Gadgets ----------------- */
 
@@ -225,6 +225,9 @@ export class Signal {
             }
             
         });
-        
+
+        Hooks.on("renderCUBPuter", (app, html, data) => {
+            CUBPuter._onRender(app, html, data);
+        });
     }
 }

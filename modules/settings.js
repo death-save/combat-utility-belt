@@ -11,13 +11,22 @@ export function registerSettings() {
     /*                   CUBPuter                   */
     /* -------------------------------------------- */
 
-    Sidekick.registerMenu(BUTLER.SETTING_KEYS.cubPuter.config, {
+    Sidekick.registerMenu(BUTLER.SETTING_KEYS.cubPuter.menu, {
         name: "SETTINGS.CUBPuter.ButtonN",
         label: BUTLER.DEFAULT_CONFIG.cubPuter.title,
         hint: "SETTINGS.CUBPuter.ButtonH",
         icon: "fas fa-desktop",
         type: CUBPuter,
         restricted: true
+    });
+
+    Sidekick.registerSetting(BUTLER.SETTING_KEYS.cubPuter.config, {
+        name: "SETTINGS.CUBPuter.ConfigN",
+        hint: "SETTINGS.CUBPuter.ConfigH",
+        default: BUTLER.DEFAULT_CONFIG.cubPuter.config,
+        scope: "world",
+        type: Object,
+        onChange: s => {}
     });
 
     /* -------------------------------------------- */

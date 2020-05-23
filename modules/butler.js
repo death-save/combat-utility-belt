@@ -148,7 +148,11 @@ export const DEFAULT_CONFIG = {
     cubPuter: {
         id: "cub-puter",
         title: "CUBPuter",
-        buttonId: "cub-puter-button"
+        buttonId: "cub-puter-button",
+        config: {
+            greeting: true,
+            instructions: true
+        }
     },
     enhancedConditions: {
         iconPath: `${PATH}/icons/`,
@@ -312,6 +316,7 @@ export const SETTING_KEYS = {
         prompt: "concentratorPromptPlayer"
     },
     cubPuter: {
+        menu: "cubPuter",
         config: "cubPuterConfig"
     },
     enhancedConditions: {

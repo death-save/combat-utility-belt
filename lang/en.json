@@ -5,7 +5,7 @@
     "APPS.CUBPuter.RestoreButton": "Restore Gadget Defaults",
     "APPS.CUBPuter.ResetButton": "Reset Settings Form",
     "APPS.CUBPuter.SaveButton": "Save Gadget Settings",
-    "APPS.CUBPuter.SettingsHeader": "Settings",
+    "APPS.CUBPuter.SettingsHeader": "Settings:",
     "APPS.CUBPuter.WikiLinkText": "Wiki/More Info",
     "APPS.CUBPuter.WikiLinkTitle": "Wiki/More Info",
     "APPS.CUBPuter.NoInfo": "No additional info available",
@@ -82,6 +82,9 @@
 
     "SETTINGS.TemporaryCombatants.EnableN": "Enable Temporary Combatants",
     "SETTINGS.TemporaryCombatants.EnableH": "Allows the creation of temporary/freeform combatants from the Combat Tracker",
+    
+    "SETTINGS.ActorUtility.InitiativeFromSheetN": "Enable Roll Initiative from sheet",
+    "SETTINGS.ActorUtility.InitiativeFromSheetH": "Creates a clickable link on the Initiative heading in some Actor sheets",
     
     "SETTINGS.TokenUtility.AutoRollHostileHpN": "Enable Auto Roll Hostile Token HP",
     "SETTINGS.TokenUtility.AutoRollHostileHpH": "Automatically roll hp for hostile tokens on canvas drop",
