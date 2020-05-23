@@ -27,10 +27,11 @@ export class ConditionLab extends FormApplication {
             title: BUTLER.DEFAULT_CONFIG.enhancedConditions.conditionLab.title,
             template: `${BUTLER.PATH}/templates/condition-lab.html`,
             classes: ["sheet"],
-            width: 950,
+            width: 1025,
             height: 725,
             resizable: true,
-            closeOnSubmit: false
+            closeOnSubmit: false,
+            scrollY: ["ol.condition-lab"]
         });
     }
 
