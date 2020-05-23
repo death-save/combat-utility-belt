@@ -7,6 +7,7 @@ export class CUBPuter extends FormApplication {
 
         this.currentGadgetId = object?.currentGadget?.id || null;
         this.firstRender = true;
+        this.typewriter = null;
     }
 
     /**
@@ -18,7 +19,7 @@ export class CUBPuter extends FormApplication {
             title: DEFAULT_CONFIG.cubPuter.title,
             template: `${PATH}/templates/cub-puter.html`,
             classes: ["crt"],
-            width: 600,
+            width: 700,
             height: "auto",
             top: 200,
             left: 400,
@@ -184,6 +185,9 @@ export class CUBPuter extends FormApplication {
      * @override
      */
     close() {
+        if (this.typewriter) {
+            this.typewriter.stop();
+        }
         this._element.find(".crt-on").removeClass("crt-on")
         this._element.addClass("crt-off");
         //this._element.find(".window-content").addClass("crt-off");
@@ -378,7 +382,7 @@ export class CUBPuter extends FormApplication {
             return;
         }
 
-        const typeWriter = new Typewriter(consoleDiv[0], {
+        const typewriter = app.typewriter = new Typewriter(consoleDiv[0], {
             loop: false,
             delay: 60
         });
@@ -387,7 +391,7 @@ export class CUBPuter extends FormApplication {
             html.find(".crt-on").removeClass("crt-on");
         }
 
-        typeWriter
+        typewriter
             .pauseFor(config.startup ? 2000 : 0)
             .pasteString(startup)
             .callFunction(() => {
