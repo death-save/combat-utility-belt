@@ -12,9 +12,9 @@
 - Pan/Select fires for Temporary Combatants
 - Pan/Select does not deselect currently selected tokens if many are selected
 
-## [1.1.0] - 2020-05-03
+## [1.1.0] - 2020-05-23
 ### Added
-- CUBPuter - a settings and information system for Combat Utility Belt! **NOTE:** most module settings have been moved into CUBPuter! **:NOTE**
+- **CUBPuter** - a settings and information system for Combat Utility Belt! **NOTE:** most module settings have been moved into CUBPuter! **:NOTE**
 - Korean translation (thanks to KLO!)
 - 13th Age *System - Default* Condition Map (thanks asacolips!)
 - 13th Age Condition compendium
