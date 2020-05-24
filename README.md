@@ -1,4 +1,4 @@
-![https://img.shields.io/badge/Foundry%20VTT-0.5.5%2B-green](https://img.shields.io/badge/Foundry%20VTT-0.5.5%2B-green)
+![https://img.shields.io/badge/Foundry%20VTT-0.5.7%2B-green](https://img.shields.io/badge/Foundry%20VTT-0.5.7%2B-green)
 
 # Combat Utility Belt
 **Author**: Evan Clarke (errational#2007 on discord)
@@ -29,6 +29,7 @@ This handy-dandy combat aid comes packed with a bunch of gadgets to ensure you g
 * Roll Initiative from Sheet
 * Temporary Combatants
 
+***NOTE:** the following descriptions may be out of date. A full documentation redesign is in the works!*
 
 ## Award Encounter XP
 *full write up coming soon*
