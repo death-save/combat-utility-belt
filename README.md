@@ -3,7 +3,7 @@
 # Combat Utility Belt
 **Author**: Evan Clarke (errational#2007 on discord)
 
-**Code Contributors**: Jordan Williams (Reaver#4634), Jacob McAuley (JacobMcAuley#3461), (Moerill#7205)
+**Code Contributors**: Jordan Williams (Reaver#4634), Jacob McAuley (JacobMcAuley#3461), (Moerill#7205)    
 **Translation Contributors**: (KLO#1490)
 
 [Installation](#Installation)    
