@@ -278,20 +278,6 @@ export function registerSettings() {
     });
 
     /* -------------------------------------------- */
-    /*                MightySummoner                */
-    /* -------------------------------------------- */
-
-    Sidekick.registerSetting(BUTLER.SETTING_KEYS.mightySummoner.enable, {
-        name: "SETTINGS.MightySummoner.EnableN",
-        hint: "SETTINGS.MightySummoner.EnableH",
-        default: BUTLER.DEFAULT_CONFIG.mightySummoner.enable,
-        scope: "world",
-        type: Boolean,
-        config: true,
-        onChange: s => {}
-    });
-
-    /* -------------------------------------------- */
     /*                   PanSelect                  */
     /* -------------------------------------------- */
 
@@ -448,6 +434,26 @@ export function registerSettings() {
             Token.prototype.drawEffects = TokenUtility._patchDrawEffects;
             canvas.draw();
         }
+    });
+
+    Sidekick.registerSetting(BUTLER.SETTING_KEYS.tokenUtility.mightySummoner, {
+        name: "SETTINGS.MightySummoner.EnableN",
+        hint: "SETTINGS.MightySummoner.EnableH",
+        default: BUTLER.DEFAULT_CONFIG.mightySummoner.enable,
+        scope: "world",
+        type: Boolean,
+        config: true,
+        onChange: s => {}
+    });
+
+    Sidekick.registerSetting(BUTLER.SETTING_KEYS.tokenUtility.mightySummonerFeat, {
+        name: "SETTINGS.MightySummoner.FeatNameN",
+        hint: "SETTINGS.MightySummoner.FeatNameH",
+        default: BUTLER.DEFAULT_CONFIG.mightySummoner.featName,
+        scope: "world",
+        type: String,
+        config: false,
+        onChange: s => {}
     });
 
     /* -------------------------------------------- */

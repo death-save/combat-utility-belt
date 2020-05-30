@@ -15,7 +15,7 @@ export class TokenUtility {
         //const token = canvas.tokens.get(tokenData._id);
         const actor = game.actors.get(tokenData.actorId);
         const autoRollHP = Sidekick.getSetting(SETTING_KEYS.tokenUtility.autoRollHP);
-        const mightySummonerSetting = Sidekick.getSetting(SETTING_KEYS.mightySummoner.enable);
+        const mightySummonerSetting = Sidekick.getSetting(SETTING_KEYS.tokenUtility.mightySummoner);
         const mightySummonerFlag = getProperty(tokenData, `flags.${NAME}.${FLAGS.mightySummoner.mightySummoner}`);
         const tempCombatantSetting = Sidekick.getSetting(SETTING_KEYS.tempCombatants.enable);
         const tempCombatantFlag = getProperty(tokenData, `flags.${NAME}.${FLAGS.temporaryCombatants.temporaryCombatant}`);
@@ -25,7 +25,9 @@ export class TokenUtility {
             return;
         }
 
-        if (mightySummonerSetting && MightySummoner._checkForFeat(actor)) {
+        const feat = Sidekick.getSetting(SETTING_KEYS.tokenUtility.mightySummonerFeat);
+
+        if (mightySummonerSetting && MightySummoner._checkForFeat(actor, feat)) {
             MightySummoner._createDialog(tokenData, actor);
             return false;
         }

@@ -7,9 +7,9 @@ export class MightySummoner {
     /**
      * Checks for the existence of the designated feat
      * @param {*} actor 
+     * @todo Move this to token utility as it's no longer tied to this feat alone
      */
-    static _checkForFeat(actor) {
-        const feat = "Mighty Summoner";
+    static _checkForFeat(actor, feat) {
         const hasFeat = ActorUtility.hasFeat(actor, feat);
 
         if (hasFeat) {
