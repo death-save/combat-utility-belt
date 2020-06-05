@@ -11,13 +11,6 @@ export const PATH = "modules/combat-utility-belt";
 
 export const WIKIPATH = "https://github.com/death-save/combat-utility-belt/wiki"
 
-export const GADGET_NAMES = {
-    enhancedConditions: "enhancedConditions",
-    hideNames: "hideNames",
-    rerollInitiative: "rerollInitiative",
-    concentrator: "concentrator"
-}
-
 export const GADGETS = {
     giveXP: {
         name: "Award XP",
@@ -212,6 +205,7 @@ export const DEFAULT_CONFIG = {
     },
     mightySummoner: {
         enable: false,
+        featName: "Mighty Summoner"
     },
     panSelect: {
         enablePan: false,
@@ -346,7 +340,8 @@ export const SETTING_KEYS = {
         unconsciousActorType: "unconsciousActorType"
     },
     mightySummoner: {
-        enable: "enableMightySummoner"
+        enable: "enableMightySummoner",
+        featName: "mightySummonerFeatName"
     },
     panSelect: {
         enablePan: "enablePan",
@@ -371,6 +366,7 @@ export const SETTING_KEYS = {
     },
     tokenUtility: {
         mightySummoner: "enableMightySummoner",
+        mightySummonerFeat: "mightySummonerFeatName",
         autoRollHP: "autoRollHP",
         effectSize: "effectSize"
     },

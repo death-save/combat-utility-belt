@@ -45,7 +45,11 @@ export class ConditionLab extends FormApplication {
 
         // If there's no default map for this system don't provide the "default" choice
         if (!mappedSystems.includes(game.system.id)) {
-            delete mapTypeChoices.default;
+            if (this.initialMap) {
+                mapTypeChoices.default = "System - Inferred";
+            } else {
+                delete mapTypeChoices.default;
+            }
         }
 
         const mapType = this.mapType || Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.mapType) || "other";
@@ -295,7 +299,8 @@ export class ConditionLab extends FormApplication {
             defaultMaps = await EnhancedConditions.loadDefaultMaps();
         }
 
-        const defaultMap = defaultMaps[system] || [];
+        //const defaultMap = defaultMaps[system] || [];
+        const defaultMap = EnhancedConditions.getDefaultMap(system);
         // If the mapType is other then the map should be empty, otherwise it's the default map for the system
         this.map = this.mapType === otherMapType ? [] : await Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.map, defaultMap);
         this.render(true);

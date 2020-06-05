@@ -11,6 +11,26 @@
 - NPC names in Initiative rolls are not always hidden
 - Pan/Select fires for Temporary Combatants
 - Pan/Select does not deselect currently selected tokens if many are selected
+- **PF2e users**: the following features require an upcoming game system update to function properly: Hide NPC Names in Combat Tracker, Temporary Combatants, Quick Edit Resource in Combat Tracker
+- **PF2e users**: Enhanced Conditions `Output to Chat` setting will cause duplicate chat messages due to similar function built into the system.
+
+## [1.1.1] - 2020-06-05
+## Added
+- Japanese translation added (thanks to BrotherSharp!)
+
+## Changed
+- For game systems with no CUB default Condition Map, a new map type of `System - Inferred` will be provided instead. This map type uses the system (or Foundry core) icons and extracts the icon file name as the Condition name
+- Enhanced Conditions and the Condition Lab can be used with PF2e again! By default the Condition Lab will use the new `System - Inferred` map type.
+- CUBputer no longer defaults to the Award XP gadget to reduce confusion around the gadget selector
+- Namespaced all CSS rules to avoid unexpected CSS issues
+- Confirmed compatibility with Foundry VTT 0.6.1
+
+## Fixed
+- Enhanced Conditions no longer causes issues with the Pathfinder 2nd Edition system! 
+- CUB no longer breaks Token Mold Overlay
+- Token Status Effects (aka Conditions) set as overlays are no longer removed from the Status Effect list in the Token HUD
+- 13th Age Condition Map now loads as expected
+- CUBputer external links work as expected
 
 ## [1.1.0] - 2020-05-23
 ### Added

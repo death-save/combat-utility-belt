@@ -9,20 +9,21 @@ export class EnhancedConditions {
      * Ready Hook handler
      */
     static async _onReady() {
-        const maps = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.defaultMaps);
+        let maps = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.defaultMaps);
         const enable = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.enable);
         const system = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.system);
         const mapType = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.mapType);
+        const defaultMapType = Sidekick.getKeyByValue(BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes, BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes.default);
         let conditionMap = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.map);
 
-        if (!maps || (maps instanceof Object && Object.keys(maps).length === 0)) {
+        if (!maps || (maps instanceof Object && Object.keys(maps).length === 0) || (maps instanceof Object && !Object.keys(maps).includes(system))) {
             const defaultMaps = await EnhancedConditions.loadDefaultMaps();
-            Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.defaultMaps, defaultMaps);
+            maps = await Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.defaultMaps, defaultMaps);
         }
 
         // If map type is not set and a default map exists for the system, set maptype to default
         if (!mapType && (maps instanceof Object && Object.keys(maps).includes(system))) {
-            const defaultMapType = Sidekick.getKeyByValue(BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes, BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes.default);
+            
             Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.mapType, defaultMapType);
         }
 
@@ -32,8 +33,9 @@ export class EnhancedConditions {
             Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.map, conditionMap);
         }
 
-
+        // If the gadget is enabled, update status icons accordingly
         if (enable) {
+            EnhancedConditions._backupCoreIcons();
             EnhancedConditions._updateStatusIcons(conditionMap);
         }
 
@@ -77,7 +79,34 @@ export class EnhancedConditions {
      */
     static getDefaultMap(system) {
         const defaultMaps = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.defaultMaps);
-        return defaultMaps[system] ? defaultMaps[system] : [];
+        let defaultMap = defaultMaps[system] || [];
+
+        if (!defaultMap.length) {
+            defaultMap = EnhancedConditions.buildDefaultMap(system);
+        }
+        return defaultMap;
+    }
+
+    /**
+     * Builds a default map for a given system
+     * @param {*} system 
+     */
+    static buildDefaultMap(system) {
+        const coreIcons = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.coreIcons);
+
+        // iterate over icons, set condition to icon file name, try to find a matching reference
+        const map = coreIcons.map(i => {
+            const icon = i;
+            let name = i.split("/").pop().split(".").shift();
+            name = name ? Sidekick.toTitleCase(name) : "";
+            
+            return {
+                name,
+                icon
+            }
+        });
+
+        return map;
     }
 
 
@@ -144,15 +173,15 @@ export class EnhancedConditions {
         }
 
         if (removeDefaultEffects) {
-            CONFIG.statusEffects = activeConditionMap ? icons : [];
-        } else {
-            if (activeConditionMap instanceof Array) {
-                //add the icons from the condition map to the status effects array
-                const coreIcons = CONFIG.defaultStatusEffects || Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.coreIcons);
-                CONFIG.statusEffects = coreIcons.concat(icons);
-            }
+            return CONFIG.statusEffects = activeConditionMap ? icons : [];
+        } 
+        
+        if (activeConditionMap instanceof Array) {
+            //add the icons from the condition map to the status effects array
+            const coreIcons = CONFIG.defaultStatusEffects || Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.coreIcons);
 
-            return;
+            // Create a Set based on the core status icons and the Enhanced Condition icons. Using a Set ensures unique icons only
+            return CONFIG.statusEffects = [...new Set(coreIcons.concat(...icons))];
         }
     }
 

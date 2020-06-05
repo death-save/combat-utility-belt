@@ -1,0 +1,102 @@
+{
+    "NOTIFICATIONS.CUBPuter.RestoreDefaults": "設定を初期化しました",
+    "NOTIFICATIONS.CUBPuter.SaveSettings": "設定を保存しました",
+    
+    "APPS.CUBPuter.RestoreButton": "ツールの設定を初期化する",
+    "APPS.CUBPuter.ResetButton": "フォームを初期化する",
+    "APPS.CUBPuter.SaveButton": "ツール設定を保存する",
+    "APPS.CUBPuter.SettingsHeader": "設定：",
+    "APPS.CUBPuter.WikiLinkText": "Wiki/取説",
+    "APPS.CUBPuter.WikiLinkTitle": "Wiki/取説",
+    "APPS.CUBPuter.NoInfo": "追加の情報が存在しません。",
+
+    "APPS.Wiki.Title": "Combat Utility Belt（戦闘補助ツール）解説Wiki",
+
+    "DEFAULTCONFIG.Concentrator.ConditionName": "集中",
+
+    "SETTINGS.CUBPuter.ButtonN": "戦闘補助ツール設定",
+    "SETTINGS.CUBPuter.ButtonH": "戦闘補助ツール用の追加設定を操作可能にします。",
+    
+    "SETTINGS.Concentrator.EnableN": "集中補助",
+    "SETTINGS.Concentrator.EnableH": "(５版でのみ動作確認)(拡張状態異常が必要)集中状態のコマがダメージを受けた時集中のためのセーヴを行います。",
+    "SETTINGS.Concentrator.ConditionNameN": "集中状態の名前",
+    "SETTINGS.Concentrator.ConditionNameH": "集中を判定するためにこのツールが参照する状態の名前を入力してください。",
+    "SETTINGS.Concentrator.OutputToChatN": "チャット出力",
+    "SETTINGS.Concentrator.OutputToChatH": "集中の判定が必要なときにチャットにメッセージを出力します。",
+    "SETTINGS.Concentrator.PromptRollN": "PLプロンプト",
+    "SETTINGS.Concentrator.PromptRollH": "集中のための判定を行うかどうかをプレイヤーに促します。",
+    "SETTINGS.Concentrator.ConcentrationAttributeN": "判定を行う能力値",
+    "SETTINGS.Concentrator.ConcentrationAttributeH": "ゲームシステムによって定義されたセーヴや判定の修正値となる能力値を設定します。",
+    "SETTINGS.Concentrator.HealthAttributeN": "HPのデータ保管場所",
+    "SETTINGS.Concentrator.HealthAttributeH": "ゲーム質テムによって定義されたHPに相当するデータが置かれている場所を設定します。",
+    "SETTINGS.Concentrator.AutoConcentrateN": "自動集中マーカ",
+    "SETTINGS.Concentrator.AutoConcentrateH": "集中を必要とする呪文が発動された場合、そのコマに集中状態を表すマーカを自動的に置くかどうかを設定します。上記の集中状態の名前と連動します。",
+    "SETTINGS.Concentrator.NotifyDoubleN": "集中重複アラート",
+    "SETTINGS.Concentrator.NotifyDoubleH": "すでに集中しているときに別の集中を必要とする呪文等を発動したときにチャットに警告を表示します。",
+    
+    "SETTINGS.EnhancedConditions.EnableN": "拡張状態異常",
+    "SETTINGS.EnhancedConditions.EnableH": "登録された状態異常をコマの状態異常メニューに連結する",
+    "SETTINGS.EnhancedConditions.CoreIconsN": "既存のアイコン",
+    "SETTINGS.EnhancedConditions.CoreIconsH": "既存の状態異常アイコンのコピーを置きます",
+    "SETTINGS.EnhancedConditions.SystemN": "ゲームシステム",
+    "SETTINGS.EnhancedConditions.SystemH": "使用しているゲームシステム。未知の場合はその他に固定されます。",
+    "SETTINGS.EnhancedConditions.OutputChatN": "チャットに出力",
+    "SETTINGS.EnhancedConditions.OutputChatH": "状態異常が付与された場合、チャットにも通知します。",
+    "SETTINGS.EnhancedConditions.DefaultMapsN": "デフォルトの状態異常マップ",
+    "SETTINGS.EnhancedConditions.DefaultMapsH": "予め読み込む状態異常マップを選択します。",
+    "SETTINGS.EnhancedConditions.RemoveDefaultEffectsN": "既存アイコンを消去する",
+    "SETTINGS.EnhancedConditions.RemoveDefaultEffectsH": "コマの状態異常メニューから既存のアイコンを消去します。",
+    "SETTINGS.EnhancedConditions.MapTypeN": "アクティブな状態異常マップ",
+    "SETTINGS.EnhancedConditions.MapTypeH": "現在使用されている状態異常マップ、既存、カスタム、その他等。",
+    "SETTINGS.EnhancedConditions.ActiveConditionMapN": "状態異常マップを保存する",
+    "SETTINGS.EnhancedConditions.ActiveConditionMapH": "現在アクティブな状態異常マップを保存します。",
+    
+    "SETTINGS.GiveXP.EnableN": "経験値を配布する",
+    "SETTINGS.GiveXP.EnableH": "戦闘終了時に参加キャラクターに経験値を付与するためのオプションを表示します。",
+
+    "SETTINGS.HideNames.EnableN": "NPC名を非表示にする",
+    "SETTINGS.HideNames.EnableH": "イニシアチブ表からNPCの名前を非表示にします。",
+    "SETTINGS.HideNames.ReplacementStringN": "代替名",
+    "SETTINGS.HideNames.ReplacementStringH": "非表示にした名前の代わりに表示するものを設定します。",
+    "SETTINGS.HideNames.HideFooterN": "チャットのフッターを非表示にする",
+    "SETTINGS.HideNames.HideFooterH": "NPC名が非表示になっている時、合わせてそのNPC名が記載されるであろうチャットカードのフッターも非表示にします。",   
+
+    "SETTINGS.MightySummoner.EnableN": "召喚の達人",
+    "SETTINGS.MightySummoner.EnableH": "(５版でのみ動作確認) 「中立」のコマの持ち主が召喚の達人の特徴を持っているかどうかも確認しする。所持していた場合新しいHPを再計算し、場に出したときにダイスをロールします。",
+    
+    "SETTINGS.PanSelect.EnablePanN": "コマに注目する",
+    "SETTINGS.PanSelect.EnablePanH": "コマのターンが回ったときに画面をそのコマに注目させます。以下の注目に関する設定を使用できるようになります。",
+    "SETTINGS.PanSelect.PanGMN": "GM注目設定",
+    "SETTINGS.PanSelect.PanGMH": "GMの画面を設定に応じて注目させます。None:GMを注目しない、NPC:NPCのコマにのみ注目する、All:すべてのコマに注目する。",
+    "SETTINGS.PanSelect.PanPlayersN": "PL注目設定",
+    "SETTINGS.PanSelect.PanPlayersH": "PLの画面を設定に応じて注目させます。None:PLを注目しない、Owner:所持権限を持ったコマにのみ注目、Observer:所持及び閲覧権限をもったコマに注目、All:すべてのコマに注目",
+    "SETTINGS.PanSelect.EnableSelectN": "コマ選択",
+    "SETTINGS.PanSelect.EnableSelectH": "ターンが開始したときにコマを選択するかどうかの設定を行います。以下の選択に関する設定を使用できます。",
+    "SETTINGS.PanSelect.SelectGMN": "GM選択設定",
+    "SETTINGS.PanSelect.SelectGMH": "GMが自動で選択するコマを設定します。None:なにも選択しない、NPC:NPCのコマにのみ選択する、All:すべてのコマを選択する。",
+    "SETTINGS.PanSelect.SelectPlayersN": "PL選択設定",
+    "SETTINGS.PanSelect.SelectPlayersH": "プレイヤーが所持権限を持っているコマをターン開始時に選択します。",
+    "SETTINGS.PanSelect.ObserverDeselectN": "コマ選択解除",
+    "SETTINGS.PanSelect.ObserverDeselectH": "ターンが終了したときにそのコマの選択を解除するかどうかを設定します。",
+    
+    "SETTINGS.RerollInitiative.EnableN": "イニシアチブ再ロール",
+    "SETTINGS.RerollInitiative.EnableH": "毎ラウンドすべての戦闘参加者のイニシアチブを再度ロールする。",
+    "SETTINGS.RerollInitiative.RerollTempCombatantsN": "一時参加者も再ロールする。",
+    "SETTINGS.RerollInitiative.RerollTempCombatantsH": "一時参加者が居た場合もイニシアチブを再ロールするかどうか設定します。",
+
+    "SETTINGS.TemporaryCombatants.EnableN": "一時参加者を使用する",
+    "SETTINGS.TemporaryCombatants.EnableH": "イニシアチブ表に任意に設定できる一時参加者を置くことが出来るように設定します。",
+    
+    "SETTINGS.ActorUtility.InitiativeFromSheetN": "キャラシからイニシアチブをロール",
+    "SETTINGS.ActorUtility.InitiativeFromSheetH": "特定のキャラクターシートのイニシアチブ表記にクリック可能なリンクを置きます。",
+    
+    "SETTINGS.TokenUtility.AutoRollHostileHpN": "敵対コマのHPを自動ロールする",
+    "SETTINGS.TokenUtility.AutoRollHostileHpH": "敵対コマのHPを場に出したときに自動的にロールし割り当てます。",
+    "SETTINGS.TokenUtility.TokenEffectSizeN": "コマ状態異常アイコンサイズ",
+    "SETTINGS.TokenUtility.TokenEffectSizeH": "コマの状態異常の大きさを設定します。デフォルト：small",
+    
+    "SETTINGS.Triggler.TriggersN": "トリガー設定",
+    "SETTINGS.Triggler.TriggersH": "トリガーを保存する",
+    
+    "TEMPLATES.EnhancedConditions.ChatCardTitle": "状態異常を付与"
+}
