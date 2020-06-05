@@ -244,7 +244,7 @@ export class CUBPuter extends FormApplication {
      * @param {*} html 
      */
     _onExternalLink(event, html) {
-        const gadgetName = html.find("select[name='gadget']").first().val();
+        const gadgetName = this.currentGadgetId;
         const href = GADGETS[gadgetName].wiki;
         window.open(href);
     }
