@@ -23,12 +23,14 @@
 - Enhanced Conditions and the Condition Lab can be used with PF2e again! By default the Condition Lab will use the new `System - Inferred` map type.
 - CUBputer no longer defaults to the Award XP gadget to reduce confusion around the gadget selector
 - Namespaced all CSS rules to avoid unexpected CSS issues
+- Confirmed compatibility with Foundry VTT 0.6.1
 
 ## Fixed
 - Enhanced Conditions no longer causes issues with the Pathfinder 2nd Edition system! 
 - CUB no longer breaks Token Mold Overlay
 - Token Status Effects (aka Conditions) set as overlays are no longer removed from the Status Effect list in the Token HUD
 - 13th Age Condition Map now loads as expected
+- CUBputer external links work as expected
 
 ## [1.1.0] - 2020-05-23
 ### Added
