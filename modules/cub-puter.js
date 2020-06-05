@@ -18,7 +18,7 @@ export class CUBPuter extends FormApplication {
             id: DEFAULT_CONFIG.cubPuter.id,
             title: DEFAULT_CONFIG.cubPuter.title,
             template: `${PATH}/templates/cub-puter.html`,
-            classes: ["crt"],
+            classes: ["cub-puter-crt"],
             width: 750,
             height: "auto",
             top: 200,
@@ -37,9 +37,13 @@ export class CUBPuter extends FormApplication {
         const username = game.user.name;
         const gadgets = GADGETS;
         const config = Sidekick.getSetting(SETTING_KEYS.cubPuter.config);
-        // Use the currently selected gadget or default to the first in the list
-        const currentGadget = gadgets && this.currentGadgetId ? gadgets[this.currentGadgetId] : gadgets[Object.keys(gadgets)[0]];
-        currentGadget.id = Sidekick.getKeyByValue(gadgets, currentGadget);
+        const currentGadget = gadgets && this.currentGadgetId ? gadgets[this.currentGadgetId] : {};
+        
+        if (Object.keys(currentGadget).length === 0) {
+            currentGadget.name = game.i18n.localize("APPS.CUBPuter.SelectGadget");
+        }
+
+        currentGadget.id = Object.keys(currentGadget).length > 0 ? Sidekick.getKeyByValue(gadgets, currentGadget) : null;
         this.currentGadgetId = this.currentGadgetId ? this.currentGadgetId : currentGadget.id ? currentGadget.id : null;
         const gadgetSettingKeys = hasProperty(SETTING_KEYS, currentGadget.id) ? Object.values(SETTING_KEYS[currentGadget.id]).map(k => `${NAME}.${k}`) : [];
 
@@ -188,8 +192,8 @@ export class CUBPuter extends FormApplication {
         if (this.typewriter) {
             this.typewriter.stop();
         }
-        this._element.find(".crt-on").removeClass("crt-on")
-        this._element.addClass("crt-off");
+        this._element.find(".cub-puter-crt-on").removeClass("cub-puter-crt-on")
+        this._element.addClass("cub-puter-crt-off");
         //this._element.find(".window-content").addClass("crt-off");
         super.close();
     }

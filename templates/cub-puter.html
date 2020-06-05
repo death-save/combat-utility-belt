@@ -40,7 +40,7 @@
 </div>
 {{/inline}}
 
-<form autocomplete="off" onsubmit="event.preventDefault()">
+<form autocomplete="off" onsubmit="event.preventDefault()" class="cub-puter">
     <div class="container crt-on">
         <h1 class="terminal"><i class="fas fa-desktop"></i> CUBPuter</h1>
         <div class="console-panel terminal" {{#if config.terminal}}{{else}}hidden{{/if}}>
@@ -67,7 +67,7 @@
             </p>
         </div>
         <br />
-        <div class="settings-panel terminal">
+        <div class="settings-panel terminal" {{#if currentGadget.id}}{{else}}hidden{{/if}}>
             <h3>{{localize "APPS.CUBPuter.SettingsHeader"}}</h3>
             {{#each menus}}
                 {{> menuPartial}}
@@ -79,7 +79,7 @@
             {{/each}}
         </div>
     </div>
-    <footer class="sheet-footer flexrow terminal">
+    <footer class="sheet-footer flexrow terminal {{#if currentGadget.id}}{{else}}hidden{{/if}}">
         <button type="button" name="restore">
             <i class="fas fa-history"></i> {{localize "APPS.CUBPuter.RestoreButton"}}
         </button>

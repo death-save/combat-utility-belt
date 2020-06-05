@@ -18,7 +18,7 @@ export class GiveXP {
 
         const dialogContent = html.find("div.dialog-content");
         const yesButton = html.find("button[data-button='yes']");
-        const xpCheckboxGroup = $(`<div class="form-group"><label class="checkbox">Award XP? <input type="checkbox" name="award-xp"></label></div>`);
+        const xpCheckboxGroup = $(`<div class="form-group"><label class="xp-checkbox">Award XP? <input type="checkbox" name="award-xp"></label></div>`);
 
         dialogContent.after(xpCheckboxGroup);
 

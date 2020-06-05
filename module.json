@@ -2,7 +2,7 @@
   "name": "combat-utility-belt",
   "title": "Combat Utility Belt",
   "description": "Adds various combat-focused features",
-  "version": "1.1",
+  "version": "1.1.1",
   "author": "Evan Clarke [errational#2007]",
   "minimumCoreVersion": "0.5.7",
   "compatibleCoreVersion": "0.6.0",
@@ -21,6 +21,11 @@
       "lang": "en",
       "name": "English",
       "path": "lang/en.json"
+    },
+    {
+      "lang": "ja",
+      "name": "日本語",
+      "path": "lang/ja.json"
     },
     {
       "lang": "ko",
