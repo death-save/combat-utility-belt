@@ -14,6 +14,17 @@
 - **PF2e users**: the following features require an upcoming game system update to function properly: Hide NPC Names in Combat Tracker, Temporary Combatants, Quick Edit Resource in Combat Tracker
 - **PF2e users**: Enhanced Conditions `Output to Chat` setting will cause duplicate chat messages due to similar function built into the system.
 
+## [1.1.2] - 2020-06-10
+## Added
+- `Active Conditions` (if any) are now output to chat on each Combatant's turn
+
+## Changed
+- Updated Korean translation (thanks KLO!)
+
+## Fixed
+- Players no longer receive an error regarding core Status Icons setting
+- Remove Condition button in `Active Conditions` chat card no longer disappears on reload
+
 ## [1.1.1] - 2020-06-05
 ## Added
 - Japanese translation added (thanks to BrotherSharp!)

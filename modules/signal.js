@@ -135,6 +135,7 @@ export class Signal {
 
         Hooks.on("updateCombat", (combat, update, options, userId) => {
             RerollInitiative._onUpdateCombat(combat, update, options, userId);
+            EnhancedConditions._onUpdateCombat(combat, update, options, userId);
             TrackerUtility._hookOnUpdateCombat(combat, update);
         });
 

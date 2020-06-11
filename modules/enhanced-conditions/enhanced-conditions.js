@@ -17,6 +17,10 @@ export class EnhancedConditions {
         let conditionMap = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.map);
 
         if (!maps || (maps instanceof Object && Object.keys(maps).length === 0) || (maps instanceof Object && !Object.keys(maps).includes(system))) {
+            if (!game.user.isGM) {
+                return;
+            }
+
             const defaultMaps = await EnhancedConditions.loadDefaultMaps();
             maps = await Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.defaultMaps, defaultMaps);
         }
@@ -30,12 +34,18 @@ export class EnhancedConditions {
         // If there's no condition map, get the default one
         if (!conditionMap.length) {
             conditionMap = EnhancedConditions.getDefaultMap(system);
+
+            if (!game.user.isGM) {
+                return;
+            }
             Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.map, conditionMap);
         }
 
         // If the gadget is enabled, update status icons accordingly
         if (enable) {
-            EnhancedConditions._backupCoreIcons();
+            if (game.user.isGM) {
+                EnhancedConditions._backupCoreIcons();
+            }
             EnhancedConditions._updateStatusIcons(conditionMap);
         }
 
@@ -353,6 +363,33 @@ export class EnhancedConditions {
     }
 
     /**
+     * Update Combat Handler
+     * @param {*} combat 
+     * @param {*} update 
+     * @param {*} options 
+     * @param {*} userId 
+     */
+    static _onUpdateCombat(combat, update, options, userId) {
+        const enableEnhancedConditions = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.enable);
+
+        if (!update.turn || !enableEnhancedConditions || !game.user.isGM) {
+            return;
+        }
+
+        const token = canvas.tokens.get(game.combat.combatant.tokenId);
+        const conditions = token.data.effects.length ? duplicate(token.data.effects) : [];
+        token.data.overlayEffect ? conditions.push(token.data.overlayEffect) : null;
+
+        if (!conditions.length) {
+            return;
+        }
+
+        const map = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.map);
+
+        return EnhancedConditions.lookupEntryMapping(token, map, conditions);
+    }
+
+    /**
      * Adds a title/tooltip with the matched Condition name
      */
     static _onRenderTokenHUD(app, html, data) {
@@ -381,15 +418,23 @@ export class EnhancedConditions {
         });
     }
 
+    /**
+     * Render Chat Message handler
+     * @param {*} app 
+     * @param {*} html 
+     * @param {*} data 
+     * @todo move to chatlog render?
+     */
     static _onRenderChatMessage(app, html, data) {
         if (data.message.content && !data.message.content.match("enhanced-conditions")) {
             return;
         }
+
         const contentDiv = html.find("div.content");
         const messageDiv = contentDiv.closest("li.message");
         const messageId = messageDiv.data().messageId;
         const tokenId = contentDiv.data().tokenId;
-        const token = canvas.tokens.get(tokenId);
+        const token = canvas.tokens.get(tokenId) || canvas.scene.data.tokens.find(t => t._id === tokenId);
         const message = game.messages.get(messageId);
         const removeConditionAnchor = html.find("a[name='remove-row']");
 
@@ -486,7 +531,7 @@ export class EnhancedConditions {
             tokenId: token.id,
             alias: tokenSpeaker.alias,
             conditions: entries,
-            isOwner: token.owner
+            isOwner: token.owner || game.user.isGM
         };
 
         const chatContent = await renderTemplate(BUTLER.DEFAULT_CONFIG.enhancedConditions.templates.chatOutput, templateData);
