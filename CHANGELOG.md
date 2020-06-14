@@ -13,7 +13,7 @@
 
 ## [1.1.2] - 2020-06-10
 ## Added
-- `Active Conditions` (if any) are now output to chat on each Combatant's turn
+- New setting to output `Active Conditions` (if any) to chat on each Combatant's turn (disabled by default)
 - New macro command `game.cub.getConditions(token/s)` returns the active conditions on the given token/s
 - New variable `game.cub.conditions` returns the current Condition Map
 
