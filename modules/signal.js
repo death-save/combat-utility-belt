@@ -75,6 +75,7 @@ export class Signal {
 
             // External methods
             game.cub.applyCondition = EnhancedConditions.applyCondition;
+            game.cub.getConditions = EnhancedConditions.getConditions;
             game.cub.removeCondition = EnhancedConditions.removeCondition;
             game.cub.removeAllConditions = EnhancedConditions.removeAllConditions;
 
