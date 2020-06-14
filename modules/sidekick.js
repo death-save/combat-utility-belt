@@ -233,7 +233,7 @@ export class Sidekick {
     * Get a random unique Id, checking an optional supplied array of ids for a match
     * @param {*} existingIds 
     */
-   static createId(existingIds=[], {iterations=10000, length=16}={}) {
+    static createId(existingIds=[], {iterations=10000, length=16}={}) {
        
        let i = 0;
        while(i < iterations) {
@@ -246,9 +246,31 @@ export class Sidekick {
        }
 
        throw new Error(`Sidekick | Tried to create a unique id over ${iterations} iterations and failed.`)
-   }
+    };
 
-   static toTitleCase(string) {
-       return string.charAt(0).toUpperCase() + string.slice(1);
-   }
+    /**
+     * Sets a string to Title Case
+     * @param {*} string 
+     */
+    static toTitleCase(string) {
+        return string.charAt(0).toUpperCase() + string.slice(1);
+    };
+
+    /**
+     * Parses HTML and replaces instances of a matched pattern
+     * @param {*} pattern 
+     * @param {*} string 
+     * @param {*} param2 
+     */
+    static replaceOnDocument(pattern, string, {target = document.body} = {}) {
+        // Handle `string` — see the last section
+        [target,...target.querySelectorAll("*:not(script):not(noscript):not(style)")]
+        .forEach(({childNodes: [...nodes]}) => nodes
+        .filter(({nodeType}) => nodeType === document.TEXT_NODE)
+        .forEach((textNode) => textNode.textContent = textNode.textContent.replace(pattern, string)));
+    };
+
+    static getTextNodesIn(el) {
+        return $(el).find(":not(iframe)").addBack().contents().filter((i, e) => e.nodeType == 3 && /\S/.test(e.nodeValue));
+    };
 }

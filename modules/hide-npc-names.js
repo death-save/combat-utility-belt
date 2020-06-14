@@ -60,11 +60,10 @@ export class HideNPCNames {
 
         const replacement = Sidekick.getSetting(SETTING_KEYS.hideNames.replacementString) || " ";
         const matchString = data.alias.includes(" ") ? Sidekick.getTerms(data.alias.trim().split(" ")).map(e => Sidekick.escapeRegExp(e)).join("|") : Sidekick.escapeRegExp(data.alias);
-        const regex = matchString + "(?=[\\W]|s|'s)";
-            
-        html.each((i, el) => {
-            el.innerHTML = el.innerHTML.replace(new RegExp(regex, "gim"), replacement);
-        });
+        const regex = matchString + "(?=\\s|[\\W]|s|'s|$)";
+        const pattern = new RegExp(regex, "gim");
+
+        Sidekick.replaceOnDocument(pattern, replacement, {target: html[0]});
 
         const hideFooter = Sidekick.getSetting(SETTING_KEYS.hideNames.hideFooter);
 
@@ -73,7 +72,7 @@ export class HideNPCNames {
         }
 
         const cardFooter = html.find(".card-footer");
-        cardFooter.prop("hidden", true);    
+        cardFooter.prop("hidden", true);
     }
 
     /**
