@@ -192,6 +192,11 @@ export function registerSettings() {
         default: {},
         onChange: s => {
             EnhancedConditions._updateStatusIcons(s);
+            
+            // Save the active condition map to a convenience property
+            if (game.cub) {
+                game.cub.conditions = conditionMap;
+            }
         }
     });
 
