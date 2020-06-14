@@ -146,6 +146,7 @@ export const DEFAULT_CONFIG = {
         iconPath: `${PATH}/icons/`,
         conditionMapsPath: `${PATH}/condition-maps`,
         outputChat: false,
+        outputCombat: false,
         removeDefaultEffects: false,
         conditionLab: {
             id: "cub-condition-lab",
@@ -317,7 +318,8 @@ export const SETTING_KEYS = {
         defaultMaps: "defaultConditionMaps",
         mapType: "conditionMapType",
         removeDefaultEffects: "removeDefaultEffects",
-        output: "conditionsOutputToChat"
+        outputChat: "conditionsOutputToChat",
+        outputCombat: "conditionsOutputDuringCombat"
     },
     giveXP: {
         enable: "enableGiveXP"

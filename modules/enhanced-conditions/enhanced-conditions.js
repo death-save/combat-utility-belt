@@ -375,8 +375,9 @@ export class EnhancedConditions {
      */
     static _onUpdateCombat(combat, update, options, userId) {
         const enableEnhancedConditions = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.enable);
+        const enableOutputCombat = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.outputCombat);
 
-        if (!update.turn || !enableEnhancedConditions || !game.user.isGM) {
+        if (!update.turn || !enableEnhancedConditions || !enableOutputCombat|| !game.user.isGM) {
             return;
         }
 
@@ -501,7 +502,7 @@ export class EnhancedConditions {
             combat.updateEmbeddedEntity("Combatant", update);
         }
 
-        const outputSetting = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.output);
+        const outputSetting = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.outputChat);
 
         if (!outputSetting) {
             return;

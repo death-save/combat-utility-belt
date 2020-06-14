@@ -41,6 +41,8 @@
     "SETTINGS.EnhancedConditions.SystemH": "A reference to the game system. Defaults to other if not known to the module",
     "SETTINGS.EnhancedConditions.OutputChatN": "Output to Chat",
     "SETTINGS.EnhancedConditions.OutputChatH": "Output matched conditions to chat",
+    "SETTINGS.EnhancedConditions.OutputCombatN": "Output During Combat",
+    "SETTINGS.EnhancedConditions.OutputCombatH": "On each round of Combat, output any conditions for the current combatant to chat",
     "SETTINGS.EnhancedConditions.DefaultMapsN": "Default Condition Maps",
     "SETTINGS.EnhancedConditions.DefaultMapsH": "Module-provided maps of conditions to icons",
     "SETTINGS.EnhancedConditions.RemoveDefaultEffectsN": "Remove Default Status Effects",
