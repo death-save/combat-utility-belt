@@ -242,10 +242,10 @@ export class Sidekick {
                return id;
            }
            i++;
-           console.log(`Sidekick | Id ${id} already exists in the provided list of ids. ${i ? `This is attempt ${i} of ${iterations} `: ""}Trying again...`);
+           console.log(`Combat Utility Belt - Sidekick | Id ${id} already exists in the provided list of ids. ${i ? `This is attempt ${i} of ${iterations} `: ""}Trying again...`);
        }
 
-       throw new Error(`Sidekick | Tried to create a unique id over ${iterations} iterations and failed.`)
+       throw new Error(`Combat Utility Belt - Sidekick | Tried to create a unique id over ${iterations} iterations and failed.`)
     };
 
     /**
