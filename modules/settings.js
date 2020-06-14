@@ -192,16 +192,31 @@ export function registerSettings() {
         default: {},
         onChange: s => {
             EnhancedConditions._updateStatusIcons(s);
+
+            // Save the active condition map to a convenience property
+            if (game.cub) {
+                game.cub.conditions = conditionMap;
+            }
         }
     });
 
-    Sidekick.registerSetting(BUTLER.SETTING_KEYS.enhancedConditions.output, {
+    Sidekick.registerSetting(BUTLER.SETTING_KEYS.enhancedConditions.outputChat, {
         name: "SETTINGS.EnhancedConditions.OutputChatN",
         hint: "SETTINGS.EnhancedConditions.OutputChatH",
         scope: "world",
         type: Boolean,
         config: false,
         default: BUTLER.DEFAULT_CONFIG.enhancedConditions.outputChat,
+        onChange: s => {}
+    });
+
+    Sidekick.registerSetting(BUTLER.SETTING_KEYS.enhancedConditions.outputCombat, {
+        name: "SETTINGS.EnhancedConditions.OutputCombatN",
+        hint: "SETTINGS.EnhancedConditions.OutputCombatH",
+        scope: "world",
+        type: Boolean,
+        config: false,
+        default: BUTLER.DEFAULT_CONFIG.enhancedConditions.outputCombat,
         onChange: s => {}
     });
 

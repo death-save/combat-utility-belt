@@ -75,6 +75,7 @@ export class Signal {
 
             // External methods
             game.cub.applyCondition = EnhancedConditions.applyCondition;
+            game.cub.getConditions = EnhancedConditions.getConditions;
             game.cub.removeCondition = EnhancedConditions.removeCondition;
             game.cub.removeAllConditions = EnhancedConditions.removeAllConditions;
 
@@ -135,6 +136,7 @@ export class Signal {
 
         Hooks.on("updateCombat", (combat, update, options, userId) => {
             RerollInitiative._onUpdateCombat(combat, update, options, userId);
+            EnhancedConditions._onUpdateCombat(combat, update, options, userId);
             TrackerUtility._hookOnUpdateCombat(combat, update);
         });
 

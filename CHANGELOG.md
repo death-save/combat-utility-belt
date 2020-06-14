@@ -8,11 +8,25 @@
 - Macros for: hiding/unhiding NPC names, rerolling initiative
 
 ## [Known Issues]
-- NPC names in Initiative rolls are not always hidden
-- Pan/Select fires for Temporary Combatants
 - Pan/Select does not deselect currently selected tokens if many are selected
-- **PF2e users**: the following features require an upcoming game system update to function properly: Hide NPC Names in Combat Tracker, Temporary Combatants, Quick Edit Resource in Combat Tracker
 - **PF2e users**: Enhanced Conditions `Output to Chat` setting will cause duplicate chat messages due to similar function built into the system.
+
+## [1.1.2] - 2020-06-10
+## Added
+- New setting to output `Active Conditions` (if any) to chat on each Combatant's turn (disabled by default)
+- New macro command `game.cub.getConditions(token/s)` returns the active conditions on the given token/s
+- New variable `game.cub.conditions` returns the current Condition Map
+
+## Changed
+- Updated Korean translation (thanks KLO!)
+- Improved the Hide NPC Names matching logic
+
+## Fixed
+- Hide NPC Names no longer breaks images with the same name as the NPC
+- Hide NPC Names no longer breaks listeners on chat messages (eg. extra functionality from other modules)
+- Players no longer receive an error regarding core Status Icons setting
+- Remove Condition button in `Active Conditions` chat card no longer disappears on reload
+- Pan/Select no longer fires for Temporary Combatants
 
 ## [1.1.1] - 2020-06-05
 ## Added
