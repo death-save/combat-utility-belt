@@ -10,6 +10,7 @@
 ## [Known Issues]
 - Pan/Select does not deselect currently selected tokens if many are selected
 - **PF2e users**: Enhanced Conditions `Output to Chat` setting will cause duplicate chat messages due to similar function built into the system.
+- Enhanced Conditions `Output to Chat` will reveal the existence of hidden creatures if conditions are applied to them and/or during combat if `Output During Combat` is on
 
 ## [1.1.2] - 2020-06-10
 ## Added
