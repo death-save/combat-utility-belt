@@ -20,7 +20,7 @@ export class PanSelect {
         }
 
         const combatant = combat.combatant;
-        const temporary = hasProperty(combatant, `flags.${BUTLER.FLAGS.temporaryCombatants.temporaryCombatant}`);
+        const temporary = hasProperty(combatant, `flags.${BUTLER.NAME}.${BUTLER.FLAGS.temporaryCombatants.temporaryCombatant}`);
 
         if (temporary) {
             return;
@@ -142,7 +142,7 @@ export class PanSelect {
         }
 
         const combatant = combat.combatant;
-        const temporary = hasProperty(combatant, `flags.${BUTLER.FLAGS.temporaryCombatants.temporaryCombatant}`);
+        const temporary = hasProperty(combatant, `flags.${BUTLER.NAME}.${BUTLER.FLAGS.temporaryCombatants.temporaryCombatant}`);
 
         if (temporary) {
             return;
