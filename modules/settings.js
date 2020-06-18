@@ -190,8 +190,8 @@ export function registerSettings() {
         scope: "world",
         type: Object,
         default: {},
-        onChange: s => {
-            EnhancedConditions._updateStatusIcons(s);
+        onChange: conditionMap => {
+            EnhancedConditions._updateStatusIcons(conditionMap);
 
             // Save the active condition map to a convenience property
             if (game.cub) {
