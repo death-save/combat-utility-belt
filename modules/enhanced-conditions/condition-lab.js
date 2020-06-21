@@ -2,6 +2,7 @@ import * as BUTLER from "../butler.js";
 import { Sidekick } from "../sidekick.js";
 import { EnhancedConditions } from "./enhanced-conditions.js";
 import { TrigglerForm } from "../triggler/triggler-form.js";
+import { DraggableList } from "../utils/draggable-list.js";
 
 /**
  * Form application for managing mapping of Conditions to Icons and JournalEntries
@@ -15,7 +16,6 @@ export class ConditionLab extends FormApplication {
         this.initialMap = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.map);
         this.map = null;
         this.maps = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.defaultMaps);
-        this.draggedIndex = -1;
     }
 
     /**
@@ -31,7 +31,9 @@ export class ConditionLab extends FormApplication {
             height: 725,
             resizable: true,
             closeOnSubmit: false,
-            scrollY: ["ol.condition-lab"]
+            scrollY: ["ol.condition-lab"],
+            // Use default FVTT drag drop implementation here
+            dragDrop: [{ dragSelector: ".row",  dropSelector: ".list"}]
         });
     }
 
@@ -450,6 +452,9 @@ export class ConditionLab extends FormApplication {
         iconPath.on("change", event => this._onChangeIconPath(event));
         compendiumSelector.on("change", event => this._onChangeCompendium(event));
 
+        // Init the DraggableList
+        new DraggableList(html[0].querySelector('.list'), '.row');
+
         super.activateListeners(html);     
     }
 
@@ -696,40 +701,30 @@ export class ConditionLab extends FormApplication {
         
     }
 
-    /**
-     * 
-     * @param {*} event 
-     * @param {*} index 
-     */
-    onDragStart(event, index) {
-        game.cub.conditionLab.draggedIndex = index;
-        // do something?
+    _onDragStart(event) {
+        const sourceElement = event.currentTarget;
+        // save the index of the currently dragged element
+        this._draggedIndex = Array.from(sourceElement.parentNode.children).indexOf(sourceElement);
     }
 
-    /**
-     * 
-     * @param {*} event 
-     * @param {*} object 
-     */
-    onDragEnd(event, object) {
-        //implement this
-        this.draggedIndex = object.draggedIdx;
-    }
-
-    /**
-     * 
-     * @param {*} event 
-     * @param {*} draggedIndex 
-     * @param {*} nextItem 
-     * @param {*} container 
-     */
-    onDrop(event, draggedIndex, nextItem, container) {
-        const oldIndex = game.cub.conditionLab.draggedIndex;
-        const newIndex = draggedIndex;
+    _onDrop(event) {
+        const oldIndex = this._draggedIndex;
         const draggedItem = game.cub.conditionLab.map[oldIndex];
         const newMap = duplicate(game.cub.conditionLab.map);
+        // remove element from list first
         newMap.splice(oldIndex, 1);
+
+        const sourceElement = event.target;
+        let newIndex = Array.from(sourceElement.parentNode.children).indexOf(sourceElement); 
+        // If dragged from above, one element is missing in the sourcenode list, so reduce index by one
+        if (oldIndex < newIndex)
+            newIndex--;
         newMap.splice(newIndex, 0, draggedItem);
+
+        // since rerender can be slow on e.g. firefox, put the node to the correct position already.
+        const origNode = Array.from(sourceElement.parentNode.children)[oldIndex];
+        sourceElement.parentNode.insertBefore(origNode, sourceElement);
+
         game.cub.conditionLab.map = newMap;
         game.cub.conditionLab.render();
     }

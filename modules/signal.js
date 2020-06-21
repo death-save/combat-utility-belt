@@ -21,7 +21,6 @@ import { TemporaryCombatants } from "./temporary-combatants/temporary-combatants
 import { TokenUtility } from "./utils/token.js";
 import { ActorUtility } from "./utils/actor.js";
 import { TrackerUtility } from "./utils/combat-tracker.js";
-import { DraggableList } from "./utils/draggable-list.js";
 import { ConditionLab } from "./enhanced-conditions/condition-lab.js";
 import { Triggler } from "./triggler/triggler.js";
 
@@ -212,21 +211,6 @@ export class Signal {
         });
 
         /* ---------------- Custom Apps --------------- */
-
-        Hooks.on("renderConditionLab", (app, html, data) => {
-            //const mappingList = html.find("ol[class='condition-map-list']");
-            const mappingList = document.getElementsByClassName("condition-lab")[0];
-            
-            if (mappingList) {
-                new DraggableList(mappingList, "li", {
-                    boundary: 0, 
-                    rowHeight: 100, 
-                    onDragStart: ConditionLab.prototype.onDragStart, 
-                    onDrop: ConditionLab.prototype.onDrop
-                });
-            }
-            
-        });
 
         Hooks.on("renderCUBPuter", (app, html, data) => {
             CUBPuter._onRender(app, html, data);
