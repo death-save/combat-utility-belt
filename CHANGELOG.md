@@ -13,6 +13,9 @@
 - Enhanced Conditions `Output to Chat` will reveal the existence of hidden creatures if conditions are applied to them and/or during combat if `Output During Combat` is on
 
 ## [1.1.3] - 2020-06-27
+### Added
+- Portugese (Brazil) translation (thanks @rinnocenti!)
+
 ### Changed
 - Confirmed compatibility with Foundry 0.6.4
 
