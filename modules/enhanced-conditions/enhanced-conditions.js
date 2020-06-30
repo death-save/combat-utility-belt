@@ -377,7 +377,7 @@ export class EnhancedConditions {
         const enableEnhancedConditions = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.enable);
         const enableOutputCombat = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.outputCombat);
 
-        if (!update.turn || !enableEnhancedConditions || !enableOutputCombat|| !game.user.isGM) {
+        if (!hasProperty(update, "turn") || !enableEnhancedConditions || !enableOutputCombat|| !game.user.isGM) {
             return;
         }
 
