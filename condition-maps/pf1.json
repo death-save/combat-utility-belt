@@ -9,14 +9,14 @@
         },
         {
             "name": "Blinded",
-            "icon": "systems/pf1/icons/skills/blood_03.jpg",
+            "icon": "systems/pf1/icons/skills/light_01.jpg",
             "referenceId": "@Compendium[pf1.conditions.coxrkb6qUKBZvVxP]",
             "referenceType": "compendium.journalEntry"
         },
         {
             "name": "Charmed",
             "icon": "systems/pf1/icons/skills/light_07.jpg",
-            "referenceId": "@Compendium[pf1.spells.NGm0EbjYOhhmkrhy]",
+            "referenceId": "@Compendium[pf1.spells.tjog6bufg5b08lvq]",
             "referenceType": "compendium.item"
         },
         {
@@ -142,7 +142,7 @@
         {
             "name": "Sleep",
             "icon": "icons/svg/sleep.svg",
-            "referenceId": "@Compendium[pf1.spells.uXpFeevV4jzzOPxi]",
+            "referenceId": "@Compendium[pf1.spells.3plb67e51webutdz]",
             "referenceType": "compendium.item",
             "options": {
                 "overlay": true,

@@ -4,7 +4,7 @@
 **Author**: Evan Clarke (errational#2007 on discord)
 
 **Code Contributors**: Jordan Williams (Reaver#4634), Jacob McAuley (JacobMcAuley#3461), (Moerill#7205)    
-**Translation Contributors**: (KLO#1490)
+**Translation Contributors**: (KLO#1490), (BrotherSharp#6921), @rinnocenti    
 
 [Installation](#Installation)    
 [Module Manifest](https://raw.githubusercontent.com/death-save/combat-utility-belt/master/module.json)    
@@ -19,11 +19,11 @@ This handy-dandy combat aid comes packed with a bunch of gadgets to ensure you g
 
 **Featuring**
 * Auto-distribute XP
-* Concentration Checks (D&D5e only)
+* Concentration Checks (D&D 5e only)
 * Enhanced Conditions
 * Hide NPC Names
 * Mark Injured/Dead
-* Mighty Summoner (Druid Circle of the Shepherd class feature) support (D&D5e only)
+* Mighty Summoner (Druid Circle of the Shepherd class feature) support (D&D 5e only)
 * Pan to/Select Token
 * Quick Edit Token Resource
 * Reroll Initiative
@@ -112,8 +112,7 @@ See [Issue Log](https://github.com/death-save/combat-utility-belt/issues)
 - [X] `Enhanced Conditions` Allow linking directly to compendium entries - [Issue #19](https://github.com/death-save/combat-utility-belt/issues/19)
 
 ## Known Issues
-- NPC names in Initiative rolls are not hidden
-- Pan/Select fires for Temporary Combatants
+Check the [Changelog](https://github.com/death-save/combat-utility-belt/blob/master/CHANGELOG.md)    
 
 ## Thanks/Attribution
 Firstly thanks to everyone who has downloaded the mod, and a special thank you to everyone who provided bug reports or feedback on discord or here on github!
@@ -122,7 +121,7 @@ Secondly I want to shout out the awesome contributors for this module: Reaver01,
 
 A big thanks to trdischat#2123 on the Foundry Discord for the awesome set of condition icons used in the `Dungeons & Dragons 5th Edition` mapping.
 
-I need to acknowledge that many of the functions found in the Combat Utility Belt are inspired by API scripts for Roll20 written by Robin Kuiper (namely the Combat Tracker, Death Tracker and StatusInfo ones).
+I would like to acknowledge that many of the functions found in the Combat Utility Belt are inspired by API scripts for Roll20 written by Robin Kuiper (namely the Combat Tracker, Death Tracker and StatusInfo ones).
 
 Concentration icon made by [Freepik](https://www.flaticon.com/authors/freepik) from [Flat Icon](www.flaticon.com)
 

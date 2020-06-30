@@ -1,0 +1,110 @@
+{
+    "NOTIFICATIONS.CUBPuter.RestoreDefaults": "configurações dos apetrechos restauradas para os padrões!",
+    "NOTIFICATIONS.CUBPuter.SaveSettings": "configurações dos apetrechos salvas!",
+    
+    "APPS.CUBPuter.RestoreButton": "Restaurar padrões do apetrecho",
+    "APPS.CUBPuter.ResetButton": "Redefinir formulário de configurações",
+    "APPS.CUBPuter.SaveButton": "Salvar configurações do apetrecho",
+    "APPS.CUBPuter.SettingsHeader": "Configurações:",
+    "APPS.CUBPuter.WikiLinkText": "Wiki/Mais informações",
+    "APPS.CUBPuter.WikiLinkTitle": "Wiki / Mais informações",
+    "APPS.CUBPuter.NoInfo": "Nenhuma informação adicional disponível",
+    "APPS.CUBPuter.SelectGadget": "--Selecione um apetrecho--",
+
+    "APPS.Wiki.Title": "Cinto de Utilidades de Combate Wiki",
+
+    "SETTINGS.CUBPuter.ButtonN": "Configurações do Cinto de Utilidades de Combate",
+    "SETTINGS.CUBPuter.ButtonH": "Fornece configuração adicional para o Cinto de Utilidades de Combate",
+
+    
+    "SETTINGS.Concentrator.EnableN": "Ativar Concentrador",
+    "SETTINGS.Concentrator.EnableH": "(Testado apenas em D&D5e) (Requer condições aprimoradas) Força as verificações de concentração nos tokens com o efeito de status de concentração quando eles sofrem danos",
+    "SETTINGS.Concentrator.ConditionNameN": "Nome da Condição de Concentração",
+    "SETTINGS.Concentrator.ConditionNameH": "Nome da condição a ser usada para adicionar e verificar a concentração",
+    "SETTINGS.Concentrator.OutputToChatN": "Notificar bate-papo",
+    "SETTINGS.Concentrator.OutputToChatH": "Exibir uma mensagem no bate-papo sempre que a concentração estiver ameaçada",
+    "SETTINGS.Concentrator.PromptRollN": "Comando do jogador",
+    "SETTINGS.Concentrator.PromptRollH": "Solicita ao jogador que faça a verificação ou não",
+    "SETTINGS.Concentrator.ConcentrationAttributeN": "Atributo de Concentração",
+    "SETTINGS.Concentrator.ConcentrationAttributeH": "Nome do Atributo de concentração conforme definido pelo sistema de jogo",
+    "SETTINGS.Concentrator.HealthAttributeN": "Atributo de Saúde",
+    "SETTINGS.Concentrator.HealthAttributeH": "Nome do atributo de integridade/PV, conforme definido pelo sistema de jogo",
+    "SETTINGS.Concentrator.AutoConcentrateN": "Definir Automaticamente o Status de Concentração",
+    "SETTINGS.Concentrator.AutoConcentrateH": "Quando uma mágica de Concentração for lançada, defina automaticamente o status de Concentração",
+    "SETTINGS.Concentrator.NotifyDoubleN": "Notificar em Dupla Concentração",
+    "SETTINGS.Concentrator.NotifyDoubleH": "Enviar uma mensagem quando um feitiço de concentração for lançado enquanto outro feitiço estiver sendo concentrado",
+
+    
+    "SETTINGS.EnhancedConditions.EnableN": "Ativar Condições Aprimoradas",
+    "SETTINGS.EnhancedConditions.EnableH": "Vincula condições a ícones de status",
+    "SETTINGS.EnhancedConditions.CoreIconsN": "Ícones Principais de Estatus",
+    "SETTINGS.EnhancedConditions.CoreIconsH": "Uma cópia dos principais ícones de estatus",
+    "SETTINGS.EnhancedConditions.SystemN": "Sistema de Jogo",
+    "SETTINGS.EnhancedConditions.SystemH": "Uma referência ao sistema do jogo. O padrão é outro se não for conhecido pelo módulo",
+    "SETTINGS.EnhancedConditions.OutputChatN": "Saída para bate-papo",
+    "SETTINGS.EnhancedConditions.OutputChatH": "Saída correspondente às condições para o bate-papo",
+    "SETTINGS.EnhancedConditions.OutputCombatN": "Saída durante o combate",
+    "SETTINGS.EnhancedConditions.OutputCombatH": "Em cada rodada de combate, exiba quaisquer condições para o combatente atual no bate-papo",
+    "SETTINGS.EnhancedConditions.DefaultMapsN": "Mapas de Condição Padrão",
+    "SETTINGS.EnhancedConditions.DefaultMapsH": "Mapas de condições fornecidos pelo módulo para ícones",
+    "SETTINGS.EnhancedConditions.RemoveDefaultEffectsN": "Remover os Efeitos de Estatus Padrão",
+    "SETTINGS.EnhancedConditions.RemoveDefaultEffectsH": "Remova os ícones de efeito de status existentes da HUD do token",
+    "SETTINGS.EnhancedConditions.MapTypeN": "Tipo de Mapa de Condição Ativo",
+    "SETTINGS.EnhancedConditions.MapTypeH": "Tipo de mapa de condições atualmente em uso -- padrão, personalizado ou outro",
+    "SETTINGS.EnhancedConditions.ActiveConditionMapN": "Mapa de Condição Ativo",
+    "SETTINGS.EnhancedConditions.ActiveConditionMapH": "Armazena o mapa de condições ativo",
+
+    
+    "SETTINGS.GiveXP.EnableN": "Ativar Distribuir XP",
+    "SETTINGS.GiveXP.EnableH": "Adiciona uma opção no final do combate para distribuir automaticamente xp do combate para os jogadores",
+
+    "SETTINGS.HideNames.EnableN": "Ativar Ocultar Nomes de NPC",
+    "SETTINGS.HideNames.EnableH": "Oculta nomes de NPC no Monitor de Combate",
+    "SETTINGS.HideNames.ReplacementStringN": "Nome da substituição",
+    "SETTINGS.HideNames.ReplacementStringH": "Texto a ser exibido para nomes ocultos de NPC",
+    "SETTINGS.HideNames.HideFooterN": "Ocultar Rodapé do Cartão de Bate-papo",
+    "SETTINGS.HideNames.HideFooterH": "Quando os nomes dos NPCs estiverem ocultos, oculte também o rodapé do cartão de bate-papo, que pode conter informações confidenciais",   
+
+    "SETTINGS.MightySummoner.EnableN": "Ativar Invocador Poderoso",
+    "SETTINGS.MightySummoner.EnableH": "(Testado apenas no D&D5e) Verifica automaticamente se o proprietário do token do ator NEUTRO também possui um ator com o talento Invocador Poderoso. Calcula e adiciona automaticamente nova fórmula HP e rola HP para token na colocar na tela",
+    "SETTINGS.MightySummoner.FeatNameN": "Nome do Talento Invocador Poderoso",
+    "SETTINGS.MightySummoner.FeatNameH": "Nome do talento a ser verificado",
+
+    
+    "SETTINGS.PanSelect.EnablePanN": "Ativar Panorâmica do Token",
+    "SETTINGS.PanSelect.EnablePanH": "Ativa a seguinte funcionalidade de panorâmica de token",
+    "SETTINGS.PanSelect.PanGMN": "Panorâmica do MJ",
+    "SETTINGS.PanSelect.PanGMH": "Desloca o GM. Opções: Nenhum (não desloca o GM), NPC (desloca apenas para tokens de personagens que não sejam jogadores), Tudo (desloca para todos os tokens)",
+    "SETTINGS.PanSelect.PanPlayersN": "Panorâmica dos Jogadores",
+    "SETTINGS.PanSelect.PanPlayersH": "Desloca os jogadores. Opções: Nenhuma (não desloca os jogadores), Proprietário (desloca apenas os tokens de propriedade), Observador (desloca os toques de Observados e de Propriedade), Todos (desloca todos os tokens)",
+    "SETTINGS.PanSelect.EnableSelectN": "Ativar Selecionar Token",
+    "SETTINGS.PanSelect.EnableSelectH": "Ativa a seguinte funcionalidade de seleção de token",
+    "SETTINGS.PanSelect.SelectGMN": "Seleções do MJ",
+    "SETTINGS.PanSelect.SelectGMH": "Seleciona o token com base na opção selecionada: Nenhum (não selecione), NPC (selecione apenas tokens de personagens que não sejam do jogador), Todos (selecione todos os tokens)",
+    "SETTINGS.PanSelect.SelectPlayersN": "Seleção dos Jogadores",
+    "SETTINGS.PanSelect.SelectPlayersH": "Seleciona tokens pertencentes ao jogador no turno em combate",
+    "SETTINGS.PanSelect.ObserverDeselectN": "Cancelar seleção de tokens",
+    "SETTINGS.PanSelect.ObserverDeselectH": "Cancele a seleção de tokens controlados no turno de qualquer combatente que não seja do proprietário",
+
+    
+    "SETTINGS.RerollInitiative.EnableN": "Ativar Re-Rolagem da Iniciativa",
+    "SETTINGS.RerollInitiative.EnableH": "Refaz a iniciativa para cada combatente a cada rodada",
+    "SETTINGS.RerollInitiative.RerollTempCombatantsN": "Re-Rolagem dos Combatants Temporários",
+    "SETTINGS.RerollInitiative.RerollTempCombatantsH": "Defina se é necessário rolar novamente a iniciativa para os Combatentes temporários, se estiverem ativados",
+
+    "SETTINGS.TemporaryCombatants.EnableN": "Ativar Combatentes Temporários",
+    "SETTINGS.TemporaryCombatants.EnableH": "Permite a criação de combatentes temporários de forma livre a partir do Monitor de Combate",
+    
+    "SETTINGS.ActorUtility.InitiativeFromSheetN": "Ativar Rolagem iniciativa pela ficha",
+    "SETTINGS.ActorUtility.InitiativeFromSheetH": "Cria um link clicável no cabeçalho da Iniciativa em algumas fichas do Personagem",
+    
+    "SETTINGS.TokenUtility.AutoRollHostileHpN": "Ativar Rolagem Automática HP para tokens hostis",
+    "SETTINGS.TokenUtility.AutoRollHostileHpH": "Role automaticamente o hp para tokens hostis na colocados na tela",
+    "SETTINGS.TokenUtility.TokenEffectSizeN": "Token Effect Icon Size",
+    "SETTINGS.TokenUtility.TokenEffectSizeH": "Define o tamanho dos ícones de efeito do token. Padrão: Pequeno",
+    
+    "SETTINGS.Triggler.TriggersN": "Gatilhos Engatilhados",
+    "SETTINGS.Triggler.TriggersH": "Armazena os Gatilhos Engatilhados salvos",
+    
+    "TEMPLATES.EnhancedConditions.ChatCardTitle": "Condições ativas"
+}

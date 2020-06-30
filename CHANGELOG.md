@@ -2,7 +2,7 @@
 
 ## [Unreleased]
 - ~~Compendium support for Condition Lab~~
-- Combatant stats in Combat Tracker
+- ~~Combatant stats in Combat Tracker~~
 - Refine Hide NPC Names to allow for "known" NPC names/information
 - Attach Macros to Conditions in Condition Lab
 - Macros for: hiding/unhiding NPC names, rerolling initiative
@@ -12,17 +12,29 @@
 - **PF2e users**: Enhanced Conditions `Output to Chat` setting will cause duplicate chat messages due to similar function built into the system.
 - Enhanced Conditions `Output to Chat` will reveal the existence of hidden creatures if conditions are applied to them and/or during combat if `Output During Combat` is on
 
+## [1.1.3] - 2020-06-27
+### Added
+- Portugese (Brazil) translation (thanks @rinnocenti!)
+
+### Changed
+- Confirmed compatibility with Foundry 0.6.4
+
+### Fixed
+- Improved drag and drop behaviour in Condition Lab (thanks moerill!)
+- `Pathfinder` Blinded, Charmed and Sleep conditions had incorrect icons or references (thanks FurySpark!)
+- Enhanced Conditions Output to Chat during Combat no longer ignores the first turn
+
 ## [1.1.2] - 2020-06-10
-## Added
+### Added
 - New setting to output `Active Conditions` (if any) to chat on each Combatant's turn (disabled by default)
 - New macro command `game.cub.getConditions(token/s)` returns the active conditions on the given token/s
 - New variable `game.cub.conditions` returns the current Condition Map
 
-## Changed
+### Changed
 - Updated Korean translation (thanks KLO!)
 - Improved the Hide NPC Names matching logic
 
-## Fixed
+### Fixed
 - Hide NPC Names no longer breaks images with the same name as the NPC
 - Hide NPC Names no longer breaks listeners on chat messages (eg. extra functionality from other modules)
 - Players no longer receive an error regarding core Status Icons setting
@@ -30,17 +42,17 @@
 - Pan/Select no longer fires for Temporary Combatants
 
 ## [1.1.1] - 2020-06-05
-## Added
+### Added
 - Japanese translation added (thanks to BrotherSharp!)
 
-## Changed
+### Changed
 - For game systems with no CUB default Condition Map, a new map type of `System - Inferred` will be provided instead. This map type uses the system (or Foundry core) icons and extracts the icon file name as the Condition name
 - Enhanced Conditions and the Condition Lab can be used with PF2e again! By default the Condition Lab will use the new `System - Inferred` map type.
 - CUBputer no longer defaults to the Award XP gadget to reduce confusion around the gadget selector
 - Namespaced all CSS rules to avoid unexpected CSS issues
 - Confirmed compatibility with Foundry VTT 0.6.1
 
-## Fixed
+### Fixed
 - Enhanced Conditions no longer causes issues with the Pathfinder 2nd Edition system! 
 - CUB no longer breaks Token Mold Overlay
 - Token Status Effects (aka Conditions) set as overlays are no longer removed from the Status Effect list in the Token HUD
