@@ -19,7 +19,7 @@ export class ActorUtility {
         const actor = app.entity;
         const initiative = html.find(".initiative");
 
-        if (initiative.length === 0) {
+        if (initiative.length === 0 || !app.object.owner) {
             return;
         }
 
