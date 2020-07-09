@@ -263,15 +263,88 @@ export function registerSettings() {
         }
     });
 
-    Sidekick.registerSetting(BUTLER.SETTING_KEYS.hideNames.replacementString, {
-        name: "SETTINGS.HideNames.ReplacementStringN",
-        hint: "SETTINGS.HideNames.ReplacementStringH",
+    Sidekick.registerSetting(BUTLER.SETTING_KEYS.hideNames.enableHostile, {
+        name: "SETTINGS.HideNames.EnableHostileN",
+        hint: "SETTINGS.HideNames.EnableHostileH",
         scope: "world",
-        type: String,
-        default: BUTLER.DEFAULT_CONFIG.hideNames.replacementString,
+        type: Boolean,
+        default: BUTLER.DEFAULT_CONFIG.hideNames.enableHostile,
         config: false,
         onChange: s => {
-            const enable = Sidekick.getSetting(BUTLER.SETTING_KEYS.hideNames.enable);
+            ui.combat.render();
+            ui.chat.render();
+        }
+    });
+
+    Sidekick.registerSetting(BUTLER.SETTING_KEYS.hideNames.enableNeutral, {
+        name: "SETTINGS.HideNames.EnableNeutralN",
+        hint: "SETTINGS.HideNames.EnableNeutralH",
+        scope: "world",
+        type: Boolean,
+        default: BUTLER.DEFAULT_CONFIG.hideNames.enableNeutral,
+        config: false,
+        onChange: s => {
+            ui.combat.render();
+            ui.chat.render();
+        }
+    });
+
+    Sidekick.registerSetting(BUTLER.SETTING_KEYS.hideNames.enableFriendly, {
+        name: "SETTINGS.HideNames.EnableFriendlyN",
+        hint: "SETTINGS.HideNames.EnableFriendlyH",
+        scope: "world",
+        type: Boolean,
+        default: BUTLER.DEFAULT_CONFIG.hideNames.enableNeutral,
+        config: false,
+        onChange: s => {
+            ui.combat.render();
+            ui.chat.render();
+        }
+    });
+
+    Sidekick.registerSetting(BUTLER.SETTING_KEYS.hideNames.hostileNameReplacement, {
+        name: "SETTINGS.HideNames.HostileNameReplacementN",
+        hint: "SETTINGS.HideNames.HostileNameReplacementH",
+        scope: "world",
+        type: String,
+        default: BUTLER.DEFAULT_CONFIG.hideNames.hostileNameReplacement,
+        config: false,
+        onChange: s => {
+            const enable = Sidekick.getSetting(BUTLER.SETTING_KEYS.hideNames.enableHostile);
+
+            if (enable) {
+                ui.combat.render();
+                ui.chat.render();
+            }
+        }
+    });
+
+    Sidekick.registerSetting(BUTLER.SETTING_KEYS.hideNames.neutralNameReplacement, {
+        name: "SETTINGS.HideNames.NeutralNameReplacementN",
+        hint: "SETTINGS.HideNames.NeutralNameReplacementH",
+        scope: "world",
+        type: String,
+        default: BUTLER.DEFAULT_CONFIG.hideNames.neutralNameReplacement,
+        config: false,
+        onChange: s => {
+            const enable = Sidekick.getSetting(BUTLER.SETTING_KEYS.hideNames.enableNeutral);
+
+            if (enable) {
+                ui.combat.render();
+                ui.chat.render();
+            }
+        }
+    });
+
+    Sidekick.registerSetting(BUTLER.SETTING_KEYS.hideNames.friendlyNameReplacement, {
+        name: "SETTINGS.HideNames.FriendlyNameReplacementN",
+        hint: "SETTINGS.HideNames.FriendlyNameReplacementH",
+        scope: "world",
+        type: String,
+        default: BUTLER.DEFAULT_CONFIG.hideNames.friendlyNameReplacement,
+        config: false,
+        onChange: s => {
+            const enable = Sidekick.getSetting(BUTLER.SETTING_KEYS.hideNames.enableFriendly);
 
             if (enable) {
                 ui.combat.render();

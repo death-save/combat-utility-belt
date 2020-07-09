@@ -190,8 +190,17 @@ export const DEFAULT_CONFIG = {
     },
     hideNames: {
         enable: false,
+        enableHostile: false,
+        enableNeutral: false,
+        enableFriendly: false,
         hideFooter: false,
-        replacementString: "Unknown Creature"
+        hostileNameReplacement: "Unknown Creature",
+        neutralNameReplacement: "Unknown Creature",
+        friendlyNameReplacement: "Unknown Creature",
+        actorForm: {
+            id: "hide-names-actor",
+            title: "Hide NPC Name"
+        }
     },
     injuredDead: {
         enableInjured: false,
@@ -292,6 +301,11 @@ export const FLAGS = {
     },
     temporaryCombatants: {
         temporaryCombatant: "temporaryCombatant"
+    },
+    hideNames: {
+        enable: "enable",
+        replacementType: "replacementType",
+        replacementName: "replacementName"
     }
 }
 
@@ -325,21 +339,14 @@ export const SETTING_KEYS = {
         enable: "enableGiveXP"
     },
     hideNames: {
-        enable: "enableHideNames",
-        replacementString: "replacementString",
+        enable: "enableHideNPCNames",
+        enableHostile: "enableHideHostileNames",
+        enableNeutral: "enableHideNeutralNames",
+        enableFriendly: "enableHideFriendlyNames",
+        hostileNameReplacement: "hostileNameReplacement",
+        neutralNameReplacement: "neutralNameReplacement",
+        friendlyNameReplacement: "friendlyNameReplacement",
         hideFooter: "hideFooter"
-    },
-    injuredDead: {
-        enableInjured: "enableInjured",
-        enableDead: "enableDead",
-        enableUnconscious: "enableUnconscious",
-        injuredIcon: "injuredIcon",
-        deadIcon: "deadIcon",
-        unconsciousIcon: "unconsciousIcon",
-        threshold: "injuredThreshold",
-        healthAttribute: "healthAttribute",
-        markDefeated: "markDefeated",
-        unconsciousActorType: "unconsciousActorType"
     },
     mightySummoner: {
         enable: "enableMightySummoner",

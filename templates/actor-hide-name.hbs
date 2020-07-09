@@ -1,0 +1,23 @@
+<form autocomplete="off" onsubmit="event.preventDefault()">
+    <h4><i class="fas fa-mask"></i> Hide Name</h4>
+    <div class="form-group">
+        <label>{{localize "HIDE_NAMES.ActorForm.Enable"}}</label>
+        <input type="checkbox" name="enable" {{checked enable}}>
+        <p class="notes">{{localize "HIDE_NAMES.ActorForm.EnableHint"}}</p>
+    </div>
+    <div class="form-group">
+        <label {{localize "HIDE_NAMES.ActorForm.ReplacementType"}}></label>
+        <select name="replacement-type" value="{{replacementType}}">
+            {{#each replacementTypes}}
+                <option value="{{@key}}">{{this}}</option>
+            {{/each}}
+        </select>
+    </div>
+    <div class="form-group">
+        <label {{localize "HIDE_NAMES.ActorForm.ReplacementName"}}></label>
+        <input type="text" name="replacement-name" value="{{replacementName}}" {{#if typeOther}}{{else}}disabled{{/if}}>
+    </div>
+    <footer>
+        <button type="button" name="save"><i class="fas fa-disk"></i> Save</button>
+    </footer>
+</form>
