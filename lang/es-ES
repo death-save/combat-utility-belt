@@ -43,7 +43,7 @@
     "SETTINGS.EnhancedConditions.OutputChatN": "Mandar al chat.",
     "SETTINGS.EnhancedConditions.OutputChatH": "Mandar las condiciones que coincidan al chat.",
     "SETTINGS.EnhancedConditions.OutputCombatN": "Mostrar durante el combate.",
-    "SETTINGS.EnhancedConditions.OutputCombatH": "On each round of Combat, output any conditions for the current combatant to chat",
+    "SETTINGS.EnhancedConditions.OutputCombatH": "En cadaOn each round of Combat, output any conditions for the current combatant to chat",
     "SETTINGS.EnhancedConditions.DefaultMapsN": "Default Condition Maps",
     "SETTINGS.EnhancedConditions.DefaultMapsH": "Module-provided maps of conditions to icons",
     "SETTINGS.EnhancedConditions.RemoveDefaultEffectsN": "Remove Default Status Effects",
