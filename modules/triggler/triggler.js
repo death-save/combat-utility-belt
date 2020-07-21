@@ -61,9 +61,9 @@ export class Triggler {
      * @param {*} entity 
      * @param {*} update 
      * @param {*} entryPoint1
-     * @param {*} entrypoint2
+     * @param {*} entryPoint2
      */
-    static _processUpdate(entity, update, entryPoint1, entrypoint2) {
+    static _processUpdate(entity, update, entryPoint1, entryPoint2) {
         if (entryPoint1 && !hasProperty(update, entryPoint1)) {
             return;
         }
@@ -96,11 +96,11 @@ export class Triggler {
                 continue;
             }
 
-            // example : actorData.data.attributes.hp.value
-            const matchString1 = `${entryPoint1}.${trigger.category}.${trigger.attribute}.${trigger.property1}`;
+            // example : actorData.data.attributes.hp.value or actorData.data.status.isShaken
+            const matchString1 = `${entryPoint1}.${trigger.category}${trigger.attribute ? `.${trigger.attribute}` : ``}${trigger.property1 ? `.${trigger.property1}` : ``}`;
 
             // example: actor.data.data.hp.max -- note this is unlikely to be in the update data
-            const matchString2 = `${entrypoint2}.${trigger.category}.${trigger.attribute}.${trigger.property2}`;
+            const matchString2 = `${entryPoint2}.${trigger.category}${trigger.attribute ? `.${trigger.attribute}` : ``}${trigger.property2 ? `.${trigger.property2}` : ``}`;
 
             // If the update doesn't have a value that matches the 1st property this trigger should be skipped
             if (!hasProperty(update, matchString1)) {
