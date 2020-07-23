@@ -296,6 +296,9 @@ export const DEFAULT_CONFIG = {
 }
 
 export const FLAGS = {
+    concentrator: {
+        chatMessage: "concentratorChatMessageParsed"
+    },
     mightySummoner: {
         mightySummoner: "mightySummoner"
     },
@@ -303,9 +306,9 @@ export const FLAGS = {
         temporaryCombatant: "temporaryCombatant"
     },
     hideNames: {
-        enable: "enable",
-        replacementType: "replacementType",
-        replacementName: "replacementName"
+        enable: "enableHideName",
+        replacementType: "hideNameReplacementType",
+        replacementName: "hideNameReplacement"
     }
 }
 
