@@ -197,6 +197,9 @@ export const DEFAULT_CONFIG = {
         hostileNameReplacement: "Unknown Creature",
         neutralNameReplacement: "Unknown Creature",
         friendlyNameReplacement: "Unknown Creature",
+        hostileIcon: "far fa-angry",
+        neutralIcon: "far fa-meh",
+        friendlyIcon: "far fa-happy",
         actorForm: {
             id: "hide-names-actor",
             title: "Hide NPC Name"

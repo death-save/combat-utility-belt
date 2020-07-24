@@ -13,6 +13,11 @@
 
     "APPS.Wiki.Title": "Combat Utility Belt Wiki",
 
+    "HIDE_NAMES.ActorForm.Enable": "Hide Actor Name",
+    "HIDE_NAMES.ActorForm.EnableHint": "Enable hiding of this actor's name in Combat Tracker and Chat Messages",
+    "HIDE_NAMES.ActorForm.ReplacementName": "Replacement Name",
+    "HIDE_NAMES.ActorForm.ReplacementHint": "The name to use instead of the Actor's name",
+
     "SETTINGS.CUBPuter.ButtonN": "Combat Utility Belt Config",
     "SETTINGS.CUBPuter.ButtonH": "Provides additional configuration for Combat Utility Belt",
     
@@ -57,6 +62,12 @@
 
     "SETTINGS.HideNames.EnableN": "Enable Hide NPC Names",
     "SETTINGS.HideNames.EnableH": "Hides NPC names in the Combat Tracker",
+    "SETTINGS.HideNames.EnableHostileN": "Hide Hostile Names",
+    "SETTINGS.HideNames.EnableHostileH": "Hide Names of Actors with Token Disposition set to HOSTILE",
+    "SETTINGS.HideNames.EnableNeutralN": "Hide Neutral Names",
+    "SETTINGS.HideNames.EnableNeutralH": "Hide Names of Actors with Token Disposition set to NEUTRAL",
+    "SETTINGS.HideNames.EnableFriendlyN": "Hide Friendly Names",
+    "SETTINGS.HideNames.EnableFriendlyH": "Hide Names of Actors with Token Disposition set to FRIENDLY",
     "SETTINGS.HideNames.ReplacementStringN": "Replacement Name",
     "SETTINGS.HideNames.ReplacementStringH": "Text to display for hidden NPC names",
     "SETTINGS.HideNames.HideFooterN": "Hide Chat Card Footer",
