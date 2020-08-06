@@ -1,0 +1,537 @@
+{
+  "system": "pf2e",
+  "map": [
+    {
+      "name": "Blinded",
+      "icon": "systems/pf2e/icons/conditions/blinded.png",
+      "referenceType": "compendium.journalEntry",
+      "compendium": "pf2e.conditionspf2e",
+      "referenceId": "@Compendium[pf2e.conditionspf2e.XgEqL1kFApUbl5Z2]",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "markDefeated": false
+      }
+    },
+    {
+      "name": "Broken",
+      "icon": "systems/pf2e/icons/conditions/broken.png",
+      "referenceType": "compendium.journalEntry",
+      "compendium": "pf2e.conditionspf2e",
+      "referenceId": "@Compendium[pf2e.conditionspf2e.6dNUvdb1dhToNDj3]",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "markDefeated": false
+      }
+    },
+    {
+      "name": "Clumsy",
+      "icon": "systems/pf2e/icons/conditions/clumsy.png",
+      "referenceType": "compendium.journalEntry",
+      "compendium": "pf2e.conditionspf2e",
+      "referenceId": "@Compendium[pf2e.conditionspf2e.i3OJZU2nk64Df3xm]",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "markDefeated": false
+      }
+    },
+    {
+      "name": "Concealed",
+      "icon": "systems/pf2e/icons/conditions/concealed.png",
+      "referenceType": "compendium.journalEntry",
+      "compendium": "pf2e.conditionspf2e",
+      "referenceId": "@Compendium[pf2e.conditionspf2e.DmAIPqOBomZ7H95W]",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "markDefeated": false
+      }
+    },
+    {
+      "name": "Confused",
+      "icon": "systems/pf2e/icons/conditions/confused.png",
+      "referenceType": "compendium.journalEntry",
+      "compendium": "pf2e.conditionspf2e",
+      "referenceId": "@Compendium[pf2e.conditionspf2e.yblD8fOR1J8rDwEQ]",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "markDefeated": false
+      }
+    },
+    {
+      "name": "Controlled",
+      "icon": "systems/pf2e/icons/conditions/controlled.png",
+      "referenceType": "compendium.journalEntry",
+      "compendium": "pf2e.conditionspf2e",
+      "referenceId": "@Compendium[pf2e.conditionspf2e.9qGBRpbX9NEwtAAr]",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "markDefeated": false
+      }
+    },
+    {
+      "name": "Dazzled",
+      "icon": "systems/pf2e/icons/conditions/dazzled.png",
+      "referenceType": "compendium.journalEntry",
+      "compendium": "pf2e.conditionspf2e",
+      "referenceId": "@Compendium[pf2e.conditionspf2e.TkIyaNPgTZFBCCuh]",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "markDefeated": false
+      }
+    },
+    {
+      "name": "Deafened",
+      "icon": "systems/pf2e/icons/conditions/deafened.png",
+      "referenceType": "compendium.journalEntry",
+      "compendium": "pf2e.conditionspf2e",
+      "referenceId": "@Compendium[pf2e.conditionspf2e.9PR9y0bi4JPKnHPR]",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "markDefeated": false
+      }
+    },
+    {
+      "name": "Drained",
+      "icon": "systems/pf2e/icons/conditions/drained.png",
+      "referenceType": "compendium.journalEntry",
+      "compendium": "pf2e.conditionspf2e",
+      "referenceId": "@Compendium[pf2e.conditionspf2e.4D2KBtexWXa6oUMR]",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "markDefeated": false
+      }
+    },
+    {
+      "name": "Encumbered",
+      "icon": "systems/pf2e/icons/conditions/encumbered.png",
+      "referenceType": "compendium.journalEntry",
+      "compendium": "pf2e.conditionspf2e",
+      "referenceId": "@Compendium[pf2e.conditionspf2e.D5mg6Tc7Jzrj6ro7]",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "markDefeated": false
+      }
+    },
+    {
+      "name": "Enfeebled",
+      "icon": "systems/pf2e/icons/conditions/enfeebled.png",
+      "referenceType": "compendium.journalEntry",
+      "compendium": "pf2e.conditionspf2e",
+      "referenceId": "@Compendium[pf2e.conditionspf2e.MIRkyAjyBeXivMa7]",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "markDefeated": false
+      }
+    },
+    {
+      "name": "Fascinated",
+      "icon": "systems/pf2e/icons/conditions/fascinated.png",
+      "referenceType": "compendium.journalEntry",
+      "compendium": "pf2e.conditionspf2e",
+      "referenceId": "@Compendium[pf2e.conditionspf2e.AdPVz7rbaVSRxHFg]",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "markDefeated": false
+      }
+    },
+    {
+      "name": "Fatigued",
+      "icon": "systems/pf2e/icons/conditions/fatigued.png",
+      "referenceType": "compendium.journalEntry",
+      "compendium": "pf2e.conditionspf2e",
+      "referenceId": "@Compendium[pf2e.conditionspf2e.HL2l2VRSaQHu9lUw]",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "markDefeated": false
+      }
+    },
+    {
+      "name": "Flat-Footed",
+      "icon": "systems/pf2e/icons/conditions/flatFooted.png",
+      "referenceType": "compendium.journalEntry",
+      "compendium": "pf2e.conditionspf2e",
+      "referenceId": "@Compendium[pf2e.conditionspf2e.AJh5ex99aV6VTggg]",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "markDefeated": false
+      }
+    },
+    {
+      "name": "Fleeing",
+      "icon": "systems/pf2e/icons/conditions/fleeing.png",
+      "referenceType": "compendium.journalEntry",
+      "compendium": "pf2e.conditionspf2e",
+      "referenceId": "@Compendium[pf2e.conditionspf2e.sDPxOjQ9kx2RZE8D]",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "markDefeated": false
+      }
+    },
+    {
+      "name": "Frightened",
+      "icon": "systems/pf2e/icons/conditions/frightened.png",
+      "referenceType": "compendium.journalEntry",
+      "compendium": "pf2e.conditionspf2e",
+      "referenceId": "@Compendium[pf2e.conditionspf2e.TBSHQspnbcqxsmjL]",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "markDefeated": false
+      }
+    },
+    {
+      "name": "Grabbed",
+      "icon": "systems/pf2e/icons/conditions/grabbed.png",
+      "referenceType": "compendium.journalEntry",
+      "compendium": "pf2e.conditionspf2e",
+      "referenceId": "@Compendium[pf2e.conditionspf2e.kWc1fhmv9LBiTuei]",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "markDefeated": false
+      }
+    },
+    {
+      "name": "Hidden",
+      "icon": "systems/pf2e/icons/conditions/hidden.png",
+      "referenceType": "compendium.journalEntry",
+      "compendium": "pf2e.conditionspf2e",
+      "referenceId": "@Compendium[pf2e.conditionspf2e.iU0fEDdBp3rXpTMC]",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "markDefeated": false
+      }
+    },
+    {
+      "name": "Immobilized",
+      "icon": "systems/pf2e/icons/conditions/immobilized.png",
+      "referenceType": "compendium.journalEntry",
+      "compendium": "pf2e.conditionspf2e",
+      "referenceId": "@Compendium[pf2e.conditionspf2e.eIcWbB5o3pP6OIMe]",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "markDefeated": false
+      }
+    },
+    {
+      "name": "Invisible",
+      "icon": "systems/pf2e/icons/conditions/invisible.png",
+      "referenceType": "compendium.journalEntry",
+      "compendium": "pf2e.conditionspf2e",
+      "referenceId": "@Compendium[pf2e.conditionspf2e.zJxUflt9np0q4yML]",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "markDefeated": false
+      }
+    },
+    {
+      "name": "Observed",
+      "icon": "systems/pf2e/icons/conditions/observed.png",
+      "referenceType": "compendium.journalEntry",
+      "compendium": "pf2e.conditionspf2e",
+      "referenceId": "@Compendium[pf2e.conditionspf2e.1wQY3JYyhMYeeV2G]",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "markDefeated": false
+      }
+    },
+    {
+      "name": "Paralyzed",
+      "icon": "systems/pf2e/icons/conditions/paralyzed.png",
+      "referenceType": "compendium.journalEntry",
+      "compendium": "pf2e.conditionspf2e",
+      "referenceId": "@Compendium[pf2e.conditionspf2e.6uEgoh53GbXuHpTF]",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "markDefeated": false
+      }
+    },
+    {
+      "name": "Persistent Damage",
+      "icon": "systems/pf2e/icons/conditions/persistentDamage.png",
+      "referenceType": "compendium.journalEntry",
+      "compendium": "pf2e.conditionspf2e",
+      "referenceId": "@Compendium[pf2e.conditionspf2e.lDVqvLKA6eF3Df60]",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "markDefeated": false
+      }
+    },
+    {
+      "name": "Petrified",
+      "icon": "systems/pf2e/icons/conditions/petrified.png",
+      "referenceType": "compendium.journalEntry",
+      "compendium": "pf2e.conditionspf2e",
+      "referenceId": "@Compendium[pf2e.conditionspf2e.dTwPJuKgBQCMxixg]",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "markDefeated": false
+      }
+    },
+    {
+      "name": "Prone",
+      "icon": "systems/pf2e/icons/conditions/prone.png",
+      "referenceType": "compendium.journalEntry",
+      "compendium": "pf2e.conditionspf2e",
+      "referenceId": "@Compendium[pf2e.conditionspf2e.j91X7x0XSomq8d60]",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "markDefeated": false
+      }
+    },
+    {
+      "name": "Quickened",
+      "icon": "systems/pf2e/icons/conditions/quickened.png",
+      "referenceType": "compendium.journalEntry",
+      "compendium": "pf2e.conditionspf2e",
+      "referenceId": "@Compendium[pf2e.conditionspf2e.nlCjDvLMf2EkV2dl]",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "markDefeated": false
+      }
+    },
+    {
+      "name": "Restrained",
+      "icon": "systems/pf2e/icons/conditions/restrained.png",
+      "referenceType": "compendium.journalEntry",
+      "compendium": "pf2e.conditionspf2e",
+      "referenceId": "@Compendium[pf2e.conditionspf2e.VcDeM8A5oI6VqhbM]",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "markDefeated": false
+      }
+    },
+    {
+      "name": "Sickened",
+      "icon": "systems/pf2e/icons/conditions/sickened.png",
+      "referenceType": "compendium.journalEntry",
+      "compendium": "pf2e.conditionspf2e",
+      "referenceId": "@Compendium[pf2e.conditionspf2e.fesd1n5eVhpCSS18]",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "markDefeated": false
+      }
+    },
+    {
+      "name": "Slowed",
+      "icon": "systems/pf2e/icons/conditions/slowed.png",
+      "referenceType": "compendium.journalEntry",
+      "compendium": "pf2e.conditionspf2e",
+      "referenceId": "@Compendium[pf2e.conditionspf2e.xYTAsEpcJE1Ccni3]",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "markDefeated": false
+      }
+    },
+    {
+      "name": "Stunned",
+      "icon": "systems/pf2e/icons/conditions/stunned.png",
+      "referenceType": "compendium.journalEntry",
+      "compendium": "pf2e.conditionspf2e",
+      "referenceId": "@Compendium[pf2e.conditionspf2e.dfCMdR4wnpbYNTix]",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "markDefeated": false
+      }
+    },
+    {
+      "name": "Stupefied",
+      "icon": "systems/pf2e/icons/conditions/stupefied.png",
+      "referenceType": "compendium.journalEntry",
+      "compendium": "pf2e.conditionspf2e",
+      "referenceId": "@Compendium[pf2e.conditionspf2e.e1XGnhKNSQIm5IXg]",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "markDefeated": false
+      }
+    },
+    {
+      "name": "Undetected",
+      "icon": "systems/pf2e/icons/conditions/undetected.png",
+      "referenceType": "compendium.journalEntry",
+      "compendium": "pf2e.conditionspf2e",
+      "referenceId": "@Compendium[pf2e.conditionspf2e.VRSef5y1LmL2Hkjf]",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "markDefeated": false
+      }
+    },
+    {
+      "name": "Unnoticed",
+      "icon": "systems/pf2e/icons/conditions/unnoticed.png",
+      "referenceType": "compendium.journalEntry",
+      "compendium": "pf2e.conditionspf2e",
+      "referenceId": "@Compendium[pf2e.conditionspf2e.9evPzg9E6muFcoSk]",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "markDefeated": false
+      }
+    },
+    {
+      "name": "Hostile",
+      "icon": "systems/pf2e/icons/conditions/hostile.png",
+      "referenceType": "compendium.journalEntry",
+      "compendium": "pf2e.conditionspf2e",
+      "referenceId": "@Compendium[pf2e.conditionspf2e.ud7gTLwPeklzYSXG]",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "markDefeated": false
+      }
+    },
+    {
+      "name": "Unfriendly",
+      "icon": "systems/pf2e/icons/conditions/unfriendly.png",
+      "referenceType": "compendium.journalEntry",
+      "compendium": "pf2e.conditionspf2e",
+      "referenceId": "@Compendium[pf2e.conditionspf2e.I1ffBVISxLr2gC4u]",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "markDefeated": false
+      }
+    },
+    {
+      "name": "Indifferent",
+      "icon": "systems/pf2e/icons/conditions/indifferent.png",
+      "referenceType": "compendium.journalEntry",
+      "compendium": "pf2e.conditionspf2e",
+      "referenceId": "@Compendium[pf2e.conditionspf2e.fuG8dgthlDWfWjIA]",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "markDefeated": false
+      }
+    },
+    {
+      "name": "Friendly",
+      "icon": "systems/pf2e/icons/conditions/friendly.png",
+      "referenceType": "compendium.journalEntry",
+      "compendium": "pf2e.conditionspf2e",
+      "referenceId": "@Compendium[pf2e.conditionspf2e.v66R7FdOf11l94im]",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "markDefeated": false
+      }
+    },
+    {
+      "name": "Helpful",
+      "icon": "systems/pf2e/icons/conditions/helpful.png",
+      "referenceType": "compendium.journalEntry",
+      "compendium": "pf2e.conditionspf2e",
+      "referenceId": "@Compendium[pf2e.conditionspf2e.v44P3WUcU1j0115l]",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "markDefeated": false
+      }
+    }
+  ]
+}
