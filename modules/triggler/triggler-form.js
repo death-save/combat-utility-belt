@@ -48,7 +48,13 @@ export class TrigglerForm extends FormApplication {
         const notZero = this.data.notZero || null;
 
         const categories = hasProperty(game, "system.template.Actor.templates.common") ? Object.keys(game.system.template.Actor.templates.common) : null;
-        const attributes = category ? Object.keys(game.system.template.Actor.templates.common[category]) : null;
+
+        var extendedAttributes = actor.templates.common[category];
+        actor.types.forEach(type => {
+            extendedAttributes = actor[type][category] ? mergeObject(extendedAttributes,actor[type][category]) : extendedAttributes
+        })
+        const attributes = category ? Object.keys(extendedAttributes) : null;        
+
         const properties = category && attribute ? Object.keys(game.system.template.Actor.templates.common[category][attribute]) : null;
         const operators = DEFAULT_CONFIG.triggler.operators;
 
