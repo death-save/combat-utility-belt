@@ -46,7 +46,8 @@ export class TrigglerForm extends FormApplication {
         const pcOnly = this.data.pcOnly || null;
         const npcOnly = this.data.npcOnly || null;
         const notZero = this.data.notZero || null;
-
+        
+        const actor = game.system.template.Actor
         const categories = hasProperty(game, "system.template.Actor.templates.common") ? Object.keys(game.system.template.Actor.templates.common) : null;
 
         var extendedAttributes = actor.templates.common[category];
