@@ -33,7 +33,7 @@ export class HideNPCNamesActorForm extends FormApplication {
         const disposition = Sidekick.getKeyByValue(CONST.TOKEN_DISPOSITIONS, dispositionEnum);
         const dispositionIcon = DEFAULT_CONFIG.hideNames[`${disposition.toLowerCase()}Icon`];
         const enableSetting = Sidekick.getSetting(SETTING_KEYS.hideNames[`enable${disposition.titleCase()}`]);
-        const settingName = game.i18n.localize(`SETTINGS.HIDE_NAMES.Enable${disposition.titleCase()}`);
+        const settingName = game.i18n.localize(`SETTINGS.HideNames.Enable${disposition.titleCase()}N`);
         const enableFlag = actor.getFlag(NAME, FLAGS.hideNames.enable);
         const enable = enableFlag ?? enableSetting;
         const replacementSetting = Sidekick.getSetting(SETTING_KEYS.hideNames[`${disposition.toLowerCase()}NameReplacement`]);

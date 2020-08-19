@@ -28,8 +28,8 @@ export const GADGETS = {
         wiki: `${WIKIPATH}/enhanced-conditions`
     },
     hideNames: {
-        name: "Hide NPC Names",
-        info: "Replaces NPC names with a new name of your choice",
+        name: "Hide Names",
+        info: "Replaces Actor names with a new name of your choice",
         wiki: `${WIKIPATH}/hide-names`
     },
     panSelect: {
@@ -202,7 +202,7 @@ export const DEFAULT_CONFIG = {
         friendlyIcon: "far fa-happy",
         actorForm: {
             id: "hide-names-actor",
-            title: "Hide NPC Name"
+            title: "Hide Name"
         }
     },
     injuredDead: {

@@ -2,9 +2,6 @@ import { Sidekick } from "../sidekick.js";
 import { SETTING_KEYS, NAME, PATH, FLAGS, DEFAULT_CONFIG } from "../butler.js";
 import { HideNPCNamesActorForm } from "./actor-form.js";
 
-/**
- * Hides NPC names in the combat tracker
- */
 export class HideNPCNames {
     /**
      * 
@@ -50,7 +47,7 @@ export class HideNPCNames {
     }
 
     /**
-     * Hooks on the Combat Tracker render to replace the NPC names
+     * Hooks on the Combat Tracker render to replace the names
      * @param {Object} app - the Application instance
      * @param {Object} html - jQuery html object
      * @todo refactor required
@@ -77,7 +74,7 @@ export class HideNPCNames {
 
         if (!npcs.length) return;
 
-        // check if NPC name should be hidden
+        // check if name should be hidden
         const hideNPCs = npcs.map(npc => {
             const flag = npc.actor.getFlag(NAME, FLAGS.hideNames.enable);
             if (flag) {
@@ -114,7 +111,7 @@ export class HideNPCNames {
     }
 
     /**
-     * Replaces instances of hidden NPC name in chat
+     * Replaces instances of hidden name in chat
      * @todo: If a player owns the message speaker - reveal the message
      */
     static _hookOnRenderChatMessage(message, html, data) {
