@@ -48,10 +48,10 @@ export class TrigglerForm extends FormApplication {
         const notZero = this.data.notZero || null;
 
         const templates = game.system.template.Actor.templates;
-        const baseTemplate = templates ? Object.values(templates)[0] : null;
-        const categories = baseTemplate ? Object.keys(baseTemplate) : hasProperty(game, "system.template.Actor.templates.common") ? Object.keys(game.system.template.Actor.templates.common) : null;
-        const attributes = category ? Object.keys(game.system.template.Actor.templates.common[category]) : null;
-        const properties = category && attribute ? Object.keys(game.system.template.Actor.templates.common[category][attribute]) : null;
+        const baseTemplate = templates ? Object.values(templates)[0] : null; 
+        const categories = baseTemplate ? Object.keys(baseTemplate) : null;
+        const attributes = category ? Object.keys(baseTemplate[category]) : null;
+        const properties = category && attribute ? Object.keys(baseTemplate[category][attribute]) : null;
         const operators = DEFAULT_CONFIG.triggler.operators;
 
         const triggerSelected = id && triggers ? true : false;
