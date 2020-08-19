@@ -12,6 +12,19 @@
 - **PF2e users**: Enhanced Conditions `Output to Chat` setting will cause duplicate chat messages due to similar function built into the system.
 - Enhanced Conditions `Output to Chat` will reveal the existence of hidden creatures if conditions are applied to them and/or during combat if `Output During Combat` is on
 
+## [1.2] - 2020-??-??
+### Added
+- Hide Names now includes settings and default replacement name options for each token disposition: `friendly`, `neutral`, and `hostile`
+- Hide Names now has a form (accessible from the Actor sheet--look for the `mask` icon) for setting whether or not to hide an Actor's name and what the replacement should be
+- Triggler now allows triggers with no `Property` (for example if the criteria you want to use for the trigger is only at the `Attribute` level)
+
+### Changed
+- Hide NPC Names is now Hide Names
+- Concentrator now uses a flag on the chat message to detect if it has assessed the message for possible Concentration spells
+
+### Fixed
+- Triggler now works for game systems that don't mirror the `dnd5e` Actor model such as `archmage`
+
 ## [1.1.3] - 2020-06-27
 ### Added
 - Portugese (Brazil) translation (thanks @rinnocenti!)
