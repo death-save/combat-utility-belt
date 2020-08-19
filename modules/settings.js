@@ -303,8 +303,8 @@ export function registerSettings() {
     });
 
     Sidekick.registerSetting(BUTLER.SETTING_KEYS.hideNames.hostileNameReplacement, {
-        name: "SETTINGS.HideNames.HostileNameReplacementN",
-        hint: "SETTINGS.HideNames.HostileNameReplacementH",
+        name: "SETTINGS.HideNames.HostileReplacementN",
+        hint: "SETTINGS.HideNames.HostileReplacementH",
         scope: "world",
         type: String,
         default: BUTLER.DEFAULT_CONFIG.hideNames.hostileNameReplacement,
@@ -320,8 +320,8 @@ export function registerSettings() {
     });
 
     Sidekick.registerSetting(BUTLER.SETTING_KEYS.hideNames.neutralNameReplacement, {
-        name: "SETTINGS.HideNames.NeutralNameReplacementN",
-        hint: "SETTINGS.HideNames.NeutralNameReplacementH",
+        name: "SETTINGS.HideNames.NeutralReplacementN",
+        hint: "SETTINGS.HideNames.NeutralReplacementH",
         scope: "world",
         type: String,
         default: BUTLER.DEFAULT_CONFIG.hideNames.neutralNameReplacement,
@@ -337,8 +337,8 @@ export function registerSettings() {
     });
 
     Sidekick.registerSetting(BUTLER.SETTING_KEYS.hideNames.friendlyNameReplacement, {
-        name: "SETTINGS.HideNames.FriendlyNameReplacementN",
-        hint: "SETTINGS.HideNames.FriendlyNameReplacementH",
+        name: "SETTINGS.HideNames.FriendlyReplacementN",
+        hint: "SETTINGS.HideNames.FriendlyReplacementH",
         scope: "world",
         type: String,
         default: BUTLER.DEFAULT_CONFIG.hideNames.friendlyNameReplacement,
