@@ -3,8 +3,14 @@ import { SETTING_KEYS, NAME, PATH, FLAGS, DEFAULT_CONFIG } from "../butler.js";
 import { HideNPCNamesActorForm } from "./actor-form.js";
 
 export class HideNPCNames {
+    static _onPreCreateChatMessage(message, data, options, user) {
+        // use most of the logic from render
+        // add a flag to the data payload marking the message as needing hiding
+        // include the replacement name
+    }
+
     /**
-     * 
+     * Handle render Actor sheet
      * @param {*} app 
      * @param {*} html 
      * @param {*} data 
@@ -117,7 +123,7 @@ export class HideNPCNames {
     static _hookOnRenderChatMessage(message, html, data) {
         const enable = Sidekick.getSetting(SETTING_KEYS.hideNames.enable);
 
-        if (game.user.isGM || !enable) {
+        if (!enable) {
             return;
         }
 
@@ -140,13 +146,20 @@ export class HideNPCNames {
         if (!enableHide) return;
 
         const replacementSetting = Sidekick.getSetting(SETTING_KEYS.hideNames[`${disposition.toLowerCase()}NameReplacement`]);
-        const replacementFlag = actor.getFlag(NAME, FLAGS.hideNames.replacementName);
+        const replacementFlag = actor.getFlag(NAME, FLAGS.hideNames.replacementName) ?? message.getFlag(NAME, FLAGS.hideNames.replacementName);
         const replacementName = replacementFlag ?? replacementSetting;
         const matchString = data.alias.includes(" ") ? Sidekick.getTerms(data.alias.trim().split(" ")).map(e => Sidekick.escapeRegExp(e)).join("|") : Sidekick.escapeRegExp(data.alias);
         const regex = matchString + "(?=\\s|[\\W]|s|'s|$)";
         const pattern = new RegExp(regex, "gim");
 
-        Sidekick.replaceOnDocument(pattern, replacementName, {target: html[0]});
+        const senderName = html.find("header").children().first();
+        const icon = `<span> <i class="fas fa-mask" title="${replacementName}"></i></span>`;
+        console.log("actor:",actor,"original name:",data.alias,"actor flag:",replacementFlag,"actor flag2:",actor.data.flags,"replacement name:",replacementName)
+        if (!game.user.isGM && !actor.owner) {
+            Sidekick.replaceOnDocument(pattern, replacementName, {target: html[0]});
+        } else {
+            senderName.append(icon);
+        }
 
         const hideFooter = Sidekick.getSetting(SETTING_KEYS.hideNames.hideFooter);
 
