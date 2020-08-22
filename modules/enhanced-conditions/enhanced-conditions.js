@@ -475,7 +475,7 @@ export class EnhancedConditions {
      * Checks statusEffect icons against map and returns matching condition mappings
      * @param {Array} icons 
      */
-    static async lookupEntryMapping(token, map, icons) {
+    static lookupEntryMapping(token, map, icons, {outputToChat=true}={}) {
         const conditionEntries = map.filter(row => icons.includes(row.icon));
 
         if (conditionEntries.length === 0) {
@@ -503,11 +503,11 @@ export class EnhancedConditions {
 
         const outputSetting = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.outputChat);
 
-        if (!outputSetting) {
+        if (!outputSetting && outputToChat) {
             return;
         }
         
-        return EnhancedConditions.outputChatMessage(token, conditionEntries);
+        return outputToChat ? EnhancedConditions.outputChatMessage(token, conditionEntries) : conditionEntries;
     }
 
     /**
@@ -633,7 +633,7 @@ export class EnhancedConditions {
                 return;
             }
 
-            EnhancedConditions.lookupEntryMapping(token, map, conditions);
+            return EnhancedConditions.lookupEntryMapping(token, map, conditions, {outputToChat: false});
         }
         
     }
