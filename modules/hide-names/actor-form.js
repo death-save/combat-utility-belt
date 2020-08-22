@@ -36,7 +36,7 @@ export class HideNPCNamesActorForm extends FormApplication {
         const settingName = game.i18n.localize(`SETTINGS.HideNames.Enable${disposition.titleCase()}N`);
         const enableFlag = actor.getFlag(NAME, FLAGS.hideNames.enable);
         const enable = enableFlag ?? enableSetting;
-        const replacementSetting = Sidekick.getSetting(SETTING_KEYS.hideNames[`${disposition.toLowerCase()}NameReplacement`]);
+        const replacementSetting = Sidekick.getSetting(SETTING_KEYS.hideNames[disposition.toLowerCase() + `NameReplacement`]);
         const replacementFlag = actor.getFlag(NAME, FLAGS.hideNames.replacementName);
         const replacementName = replacementFlag ?? replacementSetting;
         

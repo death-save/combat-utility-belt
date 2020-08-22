@@ -61,7 +61,7 @@ export class HideNPCNames {
     static _hookOnRenderCombatTracker(app, html, data) {
         const enable = Sidekick.getSetting(SETTING_KEYS.hideNames.enable);
 
-        if (game.user.isGM || !enable) {
+        if (!enable) {
             return;
         }
 
@@ -71,7 +71,14 @@ export class HideNPCNames {
         if (!combatants || !combatants?.length) return;
 
         const combatantTokens = combatants.map(c => c.token);
-        const tokens = combatantTokens.map(c => canvas.tokens.placeables.find(t => t.id === c._id));
+        const tokens = combatantTokens.map(c => {
+            const viewedSceneId = game.user.viewedScene ?? game.scenes.active.id;
+            const scene = game.scenes.get(viewedSceneId);
+            const tokenData = scene.data.tokens.find(t => t._id === c._id);
+            const token = canvas?.tokens?.placeables?.find(t => t.id === c._id) ?? tokenData ? new Token(tokenData) : null;
+            // Combatants can only come from the viewed scene
+            return token;
+        });
         const npcs = tokens.filter(t => {
             const actor = t.actor || game.actors.entities.find(a => a.id === t.actorId);
             
@@ -81,16 +88,14 @@ export class HideNPCNames {
         if (!npcs.length) return;
 
         // check if name should be hidden
-        const hideNPCs = npcs.map(npc => {
-            const flag = npc.actor.getFlag(NAME, FLAGS.hideNames.enable);
-            if (flag) {
-                const replacement = npc.actor.getFlag(NAME, FLAGS.hideNames.replacementName);
-
-                return {
-                    id: npc._id,
-                    name: npc.name,
-                    replacement
-                }
+        const hideNPCs = npcs.filter(n => HideNPCNames.shouldReplaceName(n.actor)).map(npc => {
+            const replacementName = HideNPCNames.getReplacementName(npc.actor);
+            
+            return {
+                id: npc._id ?? npc.id,
+                name: npc.name,
+                replacement: replacementName,
+                isOwner: npc.actor.owner
             }             
         });
 
@@ -99,26 +104,29 @@ export class HideNPCNames {
         // for each replacement, find the matching element and replace
         const combatantListElement = html.find("li");
         const hideNPCElements = combatantListElement.filter((i, el) => {
-            const token = game.scenes.active.data.tokens.find(t => t._id === el.dataset.tokenId);
+            const tokenId = el.dataset.tokenId;
+            const hideNPCIds = hideNPCs.map(n => n.id);
 
-            if (!token) return false;
-
-            if (hideNPCs.find(t => t.id === token._id)) return true;
+            if (hideNPCIds.includes(tokenId)) return true;
         });
 
         if (!hideNPCElements.length) return;
 
-        for (const el in hideNPCElements) {
+        for (const el of hideNPCElements) {
             const hideNPC = hideNPCs.find(n => n.id === el.dataset.tokenId);
-            $(el).find(".token-name").text(hideNPC.replacement);
-            $(el).find(".token-image").attr("title", hideNPC.replacement);
 
+            if (!game.user.isGM && !hideNPC.isOwner) {
+                $(el).find(".token-name").text(hideNPC.replacement);
+                $(el).find(".token-image").attr("title", hideNPC.replacement);
+            }
+
+            const icon = `<span> <i class="fas fa-mask" title="${hideNPC.replacement}"></i></span>`;
+            $(el).find(".token-name").children().first().append(icon);
         }
     }
 
     /**
      * Replaces instances of hidden name in chat
-     * @todo: If a player owns the message speaker - reveal the message
      */
     static _hookOnRenderChatMessage(message, html, data) {
         const enable = Sidekick.getSetting(SETTING_KEYS.hideNames.enable);
@@ -128,47 +136,43 @@ export class HideNPCNames {
         }
 
         const messageActorId = message.data.speaker.actor;
+        const messageSceneId = message.data.speaker.scene;
         const messageTokenId = message.data.speaker.token;
-        const token = canvas.tokens.get(messageTokenId);
+        const scene = messageSceneId ? game.scenes.get(messageSceneId) : null;
+        const tokenData = scene ? scene.data.tokens.find(t => t._id === messageTokenId) : null;
+        const token = canvas.tokens.get(messageTokenId) ?? tokenData ? new Token(tokenData) : null;
         const actor = token ? token.actor : game.actors.get(messageActorId);
         const speakerIsNPC = actor && !actor.isPC;
 
-        if (!speakerIsNPC) {
-            return;
-        }
+        if (!speakerIsNPC) return;
 
-        const dispositionEnum = actor.data.token.disposition;
-        const disposition = Sidekick.getKeyByValue(CONST.TOKEN_DISPOSITIONS, dispositionEnum);
-        const dispositionEnableSetting = Sidekick.getSetting(SETTING_KEYS.hideNames[`enable${disposition.titleCase()}`]);
-        const actorEnableFlag = actor.getFlag(NAME, FLAGS.hideNames.enable);
-        const enableHide = actorEnableFlag ?? dispositionEnableSetting;
+        const shouldReplace = HideNPCNames.shouldReplaceName(actor);
 
-        if (!enableHide) return;
+        if (!shouldReplace) return;
 
-        const replacementSetting = Sidekick.getSetting(SETTING_KEYS.hideNames[`${disposition.toLowerCase()}NameReplacement`]);
-        const replacementFlag = actor.getFlag(NAME, FLAGS.hideNames.replacementName) ?? message.getFlag(NAME, FLAGS.hideNames.replacementName);
-        const replacementName = replacementFlag ?? replacementSetting;
+        const replacementName = HideNPCNames.getReplacementName(actor);
+
         const matchString = data.alias.includes(" ") ? Sidekick.getTerms(data.alias.trim().split(" ")).map(e => Sidekick.escapeRegExp(e)).join("|") : Sidekick.escapeRegExp(data.alias);
         const regex = matchString + "(?=\\s|[\\W]|s|'s|$)";
         const pattern = new RegExp(regex, "gim");
 
         const senderName = html.find("header").children().first();
         const icon = `<span> <i class="fas fa-mask" title="${replacementName}"></i></span>`;
-        console.log("actor:",actor,"original name:",data.alias,"actor flag:",replacementFlag,"actor flag2:",actor.data.flags,"replacement name:",replacementName)
+        //console.log("actor:",actor,"original name:",data.alias,"actor flag:",replacementFlag,"actor flag2:",actor.data.flags,"replacement name:",replacementName)
+        
         if (!game.user.isGM && !actor.owner) {
             Sidekick.replaceOnDocument(pattern, replacementName, {target: html[0]});
-        } else {
-            senderName.append(icon);
+            const hideFooter = Sidekick.getSetting(SETTING_KEYS.hideNames.hideFooter);
+
+            if (!hideFooter) {
+                return;
+            }
+
+            const cardFooter = html.find(".card-footer");
+            cardFooter.prop("hidden", true);
         }
 
-        const hideFooter = Sidekick.getSetting(SETTING_KEYS.hideNames.hideFooter);
-
-        if (!hideFooter) {
-            return;
-        }
-
-        const cardFooter = html.find(".card-footer");
-        cardFooter.prop("hidden", true);
+        senderName.append(icon);
     }
 
     /**
@@ -180,76 +184,74 @@ export class HideNPCNames {
     static _onRenderImagePopout(app, html, data) {
         const enable = Sidekick.getSetting(SETTING_KEYS.hideNames.enable);
 
-        if (game.user.isGM || app.options.entity.type !== "Actor" || !enable) {
-            return;
-        }
+        if (app._related.entity !== "Actor" || !enable) return;
 
-        const actor = game.actors.get(app.options.entity.id);
+        const actor = app._related;
 
-        if (actor.isPC) {
-            return;
-        }
+        const shouldReplace = HideNPCNames.shouldReplaceName(actor);
+
+        if (actor.isPC || !shouldReplace) return;
 
         const windowTitle = html.find(".window-title");
-        const replacement = Sidekick.getSetting(SETTING_KEYS.hideNames.replacementString) || " ";
 
-        if (windowTitle.length === 0) {
-            return;
-        } 
+        const replacement = HideNPCNames.getReplacementName(actor);
 
-        windowTitle.text(replacement);
+        if (windowTitle.length === 0) return;
 
-        const img = html.find("img");
+        if (!game.user.isGM || !actor.owner) {
+            windowTitle.text(replacement);
 
-        if (img.length === 0) {
-            return;
+            const img = html.find("img");
+
+            if (!img.length) return;
+
+            img.attr("title", replacement);
         }
 
-        img.attr("title", replacement);
+        const icon = `<span> <i class="fas fa-mask" title="${replacement}"></i></span>`;
+
+        windowTitle.append(icon);
     }
 
+    /**
+     * Checks an actor to see if its name should be replaced
+     * @param {*} actor 
+     * @returns {Boolean} shouldReplace
+     */
+    static shouldReplaceName(actor) {
+        const dispositionEnum = actor.data.token.disposition;
+        const disposition = Sidekick.getKeyByValue(CONST.TOKEN_DISPOSITIONS, dispositionEnum);
+        const dispositionEnableSetting = Sidekick.getSetting(SETTING_KEYS.hideNames[`enable${disposition.titleCase()}`]);
+        const actorEnableFlag = actor.getFlag(NAME, FLAGS.hideNames.enable);
+        const enableHide = actorEnableFlag ?? dispositionEnableSetting;
+
+        return !!enableHide;
+    }
+
+    /**
+     * For a given actor, find out if there is a replacement name and return it
+     * @param {*} actor 
+     * @returns {String} replacementName
+     */
+    static getReplacementName(actor) {
+        const dispositionEnum = actor.data.token.disposition;
+        const disposition = Sidekick.getKeyByValue(CONST.TOKEN_DISPOSITIONS, dispositionEnum);
+        const replacementSetting = Sidekick.getSetting(SETTING_KEYS.hideNames[`${disposition.toLowerCase()}NameReplacement`]);
+        const replacementFlag = actor.getFlag(NAME, FLAGS.hideNames.replacementName);
+        const replacementName = replacementFlag ?? replacementSetting;
+
+        return replacementName;
+    }
+
+    /**
+     * Replacement type options
+     * @todo implement or delete
+     */
     static get replacementTypes() {
         return {
             race: "Race",
             type: "Type",
             other: "Other"
-        }
-    }
-}
-
-class HideNamesActorForm extends FormApplication {
-    constructor(object, options={}) {
-        super(object, options);
-
-        this.actor = object;
-    }
-
-    static get defaultOptions() {
-        return mergeObject(super.defaultOptions, {
-            id: DEFAULT_CONFIG.hideNames.actorForm.id,
-            title: DEFAULT_CONFIG.hideNames.actorForm.title,
-            template: `${PATH}/templates/actor-hide-name.hbs`
-        });
-    }
-
-    getData() {
-        const actor = this.actor;
-        const disposition = actor.data.token.disposition;
-        const demeanour = Sidekick.getKeyByValue(CONST.TOKEN_DISPOSITIONS, disposition);
-        const enableSetting = Sidekick.getSetting(SETTING_KEYS.hideNames[`enable${demeanour.titleCase()}`]);
-        const enableFlag = actor.getFlag(NAME, FLAGS.hideNames.enable);
-        const enable = enableFlag ?? enableSetting;
-        const replacementType = actor.getFlag(NAME, FLAGS.hideNames.replacementType);
-        const replacementName = actor.getFlag(NAME, FLAGS.hideNames.replacementName);
-        const replacementTypes = HideNPCNames.replacementTypes;
-        const typeOther = replacementType && replacementType === "other";
-
-        return {
-            enable,
-            replacementType,
-            replacementTypes,
-            replacementName,
-            typeOther
         }
     }
 }
