@@ -33,9 +33,14 @@
       "path": "lang/ko.json"
     },
     {
-      "lang":"pt-BR",
+      "lang": "pt-BR",
       "name": "português do Brasil",
       "path": "lang/pt-BR.json"
+    },
+    {
+      "lang": "es",
+      "name": "Castellano",
+      "path": "lang/es-ES.json"
     }
   ], 
   "packs": [
