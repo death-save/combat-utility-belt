@@ -1,17 +1,17 @@
 # Changelog
 
 ## [Unreleased]
-- Refine Hide NPC Names to allow for "known" NPC names/information
+- ~~Refine Hide NPC Names to allow for "known" NPC names/information~~
 - Attach Macros to Conditions in Condition Lab
 - Macros for: hiding/unhiding NPC names, rerolling initiative
 
 ## [Known Issues]
 - Pan/Select does not deselect currently selected tokens if many are selected
 - **PF2e users**: Enhanced Conditions `Output to Chat` setting will cause duplicate chat messages due to similar function built into the system.
-- Enhanced Conditions `Output to Chat` will reveal the existence of hidden creatures if conditions are applied to them and/or during combat if `Output During Combat` is on
+- Enhanced Conditions `Output to Chat` will reveal the existence of hidden creatures if conditions are applied to them and/or during combat if `Output During Combat` is on.
 - Chat log may not re-render when Hide Names settings are changed. This may cause the old name to still show in the log for players. Advise players to reload Foundry if you change these settings mid-session.
 
-## [1.2] - 2020-08-25
+## [1.2] - 2020-08-26
 ### Added
 - Hide Names changes:
 - - added settings and default replacement name options for each token disposition: `friendly`, `neutral`, and `hostile`
