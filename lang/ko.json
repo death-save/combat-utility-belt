@@ -12,6 +12,12 @@
     "APPS.CUBPuter.SelectGadget": "--가젯 선택--",
 
     "APPS.Wiki.Title": "Combat Utility Belt 위키",
+    
+    "HIDE_NAMES.ActorForm.Enable": "액터 이름 숨기기",
+    "HIDE_NAMES.ActorForm.EnableHint": "컴뱃 트래커와 채팅 메시지에서 이 액터의 이름 숨기기를 활성화함(기본값 덮어쓰기)",
+    "HIDE_NAMES.ActorForm.ReplacementName": "대체명",
+    "HIDE_NAMES.ActorForm.ReplacementHint": "액터의 이름을 대신해 사용할 이름",
+    "HIDE_NAMES.ActorForm.DefaultSettingH": "이 토큰의 현재 기본  설정 (CUBputer에서 설정)",
 
     "SETTINGS.CUBPuter.ButtonN": "Combat Utility Belt 환경설정",
     "SETTINGS.CUBPuter.ButtonH": "Combat Utility Belt에 대한 추가 설정을 제공한다",
@@ -57,10 +63,24 @@
 
     "SETTINGS.HideNames.EnableN": "NPC 이름 숨김 활성화",
     "SETTINGS.HideNames.EnableH": "컴뱃 트래커에서 NPC의 이름을 숨긴다",
+    "SETTINGS.HideNames.EnableHostileN": "적대적 이름 숨김",
+    "SETTINGS.HideNames.EnableHostileH": "토큰 성향이 적대적으로 설정된 액터의 이름을 숨긴다",
+    "SETTINGS.HideNames.EnableNeutralN": "중립적 이름 숨김",
+    "SETTINGS.HideNames.EnableNeutralH": "토큰 성향이 중립적으로 설정된 액터의 이름을 숨긴다",
+    "SETTINGS.HideNames.EnableFriendlyN": "우호적 이름 숨김",
+    "SETTINGS.HideNames.EnableFriendlyH": "토큰 성향이 우호적으로 설정된 액터의 이름을 숨긴다",
+    "SETTINGS.HideNames.HostileReplacementN": "적대적 대체명",
+    "SETTINGS.HideNames.HostileReplacementH": "토큰 성향이 적대적으로 설정된 액터의 이름을 대체할 기본 이름값",
+    "SETTINGS.HideNames.NeutralReplacementN": "중립적 대체명",
+    "SETTINGS.HideNames.NeutralReplacementH": "토큰 성향이 중립적으로 설정된 액터의 이름을 대체할 기본 이름값",
+    "SETTINGS.HideNames.FriendlyReplacementN": "우호적 대체명",
+    "SETTINGS.HideNames.FriendlyReplacementH": "토큰 성향이 우호적으로 설정된 액터의 이름을 대체할 기본 이름값",
     "SETTINGS.HideNames.ReplacementStringN": "이름 대체하기",
     "SETTINGS.HideNames.ReplacementStringH": "이름이 숨겨진 NPC에게 표기되는 텍스트",
     "SETTINGS.HideNames.HideFooterN": "채팅 카드 꼬리말 숨기기",
-    "SETTINGS.HideNames.HideFooterH": "NPC 이름이 숨겨질 경우 중요한 정보를 포함할 수 있는 채팅 카드 꼬리글 역시 숨긴다",   
+    "SETTINGS.HideNames.HideFooterH": "NPC 이름이 숨겨질 경우 중요한 정보를 포함할 수 있는 채팅 카드 꼬리글 역시 숨긴다",
+    "SETTINGS.HideNames.HidePartsN": "모든 이름 파트 숨김",
+    "SETTINGS.HideNames.HidePartsH": "숨겨진 이름에 공백이 있을 경우 이름을 부분별로 나눈 뒤 모든 이름을 숨긴다.",
 
     "SETTINGS.MightySummoner.EnableN": "강력한 소환사 활성화",
     "SETTINGS.MightySummoner.EnableH": "(D&D 5E에서만 테스트됨) 중립적 액터의 토큰 소유자가 Mighty Summoner 피트를 가진 액터를 소유하는지 자동으로 확인한다. 캔버스에 드롭시 HP 수식을 추가하고 토큰에 HP 굴림을 한다.",
