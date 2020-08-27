@@ -41,6 +41,8 @@
     "SETTINGS.EnhancedConditions.SystemH": "게임 시스템에 대한 참조. 모듈에 설정되지 않은 경우 Other를 기본으로 둔다",
     "SETTINGS.EnhancedConditions.OutputChatN": "채팅 메시지로 출력",
     "SETTINGS.EnhancedConditions.OutputChatH": "일치하는 상태이상을 채팅 메시지로 출력한다",
+    "SETTINGS.EnhancedConditions.OutputCombatN": "전투 중 출력",
+    "SETTINGS.EnhancedConditions.OutputCombatH": "매 전투 라운드에서 현재 전투원의 상태이상을 채팅으로 출력한다",
     "SETTINGS.EnhancedConditions.DefaultMapsN": "기본 상태이상 맵",
     "SETTINGS.EnhancedConditions.DefaultMapsH": "모듈에서 제공하는 상태이상 아이콘을 사용한다",
     "SETTINGS.EnhancedConditions.RemoveDefaultEffectsN": "기본 상태 효과 제거",

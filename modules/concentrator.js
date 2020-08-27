@@ -1,5 +1,5 @@
 import { Sidekick } from "./sidekick.js";
-import { SETTING_KEYS, DEFAULT_CONFIG } from "./butler.js";
+import { NAME, SETTING_KEYS, DEFAULT_CONFIG, FLAGS } from "./butler.js";
 import { EnhancedConditions } from "./enhanced-conditions/enhanced-conditions.js";
 
 /**
@@ -139,7 +139,10 @@ export class Concentrator {
      */
     static _onRenderChatMessage(app, html, data) {
         const autoConcentrate = Sidekick.getSetting(SETTING_KEYS.concentrator.autoConcentrate);
-        if (!game.user.isGM || app.data.timestamp + 500 < Date.now() || !autoConcentrate) {
+        const concentrateFlag = app.getFlag(NAME, FLAGS.concentrator.chatMessage);
+
+        // 
+        if (!game.user.isGM || concentrateFlag || !autoConcentrate) {
             return;
         }
 
@@ -191,7 +194,9 @@ export class Concentrator {
             }
 
             EnhancedConditions.applyCondition(conditionName, t);
-        }  
+        }
+
+        app.setFlag(NAME, FLAGS.concentrator.chatMessage, true);
     }
 
     /**

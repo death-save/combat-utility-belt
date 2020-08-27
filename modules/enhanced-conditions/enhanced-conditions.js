@@ -9,24 +9,24 @@ export class EnhancedConditions {
      * Ready Hook handler
      */
     static async _onReady() {
-        let maps = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.defaultMaps);
+        let maps;
+        let defaultMaps = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.defaultMaps);
         const enable = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.enable);
         const system = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.system);
         const mapType = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.mapType);
         const defaultMapType = Sidekick.getKeyByValue(BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes, BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes.default);
         let conditionMap = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.map);
 
-        if (!maps || (maps instanceof Object && Object.keys(maps).length === 0) || (maps instanceof Object && !Object.keys(maps).includes(system))) {
-            if (!game.user.isGM) {
-                return;
-            }
-
-            const defaultMaps = await EnhancedConditions.loadDefaultMaps();
-            maps = await Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.defaultMaps, defaultMaps);
+        // If there's no defaultMaps or defaultMaps doesn't include game system, check storage then set appropriately
+        if (!defaultMaps || (defaultMaps instanceof Object && Object.keys(defaultMaps).length === 0) || (defaultMaps instanceof Object && !Object.keys(defaultMaps).includes(system))) {
+            if (game.user.isGM) {
+                const storedMaps = await EnhancedConditions.loadDefaultMaps();
+                defaultMaps = await Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.defaultMaps, storedMaps);
+            }            
         }
 
         // If map type is not set and a default map exists for the system, set maptype to default
-        if (!mapType && (maps instanceof Object && Object.keys(maps).includes(system))) {
+        if (!mapType && (defaultMaps instanceof Object && Object.keys(defaultMaps).includes(system))) {
             
             Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.mapType, defaultMapType);
         }
@@ -35,10 +35,9 @@ export class EnhancedConditions {
         if (!conditionMap.length) {
             conditionMap = EnhancedConditions.getDefaultMap(system);
 
-            if (!game.user.isGM) {
-                return;
+            if (game.user.isGM) {
+                Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.map, conditionMap);
             }
-            Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.map, conditionMap);
         }
 
         // If the gadget is enabled, update status icons accordingly
@@ -476,7 +475,7 @@ export class EnhancedConditions {
      * Checks statusEffect icons against map and returns matching condition mappings
      * @param {Array} icons 
      */
-    static async lookupEntryMapping(token, map, icons) {
+    static lookupEntryMapping(token, map, icons, {outputToChat=true}={}) {
         const conditionEntries = map.filter(row => icons.includes(row.icon));
 
         if (conditionEntries.length === 0) {
@@ -504,11 +503,11 @@ export class EnhancedConditions {
 
         const outputSetting = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.outputChat);
 
-        if (!outputSetting) {
+        if (!outputSetting && outputToChat) {
             return;
         }
         
-        return EnhancedConditions.outputChatMessage(token, conditionEntries);
+        return outputToChat ? EnhancedConditions.outputChatMessage(token, conditionEntries) : conditionEntries;
     }
 
     /**
@@ -634,7 +633,7 @@ export class EnhancedConditions {
                 return;
             }
 
-            EnhancedConditions.lookupEntryMapping(token, map, conditions);
+            return EnhancedConditions.lookupEntryMapping(token, map, conditions, {outputToChat: false});
         }
         
     }
@@ -675,7 +674,7 @@ export class EnhancedConditions {
         }
 
         for (let token of tokens) {
-            if ((!condition?.options?.overlay && !token?.data?.effects.includes(effect)) || (condition?.options?.overlay && token?.data?.overlayEffect !== effect)) {
+            if (!token?.data?.effects.includes(effect) && token?.data?.overlayEffect !== effect) {
                 if (warn) {
                     ui.notifications.warn("Remove Condition failed. Condition is not active on token");
                     console.log(`Combat Utility Belt - Enhanced Conditions | Condition ${conditionName} is not active on token.`);
@@ -683,7 +682,13 @@ export class EnhancedConditions {
                 return;
             }
 
-            condition?.options?.overlay === true ? token.toggleOverlay(effect) : token.toggleEffect(effect);
+            if (token?.data?.effects.includes(effect)) {
+                token.toggleEffect(effect);
+            }
+
+            if (token?.data?.overlayEffect === effect) {
+                token.toggleOverlay(effect);
+            }
         }
     }
 

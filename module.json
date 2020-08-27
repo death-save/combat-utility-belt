@@ -2,10 +2,10 @@
   "name": "combat-utility-belt",
   "title": "Combat Utility Belt",
   "description": "Adds various combat-focused features",
-  "version": "1.1.3",
+  "version": "1.2",
   "author": "Evan Clarke [errational#2007]",
   "minimumCoreVersion": "0.5.7",
-  "compatibleCoreVersion": "0.6.4",
+  "compatibleCoreVersion": "0.6.5",
   "url": "https://github.com/death-save/combat-utility-belt",
   "manifest": "https://raw.githubusercontent.com/death-save/combat-utility-belt/master/module.json",
   "download": "https://github.com/death-save/combat-utility-belt/archive/master.zip",
@@ -33,9 +33,14 @@
       "path": "lang/ko.json"
     },
     {
-      "lang":"pt-BR",
+      "lang": "pt-BR",
       "name": "português do Brasil",
       "path": "lang/pt-BR.json"
+    },
+    {
+      "lang": "es",
+      "name": "Castellano",
+      "path": "lang/es-ES.json"
     }
   ], 
   "packs": [

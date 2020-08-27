@@ -1,0 +1,24 @@
+<form autocomplete="off" onsubmit="event.preventDefault()">
+    <h2><i class="fas fa-mask"></i> Hide Name</h4>
+    <div>
+        Token Disposition  <i class="{{dispositionIcon}}"></i>
+    </div>
+    <div class="form-group">
+        <label>{{settingName}}</label>
+        <input type="checkbox" name="enable-hide-by-disposition" {{checked enableSetting}} disabled>
+        <p class="notes">{{localize "HIDE_NAMES.ActorForm.DefaultSettingH"}}</p>
+    </div>
+    <div class="form-group">
+        <label>{{localize "HIDE_NAMES.ActorForm.Enable"}}</label>
+        <input type="checkbox" name="enable-hide-name" {{checked enable}}>
+        <p class="notes">{{localize "HIDE_NAMES.ActorForm.EnableHint"}}</p>
+    </div>
+    <div class="form-group">
+        <label>{{localize "HIDE_NAMES.ActorForm.ReplacementName"}}</label>
+        <input type="text" name="replacement-name" value="{{replacementName}}">
+        <p class="notes">{{localize "HIDE_NAMES.ActorForm.ReplacementHint"}}</p>
+    </div>
+    <footer>
+        <button type="button" name="save"><i class="fas fa-disk"></i> Save</button>
+    </footer>
+</form>

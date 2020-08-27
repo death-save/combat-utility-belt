@@ -28,8 +28,8 @@ export const GADGETS = {
         wiki: `${WIKIPATH}/enhanced-conditions`
     },
     hideNames: {
-        name: "Hide NPC Names",
-        info: "Replaces NPC names with a new name of your choice",
+        name: "Hide Names",
+        info: "Replaces Actor names with a new name of your choice",
         wiki: `${WIKIPATH}/hide-names`
     },
     panSelect: {
@@ -190,8 +190,21 @@ export const DEFAULT_CONFIG = {
     },
     hideNames: {
         enable: false,
+        enableHostile: false,
+        enableNeutral: false,
+        enableFriendly: false,
         hideFooter: false,
-        replacementString: "Unknown Creature"
+        hideNameParts: false,
+        hostileNameReplacement: "Unknown Creature",
+        neutralNameReplacement: "Unknown Creature",
+        friendlyNameReplacement: "Unknown Creature",
+        hostileIcon: "far fa-angry",
+        neutralIcon: "far fa-meh",
+        friendlyIcon: "far fa-happy",
+        actorForm: {
+            id: "hide-names-actor",
+            title: "Hide Name"
+        }
     },
     injuredDead: {
         enableInjured: false,
@@ -287,11 +300,19 @@ export const DEFAULT_CONFIG = {
 }
 
 export const FLAGS = {
+    concentrator: {
+        chatMessage: "concentratorChatMessageParsed"
+    },
     mightySummoner: {
         mightySummoner: "mightySummoner"
     },
     temporaryCombatants: {
         temporaryCombatant: "temporaryCombatant"
+    },
+    hideNames: {
+        enable: "enableHideName",
+        replacementType: "hideNameReplacementType",
+        replacementName: "hideNameReplacement"
     }
 }
 
@@ -325,21 +346,15 @@ export const SETTING_KEYS = {
         enable: "enableGiveXP"
     },
     hideNames: {
-        enable: "enableHideNames",
-        replacementString: "replacementString",
-        hideFooter: "hideFooter"
-    },
-    injuredDead: {
-        enableInjured: "enableInjured",
-        enableDead: "enableDead",
-        enableUnconscious: "enableUnconscious",
-        injuredIcon: "injuredIcon",
-        deadIcon: "deadIcon",
-        unconsciousIcon: "unconsciousIcon",
-        threshold: "injuredThreshold",
-        healthAttribute: "healthAttribute",
-        markDefeated: "markDefeated",
-        unconsciousActorType: "unconsciousActorType"
+        enable: "enableHideNPCNames",
+        enableHostile: "enableHideHostileNames",
+        enableNeutral: "enableHideNeutralNames",
+        enableFriendly: "enableHideFriendlyNames",
+        hostileNameReplacement: "hostileNameReplacement",
+        neutralNameReplacement: "neutralNameReplacement",
+        friendlyNameReplacement: "friendlyNameReplacement",
+        hideFooter: "hideFooter",
+        hideParts: "hideNameParts"
     },
     mightySummoner: {
         enable: "enableMightySummoner",

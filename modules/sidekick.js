@@ -163,7 +163,7 @@ export class Sidekick {
      */
     static getTerms(arr) {
         const terms = [];
-        const rejectTerms = ["of", "its", "the", "a", "it's", "if", "in", "for", "on", "by"];
+        const rejectTerms = ["of", "its", "the", "a", "it's", "if", "in", "for", "on", "by", "and"];
         for ( let i of arr.keys() ) {
             let len = arr.length - i;
             for ( let p=0; p<=i; p++ ) {

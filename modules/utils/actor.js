@@ -1,3 +1,6 @@
+import { Sidekick } from "../sidekick.js";
+import { SETTING_KEYS } from "../butler.js";
+
 export class ActorUtility {
     
     /**
@@ -16,10 +19,16 @@ export class ActorUtility {
      * @param {*} data 
      */
     static _onRenderActorSheet(app, html, data) {
+        const setting = Sidekick.getSetting(SETTING_KEYS.actorUtility.initiativeFromSheet);
+
+        if (!setting) {
+            return;
+        }
+
         const actor = app.entity;
         const initiative = html.find(".initiative");
 
-        if (initiative.length === 0) {
+        if (initiative.length === 0 || !app.object.owner) {
             return;
         }
 

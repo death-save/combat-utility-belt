@@ -11,7 +11,7 @@ import { createCUBPuterButton, CUBPuter } from "./cub-puter.js";
 import { Concentrator } from "./concentrator.js";
 import { EnhancedConditions } from "./enhanced-conditions/enhanced-conditions.js";
 import { GiveXP } from "./give-xp.js";
-import { HideNPCNames } from "./hide-npc-names.js";
+import { HideNPCNames } from "./hide-names/hide-npc-names.js";
 import { PanSelect } from "./pan-select.js";
 import { RerollInitiative } from "./reroll-initiative.js";
 import { TemporaryCombatants } from "./temporary-combatants/temporary-combatants.js"
@@ -174,6 +174,7 @@ export class Signal {
 
         Hooks.on("renderActorSheet", (app, html, data) => {
             ActorUtility._onRenderActorSheet(app, html, data);
+            HideNPCNames._onRenderActorSheet(app, html, data);
         });
 
         /* ------------------- Token ------------------ */

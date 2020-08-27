@@ -13,6 +13,12 @@
 
     "APPS.Wiki.Title": "Combat Utility Belt Wiki",
 
+    "HIDE_NAMES.ActorForm.Enable": "Hide Actor Name",
+    "HIDE_NAMES.ActorForm.EnableHint": "Enable hiding of this actor's name in Combat Tracker and Chat Messages (overrides default)",
+    "HIDE_NAMES.ActorForm.ReplacementName": "Replacement Name",
+    "HIDE_NAMES.ActorForm.ReplacementHint": "The name to use instead of the Actor's name",
+    "HIDE_NAMES.ActorForm.DefaultSettingH": "This is the current default setting for this token's disposition (set in CUBputer)",
+
     "SETTINGS.CUBPuter.ButtonN": "Combat Utility Belt Config",
     "SETTINGS.CUBPuter.ButtonH": "Provides additional configuration for Combat Utility Belt",
     
@@ -55,12 +61,26 @@
     "SETTINGS.GiveXP.EnableN": "Enable Award XP",
     "SETTINGS.GiveXP.EnableH": "Adds an option at the end of combat to automatically distribute xp from the combat to the players",
 
-    "SETTINGS.HideNames.EnableN": "Enable Hide NPC Names",
-    "SETTINGS.HideNames.EnableH": "Hides NPC names in the Combat Tracker",
+    "SETTINGS.HideNames.EnableN": "Enable Hide Actor Names",
+    "SETTINGS.HideNames.EnableH": "Hides Actor names in various places such as Combat Tracker and Chat",
+    "SETTINGS.HideNames.EnableHostileN": "Hide Hostile Names",
+    "SETTINGS.HideNames.EnableHostileH": "Hide Names of Actors with Token Disposition set to HOSTILE",
+    "SETTINGS.HideNames.EnableNeutralN": "Hide Neutral Names",
+    "SETTINGS.HideNames.EnableNeutralH": "Hide Names of Actors with Token Disposition set to NEUTRAL",
+    "SETTINGS.HideNames.EnableFriendlyN": "Hide Friendly Names",
+    "SETTINGS.HideNames.EnableFriendlyH": "Hide Names of Actors with Token Disposition set to FRIENDLY",
+    "SETTINGS.HideNames.HostileReplacementN": "Hostile Replacement Name",
+    "SETTINGS.HideNames.HostileReplacementH": "The default name to use when replacing Hostile Actor names",
+    "SETTINGS.HideNames.NeutralReplacementN": "Neutral Replacement Name",
+    "SETTINGS.HideNames.NeutralReplacementH": "The default name to use when replacing Neutral Actor names",
+    "SETTINGS.HideNames.FriendlyReplacementN": "Friendly Replacement Name",
+    "SETTINGS.HideNames.FriendlyReplacementH": "The default name to use when replacing Friendly Actor names",
     "SETTINGS.HideNames.ReplacementStringN": "Replacement Name",
-    "SETTINGS.HideNames.ReplacementStringH": "Text to display for hidden NPC names",
+    "SETTINGS.HideNames.ReplacementStringH": "Text to display for hidden names",
     "SETTINGS.HideNames.HideFooterN": "Hide Chat Card Footer",
-    "SETTINGS.HideNames.HideFooterH": "When NPC names are hidden, also hide the chat card footer which can contain sensitive information",   
+    "SETTINGS.HideNames.HideFooterH": "When names are hidden, also hide the chat card footer which can contain sensitive information",
+    "SETTINGS.HideNames.HidePartsN": "Hide All Name Parts",
+    "SETTINGS.HideNames.HidePartsH": "If a hidden name includes spaces, breaks it into parts and hides all the parts",
 
     "SETTINGS.MightySummoner.EnableN": "Enable Mighty Summoner",
     "SETTINGS.MightySummoner.EnableH": "(Tested in D&D5e only) Automatically check to see if token owner of NEUTRAL actor also owns an actor with the Mighty Summoner feat. Automatically calculates and adds new HP formula and rolls HP for token on canvas drop",
