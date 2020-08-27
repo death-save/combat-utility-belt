@@ -151,16 +151,16 @@ export class HideNPCNames {
         if (!shouldReplace) return;
 
         const replacementName = HideNPCNames.getReplacementName(actor);
-
-        const matchString = data.alias.includes(" ") ? Sidekick.getTerms(data.alias.trim().split(" ")).map(e => Sidekick.escapeRegExp(e)).join("|") : Sidekick.escapeRegExp(data.alias);
-        const regex = matchString + "(?=\\s|[\\W]|s|'s|$)";
+        const hideParts = Sidekick.getSetting(SETTING_KEYS.hideNames.hideParts);
+        const matchString = data.alias.includes(" ") && hideParts ? Sidekick.getTerms(data.alias.trim().split(" ")).map(e => Sidekick.escapeRegExp(e)).join("|") : Sidekick.escapeRegExp(data.alias);
+        const regex = `(${matchString})` + "(?=\\s|[\\W]|s\\W|'s\\W|$)";
         const pattern = new RegExp(regex, "gim");
 
         const senderName = html.find("header").children().first();
         const icon = `<span> <i class="fas fa-mask" title="${replacementName}"></i></span>`;
         //console.log("actor:",actor,"original name:",data.alias,"actor flag:",replacementFlag,"actor flag2:",actor.data.flags,"replacement name:",replacementName)
         
-        if (!game.user.isGM && !actor.owner) {
+        if (!game.user.isGM || !actor.owner) {
             Sidekick.replaceOnDocument(pattern, replacementName, {target: html[0]});
             const hideFooter = Sidekick.getSetting(SETTING_KEYS.hideNames.hideFooter);
 

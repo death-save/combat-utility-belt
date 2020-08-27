@@ -263,6 +263,19 @@ export function registerSettings() {
         }
     });
 
+    Sidekick.registerSetting(BUTLER.SETTING_KEYS.hideNames.hideParts, {
+        name: "SETTINGS.HideNames.HidePartsN",
+        hint: "SETTINGS.HideNames.HidePartsH",
+        scope: "world",
+        type: Boolean,
+        default: BUTLER.DEFAULT_CONFIG.hideNames.hideParts,
+        config: false,
+        onChange: s => {
+            ui.combat.render();
+            ui.chat.render();
+        }
+    });
+
     Sidekick.registerSetting(BUTLER.SETTING_KEYS.hideNames.enableHostile, {
         name: "SETTINGS.HideNames.EnableHostileN",
         hint: "SETTINGS.HideNames.EnableHostileH",

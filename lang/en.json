@@ -78,7 +78,9 @@
     "SETTINGS.HideNames.ReplacementStringN": "Replacement Name",
     "SETTINGS.HideNames.ReplacementStringH": "Text to display for hidden names",
     "SETTINGS.HideNames.HideFooterN": "Hide Chat Card Footer",
-    "SETTINGS.HideNames.HideFooterH": "When names are hidden, also hide the chat card footer which can contain sensitive information",   
+    "SETTINGS.HideNames.HideFooterH": "When names are hidden, also hide the chat card footer which can contain sensitive information",
+    "SETTINGS.HideNames.HidePartsN": "Hide All Name Parts",
+    "SETTINGS.HideNames.HidePartsH": "If a hidden name includes spaces, breaks it into parts and hides all the parts",
 
     "SETTINGS.MightySummoner.EnableN": "Enable Mighty Summoner",
     "SETTINGS.MightySummoner.EnableH": "(Tested in D&D5e only) Automatically check to see if token owner of NEUTRAL actor also owns an actor with the Mighty Summoner feat. Automatically calculates and adds new HP formula and rolls HP for token on canvas drop",

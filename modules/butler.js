@@ -194,6 +194,7 @@ export const DEFAULT_CONFIG = {
         enableNeutral: false,
         enableFriendly: false,
         hideFooter: false,
+        hideNameParts: false,
         hostileNameReplacement: "Unknown Creature",
         neutralNameReplacement: "Unknown Creature",
         friendlyNameReplacement: "Unknown Creature",
@@ -352,7 +353,8 @@ export const SETTING_KEYS = {
         hostileNameReplacement: "hostileNameReplacement",
         neutralNameReplacement: "neutralNameReplacement",
         friendlyNameReplacement: "friendlyNameReplacement",
-        hideFooter: "hideFooter"
+        hideFooter: "hideFooter",
+        hideParts: "hideNameParts"
     },
     mightySummoner: {
         enable: "enableMightySummoner",
