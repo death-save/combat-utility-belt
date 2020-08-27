@@ -1,8 +1,6 @@
 # Changelog
 
 ## [Unreleased]
-- ~~Compendium support for Condition Lab~~
-- ~~Combatant stats in Combat Tracker~~
 - Refine Hide NPC Names to allow for "known" NPC names/information
 - Attach Macros to Conditions in Condition Lab
 - Macros for: hiding/unhiding NPC names, rerolling initiative
@@ -11,19 +9,25 @@
 - Pan/Select does not deselect currently selected tokens if many are selected
 - **PF2e users**: Enhanced Conditions `Output to Chat` setting will cause duplicate chat messages due to similar function built into the system.
 - Enhanced Conditions `Output to Chat` will reveal the existence of hidden creatures if conditions are applied to them and/or during combat if `Output During Combat` is on
+- Chat log may not re-render when Hide Names settings are changed. This may cause the old name to still show in the log for players. Advise players to reload Foundry if you change these settings mid-session.
 
-## [1.2] - 2020-??-??
+## [1.2] - 2020-08-25
 ### Added
-- Hide Names now includes settings and default replacement name options for each token disposition: `friendly`, `neutral`, and `hostile`
-- Hide Names now has a form (accessible from the Actor sheet--look for the `mask` icon) for setting whether or not to hide an Actor's name and what the replacement should be
+- Hide Names changes:
+- - added settings and default replacement name options for each token disposition: `friendly`, `neutral`, and `hostile`
+- - added a form (accessible from the Actor sheet--look for the `mask` icon) for setting whether or not to hide an Actor's name and what the replacement should be
+- - added an indicator on: chat messages, combat tracker, and Show Artwork popup, for GM and actor owner if a name has been replaced in chat for other users. Hovering over the icon shows the replacement name
 - Triggler now allows triggers with no `Property` (for example if the criteria you want to use for the trigger is only at the `Attribute` level)
 
 ### Changed
 - Hide NPC Names is now Hide Names
-- Concentrator now uses a flag on the chat message to detect if it has assessed the message for possible Concentration spells
+- Concentrator logic improved by using a flag on the chat message to detect if it has assessed the message for possible Concentration spells. This replaces a time-based check
+- Enhanced Conditions macro/API method `getConditions` now returns an array of conditions instead of outputting to chat
 
 ### Fixed
-- Triggler now works for game systems that don't mirror the `dnd5e` Actor model such as `archmage`
+- Triggler now works for game systems that don't mirror the `dnd5e` Actor model such as `archmage` (13th Age)
+- You can now remove token status overlay icons (ie. right-clicked ones) via the Enhanced Conditions chat message, or other methods such as `removeCondition`
+- Non-GM players can now set conditions (status icons) on tokens in game systems where this previously was not possible (note: this still only applies to tokens that player controls/has access to)
 
 ## [1.1.3] - 2020-06-27
 ### Added
