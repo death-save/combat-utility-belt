@@ -375,8 +375,7 @@ export const SETTING_KEYS = {
     },
    
     tempCombatants: {
-        enable: "enableTempCombatants",
-
+        enable: "enableTempCombatants"
     },
     actorUtility: {
         initiativeFromSheet: "initiativeFromSheet"
