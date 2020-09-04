@@ -1,4 +1,5 @@
-import { NAME, FLAGS } from "../butler.js";
+import { NAME, FLAGS, SETTING_KEYS } from "../butler.js";
+import { Sidekick } from "../sidekick.js";
 
 /**
  * 
@@ -32,10 +33,12 @@ export class TemporaryCombatantForm extends FormApplication {
         if (!folder) {
             folder = await Folder.create({name: "Temporary Combatants", type: "Actor", parent: null}, {displaySheet: false});
         }
+        
+        const actorType = game.system.entityTypes.Actor.includes("npc") ? "npc" : game.system.entityTypes.Actor[0];
 
         const actor = await Actor.create({
             name: formData.name, 
-            type:"npc",
+            type: actorType,
             img: formData.icon,
             folder: folder.id,
             flags

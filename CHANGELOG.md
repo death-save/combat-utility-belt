@@ -11,6 +11,16 @@
 - Enhanced Conditions `Output to Chat` will reveal the existence of hidden creatures if conditions are applied to them and/or during combat if `Output During Combat` is on.
 - Chat log may not re-render when Hide Names settings are changed. This may cause the old name to still show in the log for players. Advise players to reload Foundry if you change these settings mid-session.
 
+## [1.2.1] - 2020-09-03
+### Changed
+- Updated Korean translation (thanks @drdwing aka `KLO#1490`)
+
+### Fixed
+- Hide Names no longer causes an error on load due to bad logic
+- Hide Names no longer displays a `mask` icon on chat cards for non-GM/non-owner users
+- Triggler now correctly replaces an Overlay Condition with another Overlay
+- Temporary Combatants no longer causes an error when the game system does not have an `npc` Actor type (eg. Simple Worldbuilding System)
+
 ## [1.2] - 2020-08-26
 ### Added
 - Hide Names changes:

@@ -140,7 +140,7 @@ export class HideNPCNames {
         const messageTokenId = message.data.speaker.token;
         const scene = messageSceneId ? game.scenes.get(messageSceneId) : null;
         const tokenData = scene ? scene.data.tokens.find(t => t._id === messageTokenId) : null;
-        const token = canvas.tokens.get(messageTokenId) ?? tokenData ? new Token(tokenData) : null;
+        const token = canvas.tokens.get(messageTokenId) ?? (tokenData ? new Token(tokenData) : null);
         const actor = token ? token.actor : game.actors.get(messageActorId);
         const speakerIsNPC = actor && !actor.isPC;
 
@@ -169,7 +169,7 @@ export class HideNPCNames {
             }
 
             const cardFooter = html.find(".card-footer");
-            cardFooter.prop("hidden", true);
+            return cardFooter.prop("hidden", true);
         }
 
         senderName.append(icon);

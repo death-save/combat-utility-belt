@@ -36,7 +36,7 @@ export class Triggler {
      * @param {*} trigger 
      * @param {*} target 
      */
-    static _executeTrigger(trigger, target) {
+    static async _executeTrigger(trigger, target) {
         const tokens = target instanceof Token ? [target] : target instanceof Actor ? target.getActiveTokens() : null;
 
         if (!tokens) {
@@ -44,16 +44,21 @@ export class Triggler {
         }
 
         const conditionMap = Sidekick.getSetting(SETTING_KEYS.enhancedConditions.map);
-        
         const matchedApplyConditions = conditionMap.filter(m => m.applyTrigger === trigger.id);
-
         const matchedRemoveConditions = conditionMap.filter(m => m.removeTrigger === trigger.id);
-
         const matchedMacros = game.macros.entities.filter(m => m.getFlag(NAME, DEFAULT_CONFIG.triggler.flags.macro) === trigger.id);
 
-        matchedApplyConditions.forEach(m => EnhancedConditions.applyCondition(m.name, tokens, {warn: false}));
-        matchedRemoveConditions.forEach(m => EnhancedConditions.removeCondition(m.name, tokens, {warn: false}));
-        matchedMacros.forEach(m => m.execute());
+        for (const condition of matchedApplyConditions) {
+            await EnhancedConditions.applyCondition(condition.name, tokens, {warn: false});
+        }
+
+        for (const condition of matchedRemoveConditions) {
+            await EnhancedConditions.removeCondition(condition.name, tokens, {warn: false});
+        }
+
+        for (const macro of matchedMacros) {
+            await macro.execute();
+        }
     }
 
     /**
@@ -63,7 +68,7 @@ export class Triggler {
      * @param {*} entryPoint1
      * @param {*} entryPoint2
      */
-    static _processUpdate(entity, update, entryPoint1, entryPoint2) {
+    static async _processUpdate(entity, update, entryPoint1, entryPoint2) {
         if (entryPoint1 && !hasProperty(update, entryPoint1)) {
             return;
         }
@@ -130,9 +135,12 @@ export class Triggler {
             // example: "50" -- check if the value can be converted to a number
             const triggerValue = isPercent ? trigger.value.replace("%","") * 1 : Sidekick.coerceType(trigger.value, updateValueType);
             
+            const triggers = [];
+
             /**
              * Switch on the operator checking it against the predefined operator choices
              * If it matches, then compare the values using the operator
+             * @todo bulkify refactor this to add matched triggers to an array then execut the array at the end
              */
             switch (operator) {
                 case DEFAULT_CONFIG.triggler.operators.eq:
@@ -141,13 +149,14 @@ export class Triggler {
                         const divisor = (triggerValue / 100);
                         // if property 1 update value = 50% of property 2 value
                         if (updateValue === (property2Value * divisor)) {
-                            Triggler._executeTrigger(trigger, entity);
+                            triggers.push({trigger, entity});
+                           
                         }
                         break;
                     }
                     if (updateValue === triggerValue) {
                         // execute the trigger's condition mappings
-                        Triggler._executeTrigger(trigger, entity);
+                        triggers.push({trigger, entity});
                     }
                     break;
 
@@ -157,12 +166,12 @@ export class Triggler {
                         const divisor = (triggerValue / 100);
                         // if property 1 update value = 50% of property 2 value
                         if (updateValue > (property2Value * divisor)) {
-                            Triggler._executeTrigger(trigger, entity);
+                            triggers.push({trigger, entity});
                         }
                         break;
                     }
                     if (updateValue > triggerValue) {
-                        Triggler._executeTrigger(trigger, entity);
+                        triggers.push({trigger, entity});
                     }
                     break;
 
@@ -172,12 +181,12 @@ export class Triggler {
                         const divisor = (triggerValue / 100);
                         // if property 1 update value = 50% of property 2 value
                         if (updateValue >= (property2Value * divisor)) {
-                            Triggler._executeTrigger(trigger, entity);
+                            triggers.push({trigger, entity});
                         }
                         break;
                     }
                     if (updateValue >= triggerValue) {
-                        Triggler._executeTrigger(trigger, entity);
+                        triggers.push({trigger, entity});
                     }
                     break;
 
@@ -187,12 +196,12 @@ export class Triggler {
                         const divisor = (triggerValue / 100);
                         // if property 1 update value = 50% of property 2 value
                         if (updateValue < (property2Value * divisor)) {
-                            Triggler._executeTrigger(trigger, entity);
+                            triggers.push({trigger, entity});
                         }
                         break;
                     }
                     if (updateValue < triggerValue) {
-                        Triggler._executeTrigger(trigger, entity);
+                        triggers.push({trigger, entity});
                     }
                     break;
 
@@ -202,12 +211,12 @@ export class Triggler {
                         const divisor = (triggerValue / 100);
                         // if property 1 update value = 50% of property 2 value
                         if (updateValue <= (property2Value * divisor)) {
-                            Triggler._executeTrigger(trigger, entity);
+                            triggers.push({trigger, entity});
                         }
                         break;
                     }
                     if (updateValue <= triggerValue) {
-                        Triggler._executeTrigger(trigger, entity);
+                        triggers.push({trigger, entity});
                     }
                     break;
                 
@@ -217,23 +226,27 @@ export class Triggler {
                         const divisor = (triggerValue / 100);
                         // if property 1 update value = 50% of property 2 value
                         if (updateValue !== (property2Value * divisor)) {
-                            Triggler._executeTrigger(trigger, entity);
+                            triggers.push({trigger, entity});
                         }
                         break;
                     }
                     if (updateValue !== triggerValue) {
-                        Triggler._executeTrigger(trigger, entity);
+                        triggers.push({trigger, entity});
                     }
                     break;
             
                 default:
                     break;
             }
+
+            for (const {trigger, entity} of triggers) {
+                await Triggler._executeTrigger(trigger, entity);
+            }
         }
     }
 
     /**
-     * 
+     * Update Actor handler
      * @param {*} actor 
      * @param {*} update 
      * @param {*} options 
