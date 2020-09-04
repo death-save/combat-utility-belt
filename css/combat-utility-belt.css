@@ -469,23 +469,6 @@ footer.condition-lab  {
     margin: 2px 5px 2px 0px;
 }
 
-/* COMBAT CAROUSEL */
-
-.combat-carousel.wrapper {
-    z-index: 30;
-}
-
-.combat-carousel.card {
-    border-radius: 3px;
-    border: 1px solid black;
-    margin: 3px;
-    padding: 2px;
-}
-
-img .combat-carousel {
-    border: none;
-}
-
 .roll-init.content {
 margin: auto auto;
 position: absolute;
