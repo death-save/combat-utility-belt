@@ -169,7 +169,7 @@ export class HideNPCNames {
             }
 
             const cardFooter = html.find(".card-footer");
-            cardFooter.prop("hidden", true);
+            return cardFooter.prop("hidden", true);
         }
 
         senderName.append(icon);
