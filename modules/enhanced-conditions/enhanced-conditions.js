@@ -644,7 +644,7 @@ export class EnhancedConditions {
      * @param {*} conditionName
      * @todo coalesce into a single update
      */
-    static removeCondition(conditionName, tokens, {warn=true}={}) {
+    static async removeCondition(conditionName, tokens, {warn=true}={}) {
         // iterate tokens removing conditions
         if (!tokens) {
             ui.notifications.error("Remove Condition failed. No token provided");
@@ -683,11 +683,11 @@ export class EnhancedConditions {
             }
 
             if (token?.data?.effects.includes(effect)) {
-                token.toggleEffect(effect);
+                await token.toggleEffect(effect);
             }
 
             if (token?.data?.overlayEffect === effect) {
-                token.toggleOverlay(effect);
+                await token.toggleOverlay(effect);
             }
         }
     }
