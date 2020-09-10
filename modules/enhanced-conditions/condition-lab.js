@@ -328,7 +328,7 @@ export class ConditionLab extends FormApplication {
         Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.mapType, mapType, true);
         Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.map, newMap, true);
 
-        ui.notifications.info("Condition Lab mapping saved!");
+        ui.notifications.info(game.i18n.localize("ENHANCED_CONDITIONS.Lab.SaveSuccess"));
     }
 
     /**
@@ -353,19 +353,19 @@ export class ConditionLab extends FormApplication {
      */
     async _importFromJSONDialog() {
         new Dialog({
-            title: `Import Condition Map`,
+            title: game.i18n.localize("ENHANCED_CONDITIONS.Lab.ImportTitle"),
             content: await renderTemplate(BUTLER.DEFAULT_CONFIG.enhancedConditions.templates.importDialog, {}),
             buttons: {
                 import: {
                     icon: '<i class="fas fa-file-import"></i>',
-                    label: "Import",
+                    label: game.i18n.localize("WORDS.Import"),
                     callback: html => {
                         this._processImport(html);
                     }
                 },
                 no: {
                     icon: '<i class="fas fa-times"></i>',
-                    label: "Cancel"
+                    label: game.i18n.localize("WORDS.Cancel")
                 }
             },
             default: "import"
@@ -380,7 +380,7 @@ export class ConditionLab extends FormApplication {
         const form = html.find("form")[0];
 
         if ( !form.data.files.length ) {
-            return ui.notifications.error("You did not upload a data file!");
+            return ui.notifications.error(game.i18n.localize("ENHANCED_CONDITIONS.Import.NoFile"));
         }
 
         const jsonFile = await readTextFromFile(form.data.files[0]);
@@ -404,7 +404,7 @@ export class ConditionLab extends FormApplication {
         
         buttons.unshift(
             {
-                label: "Import",
+                label: game.i18n.localize("WORDS.Import"),
                 class: "import",
                 icon: "fas fa-file-import",
                 onclick: async ev => {
@@ -412,7 +412,7 @@ export class ConditionLab extends FormApplication {
                 }
             },
             {
-                label: "Export",
+                label: game.i18n.localize("WORDS.Export"),
                 class: "export",
                 icon: "fas fa-file-export",
                 onclick: async ev => {
@@ -453,7 +453,7 @@ export class ConditionLab extends FormApplication {
         compendiumSelector.on("change", event => this._onChangeCompendium(event));
 
         // Init the DraggableList
-        new DraggableList(html[0].querySelector('.list'), '.row');
+        new DraggableList(html[0].querySelector(".list"), ".row");
 
         super.activateListeners(html);     
     }
@@ -605,12 +605,12 @@ export class ConditionLab extends FormApplication {
         const row = event.currentTarget.name.match(/\d+$/)[0];
 
         const dialog = new Dialog({
-            title: "Confirm Row Deletion",
-            content: "Are you sure you want to delete this row?",
+            title: game.i18n.localize("ENHANCED_CONDITIONS.Lab.ConfirmDeleteTitle"),
+            content: game.i18n.localize("ENHANCED_CONDITIONS.Lab.ConfirmDeleteContent"),
             buttons: {
                 yes: {
                     icon: `<i class="fa fa-check"></i>`,
-                    label: " Yes",
+                    label: game.i18n.localize("WORDS._Yes"),
                     callback: async event => {
                         const newMap = duplicate(this.map);
                         newMap.splice(row, 1);
@@ -620,7 +620,7 @@ export class ConditionLab extends FormApplication {
                 },
                 no :{
                     icon: `<i class="fa fa-times"></i>`,
-                    label: " No",
+                    label: game.i18n.localize("WORDS._No"),
                     callback: event => {}
                 }
             },
@@ -636,20 +636,20 @@ export class ConditionLab extends FormApplication {
      */
     _onRestoreDefaults(event) {
         event.preventDefault();
-        const content = `<p>Are you sure you want to restore this mapping to defaults?</p><strong>If you save, this change will be permanent.</strong>`;
+        const content = game.i18n.localize("ENHANCED_CONDITIONS.Lab.RestoreDefaultsContent");
 
         const confirmationDialog = new Dialog({
-            title: "Restore Defaults?",
+            title: game.i18n.localize("ENHANCED_CONDITIONS.Lab.RestoreDefaultsTitle"),
             content,
             buttons: {
                 yes: {
                     icon: `<i class="fas fa-check"></i>`,
-                    label: "Yes",
+                    label: game.i18n.localize("WORDS.Yes"),
                     callback: () => this._restoreDefaults()
                 },
                 no: {
                     icon: `<i class="fas fa-times"></i>`,
-                    label: "No",
+                    label: game.i18n.localize("WORDS.No"),
                     callback: () => {}
                 }
             },
@@ -666,12 +666,12 @@ export class ConditionLab extends FormApplication {
      */
     _onResetForm(event) {
         const dialog = new Dialog({
-            title: "Reset Form?",
-            content: `<p>Are you sure you want to reset the form?</p><p><strong>You will lose any unsaved changes.</strong></p>`,
+            title: game.i18n.localize("ENHANCED_CONDITIONS.Lab.ResetFormTitle"),
+            content: game.i18n.localize("ENHANCED_CONDITIONS.Lab.ResetFormContent"),
             buttons: {
                 yes: {
                     icon: `<i class="fa fa-check"></i>`,
-                    label: " Yes",
+                    label: game.i18n.localize("WORDS._Yes"),
                     callback: event => {
                         this.map = this.initialMap;
                         this.render();
@@ -679,7 +679,7 @@ export class ConditionLab extends FormApplication {
                 },
                 no :{
                     icon: `<i class="fa fa-times"></i>`,
-                    label: " No",
+                    label: game.i18n.localize("WORDS._No"),
                     callback: event => {}
                 }
             },
@@ -696,7 +696,7 @@ export class ConditionLab extends FormApplication {
         this.submit().then(result => {
             this.close();
         }).catch(reject => {
-            ui.notifications.warn("Condition Lab failed to Save and Close");
+            ui.notifications.warn(game.i18n.localize("ENHANCED_CONDITIONS.Lab.SaveFailed"));
         });
         
     }
