@@ -78,7 +78,7 @@ export class EnhancedConditions {
      */
     static mapFromJson(json) {
         if (json.system !== game.system.id) {
-            ui.notifications.warn("This map does not match your game system and may not work as expected.")
+            ui.notifications.warn(game.i18n.localize("ENHANCED_CONDITIONS.MapMismatch"));
         }
         
         const map = json.map;
@@ -554,9 +554,11 @@ export class EnhancedConditions {
      * @param {*} conditionName
      * @todo coalesce into a single update
      */
-    static async applyCondition(conditionName, tokens, {warn=true}={}) {
+    static async applyCondition(conditionName, tokens=null, {warn=true}={}) {
+        tokens = tokens ? tokens : canvas?.tokens?.controlled?.length ? canvas.tokens.controlled : null;
+
         if (!tokens) {
-            ui.notifications.error("Apply Condition failed. No token provided");
+            ui.notifications.error(game.i18n.localize("ENHANCED_CONDITIONS.ApplyCondition.Failed.NoToken"));
             console.log("Combat Utility Belt - Enhanced Conditions | No token provided");
             return;
         }
@@ -565,7 +567,7 @@ export class EnhancedConditions {
         const condition = map.find(c => c.name === conditionName);
 
         if (!condition) {
-            ui.notifications.error("Apply Condition failed. Could not find condition.");
+            ui.notifications.error(game.i18n.localize("ENHANCED_CONDITIONS.ApplyCondition.Failed.NoCondition"));
             console.log("Combat Utility Belt - Enhanced Conditions | Could not find condition with name: ", conditionName);
             return;
         }
@@ -573,7 +575,7 @@ export class EnhancedConditions {
         const effect = condition ? condition.icon : null;
         
         if (!effect) {
-            ui.notifications.error("Apply Condition failed. Could not find icon.");
+            ui.notifications.error(game.i18n.localize("ENHANCED_CONDITIONS.ApplyCondition.Failed.NoIcon"));
             console.log("Combat Utility Belt - Enhanced Conditions | No icon is setup for condition: ", conditionName);
             return;
         }
@@ -585,7 +587,7 @@ export class EnhancedConditions {
         for (let token of tokens) {
             if ((!condition?.options?.overlay && token?.data?.effects.includes(effect)) || (condition?.options?.overlay && token?.data?.overlayEffect === effect)) {
                 if (warn) {
-                    ui.notifications.warn("Apply Condition failed. Condition already active.");
+                    ui.notifications.warn(game.i18n.localize("ENHANCED_CONDITIONS.ApplyCondition.Failed.AlreadyActive"));
                     console.log(`Combat Utility Belt - Enhanced Conditions | Condition ${conditionName} is already active on token.`);
                 }
                 return;
@@ -606,9 +608,11 @@ export class EnhancedConditions {
      * Retrieves all active conditions for the given tokens
      * @param {*} tokens 
      */
-    static getConditions(tokens) {
+    static getConditions(tokens=null) {
+        tokens = tokens ? tokens : canvas?.tokens?.controlled?.length ? canvas.tokens.controlled : null;
+
         if (!tokens) {
-            ui.notifications.error("Get Conditions failed. No token provided");
+            ui.notifications.error(game.i18n.localize("ENHANCED_CONDITIONS.GetConditions.Failed.NoToken"));
             console.log("Combat Utility Belt - Enhanced Conditions | Get Conditions failed. No token provided");
             return;
         }
@@ -616,7 +620,7 @@ export class EnhancedConditions {
         const map = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.map);
 
         if (!map || !map.length) {
-            ui.notifications.error("Get Conditions failed. No Condition Map found");
+            ui.notifications.error(game.i18n.localize("ENHANCED_CONDITIONS.GetConditions.Failed.NoCondition"));
             console.log("Combat Utility Belt - Enhanced Conditions | Get Conditions failed. No Condition Map found");
             return;
         }
@@ -644,10 +648,12 @@ export class EnhancedConditions {
      * @param {*} conditionName
      * @todo coalesce into a single update
      */
-    static async removeCondition(conditionName, tokens, {warn=true}={}) {
+    static async removeCondition(conditionName, tokens=null, {warn=true}={}) {
+        tokens = tokens ? tokens : canvas?.tokens?.controlled?.length ? canvas.tokens.controlled : null;
+
         // iterate tokens removing conditions
         if (!tokens) {
-            ui.notifications.error("Remove Condition failed. No token provided");
+            ui.notifications.error(game.i18n.localize("ENHANCED_CONDITIONS.RemoveCondition.Failed.NoToken"));
             console.log("Combat Utility Belt - Enhanced Conditions | No token provided");
             return;
         }
@@ -656,7 +662,7 @@ export class EnhancedConditions {
         const condition = map.find(c => c.name === conditionName);
 
         if (!condition) {
-            ui.notifications.error("Remove Condition failed. Could not find condition.");
+            ui.notifications.error(game.i18n.localize("ENHANCED_CONDITIONS.RemoveCondition.Failed.NoCondition"));
             console.log("Combat Utility Belt - Enhanced Conditions | Could not find condition with name: ", conditionName);
             return;
         }
@@ -664,7 +670,7 @@ export class EnhancedConditions {
         const effect = condition ? condition.icon : null;
         
         if (!effect) {
-            ui.notifications.error("Remove Condition failed. Could not find icon");
+            ui.notifications.error(game.i18n.localize("ENHANCED_CONDITIONS.RemoveCondition.Failed.NoIcon"));
             console.log("Combat Utility Belt - Enhanced Conditions | No icon is setup for condition: ", conditionName);
             return;
         }
@@ -676,7 +682,7 @@ export class EnhancedConditions {
         for (let token of tokens) {
             if (!token?.data?.effects.includes(effect) && token?.data?.overlayEffect !== effect) {
                 if (warn) {
-                    ui.notifications.warn("Remove Condition failed. Condition is not active on token");
+                    ui.notifications.warn(game.i18n.localize("ENHANCED_CONDITIONS.RemoveCondition.Failed.NotActive"));
                     console.log(`Combat Utility Belt - Enhanced Conditions | Condition ${conditionName} is not active on token.`);
                 }
                 return;
@@ -696,16 +702,18 @@ export class EnhancedConditions {
      * Removes all conditions from the mapped tokens
      * @param {*} tokens 
      */
-    static removeAllConditions(tokens) {
+    static removeAllConditions(tokens=null) {
+        tokens = tokens ? tokens : canvas?.tokens?.controlled?.length ? canvas.tokens.controlled : null;
+
         if (!tokens) {
-            ui.notifications.error("Remove Condition failed. No token/s provided");
+            ui.notifications.error(game.i18n.localize("ENHANCED_CONDITIONS.RemoveAllConditions.Failed.NoToken"));
             console.log("Combat Utility Belt - Enhanced Conditions | Remove Condition failed: No token/s provided");
             return;
         }
         const conditionMap = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.map);
         
         if (!conditionMap) {
-            ui.notifications.error("Remove conditions failed. There is no active Condition Map");
+            ui.notifications.error(game.i18n.localize("ENHANCED_CONDITIONS.RemoveAllConditions.Failed.NoCondition"));
             console.log("Combat Utility Belt - Enhanced Conditions | Remove Condition failed: No token/s provided");
             return;
         }
