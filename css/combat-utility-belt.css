@@ -201,7 +201,7 @@ footer.condition-lab  {
 .cub-puter ul.gadget-list {
     list-style: none;
     border: 1px solid grey;
-    background: rgba(0,0,0,0.9);
+    background: url("/ui/parchment.jpg") repeat;
     width: fit-content;
     max-height: 185px;
     padding: 3px;
@@ -217,7 +217,7 @@ footer.condition-lab  {
 }
 */
 
-.cub-puter .terminal {
+.cub-puter-crt .terminal {
     padding: 2px;    
     color: lime;
     font-family: 'Courier New', Courier, monospace;
@@ -225,28 +225,40 @@ footer.condition-lab  {
     position: relative;
 }
 
+.cub-puter-crt ul.gadget-list {
+    background: rgba(0,0,0,0.9);
+}
+
 .cub-puter footer.terminal {
     border: none;
+}
+
+.cub-puter span .sudo-prompt {
+    font-weight: bold;
 }
 
 .cub-puter footer.hidden {
   visibility: hidden;
 }
 
-.cub-puter .terminal button {
+.cub-puter-crt .terminal button {
     border-color: lime;
     color: lime;
 }
 
-.cub-puter .terminal p.notes {
+.cub-puter-crt .terminal p.notes {
     color: beige;
 }
 
-.cub-puter .terminal input {
+.cub-puter-crt .terminal input {
     color: lime;
 }
 
-.cub-puter .terminal select {
+.cub-puter-crt span .sudo-prompt {
+    color: white;
+}
+
+.cub-puter-crt .terminal select {
     color: lime;
     background: black;
     font-family: 'Courier New', Courier, monospace
@@ -317,6 +329,7 @@ footer.condition-lab  {
       opacity: 0.82041;
     }
 }
+
 .cub-puter-crt {
     background: #121010;
     border-radius: 5px;

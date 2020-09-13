@@ -137,7 +137,7 @@ export class Sidekick {
      * Adds additional handlebars helpers
      */
     static handlebarsHelpers() {
-        Handlebars.registerHelper("concat", () => {
+        Handlebars.registerHelper("cub-concat", () => {
             let result;
 
             for (let a in arguments) {

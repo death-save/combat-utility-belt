@@ -138,8 +138,12 @@ export const DEFAULT_CONFIG = {
         title: "CUBPuter",
         buttonId: "cub-puter-button",
         config: {
+            crt: true,
+            terminal: true,
+            startup: true,
             greeting: true,
-            instructions: true
+            instructions: true,
+            info: true
         }
     },
     enhancedConditions: {

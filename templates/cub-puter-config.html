@@ -1,5 +1,9 @@
 <form onsubmit="event.preventDefault()">
     <div class="form-group">
+        <input type="checkbox" name="crt" {{checked crt}}/>
+        <label>Use oldschool CRT styling</label>
+    </div>
+    <div class="form-group">
         <input type="checkbox" name="terminal" {{checked terminal}}/>
         <label>Show Terminal</label>
     </div>

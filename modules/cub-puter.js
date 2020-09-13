@@ -18,7 +18,7 @@ export class CUBPuter extends FormApplication {
             id: DEFAULT_CONFIG.cubPuter.id,
             title: DEFAULT_CONFIG.cubPuter.title,
             template: `${PATH}/templates/cub-puter.html`,
-            classes: ["cub-puter-crt"],
+            //classes: ["cub-puter-crt"],
             width: 750,
             height: "auto",
             top: 200,
@@ -139,6 +139,7 @@ export class CUBPuter extends FormApplication {
      * @param {*} html 
      */
     async _saveCUBPuterConfig(html) {
+        const crt = html.find("input[name='crt']")[0];
         const terminal = html.find("input[name='terminal']")[0];
         const startup = html.find("input[name='startup']")[0];
         const greeting = html.find("input[name='greeting']")[0];
@@ -146,6 +147,7 @@ export class CUBPuter extends FormApplication {
         const info = html.find("input[name='info']")[0];
         
         const newValues = {
+            crt: crt.checked,
             terminal: terminal.checked,
             startup: startup.checked,
             greeting: greeting.checked,
@@ -340,6 +342,12 @@ export class CUBPuter extends FormApplication {
      * @param {*} html 
      */
     static _onRender(app, html, data) {
+        const cubPuterSettings = Sidekick.getSetting(SETTING_KEYS.cubPuter.config);
+        if (cubPuterSettings?.crt === true) {
+            html.closest("#cub-puter").addClass("cub-puter-crt");
+        } else if (cubPuterSettings?.crt === false) {
+            html.closest("#cub-puter").removeClass("cub-puter-crt");
+        }
         const header = html.find("header");
         header.addClass("terminal");
         const appTitle = header.find(`:contains("${app.title}")`);
@@ -373,12 +381,12 @@ export class CUBPuter extends FormApplication {
         const instructionsOutput = config.instructions ? `<span id="instructions-output"><br />> Select a gadget to get started. You can read more information about the gadget, or change its settings. With our powers combined the players stand no chance! <a id="clear-instructions">--Remove this message?--</a></span><br />` : ``;
         const sudoPrompt = `<br /> ${username}@cubputer:~$ `;
         const sudoInput = `sudo -i`;
-        const selectPrompt = `<br /> <span style="color: white">root@cubputer:~# </span>`;
-        const selectInput = `<span style="color: white">./selectGadget.sh ${app.currentGadgetId}</span>`;
-        const infoPrompt = config.info ? `<br /> <span style="color: white">root@cubputer:/gadgets/${app.currentGadgetId}# </span>` : ``;
-        const infoInput = config.info ? `<span style="color: white">./README</span>` : ``;
-        const settingsPrompt = `<br /> <span style="color: white">root@cubputer:/gadgets/${app.currentGadgetId}# </span>`
-        const settingsInput = `<span style="color: white">./settings.sh</span>` 
+        const selectPrompt = `<br /> <span class="sudo-prompt">root@cubputer:~# </span>`;
+        const selectInput = `<span class="sudo-prompt">./selectGadget.sh ${app.currentGadgetId}</span>`;
+        const infoPrompt = config.info ? `<br /> <span class="sudo-prompt">root@cubputer:/gadgets/${app.currentGadgetId}# </span>` : ``;
+        const infoInput = config.info ? `<span class="sudo-prompt">./README</span>` : ``;
+        const settingsPrompt = `<br /> <span class="sudo-prompt">root@cubputer:/gadgets/${app.currentGadgetId}# </span>`
+        const settingsInput = `<span class="sudo-prompt">./settings.sh</span>` 
 
         if (!config.terminal) {
             html.find(".crt-on").removeClass("crt-on");
