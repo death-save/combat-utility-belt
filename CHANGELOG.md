@@ -11,6 +11,17 @@
 - Enhanced Conditions `Output to Chat` will reveal the existence of hidden creatures if conditions are applied to them and/or during combat if `Output During Combat` is on.
 - Chat log may not re-render when Hide Names settings are changed. This may cause the old name to still show in the log for players. Advise players to reload Foundry if you change these settings mid-session.
 
+## [1.2.2] - 2020-09-13
+### Added
+- **CUBputer** now includes an option to remove the old-school CRT styling
+- Dozens of new translation strings added
+
+### Changed
+- **Enhanced Conditions** macro methods (eg. `applyCondition`) now work without a token provided as long as you have a token `controlled` (ie. selected)
+
+### Fixed
+- Namespaced Handlebars helper methods to avoid conflicts with other modules/systems
+
 ## [1.2.1] - 2020-09-03
 ### Changed
 - Updated Korean translation (thanks @drdwing aka `KLO#1490`)
