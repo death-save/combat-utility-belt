@@ -1,4 +1,15 @@
 {
+    "GADGET_DESCRIPTIONS.AwardXP": "Provides an end of combat prompt to distribute XP from defeated hostile combatants.",
+    "GADGET_DESCRIPTIONS.Concentrator": "Manages Concentration in the dnd5e game system.",
+    "GADGET_DESCRIPTIONS.EnhancedConditions": "Provides the ability to map Conditions to Status Effect icons",
+    "GADGET_DESCRIPTIONS.HideNames": "Replaces Actor names with a new name of your choice",
+    "GADGET_DESCRIPTIONS.PanSelect": "Automatic panning and selection of tokens during combat",
+    "GADGET_DESCRIPTIONS.RerollInitiative": "Rerolls Initiative on each Combat round change",
+    "GADGET_DESCRIPTIONS.TemporaryCombatants": "Allows the creation of temporary combatants to track things like environmental or lair actions",
+    "GADGET_DESCRIPTIONS.Triggler": "A trigger-management system for token/actor attribute changes",
+    "GADGET_DESCRIPTIONS.MiscActor": "Miscellaneous Actor enhancements",
+    "GADGET_DESCRIPTIONS.MiscToken": "Miscellaneous Token enhancements",
+
     "NOTIFICATIONS.CUBPuter.RestoreDefaults": "gadget settings restored to defaults!",
     "NOTIFICATIONS.CUBPuter.SaveSettings": "gadget settings saved!",
     
@@ -12,6 +23,9 @@
     "APPS.CUBPuter.SelectGadget": "--Select a gadget--",
 
     "APPS.Wiki.Title": "Combat Utility Belt Wiki",
+
+    "CONCENTRATOR.ConditionName": "Concentrating",
+    "CONCENTRATOR.Alias": "Concentrator",
 
     "ENHANCED_CONDITIONS.MapMismatch": "This map does not match your game system and may not work as expected.",
     "ENHANCED_CONDITIONS.ApplyCondition.Failed.NoToken": "Apply Condition failed. No token provided",
@@ -158,5 +172,8 @@
     "WORDS._Yes": " Yes",
     "WORDS._No": " No",
     "WORDS.Yes": "Yes",
-    "WORDS.No": "No"
+    "WORDS.No": "No",
+    "WORDS.None": "None",
+    "WORDS.GMOnly": "GM Only",
+    "WORDS.Everyone": "Everyone"
 }
