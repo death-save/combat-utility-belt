@@ -21,7 +21,7 @@ export class TokenUtility {
         const tempCombatantFlag = getProperty(tokenData, `flags.${NAME}.${FLAGS.temporaryCombatants.temporaryCombatant}`);
 
         // if this token has been handled by the mighty summoner logic then nothing to do
-        if (mightySummonerFlag || (tempCombatantSetting && tempCombatantFlag)) {
+        if (!actor || mightySummonerFlag || (tempCombatantSetting && tempCombatantFlag)) {
             return;
         }
 
