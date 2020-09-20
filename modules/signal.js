@@ -161,6 +161,10 @@ export class Signal {
             Triggler._createTrigglerButton(html);
         });
 
+        Hooks.on("vinoPrepareChatDisplayData", (chatDisplayData) => {
+            HideNPCNames._hookOnVinoPrepareChatDisplayData(chatDisplayData);
+        });
+
         Hooks.on("renderImagePopout", (app, html, data) => {
             HideNPCNames._onRenderImagePopout(app, html, data);
         });
