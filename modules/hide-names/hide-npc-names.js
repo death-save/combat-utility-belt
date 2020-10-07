@@ -175,6 +175,38 @@ export class HideNPCNames {
         senderName.append(icon);
     }
 
+        /**
+     * Replaces instances of hidden name in VIsual NOvel for Foundry (ViNo)
+     */
+    static _hookOnVinoPrepareChatDisplayData(chatDisplayData) {
+        const enable = Sidekick.getSetting(SETTING_KEYS.hideNames.enable);
+
+        if (!enable) {
+            return;
+        }
+
+        const messageActorId = chatDisplayData.message.data.speaker.actor;
+        const messageSceneId = chatDisplayData.message.data.speaker.scene;
+        const messageTokenId = chatDisplayData.message.data.speaker.token;
+        const scene = messageSceneId ? game.scenes.get(messageSceneId) : null;
+        const tokenData = scene ? scene.data.tokens.find(t => t._id === messageTokenId) : null;
+        const token = canvas.tokens.get(messageTokenId) ?? (tokenData ? new Token(tokenData) : null);
+        const actor = token ? token.actor : game.actors.get(messageActorId);
+        const speakerIsNPC = actor && !actor.isPC;
+
+        if (!speakerIsNPC) return;
+
+        const shouldReplace = HideNPCNames.shouldReplaceName(actor);
+
+        if (!shouldReplace) return;
+
+        const replacementName = HideNPCNames.getReplacementName(actor);
+        
+        if (!game.user.isGM || !actor.owner) {
+           chatDisplayData.name = replacementName;
+        }
+    }
+
     /**
      * Replace names in the image popout
      * @param {*} app 
