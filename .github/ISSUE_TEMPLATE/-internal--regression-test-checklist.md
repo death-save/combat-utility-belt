@@ -1,124 +1,124 @@
 ---
-name: "(INTERNAL) Regression Test Script"
+name: "(INTERNAL) Regression Test Checklist"
 about: Captures tests required to validate post-update functionality or test against
-  a game system
+  a new/changed system
 title: ''
-labels: ''
-assignees: ''
+labels: chore
+assignees: eclarke12
 
 ---
 
 ## Award XP
 ### Dialog spawned on combat end
 - [ ] Pass
-- [ ] Fail
+(Pass/Fail notes)
 
 ### XP distributed correctly
 - [ ] Pass
-- [ ] Fail
+(Pass/Fail notes)
 
 ## Concentrator
 ### Auto-set Concentrating condition on spell cast
 - [ ] Pass
-- [ ] Fail
+(Pass/Fail notes)
 
 ### Output to Chat
 - [ ] Pass
-- [ ] Fail
+(Pass/Fail notes)
 
 ### Prompt for check on damage
 - [ ] Pass
-- [ ] Fail
+(Pass/Fail notes)
 
 ### Notify double-concentration
 - [ ] Pass
-- [ ] Fail
+(Pass/Fail notes)
 
 ## Enhanced Conditions
 ### Condition Lab loads
 - [ ] Pass
-- [ ] Fail
+(Pass/Fail notes)
 
 ### Game System detected
 - [ ] Pass
-- [ ] Fail
+(Pass/Fail notes)
 
 ## Macro methods work
 - [ ] Pass
-- [ ] Fail
+(Pass/Fail notes)
 
 ### Outputs to Chat
 - [ ] Pass
-- [ ] Fail
+(Pass/Fail notes)
 
 ### Remove default conditions works
 - [ ] Pass
-- [ ] Fail
+(Pass/Fail notes)
 
 ## Hide NPC Names
 ### Hide NPC names in chat
 - [ ] Pass
-- [ ] Fail
+(Pass/Fail notes)
 
 ### Hide NPC names in combat tracker
 - [ ] Pass
-- [ ] Fail
+(Pass/Fail notes)
 
 ### Hide NPC names in combat tracker tooltip
 - [ ] Pass
-- [ ] Fail
+(Pass/Fail notes)
 
 ## Reroll Initiative
 ### Reroll on Round Change
 - [ ] Pass
-- [ ] Fail
+(Pass/Fail notes)
 
 ## Triggler
 ### Detects actor properties
 - [ ] Pass
-- [ ] Fail
+(Pass/Fail notes)
 
 ### Triggers fire on update
 - [ ] Pass
-- [ ] Fail
+(Pass/Fail notes)
 
 ## Pan/Select
 ### Pans on turn
 - [ ] Pass
-- [ ] Fail
+(Pass/Fail notes)
 
 ### Pan respects GM/player setting
 - [ ] Pass
-- [ ] Fail
+(Pass/Fail notes)
 
 ### Selects on turn
 - [ ] Pass
-- [ ] Fail
+(Pass/Fail notes)
 
 ### Select respects GM/player setting
 - [ ] Pass
-- [ ] Fail
+(Pass/Fail notes)
 
 ## Mighty Summoner
 ### Correctly sets HP when enabled
 - [ ] Pass
-- [ ] Fail
+(Pass/Fail notes)
 
 ## Actor - Misc
 ### Initiative from sheet works
 - [ ] Pass
-- [ ] Fail
+(Pass/Fail notes)
 
 ## Combat - Misc
 ### Edit tracked resource works
 - [ ] Pass
-- [ ] Fail
+(Pass/Fail notes)
 
 ## Token - Misc
 ### Auto Roll Hostile HP correctly rolls when hostile token dropped
 - [ ] Pass
-- [ ] Fail
+(Pass/Fail notes)
 
 ### Resize effects works
 - [ ] Pass
-- [ ] Fail
+(Pass/Fail notes)
