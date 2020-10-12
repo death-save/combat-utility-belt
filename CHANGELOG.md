@@ -11,12 +11,15 @@
 - Enhanced Conditions `Output to Chat` will reveal the existence of hidden creatures if conditions are applied to them and/or during combat if `Output During Combat` is on.
 - Chat log may not re-render when Hide Names settings are changed. This may cause the old name to still show in the log for players. Advise players to reload Foundry if you change these settings mid-session.
 
-## [1.2.3] - 2020-10-06
+## [1.2.3] - 2020-10-11
 ### Added
-- Hide Names support for ViNo (thanks @cswendrowski)
+- Hide Names support for ViNo (thanks @cswendrowski !)
+- Hide Names support for Combat Carousel
+- Auto Roll Hostile HP now includes a setting (in CUBputer under Misc Token) to hide the roll from players
 
 ### Changed
 - Updated Korean translation (thanks @drdwing aka `KLO#1490`)
+- Confirmed compatibility for Foundry VTT 0.7.3
 
 ### Fixed
 - Fixed bad interaction with Multi-Level Tokens (thanks @grandseiken)
