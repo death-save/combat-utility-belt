@@ -175,6 +175,38 @@ export class HideNPCNames {
         senderName.append(icon);
     }
 
+        /**
+     * Replaces instances of hidden name in VIsual NOvel for Foundry (ViNo)
+     */
+    static _hookOnVinoPrepareChatDisplayData(chatDisplayData) {
+        const enable = Sidekick.getSetting(SETTING_KEYS.hideNames.enable);
+
+        if (!enable) {
+            return;
+        }
+
+        const messageActorId = chatDisplayData.message.data.speaker.actor;
+        const messageSceneId = chatDisplayData.message.data.speaker.scene;
+        const messageTokenId = chatDisplayData.message.data.speaker.token;
+        const scene = messageSceneId ? game.scenes.get(messageSceneId) : null;
+        const tokenData = scene ? scene.data.tokens.find(t => t._id === messageTokenId) : null;
+        const token = canvas.tokens.get(messageTokenId) ?? (tokenData ? new Token(tokenData) : null);
+        const actor = token ? token.actor : game.actors.get(messageActorId);
+        const speakerIsNPC = actor && !actor.isPC;
+
+        if (!speakerIsNPC) return;
+
+        const shouldReplace = HideNPCNames.shouldReplaceName(actor);
+
+        if (!shouldReplace) return;
+
+        const replacementName = HideNPCNames.getReplacementName(actor);
+        
+        if (!game.user.isGM || !actor.owner) {
+           chatDisplayData.name = replacementName;
+        }
+    }
+
     /**
      * Replace names in the image popout
      * @param {*} app 
@@ -211,6 +243,42 @@ export class HideNPCNames {
         const icon = `<span> <i class="fas fa-mask" title="${replacement}"></i></span>`;
 
         windowTitle.append(icon);
+    }
+
+    /**
+     * Handles Combat Carousel render
+     * @param {*} app 
+     * @param {*} html 
+     * @param {*} data 
+     */
+    static _onRenderCombatCarousel(app, html, data) {
+        const combatantCards = html.find(".card");
+
+        for (const card of combatantCards) {
+            const $card = $(card);
+            const combatantId = card.dataset.combatantId;
+            const combatant = game.combat.getCombatant(combatantId);
+            const token = canvas.tokens.get(combatant.tokenId);
+            const actor = token.actor;
+
+            // @todo append mask icon
+            if (game.user.isGM || actor.owner) continue;
+
+            if (HideNPCNames.shouldReplaceName(actor)) {
+                const nameDiv = $card.find("div.name");
+                const avatarDiv = $card.find("div.avatar");
+                const avatar = avatarDiv.find("img");
+                const nameHeader = nameDiv.find("h3");
+                const name = nameHeader.text();
+                const replacement = HideNPCNames.getReplacementName(actor);
+                if (!replacement) continue;
+
+                nameHeader.text(replacement);
+                avatar.attr("title", replacement);
+                nameHeader.attr("title", replacement);
+            }
+        }
+        
     }
 
     /**

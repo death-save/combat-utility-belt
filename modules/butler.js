@@ -255,6 +255,7 @@ export const DEFAULT_CONFIG = {
     },
     tokenUtility: {
         autoRollHP: false,
+        hideAutoRoll: false,
         effectSize: {
             large: {
                 multiplier: 4,
@@ -388,6 +389,7 @@ export const SETTING_KEYS = {
         mightySummoner: "enableMightySummoner",
         mightySummonerFeat: "mightySummonerFeatName",
         autoRollHP: "autoRollHP",
+        hideAutoRoll: "hideAutoRollHP",
         effectSize: "effectSize"
     },
     triggler: {

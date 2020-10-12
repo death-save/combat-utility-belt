@@ -523,6 +523,16 @@ export function registerSettings() {
         onChange: s => {}
     });
 
+    Sidekick.registerSetting(BUTLER.SETTING_KEYS.tokenUtility.hideAutoRoll, {
+        name: "SETTINGS.TokenUtility.HideAutoRollN",
+        hint: "SETTINGS.TokenUtility.HideAutoRollH",
+        default: BUTLER.DEFAULT_CONFIG.tokenUtility.hideAutoRoll,
+        scope: "world",
+        type: Boolean,
+        config: false,
+        onChange: s => {}
+    });
+
     Sidekick.registerSetting(BUTLER.SETTING_KEYS.tokenUtility.effectSize, {
         name: "SETTINGS.TokenUtility.TokenEffectSizeN",
         hint: "SETTINGS.TokenUtility.TokenEffectSizeH",
