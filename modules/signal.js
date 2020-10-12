@@ -75,6 +75,7 @@ export class Signal {
             // External methods
             game.cub.applyCondition = EnhancedConditions.applyCondition;
             game.cub.getConditions = EnhancedConditions.getConditions;
+            game.cub.hasCondition = EnhancedConditions.hasCondition;
             game.cub.removeCondition = EnhancedConditions.removeCondition;
             game.cub.removeAllConditions = EnhancedConditions.removeAllConditions;
 
@@ -161,10 +162,6 @@ export class Signal {
             Triggler._createTrigglerButton(html);
         });
 
-        Hooks.on("vinoPrepareChatDisplayData", (chatDisplayData) => {
-            HideNPCNames._hookOnVinoPrepareChatDisplayData(chatDisplayData);
-        });
-
         Hooks.on("renderImagePopout", (app, html, data) => {
             HideNPCNames._onRenderImagePopout(app, html, data);
         });
@@ -219,6 +216,14 @@ export class Signal {
 
         Hooks.on("renderCUBPuter", (app, html, data) => {
             CUBPuter._onRender(app, html, data);
+        });
+
+        Hooks.on("renderCombatCarousel", (app, html, data) => {
+            HideNPCNames._onRenderCombatCarousel(app, html, data);
+        });
+
+        Hooks.on("vinoPrepareChatDisplayData", (chatDisplayData) => {
+            HideNPCNames._hookOnVinoPrepareChatDisplayData(chatDisplayData);
         });
     }
 }

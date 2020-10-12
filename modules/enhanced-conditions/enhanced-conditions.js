@@ -643,6 +643,47 @@ export class EnhancedConditions {
     }
 
     /**
+     * Checks if the provided token or tokens has the given condition
+     * @param {*} condition 
+     * @param {*} tokens 
+     */
+    static hasCondition(condition, tokens=null) {
+        if (!condition) {
+            ui.notifications.error(game.i18n.localize("ENHANCED_CONDITIONS.RemoveCondition.Failed.NoCondition"));
+            console.log("Combat Utility Belt - Enhanced Conditions | No condition provided");
+            return false;
+        }
+
+        tokens = tokens ? tokens : canvas?.tokens?.controlled?.length ? canvas.tokens.controlled : null;
+
+        if (!tokens) {
+            ui.notifications.error(game.i18n.localize("ENHANCED_CONDITIONS.RemoveCondition.Failed.NoToken"));
+            console.log("Combat Utility Belt - Enhanced Conditions | No token provided");
+            return false;
+        }
+
+        const conditionIcons = EnhancedConditions.getIconsByCondition(condition) || [];
+
+        if (!conditionIcons.length) {
+            ui.notifications.error(game.i18n.localize("ENHANCED_CONDITIONS.RemoveCondition.Failed.NoMapping"));
+            console.log("Combat Utility Belt - Enhanced Conditions | No condition mapping");
+            return false;
+        }
+
+        if (tokens && !(tokens instanceof Array)) {
+            tokens = [tokens];
+        }
+
+        for (let token of tokens) {
+            if (token.data.effects.some(e => conditionIcons.includes(e)) || conditionIcons.includes(token.data.overlayEffect)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Removes the named condition from a token or tokens
      * @param {*} tokens 
      * @param {*} conditionName
