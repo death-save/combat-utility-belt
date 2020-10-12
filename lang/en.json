@@ -158,6 +158,8 @@
     
     "SETTINGS.TokenUtility.AutoRollHostileHpN": "Enable Auto Roll Hostile Token HP",
     "SETTINGS.TokenUtility.AutoRollHostileHpH": "Automatically roll hp for hostile tokens on canvas drop",
+    "SETTINGS.TokenUtility.HideAutoRollN": "Hide Automatic HP Roll",
+    "SETTINGS.TokenUtility.HideAutoRollH": "If Hostile Token HP is automatically rolled, hide the roll from players",
     "SETTINGS.TokenUtility.TokenEffectSizeN": "Token Effect Icon Size",
     "SETTINGS.TokenUtility.TokenEffectSizeH": "Sets the size for token effect icons on the token. Default: Small",
     
