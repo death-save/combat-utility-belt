@@ -32,7 +32,7 @@ export class TokenUtility {
             return false;
         }
         
-        if (tokenData.disposition !== -1 || !autoRollHP || actor?.isPC) {
+        if (tokenData.disposition !== -1 || !autoRollHP || actor?.hasPlayerOwner) {
             return;
         }
 
