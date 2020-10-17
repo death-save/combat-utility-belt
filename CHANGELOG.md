@@ -11,6 +11,17 @@
 - Enhanced Conditions `Output to Chat` will reveal the existence of hidden creatures if conditions are applied to them and/or during combat if `Output During Combat` is on.
 - Chat log may not re-render when Hide Names settings are changed. This may cause the old name to still show in the log for players. Advise players to reload Foundry if you change these settings mid-session.
 
+## [1.3.0] - 2020-10-17
+### Added
+- `Inspiration` icon for dnd5e-extended Condition Map
+
+### Changed
+- Condition Lab now uses `Active Effects` to map conditions
+- Condition Maps `dnd5e` and `dnd5e-extended` now use the system-included `Rules (SRD)` compendium entries as references
+
+### Fixed
+-
+
 ## [1.2.3] - 2020-10-11
 ### Added
 - Hide Names support for ViNo (thanks @cswendrowski !)
