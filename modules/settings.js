@@ -150,6 +150,16 @@ export function registerSettings() {
         onChange: s => {}
     });
 
+    Sidekick.registerSetting(BUTLER.SETTING_KEYS.enhancedConditions.coreEffects, {
+        name: "SETTINGS.EnhancedConditions.CoreEffectsN",
+        hint: "SETTINGS.EnhancedConditions.CoreEffectsH",
+        scope: "world",
+        type: Object,
+        default: [],
+        config: false,
+        onChange: s => {}
+    });
+
     Sidekick.registerSetting(BUTLER.SETTING_KEYS.enhancedConditions.system, {
         name: "SETTINGS.EnhancedConditions.SystemN",
         hint: "SETTINGS.EnhancedConditions.SystemH",

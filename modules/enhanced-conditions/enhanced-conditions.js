@@ -22,7 +22,7 @@ export class EnhancedConditions {
             if (game.user.isGM) {
                 const storedMaps = await EnhancedConditions.loadDefaultMaps();
                 defaultMaps = await Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.defaultMaps, storedMaps);
-            }            
+            }
         }
 
         // If map type is not set and a default map exists for the system, set maptype to default
@@ -42,10 +42,12 @@ export class EnhancedConditions {
 
         // If the gadget is enabled, update status icons accordingly
         if (enable) {
+            const activeEffects = isNewerVersion(game.data.version, "0.7.3");
+
             if (game.user.isGM) {
-                EnhancedConditions._backupCoreIcons();
+                activeEffects ? EnhancedConditions._backupCoreEffects() : EnhancedConditions._backupCoreIcons();
             }
-            EnhancedConditions._updateStatusIcons(conditionMap);
+            activeEffects ? EnhancedConditions._updateStatusEffects(conditionMap) : EnhancedConditions._updateStatusIcons(conditionMap);
         }
 
         // Save the active condition map to a convenience property
@@ -122,6 +124,17 @@ export class EnhancedConditions {
         return map;
     }
 
+    /**
+     * Duplicate the core status icons, freeze the duplicate then store a copy in settings
+     */
+    static _backupCoreEffects() {
+        CONFIG.defaultStatusEffects = CONFIG.defaultStatusEffects || duplicate(CONFIG.statusEffects);
+        if (!Object.isFrozen(CONFIG.defaultStatusEffects)) {
+            Object.freeze(CONFIG.defaultStatusEffects);
+        }
+        Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.coreEffects, CONFIG.defaultStatusEffects);
+    }
+
 
     /**
      * Duplicate the core status icons, freeze the duplicate then store a copy in settings
@@ -156,6 +169,63 @@ export class EnhancedConditions {
             return entry;
         }
 
+    }
+
+    static _updateStatusEffects(conditionMap) {
+        const enable = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.enable);
+
+        if (!enable) {
+            // maybe restore the core icons?
+            return;
+        }
+
+        let entries;
+        const coreEffectsSetting = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.coreEffects);
+
+        //save the original icons
+        if (!coreEffectsSetting.length) {
+            EnhancedConditions._backupCoreEffects();
+        }
+
+        const removeDefaultEffects = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.removeDefaultEffects);
+        const activeConditionMap = conditionMap || Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.map);
+
+        if (!removeDefaultEffects && !activeConditionMap) {
+            return;
+        }
+
+        const activeConditionEffects = EnhancedConditions._prepareStatusEffects(activeConditionMap);
+
+        if (removeDefaultEffects) {
+            return CONFIG.statusEffects = activeConditionEffects ?? [];
+        } 
+        
+        if (activeConditionMap instanceof Array) {
+            //add the icons from the condition map to the status effects array
+            const coreEffects = CONFIG.defaultStatusEffects || Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.coreEffects);
+
+            // Create a Set based on the core status effects and the Enhanced Condition effects. Using a Set ensures unique icons only
+            return CONFIG.statusEffects = coreEffects.concat(activeConditionEffects);
+        }
+    }
+
+    /**
+     * Converts the given Condition Map into a Status Effects array
+     * @param {*} conditionMap 
+     * @returns {Object} statusEffects
+     */
+    static _prepareStatusEffects(conditionMap) {
+        const statusEffects = conditionMap.map(c => {
+            return {
+                id: c.name?.slugify(),
+                label: c.name,
+                icon: c.icon,
+                data: c.effects?.data || [],
+                duration: c.duration || {}
+            }
+        });
+
+        return statusEffects;
     }
 
     /**
@@ -318,13 +388,12 @@ export class EnhancedConditions {
             return;
         }
 
-        if (!hasProperty(update, "effects") && !hasProperty(update, "overlayEffect")) {
+        if (!hasProperty(update, "actorData.effects")) {
             return;
         }
 
-        const conditions = update.effects ? duplicate(update.effects) : tokenData?.effects?.length ? duplicate(tokenData.effects) : [];
-        update.overlayEffect ? conditions.push(update.overlayEffect) : tokenData.overlayEffect ? conditions.push(tokenData.overlayEffect) : null;
-
+        const conditions = [...new Set(update.actorData.effects.map(e => e.flags.core.statusId))];
+        
         if (!conditions.length) {
             return;
         }
@@ -473,10 +542,10 @@ export class EnhancedConditions {
 
     /**
      * Checks statusEffect icons against map and returns matching condition mappings
-     * @param {Array} icons 
+     * @param {Array}  
      */
-    static lookupEntryMapping(token, map, icons, {outputToChat=true}={}) {
-        const conditionEntries = map.filter(row => icons.includes(row.icon));
+    static lookupEntryMapping(token, map, effectIds, {outputToChat=true}={}) {
+        const conditionEntries = map.filter(row => effectIds.includes(row.name.slugify()));
 
         if (conditionEntries.length === 0) {
             return;
