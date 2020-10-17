@@ -1,0 +1,8 @@
+{
+    "source": { 
+        "includePattern": ".+\\.(m|c)?js(doc|x)?$"
+    },
+    "plugins": [
+        "@pixi/jsdoc-template/plugins/es6-fix"
+      ]
+}
