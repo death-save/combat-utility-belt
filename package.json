@@ -9,6 +9,7 @@
   "devDependencies": {
     "@pixi/jsdoc-template": "^2.6.0",
     "foundry-pc-types": "gitlab:foundry-projects/foundry-pc/foundry-pc-types",
+    "gitignore": "^0.6.0",
     "gulp-zip": "^5.0.2",
     "jquery": "^3.5.1",
     "jsdoc-to-markdown": "^6.0.1",
