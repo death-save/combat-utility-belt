@@ -261,7 +261,7 @@ export class CUBPuter extends FormApplication {
         
         const button = event.target;
         const form = button.form;
-        const formData = Sidekick.buildFormData(this._getFormData(form));
+        const formData = Sidekick.buildFormData(new FormDataExtended(form));
         const keys = duplicate(Object.keys(formData));
         const restored = [];
 

@@ -1,5 +1,16 @@
 <div class="enhanced-conditions header">
-    <h3>{{localize "TEMPLATES.EnhancedConditions.ChatCardTitle"}}</h3>
+    <h3>
+        {{#if type.added}}
+        {{localize "TEMPLATES.EnhancedConditions.ChatCardTitle.Added"}}
+        {{/if}}
+        {{#if type.removed}}
+        {{localize "TEMPLATES.EnhancedConditions.ChatCardTitle.Removed"}}
+        {{/if}}
+        {{#if type.active}}
+        {{localize "TEMPLATES.EnhancedConditions.ChatCardTitle.Active"}}
+        {{/if}}
+        
+    </h3>
 </div>
 <div class="enhanced-conditions content" data-token-id="{{tokenId}}">
     <ul class="chat-message condition-list">

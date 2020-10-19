@@ -185,7 +185,8 @@ export const DEFAULT_CONFIG = {
             }
         ],
         templates: {
-            chatOutput: `${PATH}/templates/chat-conditions.html`,
+            conditionLab: `${PATH}/templates/condition-lab.hbs`,
+            chatOutput: `${PATH}/templates/chat-conditions.hbs`,
             importDialog: `${PATH}/templates/import-conditions.html`
         }
     },
@@ -307,6 +308,9 @@ export const DEFAULT_CONFIG = {
 export const FLAGS = {
     concentrator: {
         chatMessage: "concentratorChatMessageParsed"
+    },
+    enhancedConditions: {
+        conditionId: "conditionId"
     },
     mightySummoner: {
         mightySummoner: "mightySummoner"

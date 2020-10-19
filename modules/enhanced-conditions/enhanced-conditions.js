@@ -1,10 +1,17 @@
 import * as BUTLER from "../butler.js";
 import { ConditionLab } from "./condition-lab.js";
 import { Sidekick } from "../sidekick.js";
+
 /**
  * Builds a mapping between status icons and journal entries that represent conditions
  */
 export class EnhancedConditions {
+
+
+    /* -------------------------------------------- */
+    /*                   Handlers                   */
+    /* -------------------------------------------- */
+
     /**
      * Ready Hook handler
      */
@@ -20,7 +27,7 @@ export class EnhancedConditions {
         // If there's no defaultMaps or defaultMaps doesn't include game system, check storage then set appropriately
         if (!defaultMaps || (defaultMaps instanceof Object && Object.keys(defaultMaps).length === 0) || (defaultMaps instanceof Object && !Object.keys(defaultMaps).includes(system))) {
             if (game.user.isGM) {
-                const storedMaps = await EnhancedConditions.loadDefaultMaps();
+                const storedMaps = await EnhancedConditions._loadDefaultMaps();
                 defaultMaps = await Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.defaultMaps, storedMaps);
             }
         }
@@ -36,18 +43,18 @@ export class EnhancedConditions {
             conditionMap = EnhancedConditions.getDefaultMap(system);
 
             if (game.user.isGM) {
-                Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.map, conditionMap);
+                const preparedMap = EnhancedConditions._prepareMap(conditionMap);
+                Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.map, preparedMap);
             }
         }
 
         // If the gadget is enabled, update status icons accordingly
         if (enable) {
-            const activeEffects = isNewerVersion(game.data.version, "0.7.3");
-
             if (game.user.isGM) {
-                activeEffects ? EnhancedConditions._backupCoreEffects() : EnhancedConditions._backupCoreIcons();
+                EnhancedConditions._backupCoreEffects();
             }
-            activeEffects ? EnhancedConditions._updateStatusEffects(conditionMap) : EnhancedConditions._updateStatusIcons(conditionMap);
+
+            EnhancedConditions._updateStatusEffects(conditionMap);
         }
 
         // Save the active condition map to a convenience property
@@ -57,11 +64,467 @@ export class EnhancedConditions {
     }
 
     /**
+     * Handle PreUpdate Token Hook.
+     * If the update includes effect data, add an `option` for the update hook handler to look for
+     * @param {*} scene 
+     * @param {*} tokenData 
+     * @param {*} update 
+     * @param {*} options 
+     * @param {*} userId 
+     */
+    static _onPreUpdateToken(scene, tokenData, update, options, userId) {
+        const cubOption = options[BUTLER.NAME] = {};
+
+        if (hasProperty(update, "actorData.effects")) {
+            cubOption.existingEffects = tokenData.actorData.effects ?? [];
+            cubOption.updateEffects = update.actorData.effects ?? [];
+        }
+
+        if (hasProperty(update, "overlayEffect")) {
+            cubOption.existingOverlay = tokenData.overlayEffect ?? null;
+            cubOption.updateOverlay = update.overlayEffect ?? null;
+        }
+    }
+
+    /**
+     * Hooks on token updates. If the update includes effects, calls the journal entry lookup
+     */
+    static _onUpdateToken(scene, tokenData, update, options, userId) {
+        const enable = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.enable);
+
+        if (!enable || !game.user.isGM || (game.users.get(userId).isGM && game.userId !== userId)) {
+            return;
+        }
+
+        if (!hasProperty(options, `${BUTLER.NAME}`)) return;
+
+        const cubOption = options[BUTLER.NAME];
+        const updateEffects = [];
+        
+        for (const e of cubOption.updateEffects) {
+            if (!cubOption.existingEffects.includes(e)) updateEffects.push({effect: e, type: "effect", changeType: "add"});
+        }
+
+        for (const e of cubOption.existingEffects) {
+            if (!cubOption.updateEffects.includes(e)) updateEffects.push({effect: e, type: "effect", changeType: "remove"});
+        }
+
+        if (!cubOption.existingOverlay && cubOption.updateOverlay) updateEffects.push({effect: updateOverlay, type: "overlay", changeType: "add"});
+        else if (cubOption.existingOverlay && !cubOption.updateOverlay) updateEffects.push({effect: existingOverlay, type: "overlay", changeType: "remove"});
+
+        if (!updateEffects.length) return;
+
+        const addConditions = [];
+        const removeConditions = [];
+
+        for (const effect of updateEffects) {
+            let condition = null;
+            // based on the type, get the condition
+            if (effect.type === "overlay") condition = EnhancedConditions.getConditionsByIcon(effect.effect) 
+            else if (effect.type === "effect") {
+                const effectId = effect.effect.flags[BUTLER.NAME][BUTLER.FLAGS.enhancedConditions.conditionId];
+                condition = EnhancedConditions.lookupEntryMapping(effectId);
+            }
+
+            if (!condition) continue;
+
+            if (effect.changeType === "add") addConditions.push(condition);
+            else if (effect.changeType === "remove") removeConditions.push(condition);
+        }
+
+        if (!addConditions.length && !removeConditions.length) return;
+
+        const token = canvas.tokens.get(tokenData._id);
+        const outputChatSetting = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.outputChat);
+
+        // If any of the addConditions Marks Defeated, mark the token's combatants defeated
+        if (addConditions.some(c => c.options.markDefeated)) EnhancedConditions._markDefeated(token);
+
+        // If any of the conditions Removes Others, remove the other Conditions
+        addConditions.some(c => {
+            if (c.options.removeOthers) {
+                EnhancedConditions._removeOtherConditions(token, c);
+                return true;
+            }
+        });
+
+        const chatAddConditions = addConditions.filter(c => c.options?.outputChat ?? outputChatSetting);
+        const chatRemoveConditions = removeConditions.filter(c => c.options?.outputChat ?? outputChatSetting);
+        
+        // If there's any conditions to output to chat, do so
+        if (chatAddConditions.length) EnhancedConditions.outputChatMessage(token, chatAddConditions, {type: "added"});
+        if (chatRemoveConditions.length) EnhancedConditions.outputChatMessage(token, chatRemoveConditions, {type: "removed"});
+    }
+
+    /**
+     * Create Active Effect handler
+     * @param {*} actor 
+     * @param {*} update 
+     * @param {*} options 
+     * @param {*} userId 
+     */
+    static _onCreateActiveEffect(actor, createData, options, userId) {
+        const enable = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.enable);
+
+        if (!enable || !game.user.isGM || (game.users.get(userId).isGM && game.userId !== userId)) {
+            return;
+        }
+
+        EnhancedConditions._processActiveEffectChange(actor, createData, "create");
+    }
+
+    /**
+     * Create Active Effect handler
+     * @param {*} actor 
+     * @param {*} update 
+     * @param {*} options 
+     * @param {*} userId 
+     */
+    static _onDeleteActiveEffect(actor, deleteData, options, userId) {
+        const enable = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.enable);
+
+        if (!enable || !game.user.isGM || (game.users.get(userId).isGM && game.userId !== userId)) {
+            return;
+        }
+
+        EnhancedConditions._processActiveEffectChange(actor, deleteData, "delete");
+    }
+
+    /**
+     * Update Combat Handler
+     * @param {*} combat 
+     * @param {*} update 
+     * @param {*} options 
+     * @param {*} userId 
+     */
+    static _onUpdateCombat(combat, update, options, userId) {
+        const enableEnhancedConditions = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.enable);
+        const enableOutputCombat = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.outputCombat);
+
+        if (!hasProperty(update, "turn") || !enableEnhancedConditions || !enableOutputCombat|| !game.user.isGM) {
+            return;
+        }
+
+        const token = canvas.tokens.get(game.combat.combatant.tokenId);
+
+        const effects = token.actor.effects.size ? token.actor.effects.entries : [];
+        const overlayCondition = token.data.overlayEffect ? EnhancedConditions.getConditionsByIcon(token.data.overlayEffect) : null;
+        
+        if (overlayCondition) {
+            effects.push({label: overlayCondition.name});
+        }
+
+        if (!effects.length) {
+            return;
+        }
+
+        const conditionIds = effects.map(e => e?.data?.flags?.core?.statusId);
+        const conditions = EnhancedConditions.lookupEntryMapping(conditionIds) || [];
+
+        if (!conditions.length) return;
+
+        const chatConditions = [];
+
+        for (const condition of conditions) {
+            const outputSetting = condition.options.outputChat ?? Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.outputChat);
+
+            if (outputSetting) {
+                chatConditions.push(condition);
+            }
+        }
+
+        EnhancedConditions.outputChatMessage(token, chatConditions, {type: "active"});
+    }
+
+    /**
+     * Adds a title/tooltip with the matched Condition name
+     */
+    static _onRenderTokenHUD(app, html, data) {
+        const enable = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.enable);
+
+        if (!enable) {
+            return;
+        }
+
+        // array of objects: {name, icon, journalId, trigger}
+        const map = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.map);
+        const conditionIcons = EnhancedConditions.getConditionIcons(map);
+        const effectIcons = html.find("img.effect-control");
+        // jquery .filter()
+        const enhancedIcons = jQuery.makeArray(effectIcons).filter(i => {
+            const src = i.attributes.src.value;
+            if (conditionIcons.includes(src)) {
+                return true;
+            }
+        })
+
+        return enhancedIcons.forEach(i => {
+            const src = i.attributes.src.value;
+            const matchedCondition = map.find(m => m.icon === src);
+            i.setAttribute("title", matchedCondition.name);
+        });
+    }
+
+    /**
+     * Render Chat Message handler
+     * @param {*} app 
+     * @param {*} html 
+     * @param {*} data 
+     * @todo move to chatlog render?
+     */
+    static _onRenderChatMessage(app, html, data) {
+        if (data.message.content && !data.message.content.match("enhanced-conditions")) {
+            return;
+        }
+
+        const contentDiv = html.find("div.content");
+        const messageDiv = contentDiv.closest("li.message");
+        const messageId = messageDiv.data().messageId;
+        const tokenId = contentDiv.data().tokenId;
+        const token = canvas?.tokens.get(tokenId) || canvas.scene.data.tokens.find(t => t._id === tokenId);
+        const message = game.messages.get(messageId);
+        const removeConditionAnchor = html.find("a[name='remove-row']");
+
+        if (!token || (token && !game.user.isGM)) {
+            removeConditionAnchor.parent().hide();
+        }
+
+        /**
+         * @todo move to chatlog listener instead
+         */
+        removeConditionAnchor.on("click", event => {
+            const li = event.target.closest("li");
+            const contentDiv = li.closest("div.content");
+            const tokenId = contentDiv.dataset.tokenId;
+            const token = canvas.tokens.get(tokenId);
+            const conditionName = li.dataset.conditionName;
+            
+            if (!token) {
+                return;
+            }
+
+            EnhancedConditions.removeCondition(conditionName, token);
+
+            /**
+             * @todo need a solution for dealing with chat log spam -- once chat output is just a diff it will be better
+             */
+            //const newContent = duplicate(message.data.content);
+            //const update = $(newContent).find(li).remove();
+            //message.delete()
+        });
+    }
+
+    /* -------------------------------------------- */
+    /*                    Workers                   */
+    /* -------------------------------------------- */
+
+    /**
+     * 
+     * @param {*} actor  the entity
+     * @param {*} update  the update data
+     * @param {String} type  the type of change to process
+     */
+    static _processActiveEffectChange(actor, changeData, type) {
+        const effectId = changeData.flags[BUTLER.NAME][BUTLER.FLAGS.enhancedConditions.conditionId];
+
+        const [condition] = EnhancedConditions.lookupEntryMapping(effectId);
+
+        if (!condition) return;
+
+        const outputSetting = condition.options.outputChat ?? Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.outputChat);
+
+        const outputType = type === "delete" ? "removed" : "added";
+
+        if (outputSetting) EnhancedConditions.outputChatMessage(actor, condition, {type: outputType});
+        
+        // If condition marks combatants defeated, look for matching combatant
+        if (type === "create" && condition.options?.markDefeated) EnhancedConditions._markDefeated(actor);
+    }
+
+    /**
+     * Checks statusEffect icons against map and returns matching condition mappings
+     * @param {Array | String} effectIds  A list of effectIds, or a single effectId to check
+     * @param {Array} [map=[]]  the condition map to look in
+     */
+    static lookupEntryMapping(effectIds, map=[]) {
+        if (!(effectIds instanceof Array)) {
+            effectIds = [effectIds];
+        }
+
+        if (!map.length) {
+            map = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.map);
+            if (!map.length) return null;
+        }
+
+        const conditionEntries = map.filter(row => effectIds.includes(row.id ?? row.name.slugify()));
+
+        if (conditionEntries.length === 0) {
+            return;
+        }
+        
+        return conditionEntries.length > 1 ? conditionEntries : conditionEntries.shift();
+    }
+
+    /**
+     * Output one or more condition entries to chat
+     * @todo refactor to use actor or token
+     */
+    static async outputChatMessage(entity, entries, options={type: "active"}) {
+        // Turn a single condition mapping entry into an array
+        entries = entries instanceof Array ? entries : [entries];
+
+        const type = {};
+
+        switch (options.type) {
+            case "added":
+                type.added = true;
+                break;
+
+            case "removed":
+                type.removed = true;
+                break;
+
+            case "active":
+            default:
+                type.active = true;
+                break;
+        }
+
+        const chatUser = game.userId;
+        //const token = token || this.currentToken;
+        const chatType = CONST.CHAT_MESSAGE_TYPES.OTHER;
+
+        let speaker = ChatMessage.getSpeaker({entity});
+
+        if (entries.length === 0) {
+            return;
+        }
+
+        // iterate over the entries and mark any with references for use in the template
+        entries.forEach((v, i, a) => {
+            if (v.referenceId) {
+                a[i].hasReference = true;
+            }
+        });
+
+        const templateData = {
+            type,
+            entityId: entity.id,
+            alias: speaker.alias,
+            conditions: entries,
+            isOwner: entity.owner || game.user.isGM
+        };
+
+        const content = await renderTemplate(BUTLER.DEFAULT_CONFIG.enhancedConditions.templates.chatOutput, templateData);
+
+        return await ChatMessage.create({
+            speaker,
+            content,
+            type: chatType,
+            user: chatUser
+        });
+    }
+
+    /**
+     * Marks a Combatants for a particular entity as defeated
+     * @param {Actor | Token} entity 
+     */
+    static _markDefeated(entity) {
+        const combat = game.combat;
+        let tokens;
+
+        if (entity instanceof Token) {
+            tokens = [entity];
+        }
+
+        if (entity instanceof Actor) {
+            tokens = entity.getActiveTokens();
+        }
+
+        const updates = [];
+
+        // loop through tokens, and if there's matching combatants, add them to the update
+        for (const t of tokens) {
+            const combatants = combat ? game.combat?.combatants.filter(c => c.tokenId === t.id) : [];
+
+            if (!combatants.length) {
+                return;
+            }
+
+            const update = combatants.map(c => {
+                return {
+                    _id: c._id,
+                    defeated: true
+                }
+            });
+
+            updates.push(update);
+        }
+
+        if (!updates.length) return;
+
+        // update all combatants at once
+        combat.updateEmbeddedEntity("Combatant", updates);
+    }
+
+    /**
+     * For a given entity, removes conditions other than the one supplied
+     * @param {*} entity 
+     * @param {*} condition 
+     */
+    _removeOtherConditions(entity, condition) {
+        
+    }
+
+    /* -------------------------------------------- */
+    /*                    Helpers                   */
+    /* -------------------------------------------- */
+
+    /**
+     * Creates a button for the Condition Lab
+     * @param {Object} html the html element where the button will be created
+     */
+    static _createLabButton(html) {
+        const cubDiv = html.find("#combat-utility-belt");
+
+        const labButton = $(
+            `<button id="condition-lab" data-action="condition-lab">
+                    <i class="fas fa-flask"></i> ${BUTLER.DEFAULT_CONFIG.enhancedConditions.conditionLab.title}
+                </button>`
+        );
+        
+        cubDiv.append(labButton);
+
+        labButton.on("click", event => game.cub.conditionLab = new ConditionLab().render(true));
+    }
+
+    /**
+     * Determines whether to display the combat utility belt div in the settings sidebar
+     * @param {Boolean} display 
+     * @todo: extract to helper in sidekick class?
+     */
+    static _toggleLabButtonVisibility(display) {
+        if (!game.user.isGM) {
+            return;
+        }
+
+        let labButton = document.getElementById("condition-lab");
+
+        if (display && labButton && labButton.style.display !== "block") {
+            return labButton.style.display = "block";
+        } 
+        
+        if (labButton && !display && labButton.style.display !== "none") {
+            return labButton.style.display = "none";
+        }
+    }
+
+    /**
      * Returns the default maps supplied with the module
      * 
      * @todo: map to entryId and then rebuild on import
      */
-    static async loadDefaultMaps() {
+    static async _loadDefaultMaps() {
         const source = "data";
         const path = BUTLER.DEFAULT_CONFIG.enhancedConditions.conditionMapsPath;
         const jsons = await Sidekick.fetchJsons(source, path);
@@ -75,53 +538,24 @@ export class EnhancedConditions {
     }
 
     /**
-     * Parses a condition map JSON and returns a map
-     * @param {*} json 
+     * Parse the provided Condition Map and prepare it for storage, validating and correcting bad or missing data where possible
+     * @param {*} conditionMap 
      */
-    static mapFromJson(json) {
-        if (json.system !== game.system.id) {
-            ui.notifications.warn(game.i18n.localize("ENHANCED_CONDITIONS.MapMismatch"));
-        }
-        
-        const map = json.map;
+    static _prepareMap(conditionMap) {
+        if (!conditionMap.length) return;
 
-        return map;
-    }
+        const preparedMap = duplicate(conditionMap);
 
-    /**
-     * Returns the default condition map for a given system
-     * @param {*} system 
-     */
-    static getDefaultMap(system) {
-        const defaultMaps = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.defaultMaps);
-        let defaultMap = defaultMaps[system] || [];
+        // Map existing ids for ease of access
+        const existingIds = conditionMap.map(c => c.id);
 
-        if (!defaultMap.length) {
-            defaultMap = EnhancedConditions.buildDefaultMap(system);
-        }
-        return defaultMap;
-    }
-
-    /**
-     * Builds a default map for a given system
-     * @param {*} system 
-     */
-    static buildDefaultMap(system) {
-        const coreIcons = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.coreIcons);
-
-        // iterate over icons, set condition to icon file name, try to find a matching reference
-        const map = coreIcons.map(i => {
-            const icon = i;
-            let name = i.split("/").pop().split(".").shift();
-            name = name ? Sidekick.toTitleCase(name) : "";
-            
-            return {
-                name,
-                icon
-            }
+        // Iterate through the map validating and fixing the data
+        preparedMap.forEach(c => {
+            c.id = c.id || Sidekick.generateUniqueSlugId(c.name, existingIds);
+            c.options = c.options || {};
         });
 
-        return map;
+        return preparedMap;
     }
 
     /**
@@ -133,18 +567,6 @@ export class EnhancedConditions {
             Object.freeze(CONFIG.defaultStatusEffects);
         }
         Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.coreEffects, CONFIG.defaultStatusEffects);
-    }
-
-
-    /**
-     * Duplicate the core status icons, freeze the duplicate then store a copy in settings
-     */
-    static _backupCoreIcons() {
-        CONFIG.defaultStatusEffects = CONFIG.defaultStatusEffects || duplicate(CONFIG.statusEffects);
-        if (!Object.isFrozen(CONFIG.defaultStatusEffects)) {
-            Object.freeze(CONFIG.defaultStatusEffects);
-        }
-        Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.coreIcons, CONFIG.defaultStatusEffects);
     }
 
     /**
@@ -210,62 +632,31 @@ export class EnhancedConditions {
     }
 
     /**
-     * Converts the given Condition Map into a Status Effects array
-     * @param {*} conditionMap 
-     * @returns {Object} statusEffects
+     * Converts the given Condition Map (one or more Conditions) into a Status Effects array or object
+     * @param {Array | Object} conditionMap 
+     * @returns {Array} statusEffects
      */
     static _prepareStatusEffects(conditionMap) {
+        conditionMap = conditionMap instanceof Array ? conditionMap : [conditionMap];
+
+        if (!conditionMap.length) return;
+
         const statusEffects = conditionMap.map(c => {
             return {
-                id: c.name?.slugify(),
+                id: c.id ?? c.name?.slugify(),
+                flags: {
+                    [BUTLER.NAME]: {
+                        [BUTLER.FLAGS.enhancedConditions.conditionId]: c.id ?? c.name?.slugify()
+                    }
+                },
                 label: c.name,
                 icon: c.icon,
-                data: c.effects?.data || [],
+                data: c.activeEffect?.data || [],
                 duration: c.duration || {}
             }
         });
 
-        return statusEffects;
-    }
-
-    /**
-     * Updates the core CONFIG.statusEffects with the new icons
-     */
-    static _updateStatusIcons(conditionMap) {
-        const enable = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.enable);
-
-        if (!enable) {
-            // maybe restore the core icons?
-            return;
-        }
-
-        let entries;
-        const coreIconSetting = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.coreIcons);
-
-        //save the original icons
-        if (!coreIconSetting.length) {
-            EnhancedConditions._backupCoreIcons();
-        }
-
-        const removeDefaultEffects = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.removeDefaultEffects);
-        const activeConditionMap = conditionMap || Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.map);
-        const icons = EnhancedConditions.getConditionIcons(activeConditionMap);
-
-        if (!removeDefaultEffects && !activeConditionMap) {
-            return;
-        }
-
-        if (removeDefaultEffects) {
-            return CONFIG.statusEffects = activeConditionMap ? icons : [];
-        } 
-        
-        if (activeConditionMap instanceof Array) {
-            //add the icons from the condition map to the status effects array
-            const coreIcons = CONFIG.defaultStatusEffects || Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.coreIcons);
-
-            // Create a Set based on the core status icons and the Enhanced Condition icons. Using a Set ensures unique icons only
-            return CONFIG.statusEffects = [...new Set(coreIcons.concat(...icons))];
-        }
+        return statusEffects.length > 1 ? statusEffects : statusEffects.shift();
     }
 
     /**
@@ -337,303 +728,84 @@ export class EnhancedConditions {
         return null;
     }
 
-    /**
-     * Creates a button for the Condition Lab
-     * @param {Object} html the html element where the button will be created
-     */
-    static _createLabButton(html) {
-        const cubDiv = html.find("#combat-utility-belt");
+    /* -------------------------------------------- */
+    /*                      API                     */
+    /* -------------------------------------------- */
 
-        const labButton = $(
-            `<button id="condition-lab" data-action="condition-lab">
-                    <i class="fas fa-flask"></i> ${BUTLER.DEFAULT_CONFIG.enhancedConditions.conditionLab.title}
-                </button>`
-        );
+    /**
+     * Parses a condition map JSON and returns a map
+     * @param {*} json 
+     */
+    static mapFromJson(json) {
+        if (json.system !== game.system.id) {
+            ui.notifications.warn(game.i18n.localize("ENHANCED_CONDITIONS.MapMismatch"));
+        }
         
-        cubDiv.append(labButton);
+        const map = json.map;
 
-        labButton.click(ev => {
-            game.cub.conditionLab = new ConditionLab().render(true);
-        });
+        return map;
     }
 
     /**
-     * Determines whether to display the combat utility belt div in the settings sidebar
-     * @param {Boolean} display 
-     * @todo: extract to helper in sidekick class?
+     * Returns the default condition map for a given system
+     * @param {*} system 
      */
-    static _toggleLabButtonVisibility(display) {
-        if (!game.user.isGM) {
-            return;
+    static getDefaultMap(system) {
+        const defaultMaps = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.defaultMaps);
+        let defaultMap = defaultMaps[system] || [];
+
+        if (!defaultMap.length) {
+            defaultMap = EnhancedConditions.buildDefaultMap(system);
         }
 
-        let labButton = document.getElementById("condition-lab");
-
-        if (display && labButton && labButton.style.display !== "block") {
-            return labButton.style.display = "block";
-        } 
-        
-        if (labButton && !display && labButton.style.display !== "none") {
-            return labButton.style.display = "none";
-        }
+        return defaultMap;
     }
 
     /**
-     * Hooks on token updates. If the update includes effects, calls the journal entry lookup
+     * Builds a default map for a given system
+     * @param {*} system 
+     * @todo #281 update for active effects
      */
-    static _onUpdateToken(scene, tokenData, update, options, userId) {
-        const enable = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.enable);
+    static buildDefaultMap(system) {
+        const coreIcons = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.coreIcons);
 
-        if (!enable || !game.user.isGM || (game.users.get(userId).isGM && game.userId !== userId)) {
-            return;
-        }
-
-        if (!hasProperty(update, "actorData.effects")) {
-            return;
-        }
-
-        const conditions = [...new Set(update.actorData.effects.map(e => e.flags.core.statusId))];
-        
-        if (!conditions.length) {
-            return;
-        }
-
-        
-
-        //If the update has effects in it, lookup mapping and set the current token
-        //const token = new Token(tokenData);
-        const token = canvas.tokens.get(tokenData._id);
-        const map = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.map);
-
-        return EnhancedConditions.lookupEntryMapping(token, map, conditions);
-    }
-
-    /**
-     * Hooks on token updates. If the update includes effects, calls the journal entry lookup
-     */
-    static _onPreUpdateToken(scene, tokenData, update, options, userId) {
-        /* WIP
-        const enable = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.enable);
-
-        if (!enable) {
-            return;
-        }
-
-        //console.log(token,sceneId,update);
-        const conditions = update.effects ? duplicate(update.effects) : [];
-        update.overlayEffect ? conditions.push(update.overlayEffect) : null;
-
-        if (!conditions.length) {
-            return;
-        } 
-
-        //If the update has effects in it, lookup mapping and set the current token
-        //const token = canvas.tokens.get(update._id);
-        const map = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.map);
-        return EnhancedConditions.lookupEntryMapping(token, map, conditions);
-        */
-    }
-
-    /**
-     * Update Combat Handler
-     * @param {*} combat 
-     * @param {*} update 
-     * @param {*} options 
-     * @param {*} userId 
-     */
-    static _onUpdateCombat(combat, update, options, userId) {
-        const enableEnhancedConditions = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.enable);
-        const enableOutputCombat = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.outputCombat);
-
-        if (!hasProperty(update, "turn") || !enableEnhancedConditions || !enableOutputCombat|| !game.user.isGM) {
-            return;
-        }
-
-        const token = canvas.tokens.get(game.combat.combatant.tokenId);
-        const conditions = token.data.effects.length ? duplicate(token.data.effects) : [];
-        token.data.overlayEffect ? conditions.push(token.data.overlayEffect) : null;
-
-        if (!conditions.length) {
-            return;
-        }
-
-        const map = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.map);
-
-        return EnhancedConditions.lookupEntryMapping(token, map, conditions);
-    }
-
-    /**
-     * Adds a title/tooltip with the matched Condition name
-     */
-    static _onRenderTokenHUD(app, html, data) {
-        const enable = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.enable);
-
-        if (!enable) {
-            return;
-        }
-
-        // array of objects: {name, icon, journalId, trigger}
-        const map = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.map);
-        const conditionIcons = EnhancedConditions.getConditionIcons(map);
-        const effectIcons = html.find("img.effect-control");
-        // jquery .filter()
-        const enhancedIcons = jQuery.makeArray(effectIcons).filter(i => {
-            const src = i.attributes.src.value;
-            if (conditionIcons.includes(src)) {
-                return true;
-            }
-        })
-
-        return enhancedIcons.forEach(i => {
-            const src = i.attributes.src.value;
-            const matchedCondition = map.find(m => m.icon === src);
-            i.setAttribute("title", matchedCondition.name);
-        });
-    }
-
-    /**
-     * Render Chat Message handler
-     * @param {*} app 
-     * @param {*} html 
-     * @param {*} data 
-     * @todo move to chatlog render?
-     */
-    static _onRenderChatMessage(app, html, data) {
-        if (data.message.content && !data.message.content.match("enhanced-conditions")) {
-            return;
-        }
-
-        const contentDiv = html.find("div.content");
-        const messageDiv = contentDiv.closest("li.message");
-        const messageId = messageDiv.data().messageId;
-        const tokenId = contentDiv.data().tokenId;
-        const token = canvas.tokens.get(tokenId) || canvas.scene.data.tokens.find(t => t._id === tokenId);
-        const message = game.messages.get(messageId);
-        const removeConditionAnchor = html.find("a[name='remove-row']");
-
-        if (!token || (token && !game.user.isGM)) {
-            removeConditionAnchor.parent().hide();
-        }
-
-        /**
-         * @todo move to chatlog listener instead
-         */
-        removeConditionAnchor.on("click", event => {
-            const li = event.target.closest("li");
-            const contentDiv = li.closest("div.content");
-            const tokenId = contentDiv.dataset.tokenId;
-            const token = canvas.tokens.get(tokenId);
-            const conditionName = li.dataset.conditionName;
+        // iterate over icons, set condition to icon file name, try to find a matching reference
+        const map = coreIcons.map(i => {
+            const icon = i;
+            let name = i.split("/").pop().split(".").shift();
+            name = name ? Sidekick.toTitleCase(name) : "";
             
-            if (!token) {
-                return;
-            }
-
-            EnhancedConditions.removeCondition(conditionName, token);
-
-            /**
-             * @todo need a solution for dealing with chat log spam -- once chat output is just a diff it will be better
-             */
-            //const newContent = duplicate(message.data.content);
-            //const update = $(newContent).find(li).remove();
-            //message.delete()
-        });
-    }
-
-    /**
-     * Checks statusEffect icons against map and returns matching condition mappings
-     * @param {Array}  
-     */
-    static lookupEntryMapping(token, map, effectIds, {outputToChat=true}={}) {
-        const conditionEntries = map.filter(row => effectIds.includes(row.name.slugify()));
-
-        if (conditionEntries.length === 0) {
-            return;
-        }
-
-        // If condition marks combatants defeated, look for matching combatant
-        if (conditionEntries.some(c => c?.options?.markDefeated)) {
-            const combat = game.combat;
-            const combatants = combat ? game.combat?.combatants.filter(c => c.tokenId === token.id) : [];
-
-            if (!combatants.length) {
-                return;
-            }
-
-            const update = combatants.map(c => {
-                return {
-                    _id: c._id,
-                    defeated: true
-                }
-            });
-
-            combat.updateEmbeddedEntity("Combatant", update);
-        }
-
-        const outputSetting = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.outputChat);
-
-        if (!outputSetting && outputToChat) {
-            return;
-        }
-        
-        return outputToChat ? EnhancedConditions.outputChatMessage(token, conditionEntries) : conditionEntries;
-    }
-
-    /**
-     * Output condition entries to chat
-     */
-    static async outputChatMessage(token, entries) {
-        const chatUser = game.userId;
-        //const token = token || this.currentToken;
-        const chatType = CONST.CHAT_MESSAGE_TYPES.OTHER;
-
-        let tokenSpeaker = ChatMessage.getSpeaker({token});
-
-        if (entries.length === 0) {
-            return;
-        }
-
-        // iterate over the entries and mark any with references for use in the template
-        entries.forEach((v, i, a) => {
-            if (v.referenceId) {
-                a[i].hasReference = true;
+            return {
+                name,
+                icon
             }
         });
 
-        const templateData = {
-            tokenId: token.id,
-            alias: tokenSpeaker.alias,
-            conditions: entries,
-            isOwner: token.owner || game.user.isGM
-        };
-
-        const chatContent = await renderTemplate(BUTLER.DEFAULT_CONFIG.enhancedConditions.templates.chatOutput, templateData);
-
-        return await ChatMessage.create({
-            speaker: tokenSpeaker,
-            content: chatContent,
-            type: chatType,
-            user: chatUser
-        });
+        return map;
     }
 
     /**
-     * Applies the named condition to the provided tokens
+     * Applies the named condition to the provided entities
      * @param {*} tokens
      * @param {*} conditionName
      * @todo coalesce into a single update
      */
-    static async applyCondition(conditionName, tokens=null, {warn=true}={}) {
-        tokens = tokens ? tokens : canvas?.tokens?.controlled?.length ? canvas.tokens.controlled : null;
+    static async applyCondition(conditionName, entities=null, {warn=true}={}) {
+        if (!entities) {
+            // First check for any controlled tokens
+            if (canvas?.tokens?.controlled) entities = canvas.tokens.controlled;
+            else if (game.user.character) entities = game.user.character;
+            else entities = null;
+        }
+        
 
-        if (!tokens) {
+        if (!entities) {
             ui.notifications.error(game.i18n.localize("ENHANCED_CONDITIONS.ApplyCondition.Failed.NoToken"));
             console.log("Combat Utility Belt - Enhanced Conditions | No token provided");
             return;
         }
 
-        const map = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.map);
-        const condition = map.find(c => c.name === conditionName);
+        const condition = EnhancedConditions.getConditionByName(conditionName);
 
         if (!condition) {
             ui.notifications.error(game.i18n.localize("ENHANCED_CONDITIONS.ApplyCondition.Failed.NoCondition"));
@@ -641,20 +813,22 @@ export class EnhancedConditions {
             return;
         }
 
-        const effect = condition ? condition.icon : null;
-        
+        const effect = EnhancedConditions.getActiveEffect(condition);
+
         if (!effect) {
-            ui.notifications.error(game.i18n.localize("ENHANCED_CONDITIONS.ApplyCondition.Failed.NoIcon"));
-            console.log("Combat Utility Belt - Enhanced Conditions | No icon is setup for condition: ", conditionName);
+            ui.notifications.error(game.i18n.localize("ENHANCED_CONDTIONS.ApplyCondition.Failed.NoEffect"));
+            console.log("Combat Utility Belt - Enhanced Condition | Cound not find effect matching condition: ", condition);
             return;
         }
         
-        if (tokens && !(tokens instanceof Array)) {
-            tokens = [tokens];
+        if (entities && !(entities instanceof Array)) {
+            entities = [entities];
         }
 
-        for (let token of tokens) {
-            if ((!condition?.options?.overlay && token?.data?.effects.includes(effect)) || (condition?.options?.overlay && token?.data?.overlayEffect === effect)) {
+        for (let entity of entities) {
+            const actor = entity instanceof Actor ? entity : entity instanceof Token ? entity.actor : null;
+
+            if (actor.effects.get(effect?.id)) {
                 if (warn) {
                     ui.notifications.warn(game.i18n.localize("ENHANCED_CONDITIONS.ApplyCondition.Failed.AlreadyActive"));
                     console.log(`Combat Utility Belt - Enhanced Conditions | Condition ${conditionName} is already active on token.`);
@@ -663,26 +837,45 @@ export class EnhancedConditions {
             }
 
             if (condition?.options?.removeOthers) {
-                await token.update({effects: []});
+                await actor.update({"effects": []});
             }
 
-            condition?.options?.overlay === true ? await token.toggleOverlay(effect) : await token.toggleEffect(effect);
-
-            
+            await actor.createEmbeddedEntity("ActiveEffect", effect);
         }
         
+    }
+
+    /**
+     * Gets a condition from the map by its name
+     * @param {*} conditionName 
+     */
+    static getConditionByName(conditionName, map=[]) {
+        if (!conditionName) return;
+
+        if (!map.length) map = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.map);
+
+        const condition = map.find(c => c.name === conditionName) ?? null;
+
+        return condition;
     }
 
     /**
      * Retrieves all active conditions for the given tokens
      * @param {*} tokens 
      */
-    static getConditions(tokens=null) {
-        tokens = tokens ? tokens : canvas?.tokens?.controlled?.length ? canvas.tokens.controlled : null;
+    static getConditions(entities=null) {
+        if (!entities) {
+            // First check for any controlled tokens
+            if (canvas?.tokens?.controlled) entities = canvas.tokens.controlled;
 
-        if (!tokens) {
-            ui.notifications.error(game.i18n.localize("ENHANCED_CONDITIONS.GetConditions.Failed.NoToken"));
-            console.log("Combat Utility Belt - Enhanced Conditions | Get Conditions failed. No token provided");
+            // Then check if the user has an assigned character
+            else if (game.user.character) entities = game.user.character;
+        }
+        
+
+        if (!entities) {
+            ui.notifications.error(game.i18n.localize("ENHANCED_CONDITIONS.ApplyCondition.Failed.NoToken"));
+            console.log("Combat Utility Belt - Enhanced Conditions | No token provided");
             return;
         }
 
@@ -694,21 +887,32 @@ export class EnhancedConditions {
             return;
         }
 
-        if (tokens && !(tokens instanceof Array)) {
-            tokens = [tokens];
+        if (!(entities instanceof Array)) {
+            entities = [entities];
         }
 
-        for (let token of tokens) {
-            const conditions = token.data.effects.length ? duplicate(token.data.effects) : [];
-            token.data.overlayEffect ? conditions.push(token.data.overlayEffect) : null;
+        const results = [];
 
-            if (!conditions.length) {
-                return;
-            }
+        for (let entity of entities) {
+            const actor = entity instanceof Actor ? entity : entity instanceof Token ? entity.actor : null;
 
-            return EnhancedConditions.lookupEntryMapping(token, map, conditions, {outputToChat: false});
+            const effects = actor.effects.entries;
+
+            if (!effects) continue;
+
+            const effectIds = effects instanceof Array ? effects.map(e => e.data?.flags?.core?.statusId) : effects.data?.flags?.core?.statusId;
+
+            if (!effectIds.length) continue;
+
+            const entityConditions = {
+                entity: entity, 
+                conditions: EnhancedConditions.lookupEntryMapping(effectIds)
+            };
+
+            results.push(entityConditions);
         }
         
+        return results.length > 1 ? results : results.length ? results.shift() : null;
     }
 
     /**
@@ -859,5 +1063,13 @@ export class EnhancedConditions {
         }
 
         game.scenes.active.updateEmbeddedEntity("Token", updates);
+    }
+
+    /**
+     * Gets the Active Effect data (if any) for the given condition
+     * @param {*} condition 
+     */
+    static getActiveEffect(condition) {
+        return EnhancedConditions._prepareStatusEffects(condition);
     }
 }

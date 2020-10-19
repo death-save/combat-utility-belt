@@ -3,6 +3,7 @@ import { Sidekick } from "../sidekick.js";
 import { EnhancedConditions } from "./enhanced-conditions.js";
 import { TrigglerForm } from "../triggler/triggler-form.js";
 import { DraggableList } from "../utils/draggable-list.js";
+import EnhancedEffectConfig from "./enhanced-effect-config.js";
 
 /**
  * Form application for managing mapping of Conditions to Icons and JournalEntries
@@ -25,7 +26,7 @@ export class ConditionLab extends FormApplication {
         return mergeObject(super.defaultOptions, {
             id: BUTLER.DEFAULT_CONFIG.enhancedConditions.conditionLab.id,
             title: BUTLER.DEFAULT_CONFIG.enhancedConditions.conditionLab.title,
-            template: `${BUTLER.PATH}/templates/condition-lab.html`,
+            template: BUTLER.DEFAULT_CONFIG.enhancedConditions.templates.conditionLab,
             classes: ["sheet"],
             width: 1025,
             height: 725,
@@ -120,7 +121,11 @@ export class ConditionLab extends FormApplication {
 
         const isDefault = mapType === Sidekick.getKeyByValue(BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes, BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes.default);
 
+        // Transform data for each Condition Mapping entry to ensure it will display correctly
         conditionMap.forEach((entry, index, map) => {
+            // First set the Output to Chat checkbox
+            entry.options.outputChat = entry.options.outputChat ?? Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.outputChat);
+
             const referenceType = entry.referenceType || "journalEntry";
             const collectionRegex = new RegExp(/\[(.*\..*)(?=\..*])/);
             
@@ -191,8 +196,8 @@ export class ConditionLab extends FormApplication {
         // Get a reference to the form via jquery
         const form = this.element.find("form").first()[0];
 
-        // Use the FormApplication#_getFormData method to parse the form
-        const FD = this._getFormData(form);
+        // Use the FormDataExtended class to parse the form
+        const FD = new FormDataExtended(form);
 
         // Build and return useable formData object
         const formData = Sidekick.buildFormData(FD);
@@ -213,6 +218,7 @@ export class ConditionLab extends FormApplication {
         let removeTriggers = [];
         let optionsOverlay = [];
         let optionsRemove = [];
+        let optionsOutputChat = [];
         let optionsDefeated = [];
         let newMap = [];
         const rows = [];
@@ -228,6 +234,7 @@ export class ConditionLab extends FormApplication {
         const removeTriggerRegex = new RegExp("remove-trigger", "i");
         const optionsOverlayRegex = new RegExp("options-overlay", "i");
         const optionsRemoveRegex = new RegExp("options-remove-others", "i");
+        const optionsOutputChatRegex = new RegExp("options-output-chat", "i");
         const optionsDefeatedRegex = new RegExp("options-mark-defeated", "i");
         const rowRegex = new RegExp(/\d+$/);
 
@@ -261,6 +268,8 @@ export class ConditionLab extends FormApplication {
                 optionsOverlay[row] = formData[e];
             } else if (e.match(optionsRemoveRegex)) {
                 optionsRemove[row] = formData[e];
+            } else if (e.match(optionsOutputChatRegex)) {
+                optionsOutputChat[row] = formData[e];
             } else if (e.match(optionsDefeatedRegex)) {
                 optionsDefeated[row] = formData[e];
             }
@@ -280,6 +289,7 @@ export class ConditionLab extends FormApplication {
                 options: {
                     overlay: optionsOverlay[i],
                     removeOthers: optionsRemove[i],
+                    outputChat: optionsOutputChat[i],
                     markDefeated: optionsDefeated[i]
                 }
             });
@@ -298,11 +308,11 @@ export class ConditionLab extends FormApplication {
         const otherMapType = Sidekick.getKeyByValue(BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes, BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes.other);
 
         if (this.mapType === defaultMapType) {
-            defaultMaps = await EnhancedConditions.loadDefaultMaps();
+            defaultMaps = await EnhancedConditions._loadDefaultMaps();
         }
 
         //const defaultMap = defaultMaps[system] || [];
-        const defaultMap = EnhancedConditions.getDefaultMap(system);
+        const defaultMap = EnhancedConditions._prepareMap(EnhancedConditions.getDefaultMap(system));
         // If the mapType is other then the map should be empty, otherwise it's the default map for the system
         this.map = this.mapType === otherMapType ? [] : await Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.map, defaultMap);
         this.render(true);
@@ -322,11 +332,12 @@ export class ConditionLab extends FormApplication {
             const defaultMap = EnhancedConditions.getDefaultMap(this.system);
             newMap = mergeObject(newMap, defaultMap);
         }
+
         this.mapType = mapType;
-        this.map = newMap;
+        this.map = EnhancedConditions._prepareMap(newMap);
 
         Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.mapType, mapType, true);
-        Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.map, newMap, true);
+        Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.map, this.map, true);
 
         ui.notifications.info(game.i18n.localize("ENHANCED_CONDITIONS.Lab.SaveSuccess"));
     }
@@ -431,6 +442,7 @@ export class ConditionLab extends FormApplication {
     activateListeners(html) {
         const inputs = html.find("input");
         const mapTypeSelector = html.find("select[class='map-type']");
+        const activeEffectButton = html.find("a.active-effect-config");
         const triggerAnchor = html.find("a[class='trigger']");
         const addRowAnchor = html.find("a[name='add-row']");
         const removeRowAnchor = html.find("a[class='remove-row']");
@@ -442,6 +454,7 @@ export class ConditionLab extends FormApplication {
         const saveCloseButton = html.find("button[name='save-close']");
 
         mapTypeSelector.on("change", event => this._onChangeMapType(event));
+        activeEffectButton.on("click", event => this._onClickActiveEffectConfig(event));
         triggerAnchor.on("click", event => this._onOpenTrigglerForm(event));            
         addRowAnchor.on("click", async event => this._onAddRow(event));
         removeRowAnchor.on("click", async event => this._onRemoveRow(event));
@@ -488,7 +501,7 @@ export class ConditionLab extends FormApplication {
 
         const update = {map: newMap, mapType: newType};
 
-        this.map = newMap;
+        this.map = EnhancedConditions._prepareMap(newMap);
 
         //await this.submit(update);
         this.render();
@@ -509,6 +522,27 @@ export class ConditionLab extends FormApplication {
         //target the icon
         const icon = $(this.form).find("img[name='icon-" + row);
         icon.attr("src", event.target.value);
+    }
+
+    /**
+     * Handle click Active Effect Config button
+     * @param {*} event 
+     */
+    _onClickActiveEffectConfig(event) {
+        const li = event.currentTarget.closest("li");
+        const row = li ? li.dataset.mappingRow : null;
+
+        if (row === null) return;
+
+        const conditions = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.map);
+        const condition = conditions.length > 0 ? conditions[row] : null;
+
+        if (!condition) return;
+
+        const effect = EnhancedConditions.getActiveEffect(condition);
+        condition.data = effect;
+
+        new EnhancedEffectConfig(condition).render(true);
     }
     
     /**
@@ -548,7 +582,7 @@ export class ConditionLab extends FormApplication {
             id,
             conditionLabRow
         }
-        //this.map = this._processFormData(this._getFormData(this.form));
+
         new TrigglerForm(data, {parent: this}).render(true);
     }
 

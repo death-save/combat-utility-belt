@@ -44,6 +44,7 @@
     "ENHANCED_CONDITIONS.RemoveAllConditions.Failed.NoToken": "Remove Conditions failed. No token/s provided",
     "ENHANCED_CONDITIONS.RemoveAllConditions.Failed.NoCondition": "Remove Conditions failed. There is no active Condition Map",
     
+    "ENHANCED_CONDITIONS.Lab.ActiveEffects.Title": "Active Effect Config",
     "ENHANCED_CONDITIONS.LAB.Import.NoFile": "You did not upload a data file!",
     "ENHANCED_CONDITIONS.Lab.ConfirmDeleteTitle": "Confirm Row Deletion",
     "ENHANCED_CONDITIONS.Lab.ConfirmDeleteContent": "Are you sure you want to delete this row?",
@@ -55,6 +56,15 @@
     "ENHANCED_CONDITIONS.Lab.SaveSuccess": "Condition Lab mapping saved!",
     "ENHANCED_CONDITIONS.Lab.ImportTitle": "Import Condition Map",
     "ENHANCED_CONDITIONS.Lab.ExportTitle": "Export Condition Map",
+    "ENHANCED_CONDITIONS.Lab.Options.Title": "Options:",
+    "ENHANCED_CONDITIONS.Lab.Options.Overlay.Label": "Overlay",
+    "ENHANCED_CONDITIONS.Lab.Options.RemoveOthers.Label": "Remove Others",
+    "ENHANCED_CONDITIONS.Lab.Options.OutputChat.Label": "Output to Chat",
+    "ENHANCED_CONDITIONS.Lab.Options.MarkDefeated.Label": "Mark Defeated",
+    "ENHANCED_CONDITIONS.Lab.Options.Overlay.Title": "Condition is an overlay",
+    "ENHANCED_CONDITIONS.Lab.Options.RemoveOthers.Title": "Remove other conditions when this one is applied",
+    "ENHANCED_CONDITIONS.Lab.Options.MarkDefeated.Title": "Mark matching combatants defeated when this condition is applied",
+    "ENHANCED_CONDITIONS.Lab.Options.OutputChat.Title": "Output this condition to chat when added/removed",
 
     "HIDE_NAMES.ActorForm.Enable": "Hide Actor Name",
     "HIDE_NAMES.ActorForm.EnableHint": "Enable hiding of this actor's name in Combat Tracker and Chat Messages (overrides default)",
@@ -166,7 +176,9 @@
     "SETTINGS.Triggler.TriggersN": "Triggler Triggers",
     "SETTINGS.Triggler.TriggersH": "Stores saved Triggler Triggers",
     
-    "TEMPLATES.EnhancedConditions.ChatCardTitle": "Active Conditions",
+    "TEMPLATES.EnhancedConditions.ChatCardTitle.Active": "Active Conditions",
+    "TEMPLATES.EnhancedConditions.ChatCardTitle.Added": "Added Conditions",
+    "TEMPLATES.EnhancedConditions.ChatCardTitle.Removed": "Removed Conditions",
 
     "WORDS.Import": "Import",
     "WORDS.Export": "Export",

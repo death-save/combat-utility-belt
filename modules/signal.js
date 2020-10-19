@@ -110,6 +110,14 @@ export class Signal {
             Triggler._onUpdateActor(actor, update, options, userId);
         });
 
+        Hooks.on("createActiveEffect", (actor, createData, options, userId) => {
+            EnhancedConditions._onCreateActiveEffect(actor, createData, options, userId);
+        });
+
+        Hooks.on("deleteActiveEffect", (actor, deleteData, options, userId) => {
+            EnhancedConditions._onDeleteActiveEffect(actor, deleteData, options, userId);
+        });
+
         /* ------------------- Token ------------------ */
 
         Hooks.on("preCreateToken", (scene, tokenData, options, userId) => {
@@ -122,6 +130,7 @@ export class Signal {
 
         Hooks.on("preUpdateToken", (scene, tokenData, updateData, options, userId) => {
             Concentrator._onPreUpdateToken(scene, tokenData, updateData, options, userId);
+            EnhancedConditions._onPreUpdateToken(scene, tokenData, updateData, options, userId);
         });
 
         Hooks.on("updateToken", (scene, token, updateData, options, userId) => {

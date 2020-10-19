@@ -201,7 +201,7 @@ export function registerSettings() {
         type: Object,
         default: {},
         onChange: conditionMap => {
-            EnhancedConditions._updateStatusIcons(conditionMap);
+            EnhancedConditions._updateStatusEffects(conditionMap);
 
             // Save the active condition map to a convenience property
             if (game.cub) {
@@ -238,7 +238,7 @@ export function registerSettings() {
         config: false,
         default: BUTLER.DEFAULT_CONFIG.enhancedConditions.removeDefaultEffects,
         onChange: s => {
-            EnhancedConditions._updateStatusIcons();
+            EnhancedConditions._updateStatusEffects();
         }
     });
 
