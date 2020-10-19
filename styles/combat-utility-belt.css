@@ -15,12 +15,13 @@ label.xp-checkbox {
 img.condition-icon {
     width: 50px;
     height: 50px;
-    background-color:rgba(0,0,0,0.5);
+    background:rgba(0,0,0,0.5);
 }
 
 img.condition-icon.chat-message {
     height: 20px;
     width: 20px;
+    padding: unset;
 }
 
 .token-resource input[name="resource"] {
@@ -52,34 +53,41 @@ li.condition-lab.row {
     border-bottom: 2px groove beige;
 }
 
-.condition-lab.flexcol {
+.condition-lab .flexcol {
     margin: 3px;
 }
 
-.condition-lab.flexcol.grabber {
+.condition-lab .flexcol.grabber {
     flex: 0;
 }
 
-.condition-lab.flexcol.content1 {
+.condition-lab .flexcol.content1 {
     flex: 4;
 }
 
-.condition-lab.flexcol.content2 {
+.condition-lab .flexcol.content2 {
     flex: 3;
 }
 
-.condition-lab.flexcol.text-entry {
+.condition-lab .flexcol.text-entry {
     flex: 8;
 }
 
-.condition-lab.flexcol.text-entry .path,
-.condition-lab.flexcol.text-entry .condition {
+.condition-lab .active-effect {
+    flex: 0 0 20px;
+    display: flex;
+    align-items: center;
+    margin: 0px 0px 3px 0px;
+}
+
+.condition-lab .flexcol.text-entry .path,
+.condition-lab .flexcol.text-entry .condition {
     display: flex;
     flex: 1;
     margin: 0px 3px 3px 0px;
 }
 
-.condition-lab.flexcol.text-entry.journal {
+.condition-lab .flexcol.text-entry.journal {
     flex: 2;
     margin: 0px 0px 3px 0px;
 }
@@ -99,7 +107,7 @@ li.condition-lab.row {
     margin: 0px 3px 0px 0px;
 }
 
-.condition-lab.text-entry.reference.flexcol {
+.condition-lab .text-entry.reference.flexcol {
     flex: 1;
     margin: 0px 0px 3px 0px;
 }
@@ -108,16 +116,16 @@ li.condition-lab.row {
     width: 100%;
 }
 
-.condition-lab.text-entry.trigger.flexcol {
+.condition-lab .text-entry.trigger.flexcol {
     flex: 2;
     margin: 0px 0px 3px 0px;
 }
 
-.condition-lab.flexcol.condition-lab.text-entry.icon.flexcol {
+.condition-lab .flexcol.condition-lab.text-entry.icon.flexcol {
     margin: 0px 0px 3px 0px;
 }
 
-.condition-lab.flexrow {
+.condition-lab .flexrow {
     justify-content: space-around;
 }
 
@@ -150,32 +158,32 @@ li.condition-lab.row {
     padding: 0 0 0 3px;
 }
 
-.condition-lab.trash {
+.condition-lab .trash {
     flex: 0 0 20px;
     line-height: 60px;
     text-align: center;
 }
 
-.condition-lab.add-row {
+.condition-lab .add-row {
     border-style: dotted;
     line-height: 25px;
     margin: 5px 2px;
     padding: 2px;
 }
 
-.condition-lab.icon {
+.condition-lab .icon {
     flex: 0 0 50px;
     width: 50px;
     height: 50px;
 }
 
-.condition-lab.trash button {
+.condition-lab .trash button {
     flex: 0 0 30px;
     width: 30px;
     line-height: 60px;
 }
 
-.condition-lab.grabber {
+.condition-lab .grabber {
     flex: 0;
     cursor: grab;
     line-height: 60px;
@@ -189,12 +197,6 @@ li.condition-lab.row {
 .condition-lab button.highlight-button {
     background-color: rgba(255, 0, 0, 0.25);
 }
-/*
-footer.condition-lab  {
-    padding: 10px 0 0 0;
-    border-top: 2px groove beige;
-}
-*/
 
 /* CUBPUTER */
 
