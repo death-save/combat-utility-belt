@@ -171,7 +171,7 @@
     "SETTINGS.TokenUtility.HideAutoRollN": "Hide Automatic HP Roll",
     "SETTINGS.TokenUtility.HideAutoRollH": "If Hostile Token HP is automatically rolled, hide the roll from players",
     "SETTINGS.TokenUtility.TokenEffectSizeN": "Token Effect Icon Size",
-    "SETTINGS.TokenUtility.TokenEffectSizeH": "Sets the size for token effect icons on the token. Default: Small",
+    "SETTINGS.TokenUtility.TokenEffectSizeH": "Sets the size for token effect icons on the token. Numbers represent the amount of effect icons to show (X * Y). Default: Small - 5x5",
     
     "SETTINGS.Triggler.TriggersN": "Triggler Triggers",
     "SETTINGS.Triggler.TriggersH": "Stores saved Triggler Triggers",

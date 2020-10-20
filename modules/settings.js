@@ -552,7 +552,7 @@ export function registerSettings() {
         choices: BUTLER.DEFAULT_CONFIG.tokenUtility.effectSizeChoices,
         config: true,
         onChange: s => {
-            Token.prototype.drawEffects = TokenUtility._patchDrawEffects;
+            TokenUtility.patchCore();
             canvas.draw();
         }
     });

@@ -68,10 +68,9 @@ export class Signal {
             
             // Handle any monkeypatching
             const effectSize = Sidekick.getSetting(BUTLER.SETTING_KEYS.tokenUtility.effectSize);
+            
             if (effectSize) {
-                /*
-                Token.prototype.drawEffects = TokenUtility._patchDrawEffects;
-                */
+                TokenUtility.patchCore();
             }
 
             // External methods

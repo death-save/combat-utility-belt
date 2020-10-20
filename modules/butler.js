@@ -258,13 +258,17 @@ export const DEFAULT_CONFIG = {
         autoRollHP: false,
         hideAutoRoll: false,
         effectSize: {
-            large: {
-                multiplier: 4,
+            xLarge: {
+                multiplier: 5,
                 divisor: 2
             },
-            medium: {
-                multiplier: 3,
+            large: {
+                multiplier: 3.3,
                 divisor: 3
+            },
+            medium: {
+                multiplier: 2.5,
+                divisor: 4
             },
             small: {
                 multiplier: 2,
@@ -272,9 +276,10 @@ export const DEFAULT_CONFIG = {
             }
         },
         effectSizeChoices: {
-            large: "Large",
-            medium: "Medium",
-            small: "Small"
+            xLarge: "Extra Large - 2x2",
+            large: "Large - 3x3",
+            medium: "Medium - 4x4",
+            small: "Small (Default) - 5x5"
         }
     },
     trackerUtility: {

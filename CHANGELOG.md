@@ -18,9 +18,10 @@
 ### Changed
 - Condition Lab now uses `Active Effects` to map conditions
 - Condition Maps `dnd5e` and `dnd5e-extended` now use the system-included `Rules (SRD)` compendium entries as references
+- Token Effect Icon sizes have changed. There are now 4 choices from Small to Extra Large.
 
 ### Fixed
--
+- Token Effect Icons are functional again and can no longer overflow the boundaries of the token.
 
 ## [1.2.3] - 2020-10-11
 ### Added
