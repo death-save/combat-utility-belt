@@ -222,6 +222,7 @@ export class ConditionLab extends FormApplication {
         let optionsDefeated = [];
         let newMap = [];
         const rows = [];
+        const existingMap = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.map);
 
 
         //need to tighten these up to check for the existence of digits after the word
@@ -286,6 +287,7 @@ export class ConditionLab extends FormApplication {
                 referenceId: references[i],
                 applyTrigger: applyTriggers[i],
                 removeTrigger: removeTriggers[i],
+                activeEffect: existingMap[i].activeEffect,
                 options: {
                     overlay: optionsOverlay[i],
                     removeOthers: optionsRemove[i],
@@ -442,7 +444,7 @@ export class ConditionLab extends FormApplication {
     activateListeners(html) {
         const inputs = html.find("input");
         const mapTypeSelector = html.find("select[class='map-type']");
-        const activeEffectButton = html.find("a.active-effect-config");
+        const activeEffectButton = html.find("button.active-effect-config");
         const triggerAnchor = html.find("a[class='trigger']");
         const addRowAnchor = html.find("a[name='add-row']");
         const removeRowAnchor = html.find("a[class='remove-row']");
@@ -539,8 +541,11 @@ export class ConditionLab extends FormApplication {
 
         if (!condition) return;
 
-        const effect = EnhancedConditions.getActiveEffect(condition);
+        const effect = condition.activeEffect ?? EnhancedConditions.getActiveEffect(condition);
         condition.data = effect;
+        condition.parent = {
+            entity: "Actor"
+        }
 
         new EnhancedEffectConfig(condition).render(true);
     }

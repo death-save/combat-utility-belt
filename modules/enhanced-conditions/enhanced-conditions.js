@@ -128,6 +128,7 @@ export class EnhancedConditions {
             // based on the type, get the condition
             if (effect.type === "overlay") condition = EnhancedConditions.getConditionsByIcon(effect.effect) 
             else if (effect.type === "effect") {
+                if (!hasProperty(effect, `effect.flags.${BUTLER.NAME}.${BUTLER.FLAGS.enhancedConditions.conditionId}`)) continue;
                 const effectId = effect.effect.flags[BUTLER.NAME][BUTLER.FLAGS.enhancedConditions.conditionId];
                 condition = EnhancedConditions.lookupEntryMapping(effectId);
             }
@@ -149,7 +150,7 @@ export class EnhancedConditions {
         // If any of the conditions Removes Others, remove the other Conditions
         addConditions.some(c => {
             if (c.options.removeOthers) {
-                EnhancedConditions._removeOtherConditions(token, c);
+                EnhancedConditions._removeOtherConditions(token, c.id);
                 return true;
             }
         });
@@ -476,10 +477,19 @@ export class EnhancedConditions {
     /**
      * For a given entity, removes conditions other than the one supplied
      * @param {*} entity 
-     * @param {*} condition 
+     * @param {*} conditionId 
      */
-    _removeOtherConditions(entity, condition) {
-        
+    static async _removeOtherConditions(entity, conditionId) {
+        const entityConditions = EnhancedConditions.getConditions(entity);
+        const conditions = entityConditions ? entityConditions.conditions : [];
+
+        if (!conditions.length) return;
+
+        const removeConditions = conditions.filter(c => c.id !== conditionId);
+
+        if (!removeConditions.length) return;
+
+        for (const c of removeConditions) await EnhancedConditions.removeCondition(c.name, entity);
     }
 
     /* -------------------------------------------- */
@@ -660,7 +670,7 @@ export class EnhancedConditions {
                 },
                 label: c.name,
                 icon: c.icon,
-                data: c.activeEffect?.data || [],
+                changes: c.activeEffect?.changes || [],
                 duration: c.duration || {}
             }
         });
@@ -802,31 +812,30 @@ export class EnhancedConditions {
     static async addCondition(conditionName, entities=null, {warn=true}={}) {
         if (!entities) {
             // First check for any controlled tokens
-            if (canvas?.tokens?.controlled) entities = canvas.tokens.controlled;
+            if (canvas?.tokens?.controlled.length) entities = canvas.tokens.controlled;
             else if (game.user.character) entities = game.user.character;
-            else entities = null;
         }
         
 
         if (!entities) {
             ui.notifications.error(game.i18n.localize("ENHANCED_CONDITIONS.ApplyCondition.Failed.NoToken"));
-            console.log("Combat Utility Belt - Enhanced Conditions | No token provided");
+            console.log(`Combat Utility Belt - Enhanced Conditions | ${game.i18n.localize("ENHANCED_CONDITIONS.ApplyCondition.Failed.NoToken")}`);
             return;
         }
 
         const condition = EnhancedConditions.getConditionByName(conditionName);
 
         if (!condition) {
-            ui.notifications.error(game.i18n.localize("ENHANCED_CONDITIONS.ApplyCondition.Failed.NoCondition"));
-            console.log("Combat Utility Belt - Enhanced Conditions | Could not find condition with name: ", conditionName);
+            ui.notifications.error(`${game.i18n.localize("ENHANCED_CONDITIONS.ApplyCondition.Failed.NoCondition")} ${conditionName}`);
+            console.log(`Combat Utility Belt - Enhanced Conditions | ${game.i18n.localize("ENHANCED_CONDITIONS.ApplyCondition.Failed.NoCondition")}`, conditionName);
             return;
         }
 
         const effect = EnhancedConditions.getActiveEffect(condition);
 
         if (!effect) {
-            ui.notifications.error(game.i18n.localize("ENHANCED_CONDTIONS.ApplyCondition.Failed.NoEffect"));
-            console.log("Combat Utility Belt - Enhanced Condition | Cound not find effect matching condition: ", condition);
+            ui.notifications.error(`${game.i18n.localize("ENHANCED_CONDTIONS.ApplyCondition.Failed.NoEffect")} ${condition}`);
+            console.log(`Combat Utility Belt - Enhanced Condition | ${game.i18n.localize("ENHANCED_CONDTIONS.ApplyCondition.Failed.NoEffect")}`, condition);
             return;
         }
         
@@ -836,17 +845,18 @@ export class EnhancedConditions {
 
         for (let entity of entities) {
             const actor = entity instanceof Actor ? entity : entity instanceof Token ? entity.actor : null;
+            const activeEffect = actor.effects.entries.find(e => e.getFlag(BUTLER.NAME, BUTLER.FLAGS.enhancedConditions.conditionId) === effect.flags[BUTLER.NAME].conditionId);
 
-            if (actor.effects.get(effect?.id)) {
+            if (activeEffect) {
                 if (warn) {
-                    ui.notifications.warn(game.i18n.localize("ENHANCED_CONDITIONS.ApplyCondition.Failed.AlreadyActive"));
-                    console.log(`Combat Utility Belt - Enhanced Conditions | Condition ${conditionName} is already active on token.`);
+                    ui.notifications.warn(`${conditionName} ${game.i18n.localize("ENHANCED_CONDITIONS.ApplyCondition.Failed.AlreadyActive")}`);
+                    console.log(`Combat Utility Belt - Enhanced Conditions | ${conditionName} ${game.i18n.localize("ENHANCED_CONDITIONS.ApplyCondition.Failed.AlreadyActive")}`);
                 }
                 return;
             }
 
             if (condition?.options?.removeOthers) {
-                await actor.update({"effects": []});
+                await EnhancedConditions.removeAllConditions(actor);
             }
 
             await actor.createEmbeddedEntity("ActiveEffect", effect);
@@ -869,13 +879,14 @@ export class EnhancedConditions {
     }
 
     /**
-     * Retrieves all active conditions for the given tokens
-     * @param {*} tokens 
+     * Retrieves all active conditions for one or more given entities (Actors or Tokens)
+     * @param {Actor | Token} entities 
+     * @returns {Array} entityConditionMap  a mapping of conditions for each provided entity
      */
     static getConditions(entities=null) {
         if (!entities) {
             // First check for any controlled tokens
-            if (canvas?.tokens?.controlled) entities = canvas.tokens.controlled;
+            if (canvas?.tokens?.controlled.length) entities = canvas.tokens.controlled;
 
             // Then check if the user has an assigned character
             else if (game.user.character) entities = game.user.character;
@@ -883,8 +894,8 @@ export class EnhancedConditions {
         
 
         if (!entities) {
-            ui.notifications.error(game.i18n.localize("ENHANCED_CONDITIONS.ApplyCondition.Failed.NoToken"));
-            console.log("Combat Utility Belt - Enhanced Conditions | No token provided");
+            ui.notifications.error(game.i18n.localize("ENHANCED_CONDITIONS.GetConditions.Failed.NoToken"));
+            console.log(`Combat Utility Belt - Enhanced Conditions | ${game.i18n.localize("ENHANCED_CONDITIONS.GetConditions.Failed.NoToken")}`);
             return;
         }
 
@@ -892,7 +903,7 @@ export class EnhancedConditions {
 
         if (!map || !map.length) {
             ui.notifications.error(game.i18n.localize("ENHANCED_CONDITIONS.GetConditions.Failed.NoCondition"));
-            console.log("Combat Utility Belt - Enhanced Conditions | Get Conditions failed. No Condition Map found");
+            console.log(`Combat Utility Belt - Enhanced Conditions | ${game.i18n.localize("ENHANCED_CONDITIONS.GetConditions.Failed.NoCondition")}`);
             return;
         }
 
@@ -909,7 +920,7 @@ export class EnhancedConditions {
 
             if (!effects) continue;
 
-            const effectIds = effects instanceof Array ? effects.map(e => e.data?.flags?.core?.statusId) : effects.data?.flags?.core?.statusId;
+            const effectIds = effects instanceof Array ? effects.map(e => e.getFlag(BUTLER.NAME, BUTLER.FLAGS.enhancedConditions.conditionId)) : effects.getFlag(BUTLER.NAME, BUTLER.FLAGS.enhancedConditions.conditionId);
 
             if (!effectIds.length) continue;
 
@@ -921,7 +932,13 @@ export class EnhancedConditions {
             results.push(entityConditions);
         }
         
-        return results.length > 1 ? results : results.length ? results.shift() : null;
+        if (!results.length) {
+            ui.notifications.notify(game.i18n.localize("ENHANCED_CONDITIONS.GetConditions.Failed.NoResults"));
+            console.log(`Combat Utility Belt - Enhanced Conditions | ${game.i18n.localize("ENHANCED_CONDITIONS.GetConditions.Failed.NoResults")}`);
+            return null;
+        }
+
+        return results.length > 1 ? results : results.shift();
     }
 
     /**
@@ -932,7 +949,7 @@ export class EnhancedConditions {
     static hasCondition(condition, tokens=null) {
         if (!condition) {
             ui.notifications.error(game.i18n.localize("ENHANCED_CONDITIONS.RemoveCondition.Failed.NoCondition"));
-            console.log("Combat Utility Belt - Enhanced Conditions | No condition provided");
+            console.log(`Combat Utility Belt - Enhanced Conditions | ${game.i18n.localize("ENHANCED_CONDITIONS.RemoveCondition.Failed.NoCondition")}`);
             return false;
         }
 
@@ -940,7 +957,7 @@ export class EnhancedConditions {
 
         if (!tokens) {
             ui.notifications.error(game.i18n.localize("ENHANCED_CONDITIONS.RemoveCondition.Failed.NoToken"));
-            console.log("Combat Utility Belt - Enhanced Conditions | No token provided");
+            console.log(`Combat Utility Belt - Enhanced Conditions | ${game.i18n.localize("ENHANCED_CONDITIONS.RemoveCondition.Failed.NoToken")}`);
             return false;
         }
 
@@ -948,7 +965,7 @@ export class EnhancedConditions {
 
         if (!conditionIcons.length) {
             ui.notifications.error(game.i18n.localize("ENHANCED_CONDITIONS.RemoveCondition.Failed.NoMapping"));
-            console.log("Combat Utility Belt - Enhanced Conditions | No condition mapping");
+            console.log(`Combat Utility Belt - Enhanced Conditions | ${game.i18n.localize("ENHANCED_CONDITIONS.RemoveCondition.Failed.NoMapping")}`);
             return false;
         }
 
@@ -974,7 +991,7 @@ export class EnhancedConditions {
     static async removeCondition(conditionName, entities=null, {warn=true}={}) {
         if (!entities) {
             // First check for any controlled tokens
-            if (canvas?.tokens?.controlled) entities = canvas.tokens.controlled;
+            if (canvas?.tokens?.controlled.length) entities = canvas.tokens.controlled;
             else if (game.user.character) entities = game.user.character;
             else entities = null;
         }
@@ -982,15 +999,15 @@ export class EnhancedConditions {
 
         if (!entities) {
             ui.notifications.error(game.i18n.localize("ENHANCED_CONDITIONS.RemoveCondition.Failed.NoToken"));
-            console.log("Combat Utility Belt - Enhanced Conditions | No entity provided");
+            console.log(`Combat Utility Belt - Enhanced Conditions | ${game.i18n.localize("ENHANCED_CONDITIONS.RemoveCondition.Failed.NoToken")}`);
             return;
         }
 
         const condition = EnhancedConditions.getConditionByName(conditionName);
 
         if (!condition) {
-            ui.notifications.error(game.i18n.localize("ENHANCED_CONDITIONS.RemoveCondition.Failed.NoCondition"));
-            console.log("Combat Utility Belt - Enhanced Conditions | Could not find condition with name: ", conditionName);
+            ui.notifications.error(`${game.i18n.localize("ENHANCED_CONDITIONS.RemoveCondition.Failed.NoCondition")} ${conditionName}`);
+            console.log(`Combat Utility Belt - Enhanced Conditions | ${game.i18n.localize("ENHANCED_CONDITIONS.RemoveCondition.Failed.NoCondition")}`, conditionName);
             return;
         }
 
@@ -998,7 +1015,7 @@ export class EnhancedConditions {
 
         if (!effect) {
             ui.notifications.error(game.i18n.localize("ENHANCED_CONDTIONS.RemoveCondition.Failed.NoEffect"));
-            console.log("Combat Utility Belt - Enhanced Condition | Cound not find effect matching condition: ", condition);
+            console.log(`Combat Utility Belt - Enhanced Condition | ${game.i18n.localize("ENHANCED_CONDTIONS.RemoveCondition.Failed.NoEffect")}`, condition);
             return;
         }
         
@@ -1008,16 +1025,17 @@ export class EnhancedConditions {
 
         for (let entity of entities) {
             const actor = entity instanceof Actor ? entity : entity instanceof Token ? entity.actor : null;
+            const activeEffect = actor.effects.entries.find(e => e.getFlag(BUTLER.NAME, BUTLER.FLAGS.enhancedConditions.conditionId) === effect.flags[BUTLER.NAME].conditionId);
 
-            if (!actor.effects.get(effect?.id)) {
+            if (!activeEffect) {
                 if (warn) {
-                    ui.notifications.warn(game.i18n.localize("ENHANCED_CONDITIONS.RemoveCondition.Failed.NotActive"));
-                    console.log(`Combat Utility Belt - Enhanced Conditions | Condition ${conditionName} is not active on entity.`);
+                    ui.notifications.warn(`${conditionName} ${game.i18n.localize("ENHANCED_CONDITIONS.RemoveCondition.Failed.NotActive")}`);
+                    console.log(`Combat Utility Belt - Enhanced Conditions | ${conditionName} ${game.i18n.localize("ENHANCED_CONDITIONS.RemoveCondition.Failed.NotActive")}")`);
                 }
                 return;
             }
 
-            await actor.deleteEmbeddedEntity("ActiveEffect", effect);
+            await actor.deleteEmbeddedEntity("ActiveEffect", activeEffect.id);
         }
     }
 
@@ -1028,14 +1046,13 @@ export class EnhancedConditions {
     static async removeAllConditions(entities=null) {
         if (!entities) {
             // First check for any controlled tokens
-            if (canvas?.tokens?.controlled) entities = canvas.tokens.controlled;
+            if (canvas?.tokens?.controlled.length) entities = canvas.tokens.controlled;
             else if (game.user.character) entities = game.user.character;
-            else entities = null;
         }
         
         if (!entities) {
             ui.notifications.error(game.i18n.localize("ENHANCED_CONDITIONS.RemoveCondition.Failed.NoToken"));
-            console.log("Combat Utility Belt - Enhanced Conditions | No entity provided");
+            console.log(`Combat Utility Belt - Enhanced Conditions | ${game.i18n.localize("ENHANCED_CONDITIONS.RemoveCondition.Failed.NoToken")}`);
             return;
         }
 

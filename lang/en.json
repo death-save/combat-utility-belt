@@ -29,17 +29,18 @@
 
     "ENHANCED_CONDITIONS.MapMismatch": "This map does not match your game system and may not work as expected.",
     "ENHANCED_CONDITIONS.ApplyCondition.Failed.NoToken": "Apply Condition failed. No token provided",
-    "ENHANCED_CONDITIONS.ApplyCondition.Failed.NoCondition": "Apply Condition failed. Could not find condition.",
+    "ENHANCED_CONDITIONS.ApplyCondition.Failed.NoCondition": "Apply Condition failed. Could not find condition:",
     "ENHANCED_CONDITIONS.ApplyCondition.Failed.NoIcon": "Apply Condition failed. Could not find icon.",
-    "ENHANCED_CONDITIONS.ApplyCondition.Failed.AlreadyActive": "Apply Condition failed. Condition already active.",
+    "ENHANCED_CONDITIONS.ApplyCondition.Failed.AlreadyActive": "is already active. Apply Condition failed",
     
-    "ENHANCED_CONDITIONS.GetConditions.Failed.NoToken": "Get Conditions failed. No token provided",
+    "ENHANCED_CONDITIONS.GetConditions.Failed.NoToken": "Get Conditions failed. No entity provided and none could be found automatically",
     "ENHANCED_CONDITIONS.GetConditions.Failed.NoCondition": "Get Conditions failed. No Condition Map found",
+    "ENHANCED_CONDITIONS.GetConditions.Failed.NoResults": "Get Conditions failed. No Conditions found on Actor/Token",
     
     "ENHANCED_CONDITIONS.RemoveCondition.Failed.NoToken": "Remove Condition failed. No token provided",
-    "ENHANCED_CONDITIONS.RemoveCondition.Failed.NoCondition": "Remove Condition failed. Could not find condition.",
+    "ENHANCED_CONDITIONS.RemoveCondition.Failed.NoCondition": "Remove Condition failed. Could not find condition with name:",
     "ENHANCED_CONDITIONS.RemoveCondition.Failed.NoIcon": "Remove Condition failed. Could not find icon",
-    "ENHANCED_CONDITIONS.RemoveCondition.Failed.NotActive": "Remove Condition failed. Condition is not active on token",
+    "ENHANCED_CONDITIONS.RemoveCondition.Failed.NotActive": "is not active on token. Remove Condition failed.",
     
     "ENHANCED_CONDITIONS.RemoveAllConditions.Failed.NoToken": "Remove Conditions failed. No token/s provided",
     "ENHANCED_CONDITIONS.RemoveAllConditions.Failed.NoCondition": "Remove Conditions failed. There is no active Condition Map",

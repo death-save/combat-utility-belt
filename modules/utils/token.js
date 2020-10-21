@@ -104,6 +104,7 @@ export class TokenUtility {
      */
     static patchCore() {
         Token.prototype._drawEffect = TokenUtility._drawEffect;
+        TokenHUD.prototype._getStatusEffectChoices = TokenUtility._getStatusEffectChoices;
     }
 
     /**
@@ -132,4 +133,49 @@ export class TokenUtility {
         bg.drawRoundedRect(icon.x + 1, icon.y + 1, w - 2, w - 2, 2);
         this.effects.addChild(icon);
       }
+
+      /**
+   * Get an array of icon paths which represent valid status effect choices
+   * @private
+   */
+    static _getStatusEffectChoices() {
+    const token = this.object;
+
+    // Get statuses which are active for the token actor
+    const actor = token.actor || null;
+    const statuses = actor ? actor.effects.reduce((obj, e) => {
+      const id = e.getFlag("core", "statusId");
+      if ( id ) {
+        obj[id] = {
+          id: id,
+          overlay: !!e.getFlag("core", "overlay")
+        }
+      }
+      return obj;
+    }, {}) : {};
+
+    // Prepare the list of effects from the configured defaults and any additional effects present on the Token
+    const tokenEffects = duplicate(token.data.effects) || [];
+    if ( token.data.overlayEffect ) tokenEffects.push(token.data.overlayEffect);
+    return CONFIG.statusEffects.concat(tokenEffects).reduce((obj, e) => {
+      const src = e.icon ?? e;
+      // Allow duplicate entries by commenting out the line below.
+      // if ( src in obj ) return obj;
+      const status = statuses[e.id] || {};
+      const isActive = !!status.id || token.data.effects.includes(src);
+      const isOverlay = !!status.overlay || token.data.overlayEffect === src;
+      obj[src] = {
+        id: e.id ?? "",
+        title: e.label ? game.i18n.localize(e.label) : null,
+        src,
+        isActive,
+        isOverlay,
+        cssClass: [
+          isActive ? "active" : null,
+          isOverlay ? "overlay" : null
+        ].filterJoin(" ")
+      };
+      return obj;
+    }, {});
+  }
 }
