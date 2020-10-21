@@ -22,7 +22,7 @@ export class TokenUtility {
 
         // if this token has been handled by the mighty summoner logic then nothing to do
         if (!actor || mightySummonerFlag || (tempCombatantSetting && tempCombatantFlag)) {
-            return;
+            return true;
         }
 
         const feat = Sidekick.getSetting(SETTING_KEYS.tokenUtility.mightySummonerFeat);
@@ -33,7 +33,7 @@ export class TokenUtility {
         }
         
         if (tokenData.disposition !== -1 || !autoRollHP || actor?.hasPlayerOwner) {
-            return;
+            return true;
         }
 
         const formula = null;
