@@ -1,13 +1,13 @@
 <div class="enhanced-conditions header">
     <h3>
         {{#if type.added}}
-        {{localize "TEMPLATES.EnhancedConditions.ChatCardTitle.Added"}}
+        {{localize "ENHANCED_CONDITIONS.ChatCard.Title.Added"}}
         {{/if}}
         {{#if type.removed}}
-        {{localize "TEMPLATES.EnhancedConditions.ChatCardTitle.Removed"}}
+        {{localize "ENHANCED_CONDITIONS.ChatCard.Title.Removed"}}
         {{/if}}
         {{#if type.active}}
-        {{localize "TEMPLATES.EnhancedConditions.ChatCardTitle.Active"}}
+        {{localize "ENHANCED_CONDITIONS.ChatCard.Title.Active"}}
         {{/if}}
         
     </h3>
@@ -16,11 +16,11 @@
     <ul class="chat-message condition-list">
         {{#each conditions as |condition key|}}
         <li class="flexrow" id="condition-{{@index}}" data-condition-name="{{condition.name}}">
-            <div class="condition-icon" style="flex: 0 0 24px; margin: 0px 6px 0px 0px">
+            <div class="condition-icon">
                 <img src="{{condition.icon}}" class="condition-icon chat-message" title="{{condition.name}}">
             </div>
             {{#if hasReference}}
-            <div class="condition-reference" style="flex: 2; margin: 3px 0px 0px 0px" height="20px">
+            <div class="condition-reference">
                 {{condition.referenceId}}{ {{~condition.name~}} }
             </div>
             {{else}}
@@ -28,9 +28,15 @@
                 {{condition.name}}
             </div>
             {{/if}}
-            <div class="remove-row" style="flex: 0 0 20px">
-                <a name="remove-row" title="Remove Condition"><i class="fas fa-times"></i></a>
+            {{#if ../type.removed}}
+            <div class="undo-remove">
+                <a name="undo-remove" title="{{localize "ENHANCED_CONDITIONS.ChatCard.Buttons.Undo"}}"><i class="fas fa-undo"></i></a>
             </div>
+            {{else}}
+            <div class="remove-row">
+                <a name="remove-row" title="{{localize "ENHANCED_CONDITIONS.ChatCard.Buttons.Removed"}}"><i class="fas fa-times"></i></a>
+            </div>
+            {{/if}}
         </li>
         {{/each}}
     </ul>

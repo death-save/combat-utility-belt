@@ -49,7 +49,7 @@ export class Triggler {
         const matchedMacros = game.macros.entities.filter(m => m.getFlag(NAME, DEFAULT_CONFIG.triggler.flags.macro) === trigger.id);
 
         for (const condition of matchedApplyConditions) {
-            await EnhancedConditions.applyCondition(condition.name, tokens, {warn: false});
+            await EnhancedConditions.addCondition(condition.name, tokens, {warn: false});
         }
 
         for (const condition of matchedRemoveConditions) {

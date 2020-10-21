@@ -99,14 +99,20 @@ export class EnhancedConditions {
         if (!hasProperty(options, `${BUTLER.NAME}`)) return;
 
         const cubOption = options[BUTLER.NAME];
+        const addUpdate = cubOption ? cubOption?.updateEffects?.length > cubOption?.existingEffects?.length : false;
+        const removeUpdate = cubOption ? cubOption?.existingEffects?.length > cubOption?.updateEffects?.length : false;
         const updateEffects = [];
         
-        for (const e of cubOption.updateEffects) {
-            if (!cubOption.existingEffects.includes(e)) updateEffects.push({effect: e, type: "effect", changeType: "add"});
+        if (addUpdate) {
+            for (const e of cubOption.updateEffects) {
+                if (!cubOption.existingEffects.find(x => x._id === e._id)) updateEffects.push({effect: e, type: "effect", changeType: "add"});
+            }
         }
-
-        for (const e of cubOption.existingEffects) {
-            if (!cubOption.updateEffects.includes(e)) updateEffects.push({effect: e, type: "effect", changeType: "remove"});
+        
+        if (removeUpdate) {
+            for (const e of cubOption.existingEffects) {
+                if (!cubOption.updateEffects.find(u => u._id === e._id)) updateEffects.push({effect: e, type: "effect", changeType: "remove"});
+            }
         }
 
         if (!cubOption.existingOverlay && cubOption.updateOverlay) updateEffects.push({effect: updateOverlay, type: "overlay", changeType: "add"});
@@ -237,35 +243,6 @@ export class EnhancedConditions {
     }
 
     /**
-     * Adds a title/tooltip with the matched Condition name
-     */
-    static _onRenderTokenHUD(app, html, data) {
-        const enable = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.enable);
-
-        if (!enable) {
-            return;
-        }
-
-        // array of objects: {name, icon, journalId, trigger}
-        const map = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.map);
-        const conditionIcons = EnhancedConditions.getConditionIcons(map);
-        const effectIcons = html.find("img.effect-control");
-        // jquery .filter()
-        const enhancedIcons = jQuery.makeArray(effectIcons).filter(i => {
-            const src = i.attributes.src.value;
-            if (conditionIcons.includes(src)) {
-                return true;
-            }
-        })
-
-        return enhancedIcons.forEach(i => {
-            const src = i.attributes.src.value;
-            const matchedCondition = map.find(m => m.icon === src);
-            i.setAttribute("title", matchedCondition.name);
-        });
-    }
-
-    /**
      * Render Chat Message handler
      * @param {*} app 
      * @param {*} html 
@@ -277,40 +254,66 @@ export class EnhancedConditions {
             return;
         }
 
-        const contentDiv = html.find("div.content");
-        const messageDiv = contentDiv.closest("li.message");
-        const messageId = messageDiv.data().messageId;
-        const tokenId = contentDiv.data().tokenId;
-        const token = canvas?.tokens.get(tokenId) || canvas.scene.data.tokens.find(t => t._id === tokenId);
-        const message = game.messages.get(messageId);
+        const speaker = data.message.speaker;
+
+        if (!speaker) return;
+
+        const actor = game.actors.get(speaker.actor) ?? null;
+        const scene = game.scenes.get(speaker.scene) ?? null;
+        const token = (canvas ? canvas?.tokens.get(speaker.token) : null) ?? (scene ? scene.data.tokens.find(t => t._id === speaker.token) : null);
         const removeConditionAnchor = html.find("a[name='remove-row']");
+        const undoRemoveAnchor = html.find("a[name='undo-remove']");
 
         if (!token || (token && !game.user.isGM)) {
             removeConditionAnchor.parent().hide();
+            undoRemoveAnchor.parent().hide();
         }
 
         /**
-         * @todo move to chatlog listener instead
+         * @todo #284 move to chatlog listener instead
          */
         removeConditionAnchor.on("click", event => {
-            const li = event.target.closest("li");
-            const contentDiv = li.closest("div.content");
-            const tokenId = contentDiv.dataset.tokenId;
-            const token = canvas.tokens.get(tokenId);
-            const conditionName = li.dataset.conditionName;
-            
-            if (!token) {
-                return;
-            }
+            const conditionListItem = event.target.closest("li");
+            const conditionName = conditionListItem.dataset.conditionName;
+            const messageListItem = conditionListItem?.parentElement?.closest("li");
+            const messageId = messageListItem?.dataset?.messageId;
+            const message = messageId ? game.messages.get(messageId) : null;
 
-            EnhancedConditions.removeCondition(conditionName, token);
+            if (!message) return;
 
-            /**
-             * @todo need a solution for dealing with chat log spam -- once chat output is just a diff it will be better
-             */
-            //const newContent = duplicate(message.data.content);
-            //const update = $(newContent).find(li).remove();
-            //message.delete()
+            const speaker = message?.data?.speaker;
+
+            if (!speaker) return;
+
+            const token = canvas.tokens.get(speaker.token);
+            const actor = game.actors.get(speaker.actor);
+            const entity = token ?? actor;
+
+            if (!entity) return;
+
+            EnhancedConditions.removeCondition(conditionName, entity);
+        });
+
+        undoRemoveAnchor.on("click", event => {
+            const conditionListItem = event.target.closest("li");
+            const conditionName = conditionListItem.dataset.conditionName;
+            const messageListItem = conditionListItem?.parentElement?.closest("li");
+            const messageId = messageListItem?.dataset?.messageId;
+            const message = messageId ? game.messages.get(messageId) : null;
+
+            if (!message) return;
+
+            const speaker = message?.data?.speaker;
+
+            if (!speaker) return;
+
+            const token = canvas.tokens.get(speaker.token);
+            const actor = game.actors.get(speaker.actor);
+            const entity = token ?? actor;
+
+            if (!entity) return;
+
+            EnhancedConditions.addCondition(conditionName, entity);
         });
     }
 
@@ -325,9 +328,12 @@ export class EnhancedConditions {
      * @param {String} type  the type of change to process
      */
     static _processActiveEffectChange(actor, changeData, type) {
+
+        if (!hasProperty(changeData, `flags.${BUTLER.NAME}.${BUTLER.FLAGS.enhancedConditions.conditionId}`)) return;
+        
         const effectId = changeData.flags[BUTLER.NAME][BUTLER.FLAGS.enhancedConditions.conditionId];
 
-        const [condition] = EnhancedConditions.lookupEntryMapping(effectId);
+        const condition = EnhancedConditions.lookupEntryMapping(effectId);
 
         if (!condition) return;
 
@@ -643,8 +649,11 @@ export class EnhancedConditions {
 
         const statusEffects = conditionMap.map(c => {
             return {
-                id: c.id ?? c.name?.slugify(),
+                id: `${[BUTLER.NAME]}.${c.id}` ?? `${[BUTLER.NAME]}.${c.name?.slugify()}`,
                 flags: {
+                    core: {
+                        statusId: `${[BUTLER.NAME]}.${c.id}` ?? `${[BUTLER.NAME]}.${c.name?.slugify()}`
+                    },
                     [BUTLER.NAME]: {
                         [BUTLER.FLAGS.enhancedConditions.conditionId]: c.id ?? c.name?.slugify()
                     }
@@ -790,7 +799,7 @@ export class EnhancedConditions {
      * @param {*} conditionName
      * @todo coalesce into a single update
      */
-    static async applyCondition(conditionName, entities=null, {warn=true}={}) {
+    static async addCondition(conditionName, entities=null, {warn=true}={}) {
         if (!entities) {
             // First check for any controlled tokens
             if (canvas?.tokens?.controlled) entities = canvas.tokens.controlled;
@@ -962,18 +971,22 @@ export class EnhancedConditions {
      * @param {*} conditionName
      * @todo coalesce into a single update
      */
-    static async removeCondition(conditionName, tokens=null, {warn=true}={}) {
-        tokens = tokens ? tokens : canvas?.tokens?.controlled?.length ? canvas.tokens.controlled : null;
+    static async removeCondition(conditionName, entities=null, {warn=true}={}) {
+        if (!entities) {
+            // First check for any controlled tokens
+            if (canvas?.tokens?.controlled) entities = canvas.tokens.controlled;
+            else if (game.user.character) entities = game.user.character;
+            else entities = null;
+        }
+        
 
-        // iterate tokens removing conditions
-        if (!tokens) {
+        if (!entities) {
             ui.notifications.error(game.i18n.localize("ENHANCED_CONDITIONS.RemoveCondition.Failed.NoToken"));
-            console.log("Combat Utility Belt - Enhanced Conditions | No token provided");
+            console.log("Combat Utility Belt - Enhanced Conditions | No entity provided");
             return;
         }
 
-        const map = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.map);
-        const condition = map.find(c => c.name === conditionName);
+        const condition = EnhancedConditions.getConditionByName(conditionName);
 
         if (!condition) {
             ui.notifications.error(game.i18n.localize("ENHANCED_CONDITIONS.RemoveCondition.Failed.NoCondition"));
@@ -981,88 +994,64 @@ export class EnhancedConditions {
             return;
         }
 
-        const effect = condition ? condition.icon : null;
-        
+        const effect = EnhancedConditions.getActiveEffect(condition);
+
         if (!effect) {
-            ui.notifications.error(game.i18n.localize("ENHANCED_CONDITIONS.RemoveCondition.Failed.NoIcon"));
-            console.log("Combat Utility Belt - Enhanced Conditions | No icon is setup for condition: ", conditionName);
+            ui.notifications.error(game.i18n.localize("ENHANCED_CONDTIONS.RemoveCondition.Failed.NoEffect"));
+            console.log("Combat Utility Belt - Enhanced Condition | Cound not find effect matching condition: ", condition);
             return;
         }
         
-        if (tokens && !(tokens instanceof Array)) {
-            tokens = [tokens];
+        if (entities && !(entities instanceof Array)) {
+            entities = [entities];
         }
 
-        for (let token of tokens) {
-            if (!token?.data?.effects.includes(effect) && token?.data?.overlayEffect !== effect) {
+        for (let entity of entities) {
+            const actor = entity instanceof Actor ? entity : entity instanceof Token ? entity.actor : null;
+
+            if (!actor.effects.get(effect?.id)) {
                 if (warn) {
                     ui.notifications.warn(game.i18n.localize("ENHANCED_CONDITIONS.RemoveCondition.Failed.NotActive"));
-                    console.log(`Combat Utility Belt - Enhanced Conditions | Condition ${conditionName} is not active on token.`);
+                    console.log(`Combat Utility Belt - Enhanced Conditions | Condition ${conditionName} is not active on entity.`);
                 }
                 return;
             }
 
-            if (token?.data?.effects.includes(effect)) {
-                await token.toggleEffect(effect);
-            }
-
-            if (token?.data?.overlayEffect === effect) {
-                await token.toggleOverlay(effect);
-            }
+            await actor.deleteEmbeddedEntity("ActiveEffect", effect);
         }
     }
 
     /**
-     * Removes all conditions from the mapped tokens
-     * @param {*} tokens 
+     * Removes all conditions from the provided entities
+     * @param {Actors | Tokens} entities 
      */
-    static removeAllConditions(tokens=null) {
-        tokens = tokens ? tokens : canvas?.tokens?.controlled?.length ? canvas.tokens.controlled : null;
-
-        if (!tokens) {
-            ui.notifications.error(game.i18n.localize("ENHANCED_CONDITIONS.RemoveAllConditions.Failed.NoToken"));
-            console.log("Combat Utility Belt - Enhanced Conditions | Remove Condition failed: No token/s provided");
-            return;
+    static async removeAllConditions(entities=null) {
+        if (!entities) {
+            // First check for any controlled tokens
+            if (canvas?.tokens?.controlled) entities = canvas.tokens.controlled;
+            else if (game.user.character) entities = game.user.character;
+            else entities = null;
         }
-        const conditionMap = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.map);
         
-        if (!conditionMap) {
-            ui.notifications.error(game.i18n.localize("ENHANCED_CONDITIONS.RemoveAllConditions.Failed.NoCondition"));
-            console.log("Combat Utility Belt - Enhanced Conditions | Remove Condition failed: No token/s provided");
+        if (!entities) {
+            ui.notifications.error(game.i18n.localize("ENHANCED_CONDITIONS.RemoveCondition.Failed.NoToken"));
+            console.log("Combat Utility Belt - Enhanced Conditions | No entity provided");
             return;
         }
 
-        const conditionMapIcons = EnhancedConditions.getConditionIcons(conditionMap);
-        const updates = [];
+        for (let entity of entities) {
+            const actor = entity instanceof Actor ? entity : entity instanceof Token ? entity.actor : null;
 
-        if (tokens && !(tokens instanceof Array)) {
-            tokens = [tokens];
+            if (!actor.effects.size) continue;
+
+            const conditionEffects = actor.effects.entries.filter(e => e.getFlag(BUTLER.NAME,BUTLER.FLAGS.enhancedConditions.conditionId));
+
+            if (!conditionEffects) continue;
+
+            const effectIds = conditionEffects.map(e => e.id);
+
+            await actor.deleteEmbeddedEntity("ActiveEffect", effectIds);
         }
-
-        for (let token of tokens) {
-            const effects = token.data.effects;
-            const overlay = token.data.overlayEffect;
-            const matchedEffects = effects.filter(e => conditionMapIcons.includes(e));
-            const matchedOverlay = conditionMapIcons.includes(overlay) ? overlay : null;
-            const update = {
-                _id: token.id
-            }
-
-            matchedOverlay ? update.overlayEffect = "" : null;
-            matchedEffects.length ? update.effects = [] : null;
-
-            if (hasProperty(update, "overlayEffect") || hasProperty(update, "effects")) {
-                updates.push(update);
-            }
-
-            continue;
-        }
-
-        if (!updates.length) {
-            return;
-        }
-
-        game.scenes.active.updateEmbeddedEntity("Token", updates);
     }
 
     /**

@@ -66,6 +66,13 @@
     "ENHANCED_CONDITIONS.Lab.Options.MarkDefeated.Title": "Mark matching combatants defeated when this condition is applied",
     "ENHANCED_CONDITIONS.Lab.Options.OutputChat.Title": "Output this condition to chat when added/removed",
 
+    "ENHANCED_CONDITIONS.ChatCard.Title.Active": "Active Conditions",
+    "ENHANCED_CONDITIONS.ChatCard.Title.Added": "Added Conditions",
+    "ENHANCED_CONDITIONS.ChatCard.Title.Removed": "Removed Conditions",
+
+    "ENHANCED_CONDITIONS.ChatCard.Buttons.Undo": "Undo Remove Condition",
+    "ENHANCED_CONDITIONS.ChatCard.Buttons.Remove": "Remove Condition",
+
     "HIDE_NAMES.ActorForm.Enable": "Hide Actor Name",
     "HIDE_NAMES.ActorForm.EnableHint": "Enable hiding of this actor's name in Combat Tracker and Chat Messages (overrides default)",
     "HIDE_NAMES.ActorForm.ReplacementName": "Replacement Name",
@@ -175,10 +182,6 @@
     
     "SETTINGS.Triggler.TriggersN": "Triggler Triggers",
     "SETTINGS.Triggler.TriggersH": "Stores saved Triggler Triggers",
-    
-    "TEMPLATES.EnhancedConditions.ChatCardTitle.Active": "Active Conditions",
-    "TEMPLATES.EnhancedConditions.ChatCardTitle.Added": "Added Conditions",
-    "TEMPLATES.EnhancedConditions.ChatCardTitle.Removed": "Removed Conditions",
 
     "WORDS.Import": "Import",
     "WORDS.Export": "Export",

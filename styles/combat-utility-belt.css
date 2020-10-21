@@ -1,7 +1,14 @@
+/* CONDITIONS CHAT MESSAGE */
 ul.chat-message.condition-list {
     list-style-type: none;
     padding: 0;
 }
+
+.chat-message.condition-list .remove-row,
+.chat-message.condition-list .undo-remove {
+   flex: 0 0 20px;
+}
+
 
 label.xp-checkbox {
     flex: 2;
@@ -16,6 +23,18 @@ img.condition-icon {
     width: 50px;
     height: 50px;
     background:rgba(0,0,0,0.5);
+}
+
+.enhanced-conditions div.condition-icon {
+    flex: 0 0 24px; 
+    margin: 0px 6px 0px 0px;
+}
+
+.enhanced-conditions div.condition-name,
+.enhanced-conditions div.condition-reference {
+    flex: 2;
+    margin: 3px 0px 0px 0px;
+    height: 20px;
 }
 
 img.condition-icon.chat-message {

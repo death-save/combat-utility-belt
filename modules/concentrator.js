@@ -193,7 +193,7 @@ export class Concentrator {
                 continue;
             }
 
-            EnhancedConditions.applyCondition(conditionName, t);
+            EnhancedConditions.addCondition(conditionName, t);
         }
 
         app.setFlag(NAME, FLAGS.concentrator.chatMessage, true);

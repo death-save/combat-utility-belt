@@ -74,7 +74,8 @@ export class Signal {
             }
 
             // External methods
-            game.cub.applyCondition = EnhancedConditions.applyCondition;
+            game.cub.getCondition = EnhancedConditions.getConditionByName;
+            game.cub.addCondition = EnhancedConditions.addCondition;
             game.cub.getConditions = EnhancedConditions.getConditions;
             game.cub.hasCondition = EnhancedConditions.hasCondition;
             game.cub.removeCondition = EnhancedConditions.removeCondition;
@@ -186,13 +187,6 @@ export class Signal {
         Hooks.on("renderActorSheet", (app, html, data) => {
             ActorUtility._onRenderActorSheet(app, html, data);
             HideNPCNames._onRenderActorSheet(app, html, data);
-        });
-
-        /* ------------------- Token ------------------ */
-
-
-        Hooks.on("renderTokenHUD", (app, html, data) => {
-            EnhancedConditions._onRenderTokenHUD(app, html, data);
         });
 
         /* ------------------- Chat ------------------- */

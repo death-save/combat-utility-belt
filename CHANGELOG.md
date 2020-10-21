@@ -15,13 +15,17 @@
 ### Added
 - `Inspiration` icon for dnd5e-extended Condition Map
 
+
 ### Changed
-- Condition Lab now uses `Active Effects` to map conditions
+- [BREAKING CHANGE] Condition Lab now uses `Active Effects` to map conditions. All mapped conditions are upgraded to Active Effects.
+- Enhanced Condition chat messages no longer show the entire set of `Active Conditions` on a token when a Condition is added or emoved. Instead they now just show the added/removed Condition. The exception to this is during combat if the "Show Active Effects during Combat" setting is enabled, then the chat message will include all Active Conditions on a token.
+- For `Removed Conditions` chat messages, the "Remove Condition" button is now an "Undo Remove" button that allows you to re-add the Condition back to the token if desired.
 - Condition Maps `dnd5e` and `dnd5e-extended` now use the system-included `Rules (SRD)` compendium entries as references
-- Token Effect Icon sizes have changed. There are now 4 choices from Small to Extra Large.
+- Token Effect Icon sizes have changed. There are now 4 choices from Small to Extra Large. Effect icon size options are now designed to neatly divide the dimensions of the token, for example if `Small` is selected, you can fit 25 (5x5) icons on the token.
+- 
 
 ### Fixed
-- Token Effect Icons are functional again and can no longer overflow the boundaries of the token.
+- Token Effect Icons are functional again.
 
 ## [1.2.3] - 2020-10-11
 ### Added
