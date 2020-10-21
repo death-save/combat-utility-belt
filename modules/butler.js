@@ -131,7 +131,7 @@ export const DEFAULT_CONFIG = {
             all: "Everyone"
         },
         icon: "modules/combat-utility-belt/icons/concentrating.svg",
-        alias: "CUB: Concentrator"
+        alias: "Concentrator"
     },
     cubPuter: {
         id: "cub-puter",
@@ -139,10 +139,10 @@ export const DEFAULT_CONFIG = {
         buttonId: "cub-puter-button",
         config: {
             crt: true,
-            terminal: true,
-            startup: true,
-            greeting: true,
-            instructions: true,
+            terminal: false,
+            startup: false,
+            greeting: false,
+            instructions: false,
             info: true
         }
     },
@@ -156,7 +156,7 @@ export const DEFAULT_CONFIG = {
             id: "cub-condition-lab",
             title: "Condition Lab",
         },
-        title: "CUB: Enhanced Conditions",
+        title: "Enhanced Conditions",
         mapTypes: {
             default: "System - Default",
             custom: "System - Custom",
