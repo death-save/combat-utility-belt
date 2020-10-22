@@ -1,0 +1,43 @@
+<form autocomplete="off" onsubmit="event.preventDefault()">
+    <div class="flexrow">
+        <strong>Combat Utility Belt</strong>
+        <span class="version"><strong>v{{version}}</strong></span>
+    </div>
+    <div class="readme">
+        <p><a href="https://github.com/death-save/combat-utility-belt/wiki" title="Wiki"><i class="fas fa-book"></i> Wiki / More Info</a></p>
+    </div>
+    <div class="made-by flexcol">
+        <span class="made">
+            Made with <span class="heart">❤</span> by <strong>DEATH SAVE DEVELOPMENT</strong>
+        </span>
+    </div>
+    <div class="patrons">
+        <p>Thanks to the support of these awesome people:</p>
+        <ol class="patrons">
+        {{#each patrons}}
+            <li class="patron">{{this.name}}</li>
+        {{/each}}
+        </ol>
+    </div>
+    <footer class="flexrow">
+        <div class="logo">
+            <a href="https://deathsave.dev">
+                <img src="modules/combat-utility-belt/img/deathsave-newlogo.png" class="death-save" title="DEATH SAVE DEVELOPMENT" height="120px" width="120px">
+            </a>
+        </div>
+        <div class="discord">
+            <a href="https://discord.gg/wwH7DQc">
+                <img src="modules/combat-utility-belt/img/Discord-Logo-Color.png" title="Discord" height="100px" width="100px">
+                <br/>
+                <span>Join us on Discord</span>
+            </a>
+        </div>
+        <div class="patreon">
+            <a href="https://www.patreon.com/bePatron?u=21811555">
+                <img src="modules/combat-utility-belt/img/Digital-Patreon-Logo_FieryCoral.png" title="Patreon" height="100px" width="100px">
+                <br/>
+               <span>Become a Patron</span>
+            </a>
+        </div>
+    </footer>
+</form>
