@@ -814,10 +814,16 @@ export class EnhancedConditions {
     }
 
     /**
-     * Applies the named condition to the provided entities
-     * @param {*} tokens
-     * @param {*} conditionName
-     * @todo coalesce into a single update
+     * Applies the named condition to the provided entities (Actors or Tokens)
+     * @param {Actor | Token} entities  one or more Actors or Tokens to apply the Condition to
+     * @param {String} conditionName  the name of the condition to add
+     * @param {Boolean} options.warn  raise warnings on errors
+     * @example
+     * // Add the Condition "Blinded" to an Actor named "Bob"
+     * game.cub.addCondition("Blinded", game.actors.getName("Bob"));
+     * @example
+     * // Add the Condition "Charmed" to the currently controlled Token/s
+     * game.cub.addCondition("Charmed");
      */
     static async addCondition(conditionName, entities=null, {warn=true}={}) {
         if (!entities) {
@@ -833,7 +839,7 @@ export class EnhancedConditions {
             return;
         }
 
-        let conditions = EnhancedConditions.getConditionByName(conditionName);
+        let conditions = EnhancedConditions.lookupConditionByName(conditionName);
         
         if (!conditions) {
             ui.notifications.error(`${game.i18n.localize("ENHANCED_CONDITIONS.ApplyCondition.Failed.NoCondition")} ${conditionName}`);
@@ -880,9 +886,10 @@ export class EnhancedConditions {
 
     /**
      * Gets one or more conditions from the map by their name
-     * @param {*} conditionName 
+     * @param {String} conditionName  the condition to get
+     * @param {Array} map  the condition map to search
      */
-    static getConditionByName(conditionName, map=null) {
+    static lookupConditionByName(conditionName, map=null) {
         if (!conditionName) return;
 
         if (!(conditionName instanceof Array)) conditionName = [conditionName];
@@ -898,8 +905,14 @@ export class EnhancedConditions {
 
     /**
      * Retrieves all active conditions for one or more given entities (Actors or Tokens)
-     * @param {Actor | Token} entities 
+     * @param {Actor | Token} entities  one or more Actors or Tokens to get Conditions from
      * @returns {Array} entityConditionMap  a mapping of conditions for each provided entity
+     * @example
+     * // Get conditions for an Actor named "Bob"
+     * game.cub.getConditions(game.actors.getName("Bob"));
+     * @example
+     * // Get conditions for the currently controlled Token
+     * game.cub.getConditions();
      */
     static getConditions(entities=null) {
         if (!entities) {
@@ -963,6 +976,7 @@ export class EnhancedConditions {
      * Checks if the provided token or tokens has the given condition
      * @param {*} condition 
      * @param {*} tokens 
+     * @todo #289 requires redesign for Active Effects
      */
     static hasCondition(condition, tokens=null) {
         if (!condition) {
@@ -1002,8 +1016,16 @@ export class EnhancedConditions {
 
     /**
      * Removes one or more named conditions from an Entity (Actor/Token)
-     * @param {*} tokens 
-     * @param {*} conditionName
+     * @param {Actor | Token} entities  One or more Actors or Tokens
+     * @param {String} conditionName  the name of the Condition to remove
+     * @param {Object} options  options for removal
+     * @param {Boolean} options.warn  whether or not to raise warnings on errors
+     * @example 
+     * // Remove Condition named "Blinded" from an Actor named Bob
+     * game.cub.removeCondition("Blinded", game.actors.getName("Bob"));
+     * @example 
+     * // Remove Condition named "Charmed" from the currently controlled Token, but don't show any warnings if it fails.
+     * game.cub.removeCondition("Charmed", {warn=false});
      */
     static async removeCondition(conditionName, entities=null, {warn=true}={}) {
         if (!entities) {
@@ -1022,7 +1044,7 @@ export class EnhancedConditions {
 
         if (!(conditionName instanceof Array)) conditionName = [conditionName];
 
-        const conditions = EnhancedConditions.getConditionByName(conditionName);
+        const conditions = EnhancedConditions.lookupConditionByName(conditionName);
 
         if (!conditions || (conditions instanceof Array && !conditions.length)) {
             ui.notifications.error(`${game.i18n.localize("ENHANCED_CONDITIONS.RemoveCondition.Failed.NoCondition")} ${conditionName}`);
@@ -1062,7 +1084,13 @@ export class EnhancedConditions {
 
     /**
      * Removes all conditions from the provided entities
-     * @param {Actors | Tokens} entities 
+     * @param {Actors | Tokens} entities  One or more Actors or Tokens to remove Conditions from
+     * @example 
+     * // Remove all Conditions on an Actor named Bob
+     * game.cub.removeAllConditions(game.actors.getName("Bob"));
+     * @example
+     * // Remove all Conditions on the currently controlled Token
+     * game.cub.removeAllConditions();
      */
     static async removeAllConditions(entities=null) {
         if (!entities) {
