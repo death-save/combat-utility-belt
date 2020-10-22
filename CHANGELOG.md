@@ -1,31 +1,34 @@
 # Changelog
 
 ## [Unreleased]
-- ~~Refine Hide NPC Names to allow for "known" NPC names/information~~
 - Attach Macros to Conditions in Condition Lab
 - Macros for: hiding/unhiding NPC names, rerolling initiative
 
 ## [Known Issues]
-- Pan/Select does not deselect currently selected tokens if many are selected
+- Attempting to add multiple Conditions at the same time when one of those Conditions already exists on the Actor/Token will block all of them being added.
+- Enhanced Conditions chat output for linked Tokens and Actors is not aggregated, so you may see multiple messages when many conditions are added/removed from an Actor/Token.
+- Overlay Effects added to a token will trigger the matching non-Overlay Condition to output to chat. The reverse is also true.
 - **PF2e users**: Enhanced Conditions `Output to Chat` setting will cause duplicate chat messages due to similar function built into the system.
-- Enhanced Conditions `Output to Chat` will reveal the existence of hidden creatures if conditions are applied to them and/or during combat if `Output During Combat` is on.
 - Chat log may not re-render when Hide Names settings are changed. This may cause the old name to still show in the log for players. Advise players to reload Foundry if you change these settings mid-session.
 
-## [1.3.0] - 2020-10-17
+## [1.3.0] - 2020-10-21
 ### Added
-- `Inspiration` icon for dnd5e-extended Condition Map
-
+- Condition Lab now supports **Active Effects**! A new `Active Effects Config` button appears next to each Condition's name in the Condition Lab. Clicking the button opens the Enhanced Effects Config app that allows you to configure the Active Effects for that Condition.
+- New `About CUB` button added to the CUBputer header which provides more info about CUB as well as links to the wiki, DEATH SAVE Discord, and the DEATH SAVE Patreon
+- `dnd5e-extended` Condition Map now includes an `Inspiration` Condition
+- A number of new translation strings have been added (thank you translators, I am trying to get them all!)
 
 ### Changed
-- [BREAKING CHANGE] Condition Lab now uses `Active Effects` to map conditions. All mapped conditions are upgraded to Active Effects.
-- Enhanced Condition chat messages no longer show the entire set of `Active Conditions` on a token when a Condition is added or emoved. Instead they now just show the added/removed Condition. The exception to this is during combat if the "Show Active Effects during Combat" setting is enabled, then the chat message will include all Active Conditions on a token.
-- For `Removed Conditions` chat messages, the "Remove Condition" button is now an "Undo Remove" button that allows you to re-add the Condition back to the token if desired.
-- Condition Maps `dnd5e` and `dnd5e-extended` now use the system-included `Rules (SRD)` compendium entries as references
+- [BREAKING CHANGE] Enhanced Conditions / Condition Lab now uses `Active Effects` to map conditions. All existing mapped conditions are upgraded to Active Effects.
+- [BREAKING CHANGE] Enhanced Conditions API methods (eg. for macros) have changed. Full details are available in the [API docs](/api.md)
+- Enhanced Condition chat messages no longer show the entire set of `Active Conditions` on an Actor/Token when a Condition is added or removed. Instead the message shows only the added/removed Condition/s. The exception to this is during combat if the `Output During Combat` setting is enabled, then the chat message will include all Active Conditions on a token.
+- - `Removed Conditions` chat messages: the "Remove Condition" button is now an "Undo Remove" button that allows you to re-add the Condition back to the token if desired.
+- Condition Maps `dnd5e` and `dnd5e-extended` now use the system-included `Rules (SRD)` compendium entries as references instead of the CUB-provided `Conditions (D&D5e)` compendium. The CUB compendium is still available for posterity but will be removed in a future release.
 - Token Effect Icon sizes have changed. There are now 4 choices from Small to Extra Large. Effect icon size options are now designed to neatly divide the dimensions of the token, for example if `Small` is selected, you can fit 25 (5x5) icons on the token.
-- 
 
 ### Fixed
-- Token Effect Icons are functional again.
+- Token Status Effect Icons are functional and can be applied from the HUD again.
+- Hide Names no longer throws an error during load due to a race condition related to the `canvas`
 
 ## [1.2.3] - 2020-10-11
 ### Added
