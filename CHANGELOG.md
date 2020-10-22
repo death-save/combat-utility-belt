@@ -25,6 +25,7 @@
 - - `Removed Conditions` chat messages: the "Remove Condition" button is now an "Undo Remove" button that allows you to re-add the Condition back to the token if desired.
 - Condition Maps `dnd5e` and `dnd5e-extended` now use the system-included `Rules (SRD)` compendium entries as references instead of the CUB-provided `Conditions (D&D5e)` compendium. The CUB compendium is still available for posterity but will be removed in a future release.
 - Token Effect Icon sizes have changed. There are now 4 choices from Small to Extra Large. Effect icon size options are now designed to neatly divide the dimensions of the token, for example if `Small` is selected, you can fit 25 (5x5) icons on the token.
+- CUBputer no longer defaults to show the faux terminal at the top of the  window. You can re-enable the terminal in the CUBputer options
 
 ### Fixed
 - Token Status Effect Icons are functional and can be applied from the HUD again.
