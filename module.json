@@ -7,7 +7,7 @@
   "minimumCoreVersion": "0.6.6",
   "compatibleCoreVersion": "0.7.3",
   "url": "https://github.com/death-save/combat-utility-belt",
-  "manifest": "https://raw.githubusercontent.com/death-save/combat-utility-belt/master/module.json",
+  "manifest": "https://raw.githubusercontent.com/death-save/combat-utility-belt/v.1.2.3/module.json",
   "download": "https://github.com/death-save/combat-utility-belt/archive/v1.2.3.zip",
   "scripts": [
     "./library/typewriterjs/core.js", 
