@@ -124,7 +124,8 @@ export class ConditionLab extends FormApplication {
         // Transform data for each Condition Mapping entry to ensure it will display correctly
         conditionMap.forEach((entry, index, map) => {
             // First set the Output to Chat checkbox
-            entry.options.outputChat = entry.options.outputChat ?? Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.outputChat);
+            entry.options = entry.options ?? {};
+            entry.options.outputChat = entry?.options?.outputChat ?? Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.outputChat);
 
             const referenceType = entry.referenceType || "journalEntry";
             const collectionRegex = new RegExp(/\[(.*\..*)(?=\..*])/);
@@ -189,23 +190,7 @@ export class ConditionLab extends FormApplication {
     }
 
     /**
-     * Captures the current state of the form and returns a formData object
-     * @returns {FormData} formData
-     */
-    _captureForm() {
-        // Get a reference to the form via jquery
-        const form = this.element.find("form").first()[0];
-
-        // Use the FormDataExtended class to parse the form
-        const FD = new FormDataExtended(form);
-
-        // Build and return useable formData object
-        const formData = Sidekick.buildFormData(FD);
-        return formData;
-    }
-
-    /**
-     * 
+     * Processes the Form Data and builds a usable Condition Map
      * @param {*} formData 
      */
     _processFormData(formData) {
@@ -278,8 +263,9 @@ export class ConditionLab extends FormApplication {
 
         const uniqueRows = [...new Set(rows)];
 
-        for (let i = 0; i <= uniqueRows.length - 1; i++) {
-            newMap.push({
+        for (let i = 0; i < uniqueRows.length; i++) {
+            const activeEffect = existingMap[i] ? existingMap[i].activeEffect : {};
+            const condition = {
                 name: conditions[i],
                 icon: icons[i],
                 referenceType: referenceTypes[i],
@@ -287,14 +273,16 @@ export class ConditionLab extends FormApplication {
                 referenceId: references[i],
                 applyTrigger: applyTriggers[i],
                 removeTrigger: removeTriggers[i],
-                activeEffect: existingMap[i].activeEffect,
+                activeEffect,
                 options: {
                     overlay: optionsOverlay[i],
                     removeOthers: optionsRemove[i],
                     outputChat: optionsOutputChat[i],
                     markDefeated: optionsDefeated[i]
                 }
-            });
+            };
+
+            newMap.push(condition);
         }
 
         return newMap;
@@ -515,10 +503,8 @@ export class ConditionLab extends FormApplication {
      */
     _onChangeIconPath(event) {
         event.preventDefault();
-
-        const formData = this._captureForm();
-        this.map = this._processFormData(formData);
         
+        this.map = this._processFormData(this._getSubmitData());
         const row = event.target.name.match(/\d+$/)[0];
 
         //target the icon
@@ -555,9 +541,11 @@ export class ConditionLab extends FormApplication {
      * @param {*} event 
      */
     _onChangeReferenceType(event) {
-        const formData = this._captureForm()
-        
+        /*
+        const formData = this._captureForm();
         this.map = this._processFormData(formData);
+        */
+        this.map = this._processFormData(this._getSubmitData());
         this.render();
     }
 
@@ -566,9 +554,7 @@ export class ConditionLab extends FormApplication {
      * @param {*} event 
      */
     _onChangeCompendium(event) {
-        const formData = this._captureForm()
-        
-        this.map = this._processFormData(formData);
+        this.map = this._processFormData(this._getSubmitData());
         this.render();
     }
 
@@ -600,8 +586,7 @@ export class ConditionLab extends FormApplication {
 
         const existingNewConditions = this.map.filter(m => m.name.includes("newCondition"));
         const newConditionIndex = existingNewConditions.length ? Math.max(...existingNewConditions.map(m => m.name.match(/\d+/g)[0])) + 1 : 1;
-        const formData = this._captureForm();
-        const fdMap = this._processFormData(formData);
+        const fdMap = this._processFormData(this._getSubmitData());
         const defaultMapType = Sidekick.getKeyByValue(BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes, BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes.default);
         const customMapType = Sidekick.getKeyByValue(BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes, BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes.custom);
 
@@ -637,8 +622,7 @@ export class ConditionLab extends FormApplication {
     _onRemoveRow(event) {
         event.preventDefault();
 
-        const formData = this._captureForm();
-        this.map = this._processFormData(formData);
+        this.map = this._processFormData(this._getSubmitData());
 
         //const mapSetting = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.map);
         const row = event.currentTarget.name.match(/\d+$/)[0];
