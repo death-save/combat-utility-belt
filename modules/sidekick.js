@@ -209,7 +209,7 @@ export class Sidekick {
     }
 
     /**
-     * Builds a FD returned from _getFormData into a formData array
+     * Builds a FD returned from FormDataExtended into a formData array
      * Borrowed from foundry.js
      * @param {*} FD 
      */
@@ -273,4 +273,19 @@ export class Sidekick {
     static getTextNodesIn(el) {
         return $(el).find(":not(iframe)").addBack().contents().filter((i, e) => e.nodeType == 3 && /\S/.test(e.nodeValue));
     };
+
+    /**
+     * For a given string generate a slug, optionally checking a list of existing Ids for uniqueness
+     * @param {*} string 
+     * @param {*} idList 
+     */
+    static generateUniqueSlugId(string, idList=[]) {
+        let slug = string.slugify();
+
+        const existingIds = idList.filter(id => id === slug);
+        const uniqueIndex = existingIds.length ? Math.max(...existingIds.map(id => id.match(/\d+/g)[0])) + 1 : "";
+        slug = slug + uniqueIndex;
+        
+        return slug;
+    }
 }

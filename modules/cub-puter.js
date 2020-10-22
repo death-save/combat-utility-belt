@@ -1,5 +1,6 @@
 import { DEFAULT_CONFIG, GADGETS, NAME, PATH, SETTING_KEYS, WIKIPATH } from "./butler.js";
 import { Sidekick } from "./sidekick.js";
+import AboutApp from "./about.mjs"
 
 export class CUBPuter extends FormApplication {
     constructor(object, options={}) {
@@ -95,13 +96,21 @@ export class CUBPuter extends FormApplication {
         
         buttons.unshift(
             {
+                label: `${game.i18n.localize("WORDS.About")} CUB`,
+                class: "about",
+                icon: "fas fa-question",
+                onclick: async ev => {
+                    new AboutApp().render(true);
+                }
+            },
+            {
                 label: "Options",
                 class: "settings",
                 icon: "fas fa-cog",
                 onclick: async ev => {
                     this._settingsDialog();
                 }
-            },
+            }
         );
 
         return buttons
@@ -261,7 +270,7 @@ export class CUBPuter extends FormApplication {
         
         const button = event.target;
         const form = button.form;
-        const formData = Sidekick.buildFormData(this._getFormData(form));
+        const formData = this._getSubmitData();
         const keys = duplicate(Object.keys(formData));
         const restored = [];
 

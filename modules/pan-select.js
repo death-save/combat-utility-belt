@@ -97,7 +97,7 @@ export class PanSelect {
                 return;
             
             case BUTLER.DEFAULT_CONFIG.panSelect.panGM.npc:
-                if (actor.isPC) {
+                if (actor.hasPlayerOwner) {
                     return;
                 }
                 
@@ -187,7 +187,7 @@ export class PanSelect {
                 return;
             
             case BUTLER.DEFAULT_CONFIG.panSelect.panGM.npc:
-                if (actor.isPC) {
+                if (actor.hasPlayerOwner) {
                     return;
                 }
                 

@@ -1,0 +1,43 @@
+<div class="enhanced-conditions header">
+    <h3>
+        {{#if type.added}}
+        {{localize "ENHANCED_CONDITIONS.ChatCard.Title.Added"}}
+        {{/if}}
+        {{#if type.removed}}
+        {{localize "ENHANCED_CONDITIONS.ChatCard.Title.Removed"}}
+        {{/if}}
+        {{#if type.active}}
+        {{localize "ENHANCED_CONDITIONS.ChatCard.Title.Active"}}
+        {{/if}}
+        
+    </h3>
+</div>
+<div class="enhanced-conditions content" data-token-id="{{tokenId}}">
+    <ul class="chat-message condition-list">
+        {{#each conditions as |condition key|}}
+        <li class="flexrow" id="condition-{{@index}}" data-condition-name="{{condition.name}}">
+            <div class="condition-icon">
+                <img src="{{condition.icon}}" class="condition-icon chat-message" title="{{condition.name}}">
+            </div>
+            {{#if hasReference}}
+            <div class="condition-reference">
+                {{condition.referenceId}}{ {{~condition.name~}} }
+            </div>
+            {{else}}
+            <div class="condition-name" style="flex: 2; margin: 3px 0px 0px 0px" height="20px">
+                {{condition.name}}
+            </div>
+            {{/if}}
+            {{#if ../type.removed}}
+            <div class="undo-remove">
+                <a name="undo-remove" title="{{localize "ENHANCED_CONDITIONS.ChatCard.Buttons.Undo"}}"><i class="fas fa-undo"></i></a>
+            </div>
+            {{else}}
+            <div class="remove-row">
+                <a name="remove-row" title="{{localize "ENHANCED_CONDITIONS.ChatCard.Buttons.Removed"}}"><i class="fas fa-times"></i></a>
+            </div>
+            {{/if}}
+        </li>
+        {{/each}}
+    </ul>
+</div>

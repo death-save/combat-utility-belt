@@ -150,6 +150,16 @@ export function registerSettings() {
         onChange: s => {}
     });
 
+    Sidekick.registerSetting(BUTLER.SETTING_KEYS.enhancedConditions.coreEffects, {
+        name: "SETTINGS.EnhancedConditions.CoreEffectsN",
+        hint: "SETTINGS.EnhancedConditions.CoreEffectsH",
+        scope: "world",
+        type: Object,
+        default: [],
+        config: false,
+        onChange: s => {}
+    });
+
     Sidekick.registerSetting(BUTLER.SETTING_KEYS.enhancedConditions.system, {
         name: "SETTINGS.EnhancedConditions.SystemN",
         hint: "SETTINGS.EnhancedConditions.SystemH",
@@ -191,7 +201,7 @@ export function registerSettings() {
         type: Object,
         default: {},
         onChange: conditionMap => {
-            EnhancedConditions._updateStatusIcons(conditionMap);
+            EnhancedConditions._updateStatusEffects(conditionMap);
 
             // Save the active condition map to a convenience property
             if (game.cub) {
@@ -228,7 +238,7 @@ export function registerSettings() {
         config: false,
         default: BUTLER.DEFAULT_CONFIG.enhancedConditions.removeDefaultEffects,
         onChange: s => {
-            EnhancedConditions._updateStatusIcons();
+            EnhancedConditions._updateStatusEffects();
         }
     });
 
@@ -542,7 +552,7 @@ export function registerSettings() {
         choices: BUTLER.DEFAULT_CONFIG.tokenUtility.effectSizeChoices,
         config: true,
         onChange: s => {
-            Token.prototype.drawEffects = TokenUtility._patchDrawEffects;
+            TokenUtility.patchCore();
             canvas.draw();
         }
     });

@@ -13,25 +13,30 @@
     <hr>
     <ol class="condition-lab list">
         {{#each conditionMap as |condition key|}}
-        <li class="condition-lab row flexrow">
+        <li class="row flexrow" data-mapping-row="{{@index}}">
             <!--column 1-->
-            <div class="condition-lab flexcol grabber">
+            <div class="flexcol grabber">
                 <span>
                     <i class="fas fa-bars"></i>
                 </span>
             </div>
             <!--column 2-->
-            <div class="condition-lab flexcol content1">
+            <div class="flexcol content1">
                 <!--row 1 icon + text-->
-                <div class="condition-lab flexrow">
+                <div class="flexrow">
                     <!--row 1 col 1 icon-->
-                    <div class="condition-lab flexcol icon">
+                    <div class="flexcol icon">
                         <img name="icon-{{@index}}" src="{{condition.icon}}" title="Status Icon" class="icon" />
                     </div>
                     <!--row 1 col 2 text-entry-->
-                    <div class="condition-lab flexcol text-entry">
-                        <div class="condition">
-                            <input type="text" name="condition-{{@index}}" title="Condition" value="{{condition.name}}" class="condition" placeholder="Icon Path" data-dtype="String" {{#if ../isDefault}}disabled{{/if}}>
+                    <div class="flexcol text-entry">
+                        <div class="flexrow">
+                            <div class="condition">
+                                <input type="text" name="condition-{{@index}}" title="Condition" value="{{condition.name}}" class="condition" placeholder="Icon Path" data-dtype="String" {{#if ../isDefault}}disabled{{/if}}>
+                            </div>
+                            <div class="active-effect">
+                                <button type="button" class="active-effect-config" title="{{localize "ENHANCED_CONDITIONS.Lab.ActiveEffects.Title"}}"><i class="fas fa-hand-sparkles"></i></button>
+                            </div>
                         </div>
                         <div class="path">
                             <input type="text" name="icon-{{@index}}" title="Status Icon Path" class="icon-path" value="{{condition.icon}}" placeholder="/icons/example.svg" data-dtype="String" {{#if ../isDefault}}disabled{{/if}}>
@@ -103,8 +108,8 @@
                 </div>
             </div>
             <!--column 3-->
-            <div class="condition-lab flexcol content2">      
-                <div class="flexrow condition-lab text-entry trigger">
+            <div class="flexcol content2">      
+                <div class="flexrow text-entry trigger">
                     <div class="trigger-icon">
                         <i class="fas fa-angle-double-right"></i>
                     </div>
@@ -117,7 +122,7 @@
                         {{/select}}
                     </select>                            
                 </div>
-                <div class="flexrow condition-lab text-entry trigger">
+                <div class="flexrow text-entry trigger">
                     <div class="trigger-icon">
                         <i class="fas fa-angle-double-left"></i>
                     </div>
@@ -130,19 +135,23 @@
                         {{/select}}
                     </select>                            
                 </div> 
-                <div class="flexrow condition-lab options">
-                    <p class="notes">Options:</label>
-                    <div class="formgroup" title="Condition is an overlay">
+                <div class="flexrow options">
+                    <p class="notes">{{localize "ENHANCED_CONDITIONS.Lab.Options.Title"}}</label>
+                    <div class="formgroup" title="{{localize "ENHANCED_CONDITIONS.Lab.Options.Overlay.Title"}}">
                         <input type="checkbox" name="options-overlay-{{@index}}" {{checked condition.options.overlay}} {{#if ../isDefault}}disabled{{/if}}>
-                        <label>Overlay</label>
+                        <label>{{localize "ENHANCED_CONDITIONS.Lab.Options.Overlay.Label"}}</label>
                     </div>
-                    <div class="formgroup" title="Remove other conditions when this one is applied">
+                    <div class="formgroup" title="{{localize "ENHANCED_CONDITIONS.Lab.Options.RemoveOthers.Title"}}">
                         <input type="checkbox" name="options-remove-others-{{@index}}" {{checked condition.options.removeOthers}} {{#if ../isDefault}}disabled{{/if}}>
-                        <label>Remove Others</label>
+                        <label>{{localize "ENHANCED_CONDITIONS.Lab.Options.RemoveOthers.Label"}}</label>
                     </div>
-                    <div class="formgroup" title="Mark matching combatants defeated when this condition is applied">
+                    <div class="formgroup" title="{{localize "ENHANCED_CONDITIONS.Lab.Options.OutputChat.Title"}}">
+                        <input type="checkbox" name="options-output-chat-{{@index}}" {{checked condition.options.outputChat}} {{#if ../isDefault}}disabled{{/if}}>
+                        <label>{{localize "ENHANCED_CONDITIONS.Lab.Options.OutputChat.Label"}}</label>
+                    </div>
+                    <div class="formgroup" title="{{localize "ENHANCED_CONDITIONS.Lab.Options.MarkDefeated.Title"}}">
                         <input type="checkbox" name="options-mark-defeated-{{@index}}" {{checked condition.options.markDefeated}} {{#if ../isDefault}}disabled{{/if}}>
-                        <label>Mark Defeated</label>
+                        <label>{{localize "ENHANCED_CONDITIONS.Lab.Options.MarkDefeated.Label"}}</label>
                     </div>
                 </div>
             </div>
@@ -151,7 +160,7 @@
             {{#if ../isDefault}}
             <!--don't show this div-->
             {{else}}
-            <div class="flexcol condition-lab trash">
+            <div class="flexcol trash">
                 <a name="remove-row-{{@index}}" class="remove-row" title="Delete Row">
                     <i class="fas fa-trash"></i>
                 </a>
@@ -159,14 +168,14 @@
             {{/if}}    
         </li>
         {{/each}}
-        <div class="flexrow condition-lab add-row">
+        <div class="flexrow add-row">
             <a name="add-row" title="Add Row">
                 <i class="fas fa-plus"></i> {{#if isDefault}}Add Row (switch to System - Custom){{else}}Add Row{{/if}}
             </a>
         </div>
     </ol>
     <hr>
-    <footer class="flexrow condition-lab">
+    <footer class="flexrow">
         <button type="submit" name="submit" title="Save mapping form values">
             <i class="far fa-save"></i> Save Mapping
         </button>

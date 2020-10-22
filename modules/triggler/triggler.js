@@ -49,7 +49,7 @@ export class Triggler {
         const matchedMacros = game.macros.entities.filter(m => m.getFlag(NAME, DEFAULT_CONFIG.triggler.flags.macro) === trigger.id);
 
         for (const condition of matchedApplyConditions) {
-            await EnhancedConditions.applyCondition(condition.name, tokens, {warn: false});
+            await EnhancedConditions.addCondition(condition.name, tokens, {warn: false});
         }
 
         for (const condition of matchedRemoveConditions) {
@@ -80,7 +80,7 @@ export class Triggler {
             return;
         }
 
-        const isPC = !!(entityType === "Actor" ? entity.isPC : entityType === "Token" ? entity.actor.isPC : null);
+        const hasPlayerOwner = !!(entityType === "Actor" ? entity.hasPlayerOwner : entityType === "Token" ? entity.actor.hasPlayerOwner : null);
 
         /**
          * process each trigger in turn, checking for a match in the update payload,
@@ -93,11 +93,11 @@ export class Triggler {
             const npcOnly = trigger.npcOnly;
             const notZero = trigger.notZero;
 
-            if (pcOnly && !isPC) {
+            if (pcOnly && !hasPlayerOwner) {
                 continue;
             }
 
-            if (npcOnly && isPC) {
+            if (npcOnly && hasPlayerOwner) {
                 continue;
             }
 

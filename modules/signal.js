@@ -68,12 +68,14 @@ export class Signal {
             
             // Handle any monkeypatching
             const effectSize = Sidekick.getSetting(BUTLER.SETTING_KEYS.tokenUtility.effectSize);
+            
             if (effectSize) {
-                Token.prototype.drawEffects = TokenUtility._patchDrawEffects;
+                TokenUtility.patchCore();
             }
 
             // External methods
-            game.cub.applyCondition = EnhancedConditions.applyCondition;
+            game.cub.getCondition = EnhancedConditions.getConditionByName;
+            game.cub.addCondition = EnhancedConditions.addCondition;
             game.cub.getConditions = EnhancedConditions.getConditions;
             game.cub.hasCondition = EnhancedConditions.hasCondition;
             game.cub.removeCondition = EnhancedConditions.removeCondition;
@@ -108,6 +110,14 @@ export class Signal {
             Triggler._onUpdateActor(actor, update, options, userId);
         });
 
+        Hooks.on("createActiveEffect", (actor, createData, options, userId) => {
+            EnhancedConditions._onCreateActiveEffect(actor, createData, options, userId);
+        });
+
+        Hooks.on("deleteActiveEffect", (actor, deleteData, options, userId) => {
+            EnhancedConditions._onDeleteActiveEffect(actor, deleteData, options, userId);
+        });
+
         /* ------------------- Token ------------------ */
 
         Hooks.on("preCreateToken", (scene, tokenData, options, userId) => {
@@ -120,6 +130,7 @@ export class Signal {
 
         Hooks.on("preUpdateToken", (scene, tokenData, updateData, options, userId) => {
             Concentrator._onPreUpdateToken(scene, tokenData, updateData, options, userId);
+            EnhancedConditions._onPreUpdateToken(scene, tokenData, updateData, options, userId);
         });
 
         Hooks.on("updateToken", (scene, token, updateData, options, userId) => {
@@ -176,13 +187,6 @@ export class Signal {
         Hooks.on("renderActorSheet", (app, html, data) => {
             ActorUtility._onRenderActorSheet(app, html, data);
             HideNPCNames._onRenderActorSheet(app, html, data);
-        });
-
-        /* ------------------- Token ------------------ */
-
-
-        Hooks.on("renderTokenHUD", (app, html, data) => {
-            EnhancedConditions._onRenderTokenHUD(app, html, data);
         });
 
         /* ------------------- Chat ------------------- */

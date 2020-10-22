@@ -22,7 +22,7 @@ export class TokenUtility {
 
         // if this token has been handled by the mighty summoner logic then nothing to do
         if (!actor || mightySummonerFlag || (tempCombatantSetting && tempCombatantFlag)) {
-            return;
+            return true;
         }
 
         const feat = Sidekick.getSetting(SETTING_KEYS.tokenUtility.mightySummonerFeat);
@@ -32,8 +32,8 @@ export class TokenUtility {
             return false;
         }
         
-        if (tokenData.disposition !== -1 || !autoRollHP || actor?.isPC) {
-            return;
+        if (tokenData.disposition !== -1 || !autoRollHP || actor?.hasPlayerOwner) {
+            return true;
         }
 
         const formula = null;
@@ -100,56 +100,82 @@ export class TokenUtility {
     }
 
     /**
-     * Patch the core draw effects so that effects are resizable
-     * Errors related to lexical "this" can be ignored due to the fact this method is used as a monkeypatch
+     * Patch core methods
      */
-    static _patchDrawEffects() {
-        let effectSize; 
-        
-        try {
-            effectSize = Sidekick.getSetting(SETTING_KEYS.tokenUtility.effectSize); 
-        } catch (e) {
-            console.warn(e);
-            effectSize = null;
-        }
+    static patchCore() {
+        Token.prototype._drawEffect = TokenUtility._drawEffect;
+        TokenHUD.prototype._getStatusEffectChoices = TokenUtility._getStatusEffectChoices;
+    }
 
+    /**
+     * Patch Core method: Token#_drawEffect
+     * @param {*} src 
+     * @param {*} i 
+     * @param {*} bg 
+     * @param {*} w 
+     * @param {*} tint 
+     */
+    static async _drawEffect(src, i, bg, w, tint) {
+        const effectSize = Sidekick.getSetting(SETTING_KEYS.tokenUtility.effectSize); 
 
         // Use the default values if no setting found
         const multiplier = effectSize ? DEFAULT_CONFIG.tokenUtility.effectSize[effectSize].multiplier : 2;
         const divisor = effectSize ? DEFAULT_CONFIG.tokenUtility.effectSize[effectSize].divisor : 5;
+        
+        // By default the width is multipled by 2, so divide by 2 first then use the new multiplier
+        w = (w / 2) * multiplier;
+        let tex = await loadTexture(src);
+        let icon = this.effects.addChild(new PIXI.Sprite(tex));
+        icon.width = icon.height = w;
+        icon.x = Math.floor(i / divisor) * w;
+        icon.y = (i % divisor) * w;
+        if ( tint ) icon.tint = tint;
+        bg.drawRoundedRect(icon.x + 1, icon.y + 1, w - 2, w - 2, 2);
+        this.effects.addChild(icon);
+      }
 
-        this.effects.removeChildren().forEach(c => c.destroy());
+      /**
+   * Get an array of icon paths which represent valid status effect choices
+   * @private
+   */
+    static _getStatusEffectChoices() {
+    const token = this.object;
 
-        // Draw status effects
-        if (this.data.effects.length > 0 ) {
-
-            // Determine the grid sizing for each effect icon
-            let w = Math.round(canvas.dimensions.size / 2 / 5) * multiplier;
-
-            // Draw a background Graphics object
-            let bg = this.effects.addChild(new PIXI.Graphics()).beginFill(0x000000, 0.40).lineStyle(1.0, 0x000000);
-
-            // Draw each effect icon
-            this.data.effects.forEach((src, i) => {
-                let tex = PIXI.Texture.from(src, { scale: 1.0 });
-                let icon = this.effects.addChild(new PIXI.Sprite(tex));
-                icon.width = icon.height = w;
-                icon.x = Math.floor(i / divisor) * w;
-                icon.y = (i % divisor) * w;
-                bg.drawRoundedRect(icon.x + 1, icon.y + 1, w - 2, w - 2, 2);
-                this.effects.addChild(icon);
-            });
+    // Get statuses which are active for the token actor
+    const actor = token.actor || null;
+    const statuses = actor ? actor.effects.reduce((obj, e) => {
+      const id = e.getFlag("core", "statusId");
+      if ( id ) {
+        obj[id] = {
+          id: id,
+          overlay: !!e.getFlag("core", "overlay")
         }
+      }
+      return obj;
+    }, {}) : {};
 
-        // Draw overlay effect
-        if ( this.data.overlayEffect ) {
-            let tex = PIXI.Texture.from(this.data.overlayEffect, { scale: 1.0 });
-            let icon = new PIXI.Sprite(tex),
-                size = Math.min(this.w * 0.6, this.h * 0.6);
-            icon.width = icon.height = size;
-            icon.position.set((this.w - size) / 2, (this.h - size) / 2);
-            icon.alpha = 0.80;
-            this.effects.addChild(icon);
-        }
-    }
+    // Prepare the list of effects from the configured defaults and any additional effects present on the Token
+    const tokenEffects = duplicate(token.data.effects) || [];
+    if ( token.data.overlayEffect ) tokenEffects.push(token.data.overlayEffect);
+    return CONFIG.statusEffects.concat(tokenEffects).reduce((obj, e) => {
+      const src = e.icon ?? e;
+      // Allow duplicate entries by commenting out the line below.
+      // if ( src in obj ) return obj;
+      const status = statuses[e.id] || {};
+      const isActive = !!status.id || token.data.effects.includes(src);
+      const isOverlay = !!status.overlay || token.data.overlayEffect === src;
+      obj[src] = {
+        id: e.id ?? "",
+        title: e.label ? game.i18n.localize(e.label) : null,
+        src,
+        isActive,
+        isOverlay,
+        cssClass: [
+          isActive ? "active" : null,
+          isOverlay ? "overlay" : null
+        ].filterJoin(" ")
+      };
+      return obj;
+    }, {});
+  }
 }

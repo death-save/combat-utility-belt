@@ -131,7 +131,7 @@ export const DEFAULT_CONFIG = {
             all: "Everyone"
         },
         icon: "modules/combat-utility-belt/icons/concentrating.svg",
-        alias: "CUB: Concentrator"
+        alias: "Concentrator"
     },
     cubPuter: {
         id: "cub-puter",
@@ -139,10 +139,10 @@ export const DEFAULT_CONFIG = {
         buttonId: "cub-puter-button",
         config: {
             crt: true,
-            terminal: true,
-            startup: true,
-            greeting: true,
-            instructions: true,
+            terminal: false,
+            startup: false,
+            greeting: false,
+            instructions: false,
             info: true
         }
     },
@@ -156,7 +156,7 @@ export const DEFAULT_CONFIG = {
             id: "cub-condition-lab",
             title: "Condition Lab",
         },
-        title: "CUB: Enhanced Conditions",
+        title: "Enhanced Conditions",
         mapTypes: {
             default: "System - Default",
             custom: "System - Custom",
@@ -185,7 +185,8 @@ export const DEFAULT_CONFIG = {
             }
         ],
         templates: {
-            chatOutput: `${PATH}/templates/chat-conditions.html`,
+            conditionLab: `${PATH}/templates/condition-lab.hbs`,
+            chatOutput: `${PATH}/templates/chat-conditions.hbs`,
             importDialog: `${PATH}/templates/import-conditions.html`
         }
     },
@@ -257,13 +258,17 @@ export const DEFAULT_CONFIG = {
         autoRollHP: false,
         hideAutoRoll: false,
         effectSize: {
-            large: {
-                multiplier: 4,
+            xLarge: {
+                multiplier: 5,
                 divisor: 2
             },
-            medium: {
-                multiplier: 3,
+            large: {
+                multiplier: 3.3,
                 divisor: 3
+            },
+            medium: {
+                multiplier: 2.5,
+                divisor: 4
             },
             small: {
                 multiplier: 2,
@@ -271,9 +276,10 @@ export const DEFAULT_CONFIG = {
             }
         },
         effectSizeChoices: {
-            large: "Large",
-            medium: "Medium",
-            small: "Small"
+            xLarge: "Extra Large - 2x2",
+            large: "Large - 3x3",
+            medium: "Medium - 4x4",
+            small: "Small (Default) - 5x5"
         }
     },
     trackerUtility: {
@@ -308,6 +314,9 @@ export const FLAGS = {
     concentrator: {
         chatMessage: "concentratorChatMessageParsed"
     },
+    enhancedConditions: {
+        conditionId: "conditionId"
+    },
     mightySummoner: {
         mightySummoner: "mightySummoner"
     },
@@ -339,6 +348,7 @@ export const SETTING_KEYS = {
     enhancedConditions: {
         enable: "enableEnhancedConditions",
         coreIcons: "coreStatusIcons",
+        coreEffects: "coreStatusEffects",
         system: "activeSystem",
         map: "activeConditionMap",
         defaultMaps: "defaultConditionMaps",

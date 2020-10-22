@@ -29,21 +29,23 @@
 
     "ENHANCED_CONDITIONS.MapMismatch": "This map does not match your game system and may not work as expected.",
     "ENHANCED_CONDITIONS.ApplyCondition.Failed.NoToken": "Apply Condition failed. No token provided",
-    "ENHANCED_CONDITIONS.ApplyCondition.Failed.NoCondition": "Apply Condition failed. Could not find condition.",
+    "ENHANCED_CONDITIONS.ApplyCondition.Failed.NoCondition": "Apply Condition failed. Could not find condition:",
     "ENHANCED_CONDITIONS.ApplyCondition.Failed.NoIcon": "Apply Condition failed. Could not find icon.",
-    "ENHANCED_CONDITIONS.ApplyCondition.Failed.AlreadyActive": "Apply Condition failed. Condition already active.",
+    "ENHANCED_CONDITIONS.ApplyCondition.Failed.AlreadyActive": "is already active. Apply Condition failed",
     
-    "ENHANCED_CONDITIONS.GetConditions.Failed.NoToken": "Get Conditions failed. No token provided",
+    "ENHANCED_CONDITIONS.GetConditions.Failed.NoToken": "Get Conditions failed. No entity provided and none could be found automatically",
     "ENHANCED_CONDITIONS.GetConditions.Failed.NoCondition": "Get Conditions failed. No Condition Map found",
+    "ENHANCED_CONDITIONS.GetConditions.Failed.NoResults": "Get Conditions failed. No Conditions found on Actor/Token",
     
     "ENHANCED_CONDITIONS.RemoveCondition.Failed.NoToken": "Remove Condition failed. No token provided",
-    "ENHANCED_CONDITIONS.RemoveCondition.Failed.NoCondition": "Remove Condition failed. Could not find condition.",
+    "ENHANCED_CONDITIONS.RemoveCondition.Failed.NoCondition": "Remove Condition failed. Could not find condition with name:",
     "ENHANCED_CONDITIONS.RemoveCondition.Failed.NoIcon": "Remove Condition failed. Could not find icon",
-    "ENHANCED_CONDITIONS.RemoveCondition.Failed.NotActive": "Remove Condition failed. Condition is not active on token",
+    "ENHANCED_CONDITIONS.RemoveCondition.Failed.NotActive": "is not active on token. Remove Condition failed.",
     
     "ENHANCED_CONDITIONS.RemoveAllConditions.Failed.NoToken": "Remove Conditions failed. No token/s provided",
     "ENHANCED_CONDITIONS.RemoveAllConditions.Failed.NoCondition": "Remove Conditions failed. There is no active Condition Map",
     
+    "ENHANCED_CONDITIONS.Lab.ActiveEffects.Title": "Active Effect Config",
     "ENHANCED_CONDITIONS.LAB.Import.NoFile": "You did not upload a data file!",
     "ENHANCED_CONDITIONS.Lab.ConfirmDeleteTitle": "Confirm Row Deletion",
     "ENHANCED_CONDITIONS.Lab.ConfirmDeleteContent": "Are you sure you want to delete this row?",
@@ -55,6 +57,22 @@
     "ENHANCED_CONDITIONS.Lab.SaveSuccess": "Condition Lab mapping saved!",
     "ENHANCED_CONDITIONS.Lab.ImportTitle": "Import Condition Map",
     "ENHANCED_CONDITIONS.Lab.ExportTitle": "Export Condition Map",
+    "ENHANCED_CONDITIONS.Lab.Options.Title": "Options:",
+    "ENHANCED_CONDITIONS.Lab.Options.Overlay.Label": "Overlay",
+    "ENHANCED_CONDITIONS.Lab.Options.RemoveOthers.Label": "Remove Others",
+    "ENHANCED_CONDITIONS.Lab.Options.OutputChat.Label": "Output to Chat",
+    "ENHANCED_CONDITIONS.Lab.Options.MarkDefeated.Label": "Mark Defeated",
+    "ENHANCED_CONDITIONS.Lab.Options.Overlay.Title": "Condition is an overlay",
+    "ENHANCED_CONDITIONS.Lab.Options.RemoveOthers.Title": "Remove other conditions when this one is applied",
+    "ENHANCED_CONDITIONS.Lab.Options.MarkDefeated.Title": "Mark matching combatants defeated when this condition is applied",
+    "ENHANCED_CONDITIONS.Lab.Options.OutputChat.Title": "Output this condition to chat when added/removed",
+
+    "ENHANCED_CONDITIONS.ChatCard.Title.Active": "Active Conditions",
+    "ENHANCED_CONDITIONS.ChatCard.Title.Added": "Added Conditions",
+    "ENHANCED_CONDITIONS.ChatCard.Title.Removed": "Removed Conditions",
+
+    "ENHANCED_CONDITIONS.ChatCard.Buttons.Undo": "Undo Remove Condition",
+    "ENHANCED_CONDITIONS.ChatCard.Buttons.Remove": "Remove Condition",
 
     "HIDE_NAMES.ActorForm.Enable": "Hide Actor Name",
     "HIDE_NAMES.ActorForm.EnableHint": "Enable hiding of this actor's name in Combat Tracker and Chat Messages (overrides default)",
@@ -161,12 +179,10 @@
     "SETTINGS.TokenUtility.HideAutoRollN": "Hide Automatic HP Roll",
     "SETTINGS.TokenUtility.HideAutoRollH": "If Hostile Token HP is automatically rolled, hide the roll from players",
     "SETTINGS.TokenUtility.TokenEffectSizeN": "Token Effect Icon Size",
-    "SETTINGS.TokenUtility.TokenEffectSizeH": "Sets the size for token effect icons on the token. Default: Small",
+    "SETTINGS.TokenUtility.TokenEffectSizeH": "Sets the size for token effect icons on the token. Numbers represent the amount of effect icons to show (X * Y). Default: Small - 5x5",
     
     "SETTINGS.Triggler.TriggersN": "Triggler Triggers",
     "SETTINGS.Triggler.TriggersH": "Stores saved Triggler Triggers",
-    
-    "TEMPLATES.EnhancedConditions.ChatCardTitle": "Active Conditions",
 
     "WORDS.Import": "Import",
     "WORDS.Export": "Export",
@@ -177,5 +193,6 @@
     "WORDS.No": "No",
     "WORDS.None": "None",
     "WORDS.GMOnly": "GM Only",
-    "WORDS.Everyone": "Everyone"
+    "WORDS.Everyone": "Everyone",
+    "WORDS.About": "About"
 }

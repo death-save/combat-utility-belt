@@ -40,8 +40,8 @@ export class GiveXP {
      * @param {Object} combat -- the combat instance being deleted
      */
     static _giveXP(combat) {
-        const defeatedEnemies = combat.turns.filter(object => (!object.actor.isPC && object.defeated && object.token.disposition === -1));
-        const playerCombatants = combat.turns.filter(object => (object.actor.isPC && !object.defeated));
+        const defeatedEnemies = combat.turns.filter(object => (!object.actor.hasPlayerOwner && object.defeated && object.token.disposition === -1));
+        const playerCombatants = combat.turns.filter(object => (object.actor.hasPlayerOwner && !object.defeated));
         let experience = 0;
 
         if (defeatedEnemies.length === 0 || playerCombatants.length === 0) {
