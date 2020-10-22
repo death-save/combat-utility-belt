@@ -84,6 +84,8 @@ export class EnhancedConditions {
             cubOption.existingOverlay = tokenData.overlayEffect ?? null;
             cubOption.updateOverlay = update.overlayEffect ?? null;
         }
+
+        return true;
     }
 
     /**
@@ -214,6 +216,9 @@ export class EnhancedConditions {
 
         const token = canvas.tokens.get(game.combat.combatant.tokenId);
 
+        const conditions = EnhancedConditions.getConditions(token);
+
+        /*
         const effects = token.actor.effects.size ? token.actor.effects.entries : [];
         const overlayCondition = token.data.overlayEffect ? EnhancedConditions.getConditionsByIcon(token.data.overlayEffect) : null;
         
@@ -227,13 +232,14 @@ export class EnhancedConditions {
 
         const conditionIds = effects.map(e => e?.data?.flags?.core?.statusId);
         const conditions = EnhancedConditions.lookupEntryMapping(conditionIds) || [];
+        */
 
-        if (!conditions.length) return;
+        if (!conditions || !conditions?.conditions.length) return;
 
         const chatConditions = [];
 
-        for (const condition of conditions) {
-            const outputSetting = condition.options.outputChat ?? Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.outputChat);
+        for (const condition of conditions.conditions) {
+            const outputSetting = condition.options?.outputChat ?? Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.outputChat);
 
             if (outputSetting) {
                 chatConditions.push(condition);
@@ -339,13 +345,15 @@ export class EnhancedConditions {
         if (!condition) return;
 
         const outputSetting = condition.options.outputChat ?? Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.outputChat);
-
         const outputType = type === "delete" ? "removed" : "added";
 
         if (outputSetting) EnhancedConditions.outputChatMessage(actor, condition, {type: outputType});
         
         // If condition marks combatants defeated, look for matching combatant
-        if (type === "create" && condition.options?.markDefeated) EnhancedConditions._markDefeated(actor);
+        if (type === "create") {
+            if (condition.options?.markDefeated) EnhancedConditions._markDefeated(actor);
+            if (condition.options?.removeOthers) EnhancedConditions._removeOtherConditions(actor, condition.id);
+        }
     }
 
     /**
@@ -377,6 +385,8 @@ export class EnhancedConditions {
      * @todo refactor to use actor or token
      */
     static async outputChatMessage(entity, entries, options={type: "active"}) {
+        const isActorEntity = entity instanceof Actor;
+        const isTokenEntity = entity instanceof Token;
         // Turn a single condition mapping entry into an array
         entries = entries instanceof Array ? entries : [entries];
 
@@ -400,8 +410,8 @@ export class EnhancedConditions {
         const chatUser = game.userId;
         //const token = token || this.currentToken;
         const chatType = CONST.CHAT_MESSAGE_TYPES.OTHER;
-
-        let speaker = ChatMessage.getSpeaker({entity});
+        
+        const speaker = isActorEntity ? ChatMessage.getSpeaker({actor: entity}) : ChatMessage.getSpeaker({token: entity});
 
         if (entries.length === 0) {
             return;
@@ -823,19 +833,21 @@ export class EnhancedConditions {
             return;
         }
 
-        const condition = EnhancedConditions.getConditionByName(conditionName);
-
-        if (!condition) {
+        let conditions = EnhancedConditions.getConditionByName(conditionName);
+        
+        if (!conditions) {
             ui.notifications.error(`${game.i18n.localize("ENHANCED_CONDITIONS.ApplyCondition.Failed.NoCondition")} ${conditionName}`);
             console.log(`Combat Utility Belt - Enhanced Conditions | ${game.i18n.localize("ENHANCED_CONDITIONS.ApplyCondition.Failed.NoCondition")}`, conditionName);
             return;
         }
 
-        const effect = EnhancedConditions.getActiveEffect(condition);
+        conditions = conditions instanceof Array ? conditions : [conditions];
 
-        if (!effect) {
-            ui.notifications.error(`${game.i18n.localize("ENHANCED_CONDTIONS.ApplyCondition.Failed.NoEffect")} ${condition}`);
-            console.log(`Combat Utility Belt - Enhanced Condition | ${game.i18n.localize("ENHANCED_CONDTIONS.ApplyCondition.Failed.NoEffect")}`, condition);
+        const effects = EnhancedConditions.getActiveEffect(conditions);
+
+        if (!effects) {
+            ui.notifications.error(`${game.i18n.localize("ENHANCED_CONDTIONS.ApplyCondition.Failed.NoEffect")} ${conditions}`);
+            console.log(`Combat Utility Belt - Enhanced Condition | ${game.i18n.localize("ENHANCED_CONDTIONS.ApplyCondition.Failed.NoEffect")}`, conditions);
             return;
         }
         
@@ -845,9 +857,9 @@ export class EnhancedConditions {
 
         for (let entity of entities) {
             const actor = entity instanceof Actor ? entity : entity instanceof Token ? entity.actor : null;
-            const activeEffect = actor.effects.entries.find(e => e.getFlag(BUTLER.NAME, BUTLER.FLAGS.enhancedConditions.conditionId) === effect.flags[BUTLER.NAME].conditionId);
+            const activeEffects = actor.effects.entries;
 
-            if (activeEffect) {
+            if (activeEffects.length) {
                 if (warn) {
                     ui.notifications.warn(`${conditionName} ${game.i18n.localize("ENHANCED_CONDITIONS.ApplyCondition.Failed.AlreadyActive")}`);
                     console.log(`Combat Utility Belt - Enhanced Conditions | ${conditionName} ${game.i18n.localize("ENHANCED_CONDITIONS.ApplyCondition.Failed.AlreadyActive")}`);
@@ -855,27 +867,33 @@ export class EnhancedConditions {
                 return;
             }
 
-            if (condition?.options?.removeOthers) {
+            if (conditions.some(c => c?.options?.removeOthers)) {
                 await EnhancedConditions.removeAllConditions(actor);
             }
 
-            await actor.createEmbeddedEntity("ActiveEffect", effect);
+            const createData = effects;
+
+            await actor.createEmbeddedEntity("ActiveEffect", createData);
         }
         
     }
 
     /**
-     * Gets a condition from the map by its name
+     * Gets one or more conditions from the map by their name
      * @param {*} conditionName 
      */
-    static getConditionByName(conditionName, map=[]) {
+    static getConditionByName(conditionName, map=null) {
         if (!conditionName) return;
 
-        if (!map.length) map = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.map);
+        if (!(conditionName instanceof Array)) conditionName = [conditionName];
 
-        const condition = map.find(c => c.name === conditionName) ?? null;
+        if (!map) map = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.map);
 
-        return condition;
+        const conditions = map.filter(c => conditionName.includes(c.name)) ?? [];
+
+        if (!conditions.length) return null;
+
+        return conditions.length > 1 ? conditions : conditions.shift();
     }
 
     /**
@@ -983,10 +1001,9 @@ export class EnhancedConditions {
     }
 
     /**
-     * Removes the named condition from a token or tokens
+     * Removes one or more named conditions from an Entity (Actor/Token)
      * @param {*} tokens 
      * @param {*} conditionName
-     * @todo coalesce into a single update
      */
     static async removeCondition(conditionName, entities=null, {warn=true}={}) {
         if (!entities) {
@@ -1003,31 +1020,33 @@ export class EnhancedConditions {
             return;
         }
 
-        const condition = EnhancedConditions.getConditionByName(conditionName);
+        if (!(conditionName instanceof Array)) conditionName = [conditionName];
 
-        if (!condition) {
+        const conditions = EnhancedConditions.getConditionByName(conditionName);
+
+        if (!conditions || (conditions instanceof Array && !conditions.length)) {
             ui.notifications.error(`${game.i18n.localize("ENHANCED_CONDITIONS.RemoveCondition.Failed.NoCondition")} ${conditionName}`);
             console.log(`Combat Utility Belt - Enhanced Conditions | ${game.i18n.localize("ENHANCED_CONDITIONS.RemoveCondition.Failed.NoCondition")}`, conditionName);
             return;
         }
 
-        const effect = EnhancedConditions.getActiveEffect(condition);
+        let effects = EnhancedConditions.getActiveEffect(conditions);
 
-        if (!effect) {
+        if (!effects) {
             ui.notifications.error(game.i18n.localize("ENHANCED_CONDTIONS.RemoveCondition.Failed.NoEffect"));
             console.log(`Combat Utility Belt - Enhanced Condition | ${game.i18n.localize("ENHANCED_CONDTIONS.RemoveCondition.Failed.NoEffect")}`, condition);
             return;
         }
+
+        if (!(effects instanceof Array)) effects = [effects];
         
-        if (entities && !(entities instanceof Array)) {
-            entities = [entities];
-        }
+        if (entities && !(entities instanceof Array)) entities = [entities];
 
         for (let entity of entities) {
             const actor = entity instanceof Actor ? entity : entity instanceof Token ? entity.actor : null;
-            const activeEffect = actor.effects.entries.find(e => e.getFlag(BUTLER.NAME, BUTLER.FLAGS.enhancedConditions.conditionId) === effect.flags[BUTLER.NAME].conditionId);
+            const activeEffects = actor.effects.entries.filter(e => effects.map(e => e.flags[BUTLER.NAME].conditionId).includes(e.getFlag(BUTLER.NAME, BUTLER.FLAGS.enhancedConditions.conditionId)));
 
-            if (!activeEffect) {
+            if (!activeEffects || (activeEffects && !activeEffects.length)) {
                 if (warn) {
                     ui.notifications.warn(`${conditionName} ${game.i18n.localize("ENHANCED_CONDITIONS.RemoveCondition.Failed.NotActive")}`);
                     console.log(`Combat Utility Belt - Enhanced Conditions | ${conditionName} ${game.i18n.localize("ENHANCED_CONDITIONS.RemoveCondition.Failed.NotActive")}")`);
@@ -1035,7 +1054,9 @@ export class EnhancedConditions {
                 return;
             }
 
-            await actor.deleteEmbeddedEntity("ActiveEffect", activeEffect.id);
+            const effectIds = activeEffects.map(e => e.id);
+
+            await actor.deleteEmbeddedEntity("ActiveEffect", effectIds);
         }
     }
 
