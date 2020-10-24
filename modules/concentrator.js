@@ -26,16 +26,16 @@ export class Concentrator {
      * @returns {Boolean}
      */
     static _isConcentrating(token) {
-        const tokenEffects = getProperty(token, "data.effects");
-        
-        if (!tokenEffects?.length) {
-            return;
+        const tokenEffects = getProperty(token, "actor.effects");
+
+        if (!tokenEffects?.size) {
+                return;
         }
 
         const conditionName = Sidekick.getSetting(SETTING_KEYS.concentrator.conditionName);
         const concentratingIcon = EnhancedConditions.getIconsByCondition(conditionName, {firstOnly: true});
 
-        const _isConcentrating = Boolean(tokenEffects.find(e => e === concentratingIcon)) || false;
+        const _isConcentrating = Boolean(tokenEffects.find(e => e.data.icon === concentratingIcon)) || false;
 
         return _isConcentrating;
     }
@@ -174,15 +174,15 @@ export class Concentrator {
             const item = itemId ? (tokenId ? t.actor.getOwnedItem(itemId) : actor.getOwnedItem(itemId)) : null;
             const isSpell = (concentrationDiv.length > 0 && itemDiv.length === 0) ? true : (itemDiv.length > 0 ? item.type === "spell" : false);
             const isConcentration = concentrationDiv.length > 0 ? true : (itemDiv.length > 0 && isSpell) ? item.data.data.components.concentration : false;
-
+            
             if (!isConcentration) {
                 continue;
             }
 
-            const tokenEffects = getProperty(t, "data.effects");
+            const tokenEffects = getProperty(t, "actor.effects");
             const conditionName = Sidekick.getSetting(SETTING_KEYS.concentrator.conditionName);
             const concentratingIcon = EnhancedConditions.getIconsByCondition(conditionName, {firstOnly: true});
-            const isAlreadyConcentrating = !!tokenEffects.find(e => e === concentratingIcon);
+            const isAlreadyConcentrating = !!tokenEffects.find(e => e.data.icon === concentratingIcon);
 
             if (isAlreadyConcentrating) {
 

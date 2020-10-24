@@ -174,8 +174,8 @@ export class EnhancedConditions {
      */
     static _onCreateActiveEffect(actor, createData, options, userId) {
         const enable = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.enable);
-
-        if (!enable || !game.user.isGM || (game.users.get(userId).isGM && game.userId !== userId)) {
+        
+        if (!enable || game.userId !== userId) {
             return;
         }
 
@@ -191,8 +191,8 @@ export class EnhancedConditions {
      */
     static _onDeleteActiveEffect(actor, deleteData, options, userId) {
         const enable = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.enable);
-
-        if (!enable || !game.user.isGM || (game.users.get(userId).isGM && game.userId !== userId)) {
+        
+        if (!enable || game.userId !== userId) {
             return;
         }
 
@@ -865,7 +865,7 @@ export class EnhancedConditions {
             const actor = entity instanceof Actor ? entity : entity instanceof Token ? entity.actor : null;
             const activeEffects = actor.effects.entries;
 
-            if (activeEffects.length) {
+            if (activeEffects.some(e=>e.data?.label == effects?.label)) {
                 if (warn) {
                     ui.notifications.warn(`${conditionName} ${game.i18n.localize("ENHANCED_CONDITIONS.ApplyCondition.Failed.AlreadyActive")}`);
                     console.log(`Combat Utility Belt - Enhanced Conditions | ${conditionName} ${game.i18n.localize("ENHANCED_CONDITIONS.ApplyCondition.Failed.AlreadyActive")}`);
