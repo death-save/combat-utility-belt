@@ -29,7 +29,7 @@ export class Concentrator {
         const tokenEffects = getProperty(token, "actor.effects");
 
         if (!tokenEffects?.size) {
-                return;
+            return;
         }
 
         const conditionName = Sidekick.getSetting(SETTING_KEYS.concentrator.conditionName);
