@@ -312,10 +312,14 @@ export const DEFAULT_CONFIG = {
 
 export const FLAGS = {
     concentrator: {
-        chatMessage: "concentratorChatMessageParsed"
+        chatMessage: "concentratorChatMessageParsed",
+        damageTaken: "damageWasTaken",
+        damageAmount: "damageAmount",
+        isDead: "isDead"
     },
     enhancedConditions: {
-        conditionId: "conditionId"
+        conditionId: "conditionId",
+        overlay: "overlay"
     },
     mightySummoner: {
         mightySummoner: "mightySummoner"

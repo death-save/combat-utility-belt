@@ -73,11 +73,12 @@ export class Signal {
                 TokenUtility.patchCore();
             }
 
-            // External methods
-            game.cub.getCondition = EnhancedConditions.getConditionByName;
-            game.cub.addCondition = EnhancedConditions.addCondition;
+            // Expose API methods
+            game.cub.getCondition = EnhancedConditions.getCondition;
             game.cub.getConditions = EnhancedConditions.getConditions;
+            game.cub.getConditionEffects = EnhancedConditions.getConditionEffects;
             game.cub.hasCondition = EnhancedConditions.hasCondition;
+            game.cub.addCondition = EnhancedConditions.addCondition;
             game.cub.removeCondition = EnhancedConditions.removeCondition;
             game.cub.removeAllConditions = EnhancedConditions.removeAllConditions;
 
@@ -122,10 +123,6 @@ export class Signal {
 
         Hooks.on("preCreateToken", (scene, tokenData, options, userId) => {
             return TokenUtility._onPreCreateToken(scene, tokenData, options, userId);
-        });
-
-        Hooks.on("createToken", (scene, tokenData, options, userId) => {
-            //TokenUtility._onCreateToken(scene, tokenData, options, userId);
         });
 
         Hooks.on("preUpdateToken", (scene, tokenData, updateData, options, userId) => {
