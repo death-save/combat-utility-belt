@@ -11,6 +11,17 @@
 - **PF2e users**: Enhanced Conditions `Output to Chat` setting will cause duplicate chat messages due to similar function built into the system.
 - Chat log may not re-render when Hide Names settings are changed. This may cause the old name to still show in the log for players. Advise players to reload Foundry if you change these settings mid-session.
 
+## [1.3.1] - 2020-10-24
+### Changed
+- Some API methods have changed again. These are in a state of flux right now, so please monitor the API docs under the `EnhancedConditions` class.
+
+### Fixed
+- Enhanced Conditions correctly adds Conditions other than Blinded again
+- Enhanced Conditions sets `overlay` type effects correctly again
+- Concentrator correctly adds Concentrating condition again
+- Concentrator prompts on damage again
+- Triggler trigger fire reliably again
+
 ## [1.3.0] - 2020-10-21
 ### Added
 - Condition Lab now supports **Active Effects**! A new `Active Effects Config` button appears next to each Condition's name in the Condition Lab. Clicking the button opens the Enhanced Effects Config app that allows you to configure the Active Effects for that Condition.

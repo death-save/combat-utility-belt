@@ -118,31 +118,196 @@ Call app default options
 Request a roll or display concentration checks when damage is taken.
 
 **Kind**: global class  
-**Author**: @jacobmcauley  
-**Author**: @eclarke12  
+**Author**: JacobMcAuley  
+**Author**: Evan Clarke  
 **Todo**
 
 - [ ] Supply DC
 
 
 * [Concentrator](#Concentrator)
+    * [._onRenderChatMessage(app, html, data)](#Concentrator._onRenderChatMessage)
+    * [._onPreUpdateActor(actor, update, options, userId)](#Concentrator._onPreUpdateActor)
+    * [._onUpdateActor(actor, update, options)](#Concentrator._onUpdateActor)
+    * [._onPreUpdateToken(scene, tokenData, update, options)](#Concentrator._onPreUpdateToken)
+    * [._onUpdateToken(scene, token, update, options, userId)](#Concentrator._onUpdateToken)
+    * [._processDeath(entity)](#Concentrator._processDeath)
+    * [._determinePromptedUsers(options)](#Concentrator._determinePromptedUsers)
+    * [._distributePrompts(actorId, users)](#Concentrator._distributePrompts)
+    * [._displayPrompt(actorId, userId)](#Concentrator._displayPrompt)
+    * [._displayChat(entity, damage)](#Concentrator._displayChat)
+    * [._displayDeathChat(entity)](#Concentrator._displayDeathChat)
+    * [._notifyDoubleConcentration(entity)](#Concentrator._notifyDoubleConcentration)
+    * [._promptEnableEnhancedConditions()](#Concentrator._promptEnableEnhancedConditions)
+    * [._createCondition()](#Concentrator._createCondition)
     * [._wasDamageTaken(newHealth, oldHealth)](#Concentrator._wasDamageTaken) ⇒ <code>Boolean</code>
     * [._isConcentrating(token)](#Concentrator._isConcentrating) ⇒ <code>Boolean</code>
     * [._calculateDamage(newHealth, oldHealth)](#Concentrator._calculateDamage) ⇒ <code>Number</code>
-    * [._processDeath(token)](#Concentrator._processDeath)
-    * [._promptEnableEnhancedConditions()](#Concentrator._promptEnableEnhancedConditions)
-    * [._createCondition()](#Concentrator._createCondition)
-    * [._onRenderChatMessage(app, html, data)](#Concentrator._onRenderChatMessage)
-    * [._onPreUpdateToken(scene, tokenData, update, options)](#Concentrator._onPreUpdateToken)
-    * [._onPreUpdateActor(actor, update, options)](#Concentrator._onPreUpdateActor)
-    * [._onUpdateActor(actor, update, options)](#Concentrator._onUpdateActor)
-    * [._onUpdateToken(scene, token, update, options, userId)](#Concentrator._onUpdateToken)
-    * [._determineDisplayedUsers(options)](#Concentrator._determineDisplayedUsers)
-    * [._displayChat(token, damage)](#Concentrator._displayChat)
-    * [._displayDeathChat(token)](#Concentrator._displayDeathChat)
-    * [._distributePrompts(actorId, users)](#Concentrator._distributePrompts)
-    * [._displayPrompt(actorId, userId)](#Concentrator._displayPrompt)
-    * [._notifyDoubleConcentration(token)](#Concentrator._notifyDoubleConcentration)
+
+<a name="Concentrator._onRenderChatMessage"></a>
+
+### Concentrator.\_onRenderChatMessage(app, html, data)
+Handle render ChatMessage
+
+**Kind**: static method of [<code>Concentrator</code>](#Concentrator)  
+
+| Param | Type |
+| --- | --- |
+| app | <code>\*</code> | 
+| html | <code>\*</code> | 
+| data | <code>\*</code> | 
+
+<a name="Concentrator._onPreUpdateActor"></a>
+
+### Concentrator.\_onPreUpdateActor(actor, update, options, userId)
+preUpdateActor Handler
+
+**Kind**: static method of [<code>Concentrator</code>](#Concentrator)  
+
+| Param | Type |
+| --- | --- |
+| actor | <code>\*</code> | 
+| update | <code>\*</code> | 
+| options | <code>\*</code> | 
+| userId | <code>\*</code> | 
+
+<a name="Concentrator._onUpdateActor"></a>
+
+### Concentrator.\_onUpdateActor(actor, update, options)
+Update Actor handler
+
+**Kind**: static method of [<code>Concentrator</code>](#Concentrator)  
+
+| Param | Type |
+| --- | --- |
+| actor | <code>\*</code> | 
+| update | <code>\*</code> | 
+| options | <code>\*</code> | 
+
+<a name="Concentrator._onPreUpdateToken"></a>
+
+### Concentrator.\_onPreUpdateToken(scene, tokenData, update, options)
+preUpdateToken handler
+
+**Kind**: static method of [<code>Concentrator</code>](#Concentrator)  
+
+| Param | Type |
+| --- | --- |
+| scene | <code>\*</code> | 
+| tokenData | <code>\*</code> | 
+| update | <code>\*</code> | 
+| options | <code>\*</code> | 
+
+<a name="Concentrator._onUpdateToken"></a>
+
+### Concentrator.\_onUpdateToken(scene, token, update, options, userId)
+Update Token handler
+
+**Kind**: static method of [<code>Concentrator</code>](#Concentrator)  
+
+| Param | Type |
+| --- | --- |
+| scene | <code>\*</code> | 
+| token | <code>\*</code> | 
+| update | <code>\*</code> | 
+| options | <code>\*</code> | 
+| userId | <code>\*</code> | 
+
+<a name="Concentrator._processDeath"></a>
+
+### Concentrator.\_processDeath(entity)
+Processes the steps necessary when the concentrating token is dead
+
+**Kind**: static method of [<code>Concentrator</code>](#Concentrator)  
+
+| Param | Type |
+| --- | --- |
+| entity | <code>\*</code> | 
+
+<a name="Concentrator._determinePromptedUsers"></a>
+
+### Concentrator.\_determinePromptedUsers(options)
+Distributes concentration prompts to affected users
+
+**Kind**: static method of [<code>Concentrator</code>](#Concentrator)  
+
+| Param | Type |
+| --- | --- |
+| options | <code>\*</code> | 
+
+<a name="Concentrator._distributePrompts"></a>
+
+### Concentrator.\_distributePrompts(actorId, users)
+Distribute concentration prompts to affected users
+
+**Kind**: static method of [<code>Concentrator</code>](#Concentrator)  
+
+| Param | Type |
+| --- | --- |
+| actorId | <code>\*</code> | 
+| users | <code>\*</code> | 
+
+<a name="Concentrator._displayPrompt"></a>
+
+### Concentrator.\_displayPrompt(actorId, userId)
+Displays the prompt to roll a concentration check
+
+**Kind**: static method of [<code>Concentrator</code>](#Concentrator)  
+
+| Param | Type |
+| --- | --- |
+| actorId | <code>\*</code> | 
+| userId | <code>\*</code> | 
+
+<a name="Concentrator._displayChat"></a>
+
+### Concentrator.\_displayChat(entity, damage)
+Displays a chat message for concentration checks
+
+**Kind**: static method of [<code>Concentrator</code>](#Concentrator)  
+
+| Param | Type |
+| --- | --- |
+| entity | <code>\*</code> | 
+| damage | <code>\*</code> | 
+
+<a name="Concentrator._displayDeathChat"></a>
+
+### Concentrator.\_displayDeathChat(entity)
+Displays a message when a concentrating token dies
+
+**Kind**: static method of [<code>Concentrator</code>](#Concentrator)  
+
+| Param | Type |
+| --- | --- |
+| entity | <code>\*</code> | 
+
+<a name="Concentrator._notifyDoubleConcentration"></a>
+
+### Concentrator.\_notifyDoubleConcentration(entity)
+Displays a chat message to GMs if a Concentration spell is cast while already concentrating
+
+**Kind**: static method of [<code>Concentrator</code>](#Concentrator)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| entity | <code>\*</code> | the entity with double concentration |
+
+<a name="Concentrator._promptEnableEnhancedConditions"></a>
+
+### Concentrator.\_promptEnableEnhancedConditions()
+Executes when the module setting is enabled
+
+**Kind**: static method of [<code>Concentrator</code>](#Concentrator)  
+<a name="Concentrator._createCondition"></a>
+
+### Concentrator.\_createCondition()
+Creates a condition for Concentrating if none exists
+
+**Kind**: static method of [<code>Concentrator</code>](#Concentrator)  
+**Todo**
+
+- [ ] extract to Enhanced Conditions and make it generic
 
 <a name="Concentrator._wasDamageTaken"></a>
 
@@ -178,170 +343,6 @@ Calculates damage taken based on two health values
 | --- | --- |
 | newHealth | <code>\*</code> | 
 | oldHealth | <code>\*</code> | 
-
-<a name="Concentrator._processDeath"></a>
-
-### Concentrator.\_processDeath(token)
-Processes the steps necessary when the concentrating token is dead
-
-**Kind**: static method of [<code>Concentrator</code>](#Concentrator)  
-
-| Param | Type |
-| --- | --- |
-| token | <code>\*</code> | 
-
-<a name="Concentrator._promptEnableEnhancedConditions"></a>
-
-### Concentrator.\_promptEnableEnhancedConditions()
-Executes when the module setting is enabled
-
-**Kind**: static method of [<code>Concentrator</code>](#Concentrator)  
-<a name="Concentrator._createCondition"></a>
-
-### Concentrator.\_createCondition()
-Creates a condition for Concentrating if none exists
-
-**Kind**: static method of [<code>Concentrator</code>](#Concentrator)  
-**Todo**
-
-- [ ] extract to Enhanced Conditions and make it generic
-
-<a name="Concentrator._onRenderChatMessage"></a>
-
-### Concentrator.\_onRenderChatMessage(app, html, data)
-Handle render ChatMessage
-
-**Kind**: static method of [<code>Concentrator</code>](#Concentrator)  
-
-| Param | Type |
-| --- | --- |
-| app | <code>\*</code> | 
-| html | <code>\*</code> | 
-| data | <code>\*</code> | 
-
-<a name="Concentrator._onPreUpdateToken"></a>
-
-### Concentrator.\_onPreUpdateToken(scene, tokenData, update, options)
-Handles preUpdateToken
-
-**Kind**: static method of [<code>Concentrator</code>](#Concentrator)  
-
-| Param | Type |
-| --- | --- |
-| scene | <code>\*</code> | 
-| tokenData | <code>\*</code> | 
-| update | <code>\*</code> | 
-| options | <code>\*</code> | 
-
-<a name="Concentrator._onPreUpdateActor"></a>
-
-### Concentrator.\_onPreUpdateActor(actor, update, options)
-Handles preUpdate Actor
-
-**Kind**: static method of [<code>Concentrator</code>](#Concentrator)  
-
-| Param | Type |
-| --- | --- |
-| actor | <code>\*</code> | 
-| update | <code>\*</code> | 
-| options | <code>\*</code> | 
-
-<a name="Concentrator._onUpdateActor"></a>
-
-### Concentrator.\_onUpdateActor(actor, update, options)
-Handle update Actor
-
-**Kind**: static method of [<code>Concentrator</code>](#Concentrator)  
-
-| Param | Type |
-| --- | --- |
-| actor | <code>\*</code> | 
-| update | <code>\*</code> | 
-| options | <code>\*</code> | 
-
-<a name="Concentrator._onUpdateToken"></a>
-
-### Concentrator.\_onUpdateToken(scene, token, update, options, userId)
-Handle update Token
-
-**Kind**: static method of [<code>Concentrator</code>](#Concentrator)  
-
-| Param | Type |
-| --- | --- |
-| scene | <code>\*</code> | 
-| token | <code>\*</code> | 
-| update | <code>\*</code> | 
-| options | <code>\*</code> | 
-| userId | <code>\*</code> | 
-
-<a name="Concentrator._determineDisplayedUsers"></a>
-
-### Concentrator.\_determineDisplayedUsers(options)
-Distributes concentration prompts to affected users
-
-**Kind**: static method of [<code>Concentrator</code>](#Concentrator)  
-
-| Param | Type |
-| --- | --- |
-| options | <code>\*</code> | 
-
-<a name="Concentrator._displayChat"></a>
-
-### Concentrator.\_displayChat(token, damage)
-Displays a chat message for concentration checks
-
-**Kind**: static method of [<code>Concentrator</code>](#Concentrator)  
-
-| Param | Type |
-| --- | --- |
-| token | <code>\*</code> | 
-| damage | <code>\*</code> | 
-
-<a name="Concentrator._displayDeathChat"></a>
-
-### Concentrator.\_displayDeathChat(token)
-Displays a message when a concentrating token dies
-
-**Kind**: static method of [<code>Concentrator</code>](#Concentrator)  
-
-| Param | Type |
-| --- | --- |
-| token | <code>\*</code> | 
-
-<a name="Concentrator._distributePrompts"></a>
-
-### Concentrator.\_distributePrompts(actorId, users)
-Distribute concentration prompts to affected users
-
-**Kind**: static method of [<code>Concentrator</code>](#Concentrator)  
-
-| Param | Type |
-| --- | --- |
-| actorId | <code>\*</code> | 
-| users | <code>\*</code> | 
-
-<a name="Concentrator._displayPrompt"></a>
-
-### Concentrator.\_displayPrompt(actorId, userId)
-Displays the prompt to roll a concentration check
-
-**Kind**: static method of [<code>Concentrator</code>](#Concentrator)  
-
-| Param | Type |
-| --- | --- |
-| actorId | <code>\*</code> | 
-| userId | <code>\*</code> | 
-
-<a name="Concentrator._notifyDoubleConcentration"></a>
-
-### Concentrator.\_notifyDoubleConcentration(token)
-Displays a chat message to GMs if a Concentration spell is cast while already concentrating
-
-**Kind**: static method of [<code>Concentrator</code>](#Concentrator)  
-
-| Param | Type |
-| --- | --- |
-| token | <code>\*</code> | 
 
 <a name="ConditionLab"></a>
 
@@ -596,7 +597,7 @@ Builds a mapping between status icons and journal entries that represent conditi
     * [._processActiveEffectChange(actor, update, type)](#EnhancedConditions._processActiveEffectChange)
     * [.lookupEntryMapping(effectIds, [map])](#EnhancedConditions.lookupEntryMapping)
     * [.outputChatMessage()](#EnhancedConditions.outputChatMessage)
-    * [._markDefeated(entity)](#EnhancedConditions._markDefeated)
+    * [._toggleDefeated(entities)](#EnhancedConditions._toggleDefeated)
     * [._removeOtherConditions(entity, conditionId)](#EnhancedConditions._removeOtherConditions)
     * [._createLabButton(html)](#EnhancedConditions._createLabButton)
     * [._toggleLabButtonVisibility(display)](#EnhancedConditions._toggleLabButtonVisibility)
@@ -604,7 +605,10 @@ Builds a mapping between status icons and journal entries that represent conditi
     * [._prepareMap(conditionMap)](#EnhancedConditions._prepareMap)
     * [._backupCoreEffects()](#EnhancedConditions._backupCoreEffects)
     * [._createJournalEntry(condition)](#EnhancedConditions._createJournalEntry)
+    * [._lookupConditionByName(conditionName, map)](#EnhancedConditions._lookupConditionByName)
+    * [._updateStatusEffects(conditionMap)](#EnhancedConditions._updateStatusEffects)
     * [._prepareStatusEffects(conditionMap)](#EnhancedConditions._prepareStatusEffects) ⇒ <code>Array</code>
+    * [._prepareActiveEffects(effects)](#EnhancedConditions._prepareActiveEffects)
     * [.getConditionIcons()](#EnhancedConditions.getConditionIcons)
     * [.getIconsByCondition(condition)](#EnhancedConditions.getIconsByCondition)
     * [.getConditionsByIcon(icon)](#EnhancedConditions.getConditionsByIcon)
@@ -612,12 +616,13 @@ Builds a mapping between status icons and journal entries that represent conditi
     * [.getDefaultMap(system)](#EnhancedConditions.getDefaultMap)
     * [.buildDefaultMap(system)](#EnhancedConditions.buildDefaultMap)
     * [.addCondition(entities, conditionName)](#EnhancedConditions.addCondition)
-    * [.lookupConditionByName(conditionName, map)](#EnhancedConditions.lookupConditionByName)
+    * [.getCondition(conditionName, map)](#EnhancedConditions.getCondition)
     * [.getConditions(entities)](#EnhancedConditions.getConditions) ⇒ <code>Array</code>
-    * [.hasCondition(condition, tokens)](#EnhancedConditions.hasCondition)
+    * [.getActiveEffect(condition)](#EnhancedConditions.getActiveEffect)
+    * [.getConditionEffects(entities, map, warn)](#EnhancedConditions.getConditionEffects) ⇒ <code>Map</code> \| <code>Object</code>
+    * [.hasCondition(conditionName, entities)](#EnhancedConditions.hasCondition) ⇒ <code>Boolean</code>
     * [.removeCondition(entities, conditionName, options)](#EnhancedConditions.removeCondition)
     * [.removeAllConditions(entities)](#EnhancedConditions.removeAllConditions)
-    * [.getActiveEffect(condition)](#EnhancedConditions.getActiveEffect)
 
 <a name="EnhancedConditions._onReady"></a>
 
@@ -738,16 +743,17 @@ Output one or more condition entries to chat
 
 - [ ] refactor to use actor or token
 
-<a name="EnhancedConditions._markDefeated"></a>
+<a name="EnhancedConditions._toggleDefeated"></a>
 
-### EnhancedConditions.\_markDefeated(entity)
+### EnhancedConditions.\_toggleDefeated(entities)
 Marks a Combatants for a particular entity as defeated
 
 **Kind**: static method of [<code>EnhancedConditions</code>](#EnhancedConditions)  
 
-| Param | Type |
-| --- | --- |
-| entity | <code>Actor</code> \| <code>Token</code> | 
+| Param | Type | Description |
+| --- | --- | --- |
+| entities | <code>Actor</code> \| <code>Token</code> | the entity to mark defeated |
+| options.markDefeated | <code>Boolean</code> | an optional state flag (default=true) |
 
 <a name="EnhancedConditions._removeOtherConditions"></a>
 
@@ -819,6 +825,29 @@ Creates journal entries for any conditions that don't have one
 | --- | --- | --- |
 | condition | <code>String</code> | the condition being evaluated |
 
+<a name="EnhancedConditions._lookupConditionByName"></a>
+
+### EnhancedConditions.\_lookupConditionByName(conditionName, map)
+Gets one or more conditions from the map by their name
+
+**Kind**: static method of [<code>EnhancedConditions</code>](#EnhancedConditions)  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| conditionName | <code>String</code> |  | the condition to get |
+| map | <code>Array</code> | <code></code> | the condition map to search |
+
+<a name="EnhancedConditions._updateStatusEffects"></a>
+
+### EnhancedConditions.\_updateStatusEffects(conditionMap)
+Updates the CONFIG.statusEffect effects with Condition Map ones
+
+**Kind**: static method of [<code>EnhancedConditions</code>](#EnhancedConditions)  
+
+| Param | Type |
+| --- | --- |
+| conditionMap | <code>\*</code> | 
+
 <a name="EnhancedConditions._prepareStatusEffects"></a>
 
 ### EnhancedConditions.\_prepareStatusEffects(conditionMap) ⇒ <code>Array</code>
@@ -830,6 +859,17 @@ Converts the given Condition Map (one or more Conditions) into a Status Effects 
 | Param | Type |
 | --- | --- |
 | conditionMap | <code>Array</code> \| <code>Object</code> | 
+
+<a name="EnhancedConditions._prepareActiveEffects"></a>
+
+### EnhancedConditions.\_prepareActiveEffects(effects)
+Prepares one or more ActiveEffects from Conditions for placement on an actor
+
+**Kind**: static method of [<code>EnhancedConditions</code>](#EnhancedConditions)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| effects | <code>Object</code> \| <code>Array</code> | a single ActiveEffect data object or an array of ActiveEffect data objects |
 
 <a name="EnhancedConditions.getConditionIcons"></a>
 
@@ -917,17 +957,18 @@ Applies the named condition to the provided entities (Actors or Tokens)
 ```js
 // Add the Condition "Charmed" to the currently controlled Token/sgame.cub.addCondition("Charmed");
 ```
-<a name="EnhancedConditions.lookupConditionByName"></a>
+<a name="EnhancedConditions.getCondition"></a>
 
-### EnhancedConditions.lookupConditionByName(conditionName, map)
-Gets one or more conditions from the map by their name
+### EnhancedConditions.getCondition(conditionName, map)
+Gets a condition by name from the Condition Map
 
 **Kind**: static method of [<code>EnhancedConditions</code>](#EnhancedConditions)  
 
-| Param | Type | Default | Description |
-| --- | --- | --- | --- |
-| conditionName | <code>String</code> |  | the condition to get |
-| map | <code>Array</code> | <code></code> | the condition map to search |
+| Param | Type | Default |
+| --- | --- | --- |
+| conditionName | <code>\*</code> |  | 
+| map | <code>\*</code> | <code></code> | 
+| options.warn | <code>\*</code> |  | 
 
 <a name="EnhancedConditions.getConditions"></a>
 
@@ -940,6 +981,7 @@ Retrieves all active conditions for one or more given entities (Actors or Tokens
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
 | entities | <code>Actor</code> \| <code>Token</code> | <code></code> | one or more Actors or Tokens to get Conditions from |
+| options.warn | <code>Boolean</code> |  | output notifications |
 
 **Example**  
 ```js
@@ -949,22 +991,53 @@ Retrieves all active conditions for one or more given entities (Actors or Tokens
 ```js
 // Get conditions for the currently controlled Tokengame.cub.getConditions();
 ```
-<a name="EnhancedConditions.hasCondition"></a>
+<a name="EnhancedConditions.getActiveEffect"></a>
 
-### EnhancedConditions.hasCondition(condition, tokens)
-Checks if the provided token or tokens has the given condition
+### EnhancedConditions.getActiveEffect(condition)
+Gets the Active Effect data (if any) for the given condition
 
 **Kind**: static method of [<code>EnhancedConditions</code>](#EnhancedConditions)  
-**Todo**
 
-- [ ] #289 requires redesign for Active Effects
+| Param | Type |
+| --- | --- |
+| condition | <code>\*</code> | 
 
+<a name="EnhancedConditions.getConditionEffects"></a>
 
-| Param | Type | Default |
-| --- | --- | --- |
-| condition | <code>\*</code> |  | 
-| tokens | <code>\*</code> | <code></code> | 
+### EnhancedConditions.getConditionEffects(entities, map, warn) ⇒ <code>Map</code> \| <code>Object</code>
+Gets any Active Effect instances present on the entities (Actor/s or Token/s) that are mapped Conditions
 
+**Kind**: static method of [<code>EnhancedConditions</code>](#EnhancedConditions)  
+**Returns**: <code>Map</code> \| <code>Object</code> - A Map containing the Actor Id and the Condition Active Effect instances if any  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| entities | <code>String</code> |  | the entities to check |
+| map | <code>Array</code> | <code></code> | the Condition map to check (optional) |
+| warn | <code>Boolean</code> |  | output notifications |
+
+<a name="EnhancedConditions.hasCondition"></a>
+
+### EnhancedConditions.hasCondition(conditionName, entities) ⇒ <code>Boolean</code>
+Checks if the provided Entity (Actor or Token) has the given condition
+
+**Kind**: static method of [<code>EnhancedConditions</code>](#EnhancedConditions)  
+**Returns**: <code>Boolean</code> - hasCondition  Returns true if one or more of the provided entities has one or more of the provided conditions  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| conditionName | <code>String</code> \| <code>Array</code> |  | the name/s of the condition or conditions to check for |
+| entities | <code>Actor</code> \| <code>Token</code> \| <code>Array</code> | <code></code> | the entity or entities to check (Actor/s or Token/s) |
+| options.warn | <code>Boolean</code> |  | output notifications |
+
+**Example**  
+```js
+// Check for the "Blinded" condition on Actor "Bob"game.cub.hasCondition("Blinded", game.actors.getName("Bob"));
+```
+**Example**  
+```js
+// Check for the "Charmed" and "Deafened" conditions on the controlled tokensgame.cub.hasCondition(["Charmed", "Deafened"]);
+```
 <a name="EnhancedConditions.removeCondition"></a>
 
 ### EnhancedConditions.removeCondition(entities, conditionName, options)
@@ -997,6 +1070,7 @@ Removes all conditions from the provided entities
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
 | entities | <code>Actors</code> \| <code>Tokens</code> | <code></code> | One or more Actors or Tokens to remove Conditions from |
+| options.warn | <code>Boolean</code> |  | output notifications |
 
 **Example**  
 ```js
@@ -1006,17 +1080,6 @@ Removes all conditions from the provided entities
 ```js
 // Remove all Conditions on the currently controlled Tokengame.cub.removeAllConditions();
 ```
-<a name="EnhancedConditions.getActiveEffect"></a>
-
-### EnhancedConditions.getActiveEffect(condition)
-Gets the Active Effect data (if any) for the given condition
-
-**Kind**: static method of [<code>EnhancedConditions</code>](#EnhancedConditions)  
-
-| Param | Type |
-| --- | --- |
-| condition | <code>\*</code> | 
-
 <a name="PanSelect"></a>
 
 ## PanSelect
