@@ -36,8 +36,8 @@
     },
     {
       "lang": "pt-BR",
-      "name": "português do Brasil",
-      "path": "lang/pt-BR.json"
+      "name": "Português (Brasil)",
+      "path": "langs/pt-BR.json"
     },
     {
       "lang": "es",
