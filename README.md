@@ -1,4 +1,4 @@
-** WARNING THIS README IS OUT OF DATE**    
+** WARNING THIS README IS OUT OF DATE **    
 I apologise for any confusion this may cause.
 ![https://img.shields.io/badge/Foundry%20VTT-0.5.7%2B-green](https://img.shields.io/badge/Foundry%20VTT-0.5.7%2B-green)
 
