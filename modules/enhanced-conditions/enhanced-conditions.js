@@ -116,8 +116,8 @@ export class EnhancedConditions {
             }
         }
 
-        if (!cubOption.existingOverlay && cubOption.updateOverlay) updateEffects.push({effect: updateOverlay, type: "overlay", changeType: "add"});
-        else if (cubOption.existingOverlay && !cubOption.updateOverlay) updateEffects.push({effect: existingOverlay, type: "overlay", changeType: "remove"});
+        if (!cubOption.existingOverlay && cubOption.updateOverlay) updateEffects.push({effect: cubOption.updateOverlay, type: "overlay", changeType: "add"});
+        else if (cubOption.existingOverlay && !cubOption.updateOverlay) updateEffects.push({effect: cubOption.existingOverlay, type: "overlay", changeType: "remove"});
 
         if (!updateEffects.length) return;
 

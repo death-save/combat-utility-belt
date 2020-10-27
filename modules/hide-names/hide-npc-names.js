@@ -131,9 +131,7 @@ export class HideNPCNames {
     static _hookOnRenderChatMessage(message, html, data) {
         const enable = Sidekick.getSetting(SETTING_KEYS.hideNames.enable);
 
-        if (!enable) {
-            return;
-        }
+        if (!enable) return;
 
         const messageActorId = message.data.speaker.actor;
         const messageSceneId = message.data.speaker.scene;
@@ -141,7 +139,10 @@ export class HideNPCNames {
         const scene = messageSceneId ? game.scenes.get(messageSceneId) : null;
         const tokenData = scene ? scene.data.tokens.find(t => t._id === messageTokenId) : null;
         const token = canvas?.tokens.get(messageTokenId) ?? (tokenData ? new Token(tokenData) : null);
-        const actor = token ? token.actor : game.actors.get(messageActorId);
+        const actor = token ? token.actor : messageActorId ? game.actors.get(messageActorId) : null;
+
+        if (!actor) return;
+        
         const speakerIsNPC = actor && !actor.hasPlayerOwner;
 
         if (!speakerIsNPC) return;

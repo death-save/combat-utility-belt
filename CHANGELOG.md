@@ -5,11 +5,24 @@
 - Macros for: hiding/unhiding NPC names, rerolling initiative
 
 ## [Known Issues]
-- Attempting to add multiple Conditions at the same time when one of those Conditions already exists on the Actor/Token will block all of them being added.
-- Enhanced Conditions chat output for linked Tokens and Actors is not aggregated, so you may see multiple messages when many conditions are added/removed from an Actor/Token.
-- Overlay Effects added to a token will trigger the matching non-Overlay Condition to output to chat. The reverse is also true.
-- **PF2e users**: Enhanced Conditions `Output to Chat` setting will cause duplicate chat messages due to similar function built into the system.
-- Chat log may not re-render when Hide Names settings are changed. This may cause the old name to still show in the log for players. Advise players to reload Foundry if you change these settings mid-session.
+1. Loading a world with an existing Condition Lab mapping from pre CUB v1.3.0 may cause any Conditions added to a token to default to the first mapped condition. WORKAROUND: After loading your world, go into the Condition Lab and click Save.
+2. Attempting to add multiple Conditions at the same time when one of those Conditions already exists on the Actor/Token will block all of them being added.
+3. Enhanced Conditions chat output for linked Tokens and Actors is not aggregated, so you may see multiple messages when many conditions are added/removed from an Actor/Token.
+4. Overlay Effects added to a token will trigger the matching non-Overlay Condition to output to chat. The reverse is also true.
+5. **PF2e users**: Enhanced Conditions `Output to Chat` setting will cause duplicate chat messages due to similar function built into the system.
+6. Chat log may not re-render when Hide Names settings are changed. This may cause the old name to still show in the log for players. Advise players to reload Foundry if you change these settings mid-session.
+
+## [1.3.2] - 2020-10-26
+### Changed
+- Updated Português (Brasil) translation (thanks @rinnocenti!)
+
+### Fixed
+- Token disposition is now correctly detected for unlinked Tokens
+- Overlay Active Effects added to Tokens are correctly detected
+
+## [1.3.1-hotfix] - 2020-10-24
+### Fixed
+- Enhanced Condition ids will no longer default to `undefined` prior to saving the Condition Lab. This should resolve known issue 1, however if not, please try the provided workaround.
 
 ## [1.3.1] - 2020-10-24
 ### Changed
