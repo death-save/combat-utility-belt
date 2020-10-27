@@ -1,4 +1,15 @@
 {
+    "GADGET_DESCRIPTIONS.AwardXP": "Fornece um prompt ao fim do combate para distribuir XP dos combatentes hostis derrotados.",
+    "GADGET_DESCRIPTIONS.Concentrator": "Gerencia a Concentração no sistema de jogo dnd5e.",
+    "GADGET_DESCRIPTIONS.EnhancedConditions": "Oferece a capacidade de mapear as Condições para os ícones de Efeito de Status",
+    "GADGET_DESCRIPTIONS.HideNames": "Substitui os nomes dos atores por um novo nome de sua escolha",
+    "GADGET_DESCRIPTIONS.PanSelect": "Enquadramento automático e seleção de tokens durante o combate",
+    "GADGET_DESCRIPTIONS.RerollInitiative": "Reinicia a iniciativa em cada mudança de rodada de combate",
+    "GADGET_DESCRIPTIONS.TemporaryCombatants": "Permite a criação de combatentes temporários para rastrear coisas como ações ambientais ou de covil",
+    "GADGET_DESCRIPTIONS.Triggler": "Um sistema de gerenciamento de gatilhos para mudanças de atributos de token/ator",
+    "GADGET_DESCRIPTIONS.MiscActor": "Aprimoramentos diversos de atores",
+    "GADGET_DESCRIPTIONS.MiscToken": "Aprimoramentos diversos de tokens",    
+    
     "NOTIFICATIONS.CUBPuter.RestoreDefaults": "configurações dos apetrechos restauradas para os padrões!",
     "NOTIFICATIONS.CUBPuter.SaveSettings": "configurações dos apetrechos salvas!",
     
@@ -13,9 +24,64 @@
 
     "APPS.Wiki.Title": "Cinto de Utilidades de Combate Wiki",
 
+    "CONCENTRATOR.ConditionName": "Concentrando",
+    "CONCENTRATOR.Alias": "Concentrador",
+
+    "ENHANCED_CONDITIONS.MapMismatch": "Este mapa não corresponde ao seu sistema de jogo e pode não funcionar como esperado.",
+    "ENHANCED_CONDITIONS.ApplyCondition.Failed.NoToken": "Falha ao aplicar condição. Nenhum token fornecido",
+    "ENHANCED_CONDITIONS.ApplyCondition.Failed.NoCondition": "Falha ao aplicar condição. Não foi possível encontrar a condição:",
+    "ENHANCED_CONDITIONS.ApplyCondition.Failed.NoIcon": "Falha ao aplicar condição. Não foi possível encontrar o ícone.",
+    "ENHANCED_CONDITIONS.ApplyCondition.Failed.AlreadyActive": "já está ativo. Falha ao aplicar condição",
+    
+    "ENHANCED_CONDITIONS.GetConditions.Failed.NoToken": "Obter condições falhou. Nenhuma entidade fornecida e nenhuma foi encontrada automaticamente",
+    "ENHANCED_CONDITIONS.GetConditions.Failed.NoCondition": "Obter condições falhou. Nenhum mapa de condição encontrado",
+    "ENHANCED_CONDITIONS.GetConditions.Failed.NoResults": "Obter condições falhou. Nenhuma condição encontrada no ator/token",
+    
+    "ENHANCED_CONDITIONS.RemoveCondition.Failed.NoToken": "Falha na remoção da condição. Nenhum token fornecido",
+    "ENHANCED_CONDITIONS.RemoveCondition.Failed.NoCondition": "Falha na remoção da condição. Não foi possível encontrar a condição com o nome:",
+    "ENHANCED_CONDITIONS.RemoveCondition.Failed.NoIcon": "Falha na remoção da condição. Não foi possível encontrar o ícone",
+    "ENHANCED_CONDITIONS.RemoveCondition.Failed.NotActive": "não está ativo no token. Falha na remoção da condição.",
+    
+    "ENHANCED_CONDITIONS.RemoveAllConditions.Failed.NoToken": "Falha ao remover condições. Nenhum token fornecido",
+    "ENHANCED_CONDITIONS.RemoveAllConditions.Failed.NoCondition": "Falha ao remover condições. Não há nenhum mapa de condição ativo",
+
+    "ENHANCED_CONDITIONS.Lab.ActiveEffects.Title": "Configuração de Ativar Efeitos",
+    "ENHANCED_CONDITIONS.LAB.Import.NoFile": "Você não carregou um arquivo de dados!",
+    "ENHANCED_CONDITIONS.Lab.ConfirmDeleteTitle": "Confirmar exclusão de linha",
+    "ENHANCED_CONDITIONS.Lab.ConfirmDeleteContent": "Tem certeza de que deseja excluir esta linha?",
+    "ENHANCED_CONDITIONS.Lab.RestoreDefaultsTitle": "Restaurar padrões?",
+    "ENHANCED_CONDITIONS.Lab.RestoreDefaultsContent": "<p>Tem certeza de que deseja restaurar este mapeamento para os padrões?</p> <strong> Se você salvar, esta alteração será permanente.</strong>",
+    "ENHANCED_CONDITIONS.Lab.ResetFormTitle": "Redefinir formulário?",
+    "ENHANCED_CONDITIONS.Lab.ResetFormContent": "<p> Tem certeza de que deseja redefinir o formulário?</p> <p><strong>Você perderá todas as alterações não salvas.</strong></p>",
+    "ENHANCED_CONDITIONS.Lab.SaveFailed": "Lab de condição falhou ao salvar e fechar",
+    "ENHANCED_CONDITIONS.Lab.SaveSuccess": "Mapeamento do Laboratório de Condições salvo!",
+    "ENHANCED_CONDITIONS.Lab.ImportTitle": "Importar Mapa de Condições",
+    "ENHANCED_CONDITIONS.Lab.ExportTitle": "Exportar Mapa de Condições",
+    "ENHANCED_CONDITIONS.Lab.Options.Title": "Opções:",
+    "ENHANCED_CONDITIONS.Lab.Options.Overlay.Label": "Sobrepor",
+    "ENHANCED_CONDITIONS.Lab.Options.RemoveOthers.Label": "Remover os Outros",
+    "ENHANCED_CONDITIONS.Lab.Options.OutputChat.Label": "Exibir no Bate-papo",
+    "ENHANCED_CONDITIONS.Lab.Options.MarkDefeated.Label": "Marcar como Derrotado",
+    "ENHANCED_CONDITIONS.Lab.Options.Overlay.Title": "A Condição é Sobreposta",
+    "ENHANCED_CONDITIONS.Lab.Options.RemoveOthers.Title": "Remova outras condições quando esta for aplicada",
+    "ENHANCED_CONDITIONS.Lab.Options.MarkDefeated.Title": "Marcar combatentes correspondentes como derrotados quando esta condição for aplicada",
+    "ENHANCED_CONDITIONS.Lab.Options.OutputChat.Title": "Envie esta condição para o bate-papo quando adicionado/removido",
+
+    "ENHANCED_CONDITIONS.ChatCard.Title.Active": "Condições Ativas",
+    "ENHANCED_CONDITIONS.ChatCard.Title.Added": "Condições Adicionadas",
+    "ENHANCED_CONDITIONS.ChatCard.Title.Removed": "Condições Removidas",
+
+    "ENHANCED_CONDITIONS.ChatCard.Buttons.Undo": "Reverter Remover Condições",
+    "ENHANCED_CONDITIONS.ChatCard.Buttons.Remove": "Remover Condições",
+
+    "HIDE_NAMES.ActorForm.Enable": "Ocultar Nome do Ator",
+    "HIDE_NAMES.ActorForm.EnableHint": "Habilita a ocultação do nome deste ator no Rastreador de Combate e Mensagens de Bate-papo (substitui o padrão)",
+    "HIDE_NAMES.ActorForm.ReplacementName": "Subistitur o Nome",
+    "HIDE_NAMES.ActorForm.ReplacementHint": "O nome a ser usado em vez do nome do ator",
+    "HIDE_NAMES.ActorForm.DefaultSettingH": "Esta é a configuração padrão atual para a disposição deste token (definida no CUBputer)",
+
     "SETTINGS.CUBPuter.ButtonN": "Configurações do Cinto de Utilidades de Combate",
     "SETTINGS.CUBPuter.ButtonH": "Fornece configuração adicional para o Cinto de Utilidades de Combate",
-
     
     "SETTINGS.Concentrator.EnableN": "Ativar Concentrador",
     "SETTINGS.Concentrator.EnableH": "(Testado apenas em D&D5e) (Requer condições aprimoradas) Força as verificações de concentração nos tokens com o efeito de status de concentração quando eles sofrem danos",
@@ -33,7 +99,6 @@
     "SETTINGS.Concentrator.AutoConcentrateH": "Quando uma mágica de Concentração for lançada, defina automaticamente o status de Concentração",
     "SETTINGS.Concentrator.NotifyDoubleN": "Notificar em Dupla Concentração",
     "SETTINGS.Concentrator.NotifyDoubleH": "Enviar uma mensagem quando um feitiço de concentração for lançado enquanto outro feitiço estiver sendo concentrado",
-
     
     "SETTINGS.EnhancedConditions.EnableN": "Ativar Condições Aprimoradas",
     "SETTINGS.EnhancedConditions.EnableH": "Vincula condições a ícones de status",
@@ -53,23 +118,35 @@
     "SETTINGS.EnhancedConditions.MapTypeH": "Tipo de mapa de condições atualmente em uso -- padrão, personalizado ou outro",
     "SETTINGS.EnhancedConditions.ActiveConditionMapN": "Mapa de Condição Ativo",
     "SETTINGS.EnhancedConditions.ActiveConditionMapH": "Armazena o mapa de condições ativo",
-
     
     "SETTINGS.GiveXP.EnableN": "Ativar Distribuir XP",
     "SETTINGS.GiveXP.EnableH": "Adiciona uma opção no final do combate para distribuir automaticamente xp do combate para os jogadores",
 
     "SETTINGS.HideNames.EnableN": "Ativar Ocultar Nomes de NPC",
     "SETTINGS.HideNames.EnableH": "Oculta nomes de NPC no Monitor de Combate",
+    "SETTINGS.HideNames.EnableHostileN": "Ocultar Nomes Hostis",
+    "SETTINGS.HideNames.EnableHostileH": "Ocultar nomes de atores com disposição de token definida como HOSTIL",
+    "SETTINGS.HideNames.EnableNeutralN": "Ocultar Nomes Neutros",
+    "SETTINGS.HideNames.EnableNeutralH": "Ocultar nomes de atores com disposição de token definida como NEUTRO",
+    "SETTINGS.HideNames.EnableFriendlyN": "Ocultar Nomes Amigáveis",
+    "SETTINGS.HideNames.EnableFriendlyH": "Ocultar nomes de atores com disposição de token definida como Amigável",
+    "SETTINGS.HideNames.HostileReplacementN": "Nome de Substituição Hostil",
+    "SETTINGS.HideNames.HostileReplacementH": "O nome padrão a ser usado ao substituir nomes de Atores Hostis",
+    "SETTINGS.HideNames.NeutralReplacementN": "Nome de Substituição Neutros",
+    "SETTINGS.HideNames.NeutralReplacementH": "O nome padrão a ser usado ao substituir nomes de Atores Neutros",
+    "SETTINGS.HideNames.FriendlyReplacementN": "Nome de Substituição Amigável",
+    "SETTINGS.HideNames.FriendlyReplacementH": "O nome padrão a ser usado ao substituir nomes de Atores Amigáveis",
     "SETTINGS.HideNames.ReplacementStringN": "Nome da substituição",
     "SETTINGS.HideNames.ReplacementStringH": "Texto a ser exibido para nomes ocultos de NPC",
     "SETTINGS.HideNames.HideFooterN": "Ocultar Rodapé do Cartão de Bate-papo",
-    "SETTINGS.HideNames.HideFooterH": "Quando os nomes dos NPCs estiverem ocultos, oculte também o rodapé do cartão de bate-papo, que pode conter informações confidenciais",   
+    "SETTINGS.HideNames.HideFooterH": "Quando os nomes dos NPCs estiverem ocultos, oculte também o rodapé do cartão de bate-papo, que pode conter informações confidenciais",
+    "SETTINGS.HideNames.HidePartsN": "Ocultar Nomes Completos",
+    "SETTINGS.HideNames.HidePartsH": "Se um nome oculto inclui espaços, divide-o em partes e oculta todas as partes",
 
     "SETTINGS.MightySummoner.EnableN": "Ativar Invocador Poderoso",
     "SETTINGS.MightySummoner.EnableH": "(Testado apenas no D&D5e) Verifica automaticamente se o proprietário do token do ator NEUTRO também possui um ator com o talento Invocador Poderoso. Calcula e adiciona automaticamente nova fórmula HP e rola HP para token na colocar na tela",
     "SETTINGS.MightySummoner.FeatNameN": "Nome do Talento Invocador Poderoso",
     "SETTINGS.MightySummoner.FeatNameH": "Nome do talento a ser verificado",
-
     
     "SETTINGS.PanSelect.EnablePanN": "Ativar Panorâmica do Token",
     "SETTINGS.PanSelect.EnablePanH": "Ativa a seguinte funcionalidade de panorâmica de token",
@@ -86,7 +163,6 @@
     "SETTINGS.PanSelect.ObserverDeselectN": "Cancelar seleção de tokens",
     "SETTINGS.PanSelect.ObserverDeselectH": "Cancele a seleção de tokens controlados no turno de qualquer combatente que não seja do proprietário",
 
-    
     "SETTINGS.RerollInitiative.EnableN": "Ativar Re-Rolagem da Iniciativa",
     "SETTINGS.RerollInitiative.EnableH": "Refaz a iniciativa para cada combatente a cada rodada",
     "SETTINGS.RerollInitiative.RerollTempCombatantsN": "Re-Rolagem dos Combatants Temporários",
@@ -100,11 +176,23 @@
     
     "SETTINGS.TokenUtility.AutoRollHostileHpN": "Ativar Rolagem Automática HP para tokens hostis",
     "SETTINGS.TokenUtility.AutoRollHostileHpH": "Role automaticamente o hp para tokens hostis na colocados na tela",
-    "SETTINGS.TokenUtility.TokenEffectSizeN": "Token Effect Icon Size",
+    "SETTINGS.TokenUtility.HideAutoRollN": "Ocultar a Rolagem automática de HP",
+    "SETTINGS.TokenUtility.HideAutoRollH": "Se o HP de Tokens Hostis for rolado automaticamente, esconda a rolagem dos jogadores",
+    "SETTINGS.TokenUtility.TokenEffectSizeN": "Tamanho do ícone de efeito de token",
     "SETTINGS.TokenUtility.TokenEffectSizeH": "Define o tamanho dos ícones de efeito do token. Padrão: Pequeno",
     
     "SETTINGS.Triggler.TriggersN": "Gatilhos Engatilhados",
     "SETTINGS.Triggler.TriggersH": "Armazena os Gatilhos Engatilhados salvos",
     
-    "TEMPLATES.EnhancedConditions.ChatCardTitle": "Condições ativas"
+    "WORDS.Import": "Importar",
+    "WORDS.Export": "Exportar",
+    "WORDS.Cancel": "Cancelar",
+    "WORDS._Yes": " Sim",
+    "WORDS._No": " Não",
+    "WORDS.Yes": "Sim",
+    "WORDS.No": "Não",
+    "WORDS.None": "Nenhum",
+    "WORDS.GMOnly": "Somente MJ",
+    "WORDS.Everyone": "Todos",
+    "WORDS.About": "Sobre"
 }
