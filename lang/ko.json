@@ -40,7 +40,7 @@
     "ENHANCED_CONDITIONS.RemoveCondition.Failed.NoToken": "상태이상 제거에 실패했습니다. 토큰이 제공되지 않았습니다",
     "ENHANCED_CONDITIONS.RemoveCondition.Failed.NoCondition": "상태이상 제거에 실패했습니다. 상태이상을 찾을 수 없었습니다.",
     "ENHANCED_CONDITIONS.RemoveCondition.Failed.NoIcon": "상태이상 제거에 실패했습니다. 아이콘을 찾을 수 없었습니다",
-    "ENHANCED_CONDITIONS.RemoveCondition.Failed.NotActive": "상태이상 제거에 실패했습니다. Condition is not active on token",
+    "ENHANCED_CONDITIONS.RemoveCondition.Failed.NotActive": "상태이상 제거에 실패했습니다. 상태이상이 토큰에 활성화 되지 않았습니다.",
     
     "ENHANCED_CONDITIONS.RemoveAllConditions.Failed.NoToken": "상태이상들의 제거에 실패했습니다. 토큰이 제공되지 않았습니다",
     "ENHANCED_CONDITIONS.RemoveAllConditions.Failed.NoCondition": "상태이상들의 제거에 실패했습니다. 활성화된 상태이상 맵이 없습니다.",
@@ -62,7 +62,7 @@
     "ENHANCED_CONDITIONS.Lab.Options.RemoveOthers.Label": "다른 상태 제거",
     "ENHANCED_CONDITIONS.Lab.Options.OutputChat.Label": "채팅으로 출력",
     "ENHANCED_CONDITIONS.Lab.Options.MarkDefeated.Label": "패배 표시",
-    "ENHANCED_CONDITIONS.Lab.Options.Overlay.Title": "상태가 오버레이 된다.",
+    "ENHANCED_CONDITIONS.Lab.Options.Overlay.Title": "상태이상이 오버레이 된다.",
     "ENHANCED_CONDITIONS.Lab.Options.RemoveOthers.Title": "이 상태이상이 적용될 때 다른 상태이상을 제거한다.",
     "ENHANCED_CONDITIONS.Lab.Options.MarkDefeated.Title": "이 상태이상이 적용될 때 일치하는 전투원을 패배 표시한다.",
     "ENHANCED_CONDITIONS.Lab.Options.OutputChat.Title": "추가/제거시 채팅으로 상태이상을 출력한다.",
