@@ -21,6 +21,10 @@ export class Concentrator {
      * @param {*} data 
      */
     static _onRenderChatMessage(app, html, data) {
+        const enableConcentrator = Sidekick.getSetting(SETTING_KEYS.concentrator.enable);
+
+        if (!enableConcentrator) return;
+
         const autoConcentrate = Sidekick.getSetting(SETTING_KEYS.concentrator.autoConcentrate);
         const concentrateFlag = app.getFlag(NAME, FLAGS.concentrator.chatMessage);
 
