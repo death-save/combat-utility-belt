@@ -366,11 +366,9 @@ export class EnhancedConditions {
             if (!map.length) return null;
         }
 
-        const conditionEntries = map.filter(row => effectIds.includes(row.id ?? row.name.slugify()));
+        const conditionEntries = map.filter(row => effectIds.includes(row.id ?? Sidekick.generateUniqueSlugId(row.name)));
 
-        if (conditionEntries.length === 0) {
-            return;
-        }
+        if (conditionEntries.length === 0) return;
         
         return conditionEntries.length > 1 ? conditionEntries : conditionEntries.shift();
     }
@@ -1112,6 +1110,7 @@ export class EnhancedConditions {
             return false;
         }
 
+        conditions = EnhancedConditions._prepareStatusEffects(conditions);
         conditions = conditions instanceof Array ? conditions : [conditions];
 
         for (let entity of entities) {
