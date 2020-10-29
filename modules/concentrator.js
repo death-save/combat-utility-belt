@@ -181,7 +181,7 @@ export class Concentrator {
     static _onUpdateToken(scene, tokenData, update, options, userId){
         const damageTaken = getProperty(options, `${NAME}.${FLAGS.concentrator.damageTaken}`);
 
-        if (!damageTaken || (!game.user.isGM && !game.userId)) return;
+        if (!damageTaken || (!game.user.isGM && userId !== game.userId)) return;
 
         const token = canvas.tokens.get(tokenData._id) ?? new Token(tokenData);
         const actor = token.actor;
