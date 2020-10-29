@@ -35,15 +35,17 @@
     
     "ENHANCED_CONDITIONS.GetConditions.Failed.NoToken": "상태이상을 가져오지 못했습니다. 토큰이 제공되지 않았습니다.",
     "ENHANCED_CONDITIONS.GetConditions.Failed.NoCondition": "상태이상을 가져오지 못했습니다. 상태이상 맵을 찾을 수 없었습니다.",
-    
+    "ENHANCED_CONDITIONS.GetConditions.Failed.NoResults": "상태이상을 가져오지 못했습니다. 액터/토큰에서 상태이상을 찾을 수 없었습니다.",
+
     "ENHANCED_CONDITIONS.RemoveCondition.Failed.NoToken": "상태이상 제거에 실패했습니다. 토큰이 제공되지 않았습니다",
     "ENHANCED_CONDITIONS.RemoveCondition.Failed.NoCondition": "상태이상 제거에 실패했습니다. 상태이상을 찾을 수 없었습니다.",
     "ENHANCED_CONDITIONS.RemoveCondition.Failed.NoIcon": "상태이상 제거에 실패했습니다. 아이콘을 찾을 수 없었습니다",
-    "ENHANCED_CONDITIONS.RemoveCondition.Failed.NotActive": "상태이상 제거에 실패했습니다. Condition is not active on token",
+    "ENHANCED_CONDITIONS.RemoveCondition.Failed.NotActive": "상태이상 제거에 실패했습니다. 상태이상이 토큰에 활성화 되지 않았습니다.",
     
     "ENHANCED_CONDITIONS.RemoveAllConditions.Failed.NoToken": "상태이상들의 제거에 실패했습니다. 토큰이 제공되지 않았습니다",
     "ENHANCED_CONDITIONS.RemoveAllConditions.Failed.NoCondition": "상태이상들의 제거에 실패했습니다. 활성화된 상태이상 맵이 없습니다.",
     
+    "ENHANCED_CONDITIONS.Lab.ActiveEffects.Title": "활성화 효과 설정",
     "ENHANCED_CONDITIONS.LAB.Import.NoFile": "데이터 파일을 업로드하지 않았습니다!",
     "ENHANCED_CONDITIONS.Lab.ConfirmDeleteTitle": "행 삭제 확인",
     "ENHANCED_CONDITIONS.Lab.ConfirmDeleteContent": "이 행을 삭제하시겠습니까?",
@@ -55,6 +57,22 @@
     "ENHANCED_CONDITIONS.Lab.SaveSuccess": "Condition Lab 매핑이 저장 되었습니다!",
     "ENHANCED_CONDITIONS.Lab.ImportTitle": "Condition Map 가져오기",
     "ENHANCED_CONDITIONS.Lab.ExportTitle": "Condition Map 내보내기",
+    "ENHANCED_CONDITIONS.Lab.Options.Title": "옵션:",
+    "ENHANCED_CONDITIONS.Lab.Options.Overlay.Label": "오버레이",
+    "ENHANCED_CONDITIONS.Lab.Options.RemoveOthers.Label": "다른 상태 제거",
+    "ENHANCED_CONDITIONS.Lab.Options.OutputChat.Label": "채팅으로 출력",
+    "ENHANCED_CONDITIONS.Lab.Options.MarkDefeated.Label": "패배 표시",
+    "ENHANCED_CONDITIONS.Lab.Options.Overlay.Title": "상태이상이 오버레이 된다.",
+    "ENHANCED_CONDITIONS.Lab.Options.RemoveOthers.Title": "이 상태이상이 적용될 때 다른 상태이상을 제거한다.",
+    "ENHANCED_CONDITIONS.Lab.Options.MarkDefeated.Title": "이 상태이상이 적용될 때 일치하는 전투원을 패배 표시한다.",
+    "ENHANCED_CONDITIONS.Lab.Options.OutputChat.Title": "추가/제거시 채팅으로 상태이상을 출력한다.",
+
+    "ENHANCED_CONDITIONS.ChatCard.Title.Active": "활성화 상태이상",
+    "ENHANCED_CONDITIONS.ChatCard.Title.Added": "상태이상 추가됨",
+    "ENHANCED_CONDITIONS.ChatCard.Title.Removed": "상태이상 제거됨",
+
+    "ENHANCED_CONDITIONS.ChatCard.Buttons.Undo": "상태이상 제거 취소",
+    "ENHANCED_CONDITIONS.ChatCard.Buttons.Remove": "상태이상 제거",
 
     "HIDE_NAMES.ActorForm.Enable": "액터 이름 숨기기",
     "HIDE_NAMES.ActorForm.EnableHint": "컴뱃 트래커와 채팅 메시지에서 이 액터의 이름 숨기기를 활성화함(기본값 덮어쓰기)",
@@ -158,14 +176,14 @@
     
     "SETTINGS.TokenUtility.AutoRollHostileHpN": "적대적 생물 자동 굴림 활성화",
     "SETTINGS.TokenUtility.AutoRollHostileHpH": "캔버스에 드롭된 적대적 토큰의 HP 수식을 굴린다.",
+        "SETTINGS.TokenUtility.HideAutoRollN": "자동 HP 굴림 숨김",
+    "SETTINGS.TokenUtility.HideAutoRollH": "적대적 토큰의 HP가 자동으로 굴려질 경우 굴림을 플레이어로부터 숨긴다.",
     "SETTINGS.TokenUtility.TokenEffectSizeN": "토큰 효과 사이즈",
-    "SETTINGS.TokenUtility.TokenEffectSizeH": "토큰에 표시되는 토큰 효과의 크기를 설정한다. 기본값: Small",
+    "SETTINGS.TokenUtility.TokenEffectSizeH": "토큰에 표시되는 토큰 효과의 크기를 설정한다. 기본값: Small - 5x5",
     
     "SETTINGS.Triggler.TriggersN": "Triggler 트리거",
     "SETTINGS.Triggler.TriggersH": "Triggler Triggers를 저장한다",
     
-    "TEMPLATES.EnhancedConditions.ChatCardTitle": "상태이상 활성화",
-
     "WORDS.Import": "가져오기",
     "WORDS.Export": "내보내기",
     "WORDS.Cancel": "취소",
@@ -175,5 +193,6 @@
     "WORDS.No": "아니오",
     "WORDS.None": "없음",
     "WORDS.GMOnly": "GM만",
-    "WORDS.Everyone": "모두"
+    "WORDS.Everyone": "모두",
+    "WORDS.About": "About"
 }
