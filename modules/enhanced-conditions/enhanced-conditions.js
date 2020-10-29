@@ -1119,7 +1119,7 @@ export class EnhancedConditions {
             if (!actor.effects.size) continue;
 
             const conditionEffect = actor.effects.entries.some(ae => {
-                return conditions.some(e => e.id === ae.getFlag(BUTLER.NAME, BUTLER.FLAGS.enhancedConditions.conditionId));
+                return conditions.some(e => e?.flags[BUTLER.NAME][BUTLER.FLAGS.enhancedConditions.conditionId] === ae.getFlag(BUTLER.NAME, BUTLER.FLAGS.enhancedConditions.conditionId));
             });
 
             if (conditionEffect) return true;
