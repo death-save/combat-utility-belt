@@ -21,6 +21,10 @@ export class Concentrator {
      * @param {*} data 
      */
     static _onRenderChatMessage(app, html, data) {
+        const enableConcentrator = Sidekick.getSetting(SETTING_KEYS.concentrator.enable);
+
+        if (!enableConcentrator) return;
+
         const autoConcentrate = Sidekick.getSetting(SETTING_KEYS.concentrator.autoConcentrate);
         const concentrateFlag = app.getFlag(NAME, FLAGS.concentrator.chatMessage);
 
@@ -177,7 +181,7 @@ export class Concentrator {
     static _onUpdateToken(scene, tokenData, update, options, userId){
         const damageTaken = getProperty(options, `${NAME}.${FLAGS.concentrator.damageTaken}`);
 
-        if (!damageTaken || (!game.user.isGM && !game.userId)) return;
+        if (!damageTaken || (!game.user.isGM && userId !== game.userId)) return;
 
         const token = canvas.tokens.get(tokenData._id) ?? new Token(tokenData);
         const actor = token.actor;

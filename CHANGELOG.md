@@ -5,12 +5,26 @@
 - Macros for: hiding/unhiding NPC names, rerolling initiative
 
 ## [Known Issues]
-1. Loading a world with an existing Condition Lab mapping from pre CUB v1.3.0 may cause any Conditions added to a token to default to the first mapped condition. WORKAROUND: After loading your world, go into the Condition Lab and click Save.
-2. Attempting to add multiple Conditions at the same time when one of those Conditions already exists on the Actor/Token will block all of them being added.
-3. Enhanced Conditions chat output for linked Tokens and Actors is not aggregated, so you may see multiple messages when many conditions are added/removed from an Actor/Token.
-4. Overlay Effects added to a token will trigger the matching non-Overlay Condition to output to chat. The reverse is also true.
-5. **PF2e users**: Enhanced Conditions `Output to Chat` setting will cause duplicate chat messages due to similar function built into the system.
-6. Chat log may not re-render when Hide Names settings are changed. This may cause the old name to still show in the log for players. Advise players to reload Foundry if you change these settings mid-session.
+> Some issues related to the upgrade to Active Effects can be resolved/mitigated by **Saving your Condition Lab** after updating to a CUB version greater than 1.3.0. Please try this before reporting an issue!
+
+1. Active Effects cannot be added to some Conditions (lower in the Condition Lab)
+2. Loading a world with an existing Condition Lab mapping from pre CUB v1.3.0 may cause any Conditions added to a token to default to the first mapped condition. WORKAROUND: After loading your world, go into the Condition Lab and click Save.
+3. Attempting to add multiple Conditions at the same time when one of those Conditions already exists on the Actor/Token will block all of them being added.
+4. Enhanced Conditions chat output for linked Tokens and Actors is not aggregated, so you may see multiple messages when many conditions are added/removed from an Actor/Token.
+5. Overlay Effects added to a token will trigger the matching non-Overlay Condition to output to chat. The reverse is also true.
+6. **PF2e users**: Enhanced Conditions `Output to Chat` setting will cause duplicate chat messages due to similar function built into the system.
+7. Chat log may not re-render when Hide Names settings are changed. This may cause the old name to still show in the log for players. Advise players to reload Foundry if you change these settings mid-session.
+
+## [1.3.3] - 2020-10-28
+### Changed
+- Updated 한국어 (Korean) translation (thanks @drdwing aka KLO)
+
+### Fixed
+- Duplicated Conditions being created on Actors/Tokens in some circumstances related to existing (ie. pre-CUB-v1.3.0) Condition Lab mappings. The workaround in Known Issue 2 may prevent this behaviour. 
+- - *Note: it may be necessary to delete and recreate a token to fully resolve this issue, or alternately create and run a script macro: `game.cub.removeAllConditions()` with the affected token selected, then toggle off any remaining Status Effects in the Token HUD*
+- Concentrator no longer ignores the `Enable Concentrator` setting
+- Players no longer trigger Concentrator for every spell cast
+- `hasCondition` API method should behave more reliably
 
 ## [1.3.2] - 2020-10-26
 ### Changed
