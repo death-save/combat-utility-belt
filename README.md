@@ -1,8 +1,9 @@
-** WARNING THIS README IS OUT OF DATE **    
-I apologise for any confusion this may cause.    
-![https://img.shields.io/badge/Foundry%20VTT-0.5.7%2B-green](https://img.shields.io/badge/Foundry%20VTT-0.5.7%2B-green)
+![https://img.shields.io/badge/Foundry%20VTT-0.7.6%2B-green](https://img.shields.io/badge/Foundry%20VTT-0.7.6%2B-green)
 
 # Combat Utility Belt
+** WARNING THIS README IS OUT OF DATE **    
+*I apologise for any confusion this may cause.*
+
 **Author**: Evan Clarke (errational#2007 on discord)
 
 **Code Contributors**: Jordan Williams (Reaver#4634), Jacob McAuley (JacobMcAuley#3461), (Moerill#7205)    

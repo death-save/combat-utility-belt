@@ -104,6 +104,6 @@ const chores = parallel(/*patrons,*/ docs);
 
 exports.build = build;
 exports.docs = docs;
-exports.patrons = patrons;
+//exports.patrons = patrons;
 exports.chores = chores;
 exports.default = series(chores, build);
