@@ -66,6 +66,9 @@
     "ENHANCED_CONDITIONS.Lab.Options.RemoveOthers.Title": "Remove other conditions when this one is applied",
     "ENHANCED_CONDITIONS.Lab.Options.MarkDefeated.Title": "Mark matching combatants defeated when this condition is applied",
     "ENHANCED_CONDITIONS.Lab.Options.OutputChat.Title": "Output this condition to chat when added/removed",
+    "ENHANCED_CONDITIONS.PreventativeSaveReminder.Title": "Enhanced Conditions | Preventative Save Reminder",
+    "ENHANCED_CONDITIONS.PreventativeSaveReminder.Content": "<p>To prevent some issues arising from the migration to <i>Active Effects</i>, please open the <strong>Condition Lab</strong> and click the <strong>Save Mapping</strong> button.</p><p>This will ensure your Condition Map is converted correctly.</p>",
+    "ENHANCED_CONDITIONS.PreventativeSaveReminder.Suppress": "Never show this reminder again",
 
     "ENHANCED_CONDITIONS.ChatCard.Title.Active": "Active Conditions",
     "ENHANCED_CONDITIONS.ChatCard.Title.Added": "Added Conditions",
@@ -118,6 +121,8 @@
     "SETTINGS.EnhancedConditions.MapTypeH": "Condition map type currently in use -- default, custom or other",
     "SETTINGS.EnhancedConditions.ActiveConditionMapN": "Active Condition Map",
     "SETTINGS.EnhancedConditions.ActiveConditionMapH": "Stores the active condition map",
+    "SETTINGS.EnhancedConditions.PreventativeSaveReminderN": "Preventative Save Reminder",
+    "SETTINGS.EnhancedConditions.PreventativeSaveReminderH": "A reminder to save the Condition Lab to prevent issues",
     
     "SETTINGS.GiveXP.EnableN": "Enable Award XP",
     "SETTINGS.GiveXP.EnableH": "Adds an option at the end of combat to automatically distribute xp from the combat to the players",
@@ -183,7 +188,8 @@
     
     "SETTINGS.Triggler.TriggersN": "Triggler Triggers",
     "SETTINGS.Triggler.TriggersH": "Stores saved Triggler Triggers",
-
+    
+    "WORDS.IUnderstand": "I Understand",
     "WORDS.Import": "Import",
     "WORDS.Export": "Export",
     "WORDS.Cancel": "Cancel",
@@ -194,5 +200,6 @@
     "WORDS.None": "None",
     "WORDS.GMOnly": "GM Only",
     "WORDS.Everyone": "Everyone",
-    "WORDS.About": "About"
+    "WORDS.About": "About",
+    "WORDS.OK": "OK"
 }

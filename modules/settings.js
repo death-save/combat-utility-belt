@@ -242,6 +242,16 @@ export function registerSettings() {
         }
     });
 
+    Sidekick.registerSetting(BUTLER.SETTING_KEYS.enhancedConditions.suppressPreventativeSaveReminder, {
+        name: "SETTINGS.EnhancedConditions.SuppressPreventativeSaveReminderN",
+        hint: "SETTINGS.EnhancedConditions.SuppressPreventativeSaveReminderH",
+        scope: "world",
+        type: Boolean,
+        config: false,
+        default: false,
+        onChange: s => {}
+    });
+
     /* -------------------------------------------- */
     /*                    GiveXP                    */
     /* -------------------------------------------- */

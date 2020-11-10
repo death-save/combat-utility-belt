@@ -359,7 +359,8 @@ export const SETTING_KEYS = {
         mapType: "conditionMapType",
         removeDefaultEffects: "removeDefaultEffects",
         outputChat: "conditionsOutputToChat",
-        outputCombat: "conditionsOutputDuringCombat"
+        outputCombat: "conditionsOutputDuringCombat",
+        suppressPreventativeSaveReminder: "conditionsSuppressPreventativeSaveReminder"
     },
     giveXP: {
         enable: "enableGiveXP"
