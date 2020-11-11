@@ -73,7 +73,8 @@ export class TokenUtility {
 
         roll.toMessage({
             flavor: `${actor.name} rolls for HP!`,
-            rollMode: hideRoll ? `gmroll` : `roll`
+            rollMode: hideRoll ? `gmroll` : `roll`,
+            speaker: ChatMessage.getSpeaker({actor: actor})
         });
         const hp = r.total;
     
