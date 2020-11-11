@@ -131,9 +131,9 @@ export function registerSettings() {
         type: Boolean,
         default: false,
         config: true,
-        onChange: s => {
+        onChange: async s => {
             if (s) {
-                EnhancedConditions._onReady();
+                await EnhancedConditions._onReady();
             }
 
             EnhancedConditions._toggleLabButtonVisibility(s);
@@ -190,7 +190,7 @@ export function registerSettings() {
         hint: "SETTINGS.EnhancedConditions.DefaultMapsH",
         scope: "world",
         type: Object,
-        default: {},
+        default: [],
         onChange: s => {}
     });
 
@@ -199,9 +199,9 @@ export function registerSettings() {
         hint: "SETTINGS.EnhancedConditions.ActiveConditionMapH",
         scope: "world",
         type: Object,
-        default: {},
-        onChange: conditionMap => {
-            EnhancedConditions._updateStatusEffects(conditionMap);
+        default: [],
+        onChange: async conditionMap => {
+            await EnhancedConditions._updateStatusEffects(conditionMap);
 
             // Save the active condition map to a convenience property
             if (game.cub) {
