@@ -226,7 +226,7 @@ export class EnhancedConditions {
 
         const conditions = EnhancedConditions.getConditions(token, {warn: false});
 
-        if (!conditions || !conditions?.conditions.length) return;
+        if (!conditions || !conditions?.conditions?.length) return;
 
         const chatConditions = [];
 
