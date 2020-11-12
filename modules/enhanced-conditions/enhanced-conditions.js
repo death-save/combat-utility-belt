@@ -53,7 +53,7 @@ export class EnhancedConditions {
 
             if (game.user.isGM) {
                 const preparedMap = EnhancedConditions._prepareMap(conditionMap);
-                Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.map, preparedMap);
+                Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.map, preparedMap, true);
             }
         }
 
@@ -856,7 +856,8 @@ export class EnhancedConditions {
      * @todo #281 update for active effects
      */
     static buildDefaultMap(system) {
-        const coreEffects = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.coreEffects) || CONFIG.statusEffects;
+        const coreEffectsSetting = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.coreEffects) 
+        const coreEffects = (coreEffectsSetting && coreEffectsSetting.length) ? coreEffectsSetting : CONFIG.statusEffects;
         const map = EnhancedConditions._prepareMap(coreEffects);
 
         return map;
