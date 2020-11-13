@@ -896,17 +896,22 @@ export class EnhancedConditions {
 
     /**
      * Applies the named condition to the provided entities (Actors or Tokens)
-     * @param {Actor | Token} entities  one or more Actors or Tokens to apply the Condition to
-     * @param {String} conditionName  the name of the condition to add
-     * @param {Boolean} options.warn  raise warnings on errors
+     * @param {String[] | String} conditionName  the name of the condition to add
+     * @param {(Actor[] | Token[] | Actor | Token)} [entities=null] one or more Actors or Tokens to apply the Condition to
+     * @param {Boolean} [options.warn=true]  raise warnings on errors
+     * @param {Boolean} [options.allowDuplicates=true]  if one or more of the Conditions specified is already active on the Entity, this will still add the Condition. Use in conjunction with `replaceExisting` to determine how duplicates are handled
+     * @param {Boolean} [options.replaceExisting=false]  whether or not to replace existing Conditions with any duplicates in the `conditionName` parameter. If `allowDuplicates` is true and `replaceExisting` is false then a duplicate condition is created. Has no effect is `keepDuplicates` is `false`
      * @example
      * // Add the Condition "Blinded" to an Actor named "Bob"
      * game.cub.addCondition("Blinded", game.actors.getName("Bob"));
      * @example
      * // Add the Condition "Charmed" to the currently controlled Token/s
      * game.cub.addCondition("Charmed");
+     * @example
+     * // Add the Conditions "Blinded" and "Charmed" to the targetted Token/s
+     * game.cub.addCondition(["Blinded", "Charmed"], [...game.user.targets])
      */
-    static async addCondition(conditionName, entities=null, {warn=true}={}) {
+    static async addCondition(conditionName, entities=null, {warn=true, allowDuplicates=true, replaceExisting=false}={}) {
         if (!entities) {
             // First check for any controlled tokens
             if (canvas?.tokens?.controlled.length) entities = canvas.tokens.controlled;
@@ -946,23 +951,56 @@ export class EnhancedConditions {
 
         for (let entity of entities) {
             const actor = entity instanceof Actor ? entity : entity instanceof Token ? entity.actor : null;
-            const existingConditions = EnhancedConditions.hasCondition(conditionNames, actor, {warn: false});
+            
+            if (!actor) continue;
 
-            if (existingConditions) {
+            const hasDuplicate = EnhancedConditions.hasCondition(conditionNames, actor, {warn: false});
+            const newEffects = [];
+            const updateEffects = [];
+            
+
+            // If there are duplicate Condition effects on the Actor, and duplicates should be kept, take extra steps
+            if (hasDuplicate && allowDuplicates) {
+
+                // @todo #348 determine the best way to raise warnings in this scenario
+                /*
                 if (warn) {
                     ui.notifications.warn(`${entity.name}: ${conditionName} ${game.i18n.localize("ENHANCED_CONDITIONS.ApplyCondition.Failed.AlreadyActive")}`);
                     console.log(`Combat Utility Belt - Enhanced Conditions | ${entity.name}: ${conditionName} ${game.i18n.localize("ENHANCED_CONDITIONS.ApplyCondition.Failed.AlreadyActive")}`);
                 }
-                continue;
+                */
+
+                // If existing Condition effects should be replaced, split the incoming effects into existing and new
+                if (replaceExisting) {
+
+                    // get the existing conditions on the actor
+                    let existingConditionEffects = EnhancedConditions.getConditionEffects(actor, {warn: false});
+                    existingConditionEffects = existingConditionEffects instanceof Array ? existingConditionEffects : [existingConditionEffects];
+   
+                    // loop through the effects sorting them into either existing or new effects
+                    for (const effect of effects) {
+                        const conditionId = getProperty(effect, `flags.${BUTLER.NAME}.${BUTLER.FLAGS.enhancedConditions.conditionId}`);
+                        const matchedConditionEffects = existingConditionEffects.filter(e => e.getFlag(BUTLER.NAME, BUTLER.FLAGS.enhancedConditions.conditionId) === conditionId);
+
+                        for (const matchedCondition of matchedConditionEffects) {
+                            updateEffects.push({_id: matchedCondition.data._id, ...effect});
+                        }
+
+                        if (!matchedConditionEffects.length) newEffects.push(effect);
+                    }
+                }
             }
 
             if (conditions.some(c => c?.options?.removeOthers)) {
                 await EnhancedConditions.removeAllConditions(actor, {warn: false});
             }
 
-            const createData = effects;
+            // if there's no update effects, then all the effects are new
+            const createData = !updateEffects.length ? effects : newEffects;
+            const updateData = updateEffects;
 
-            await actor.createEmbeddedEntity("ActiveEffect", createData);
+            if (createData.length) await actor.createEmbeddedEntity("ActiveEffect", createData);
+            if (updateData.length) await actor.updateEmbeddedEntity("ActiveEffect", updateData);
         }
         
     }
@@ -1175,10 +1213,10 @@ export class EnhancedConditions {
      * @param {Boolean} options.warn  whether or not to raise warnings on errors
      * @example 
      * // Remove Condition named "Blinded" from an Actor named Bob
-     * game.cub.removeCondition("Blinded", game.actors.getName("Bob"));
+     * game.cub.removeConditions("Blinded", game.actors.getName("Bob"));
      * @example 
      * // Remove Condition named "Charmed" from the currently controlled Token, but don't show any warnings if it fails.
-     * game.cub.removeCondition("Charmed", {warn=false});
+     * game.cub.removeConditions("Charmed", {warn=false});
      */
     static async removeCondition(conditionName, entities=null, {warn=true}={}) {
         if (!entities) {
