@@ -516,20 +516,6 @@ export function registerSettings() {
     });
 
     /* -------------------------------------------- */
-    /*                 ActorUtility                 */
-    /* -------------------------------------------- */
-
-    Sidekick.registerSetting(BUTLER.SETTING_KEYS.actorUtility.initiativeFromSheet, {
-        name: "SETTINGS.ActorUtility.InitiativeFromSheetN",
-        hint: "SETTINGS.ActorUtility.InitiativeFromSheetH",
-        default: BUTLER.DEFAULT_CONFIG.actorUtility.initiativeFromSheet,
-        scope: "world",
-        type: Boolean,
-        config: false,
-        onChange: s => {}
-    })
-
-    /* -------------------------------------------- */
     /*                 TokenUtility                 */
     /* -------------------------------------------- */
 

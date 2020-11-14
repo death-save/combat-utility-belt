@@ -182,7 +182,6 @@ export class Signal {
 
 
         Hooks.on("renderActorSheet", (app, html, data) => {
-            ActorUtility._onRenderActorSheet(app, html, data);
             HideNPCNames._onRenderActorSheet(app, html, data);
         });
 
@@ -206,11 +205,6 @@ export class Signal {
             HideNPCNames._hookOnRenderCombatTracker(app, html, data);
             TrackerUtility._onRenderCombatTracker(app, html, data);
             TemporaryCombatants._onRenderCombatTracker(app, html, data);
-        });
-        
-        Hooks.on("renderCombatTrackerConfig", (app, html, data) => {
-            // Possible future feature
-            //game.cub.combatTracker._onRenderCombatTrackerConfig(app, html, data);
         });
 
         /* ---------------- Custom Apps --------------- */
