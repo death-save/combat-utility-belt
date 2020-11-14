@@ -1,19 +1,32 @@
 # Changelog
 
-## [Unreleased]
-- Attach Macros to Conditions in Condition Lab
-- Macros for: hiding/unhiding NPC names, rerolling initiative
-
 ## [Known Issues]
 > Some issues related to the upgrade to Active Effects can be resolved/mitigated by **Saving your Condition Lab** after updating to a CUB version greater than 1.3.0. Please try this before reporting an issue!
 
 1. Active Effects cannot be added to some Conditions (lower in the Condition Lab)
 2. Loading a world with an existing Condition Lab mapping from pre CUB v1.3.0 may cause any Conditions added to a token to default to the first mapped condition. WORKAROUND: After loading your world, go into the Condition Lab and click Save.
-3. Attempting to add multiple Conditions at the same time when one of those Conditions already exists on the Actor/Token will block all of them being added.
+3. ~~Attempting to add multiple Conditions at the same time when one of those Conditions already exists on the Actor/Token will block all of them being added.~~ Resolved in CUB v1.3.4
 4. Enhanced Conditions chat output for linked Tokens and Actors is not aggregated, so you may see multiple messages when many conditions are added/removed from an Actor/Token.
 5. Overlay Effects added to a token will trigger the matching non-Overlay Condition to output to chat. The reverse is also true.
 6. **PF2e users**: Enhanced Conditions `Output to Chat` setting will cause duplicate chat messages due to similar function built into the system.
 7. Chat log may not re-render when Hide Names settings are changed. This may cause the old name to still show in the log for players. Advise players to reload Foundry if you change these settings mid-session.
+
+## [1.3.4] - 2020-11-14
+### Added
+- Added a reminder to save the Condition Lab for worlds where Enhanced Conditions is enabled to possibly prevent issues
+
+### Changed
+- `addCondition` API method now includes additional options `keepDuplicates` (default: `true`) and `replaceExisting` (default: `false`) which allow you to specify how to deal with existing duplicate Condition Effects already active on the target actor when adding Condition Effects. For example if an Actor is already *Blinded* and you add the *Blinded* Condition again you can now specify to replace the existing Condition like so: `game.cub.addCondition("Blinded", {replaceExisting: true})`
+- Roll Hostile Token HP now uses the Actor's name as the Chat Message speaker, which allows Hide Names to work on the message
+
+### Fixed
+- Fixed Condition Lab not opening in worlds where the game system was unknown to CUB
+- Reroll Initiative no longer rerolls when combat is first started (ie. by clicking Begin Combat)
+- Inspiration icon dimensions are now correctly set for use in Foundry
+- Condition Lab - Condition Name placeholder text now says `Condition Name` instead of `Icon Path`
+
+### Removed
+- Misc Actor - Roll Initiative from Sheet has been removed in favour of the same functionality now built-into Foundry
 
 ## [1.3.3] - 2020-10-28
 ### Changed

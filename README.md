@@ -1,8 +1,8 @@
-![https://img.shields.io/badge/Foundry%20VTT-0.7.6%2B-green](https://img.shields.io/badge/Foundry%20VTT-0.7.6%2B-green)
+![https://img.shields.io/badge/Foundry%20VTT-0.7.6=>0.7.7-green](https://img.shields.io/badge/Foundry%20VTT-0.7.6=>0.7.7-green)
 
 # Combat Utility Belt
 ** WARNING THIS README IS OUT OF DATE **    
-*I apologise for any confusion this may cause.*
+*I apologise for any confusion this may cause. A full redesign of the README is planned*
 
 **Author**: Evan Clarke (errational#2007 on discord)
 
