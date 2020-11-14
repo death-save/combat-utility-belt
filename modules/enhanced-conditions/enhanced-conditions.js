@@ -66,6 +66,11 @@ export class EnhancedConditions {
         if (enable) {
             if (game.user.isGM) {
                 EnhancedConditions._backupCoreEffects();
+                // If the reminder is not suppressed, advise users to save the Condition Lab
+                const suppressPreventativeSaveReminder = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.suppressPreventativeSaveReminder);
+                if (!suppressPreventativeSaveReminder) {
+                    EnhancedConditions._preventativeSaveReminder();
+                }
             }
 
             EnhancedConditions._updateStatusEffects(conditionMap);
@@ -76,11 +81,7 @@ export class EnhancedConditions {
             game.cub.conditions = conditionMap;
         }
 
-        // If the reminder is not suppressed, advise users to save the Condition Lab
-        const suppressPreventativeSaveReminder = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.suppressPreventativeSaveReminder);
-        if (!suppressPreventativeSaveReminder) {
-            EnhancedConditions._preventativeSaveReminder();
-        }
+        
     }
 
     /**
