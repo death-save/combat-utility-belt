@@ -139,7 +139,7 @@ export class Signal {
         /* ------------------ Combat ------------------ */
 
         Hooks.on("preUpdateCombat", (combat, update, options) => {
-            
+            RerollInitiative._onPreUpdateCombat(combat, update, options);
         });
 
         Hooks.on("updateCombat", (combat, update, options, userId) => {
