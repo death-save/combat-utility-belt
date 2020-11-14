@@ -75,7 +75,7 @@ export class HideNPCNames {
             const viewedSceneId = game.user.viewedScene ?? game.scenes.active.id;
             const scene = game.scenes.get(viewedSceneId);
             const tokenData = scene.data.tokens.find(t => t._id === c._id);
-            const token = canvas?.tokens?.placeables?.find(t => t.id === c._id) ?? tokenData ? new Token(tokenData) : null;
+            const token = canvas?.tokens?.placeables?.find(t => t.id === c._id) ?? tokenData ? new Token(tokenData, scene) : null;
             // Combatants can only come from the viewed scene
             return token;
         });
@@ -138,7 +138,7 @@ export class HideNPCNames {
         const messageTokenId = message.data.speaker.token;
         const scene = messageSceneId ? game.scenes.get(messageSceneId) : null;
         const tokenData = scene ? scene.data.tokens.find(t => t._id === messageTokenId) : null;
-        const token = canvas?.tokens.get(messageTokenId) ?? (tokenData ? new Token(tokenData) : null);
+        const token = canvas?.tokens.get(messageTokenId) ?? (tokenData ? new Token(tokenData, scene) : null);
         const actor = token ? token.actor : messageActorId ? game.actors.get(messageActorId) : null;
 
         if (!actor) return;
@@ -191,7 +191,7 @@ export class HideNPCNames {
         const messageTokenId = chatDisplayData.message.data.speaker.token;
         const scene = messageSceneId ? game.scenes.get(messageSceneId) : null;
         const tokenData = scene ? scene.data.tokens.find(t => t._id === messageTokenId) : null;
-        const token = canvas.tokens.get(messageTokenId) ?? (tokenData ? new Token(tokenData) : null);
+        const token = canvas.tokens.get(messageTokenId) ?? (tokenData ? new Token(tokenData, scene) : null);
         const actor = token ? token.actor : game.actors.get(messageActorId);
         const speakerIsNPC = actor && !actor.hasPlayerOwner;
 

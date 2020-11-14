@@ -183,6 +183,10 @@ export class Concentrator {
 
         if (!damageTaken || (!game.user.isGM && userId !== game.userId)) return;
 
+        const tokenId = tokenData._id;
+        const newTokenData = duplicate(tokenData);
+        delete newTokenData._id;
+        
         const token = canvas.tokens.get(tokenData._id) ?? new Token(tokenData);
         const actor = token.actor;
 
