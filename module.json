@@ -13,7 +13,7 @@
   "download": "https://github.com/death-save/combat-utility-belt/releases/latest/download/module.zip",
   "scripts": [
     "./library/typewriterjs/core.js", 
-    "greensock/dist/TweenMax.min.js"
+    "greensock/dist/gsap.min.js"
   ],
   "esmodules": [
     "./combat-utility-belt.js"
