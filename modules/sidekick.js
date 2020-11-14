@@ -288,4 +288,24 @@ export class Sidekick {
         
         return slug;
     }
+
+    /**
+     * For a given file path, find the filename and then apply title case
+     * @param {String} path 
+     * @returns {String}
+     */
+    static getNameFromFilePath(path) {
+        if (!path) return null;
+
+        const file = path.split("\\").pop().split("/").pop();
+
+        if (!file) return null;
+
+        const filename = file.replace(/\.[^/.]+$/, "");
+
+        if (!filename) return null;
+
+        const name = Sidekick.toTitleCase(filename);
+        return name;
+    }
 }

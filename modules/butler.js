@@ -276,10 +276,10 @@ export const DEFAULT_CONFIG = {
             }
         },
         effectSizeChoices: {
-            xLarge: "Extra Large - 2x2",
-            large: "Large - 3x3",
-            medium: "Medium - 4x4",
-            small: "Small (Default) - 5x5"
+            "small": "Small (Default) - 5x5",
+            "medium": "Medium - 4x4",
+            "large": "Large - 3x3",
+            "xLarge": "Extra Large - 2x2"
         }
     },
     trackerUtility: {
@@ -359,7 +359,8 @@ export const SETTING_KEYS = {
         mapType: "conditionMapType",
         removeDefaultEffects: "removeDefaultEffects",
         outputChat: "conditionsOutputToChat",
-        outputCombat: "conditionsOutputDuringCombat"
+        outputCombat: "conditionsOutputDuringCombat",
+        suppressPreventativeSaveReminder: "conditionsSuppressPreventativeSaveReminder"
     },
     giveXP: {
         enable: "enableGiveXP"

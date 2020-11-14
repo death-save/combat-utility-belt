@@ -425,7 +425,8 @@ Exports the current map to JSON
 <a name="ConditionLab+_importFromJSONDialog"></a>
 
 ### conditionLab.\_importFromJSONDialog()
-Initiates an import via a dialogBorrowed from foundry.js Entity class
+Initiates an import via a dialog
+Borrowed from foundry.js Entity class
 
 **Kind**: instance method of [<code>ConditionLab</code>](#ConditionLab)  
 <a name="ConditionLab+_processImport"></a>
@@ -615,7 +616,8 @@ Builds a mapping between status icons and journal entries that represent conditi
     * [.mapFromJson(json)](#EnhancedConditions.mapFromJson)
     * [.getDefaultMap(system)](#EnhancedConditions.getDefaultMap)
     * [.buildDefaultMap(system)](#EnhancedConditions.buildDefaultMap)
-    * [.addCondition(entities, conditionName)](#EnhancedConditions.addCondition)
+    * [._preventativeSaveReminder()](#EnhancedConditions._preventativeSaveReminder)
+    * [.addCondition(conditionName, [entities])](#EnhancedConditions.addCondition)
     * [.getCondition(conditionName, map)](#EnhancedConditions.getCondition)
     * [.getConditions(entities)](#EnhancedConditions.getConditions) ⇒ <code>Array</code>
     * [.getActiveEffect(condition)](#EnhancedConditions.getActiveEffect)
@@ -628,12 +630,18 @@ Builds a mapping between status icons and journal entries that represent conditi
 
 ### EnhancedConditions.\_onReady()
 Ready Hook handler
+Steps:
+1. Get default maps
+2. Get mapType
+3. Get Condition Map
+4. Override status effects
 
 **Kind**: static method of [<code>EnhancedConditions</code>](#EnhancedConditions)  
 <a name="EnhancedConditions._onPreUpdateToken"></a>
 
 ### EnhancedConditions.\_onPreUpdateToken(scene, tokenData, update, options, userId)
-Handle PreUpdate Token Hook.If the update includes effect data, add an `option` for the update hook handler to look for
+Handle PreUpdate Token Hook.
+If the update includes effect data, add an `option` for the update hook handler to look for
 
 **Kind**: static method of [<code>EnhancedConditions</code>](#EnhancedConditions)  
 
@@ -936,26 +944,41 @@ Builds a default map for a given system
 | --- | --- |
 | system | <code>\*</code> | 
 
+<a name="EnhancedConditions._preventativeSaveReminder"></a>
+
+### EnhancedConditions.\_preventativeSaveReminder()
+Create a dialog reminding users to Save the Condition Lab as a preventation for issues arising from the transition to Active Effects
+
+**Kind**: static method of [<code>EnhancedConditions</code>](#EnhancedConditions)  
 <a name="EnhancedConditions.addCondition"></a>
 
-### EnhancedConditions.addCondition(entities, conditionName)
+### EnhancedConditions.addCondition(conditionName, [entities])
 Applies the named condition to the provided entities (Actors or Tokens)
 
 **Kind**: static method of [<code>EnhancedConditions</code>](#EnhancedConditions)  
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
-| entities | <code>Actor</code> \| <code>Token</code> | <code></code> | one or more Actors or Tokens to apply the Condition to |
-| conditionName | <code>String</code> |  | the name of the condition to add |
-| options.warn | <code>Boolean</code> |  | raise warnings on errors |
+| conditionName | <code>Array.&lt;String&gt;</code> \| <code>String</code> |  | the name of the condition to add |
+| [entities] | <code>Array.&lt;Actor&gt;</code> \| <code>Array.&lt;Token&gt;</code> \| <code>Actor</code> \| <code>Token</code> | <code></code> | one or more Actors or Tokens to apply the Condition to |
+| [options.warn] | <code>Boolean</code> | <code>true</code> | raise warnings on errors |
+| [options.allowDuplicates] | <code>Boolean</code> | <code>true</code> | if one or more of the Conditions specified is already active on the Entity, this will still add the Condition. Use in conjunction with `replaceExisting` to determine how duplicates are handled |
+| [options.replaceExisting] | <code>Boolean</code> | <code>false</code> | whether or not to replace existing Conditions with any duplicates in the `conditionName` parameter. If `allowDuplicates` is true and `replaceExisting` is false then a duplicate condition is created. Has no effect is `keepDuplicates` is `false` |
 
 **Example**  
 ```js
-// Add the Condition "Blinded" to an Actor named "Bob"game.cub.addCondition("Blinded", game.actors.getName("Bob"));
+// Add the Condition "Blinded" to an Actor named "Bob"
+game.cub.addCondition("Blinded", game.actors.getName("Bob"));
 ```
 **Example**  
 ```js
-// Add the Condition "Charmed" to the currently controlled Token/sgame.cub.addCondition("Charmed");
+// Add the Condition "Charmed" to the currently controlled Token/s
+game.cub.addCondition("Charmed");
+```
+**Example**  
+```js
+// Add the Conditions "Blinded" and "Charmed" to the targetted Token/s
+game.cub.addCondition(["Blinded", "Charmed"], [...game.user.targets])
 ```
 <a name="EnhancedConditions.getCondition"></a>
 
@@ -985,11 +1008,13 @@ Retrieves all active conditions for one or more given entities (Actors or Tokens
 
 **Example**  
 ```js
-// Get conditions for an Actor named "Bob"game.cub.getConditions(game.actors.getName("Bob"));
+// Get conditions for an Actor named "Bob"
+game.cub.getConditions(game.actors.getName("Bob"));
 ```
 **Example**  
 ```js
-// Get conditions for the currently controlled Tokengame.cub.getConditions();
+// Get conditions for the currently controlled Token
+game.cub.getConditions();
 ```
 <a name="EnhancedConditions.getActiveEffect"></a>
 
@@ -1032,11 +1057,13 @@ Checks if the provided Entity (Actor or Token) has the given condition
 
 **Example**  
 ```js
-// Check for the "Blinded" condition on Actor "Bob"game.cub.hasCondition("Blinded", game.actors.getName("Bob"));
+// Check for the "Blinded" condition on Actor "Bob"
+game.cub.hasCondition("Blinded", game.actors.getName("Bob"));
 ```
 **Example**  
 ```js
-// Check for the "Charmed" and "Deafened" conditions on the controlled tokensgame.cub.hasCondition(["Charmed", "Deafened"]);
+// Check for the "Charmed" and "Deafened" conditions on the controlled tokens
+game.cub.hasCondition(["Charmed", "Deafened"]);
 ```
 <a name="EnhancedConditions.removeCondition"></a>
 
@@ -1054,11 +1081,13 @@ Removes one or more named conditions from an Entity (Actor/Token)
 
 **Example**  
 ```js
-// Remove Condition named "Blinded" from an Actor named Bobgame.cub.removeCondition("Blinded", game.actors.getName("Bob"));
+// Remove Condition named "Blinded" from an Actor named Bob
+game.cub.removeConditions("Blinded", game.actors.getName("Bob"));
 ```
 **Example**  
 ```js
-// Remove Condition named "Charmed" from the currently controlled Token, but don't show any warnings if it fails.game.cub.removeCondition("Charmed", {warn=false});
+// Remove Condition named "Charmed" from the currently controlled Token, but don't show any warnings if it fails.
+game.cub.removeConditions("Charmed", {warn=false});
 ```
 <a name="EnhancedConditions.removeAllConditions"></a>
 
@@ -1074,11 +1103,13 @@ Removes all conditions from the provided entities
 
 **Example**  
 ```js
-// Remove all Conditions on an Actor named Bobgame.cub.removeAllConditions(game.actors.getName("Bob"));
+// Remove all Conditions on an Actor named Bob
+game.cub.removeAllConditions(game.actors.getName("Bob"));
 ```
 **Example**  
 ```js
-// Remove all Conditions on the currently controlled Tokengame.cub.removeAllConditions();
+// Remove all Conditions on the currently controlled Token
+game.cub.removeAllConditions();
 ```
 <a name="PanSelect"></a>
 
@@ -1195,6 +1226,22 @@ Rerolls initiative for all combatants
 
 - [ ] refactor to preUpdate hook
 
+
+* [RerollInitiative](#RerollInitiative)
+    * [._onPreUpdateCombat(combat, update, options)](#RerollInitiative._onPreUpdateCombat)
+    * [._onUpdateCombat(combat, update, options, userId)](#RerollInitiative._onUpdateCombat)
+
+<a name="RerollInitiative._onPreUpdateCombat"></a>
+
+### RerollInitiative.\_onPreUpdateCombat(combat, update, options)
+**Kind**: static method of [<code>RerollInitiative</code>](#RerollInitiative)  
+
+| Param | Type |
+| --- | --- |
+| combat | <code>\*</code> | 
+| update | <code>\*</code> | 
+| options | <code>\*</code> | 
+
 <a name="RerollInitiative._onUpdateCombat"></a>
 
 ### RerollInitiative.\_onUpdateCombat(combat, update, options, userId)
@@ -1233,6 +1280,7 @@ Provides helper methods for use elsewhere in the module (and has your back in a 
     * [.toTitleCase(string)](#Sidekick.toTitleCase)
     * [.replaceOnDocument(pattern, string, param2)](#Sidekick.replaceOnDocument)
     * [.generateUniqueSlugId(string, idList)](#Sidekick.generateUniqueSlugId)
+    * [.getNameFromFilePath(path)](#Sidekick.getNameFromFilePath) ⇒ <code>String</code>
 
 <a name="Sidekick.getSystemChoices"></a>
 
@@ -1344,7 +1392,8 @@ Attempts to coerce a target value into the exemplar's type
 <a name="Sidekick.buildFormData"></a>
 
 ### Sidekick.buildFormData(FD)
-Builds a FD returned from FormDataExtended into a formData arrayBorrowed from foundry.js
+Builds a FD returned from FormDataExtended into a formData array
+Borrowed from foundry.js
 
 **Kind**: static method of [<code>Sidekick</code>](#Sidekick)  
 
@@ -1398,6 +1447,17 @@ For a given string generate a slug, optionally checking a list of existing Ids f
 | --- | --- |
 | string | <code>\*</code> | 
 | idList | <code>\*</code> | 
+
+<a name="Sidekick.getNameFromFilePath"></a>
+
+### Sidekick.getNameFromFilePath(path) ⇒ <code>String</code>
+For a given file path, find the filename and then apply title case
+
+**Kind**: static method of [<code>Sidekick</code>](#Sidekick)  
+
+| Param | Type |
+| --- | --- |
+| path | <code>String</code> | 
 
 <a name="Signal"></a>
 
@@ -1521,7 +1581,11 @@ Update token handler
 <a name="DraggableList"></a>
 
 ## DraggableList
-From Valentin "Moerill" Henkysthe code is licensed under LGPL v3.Original is implemented in his module "Mess":https://github.com/Moerill/MessLICENSE: https://github.com/Moerill/Mess/blob/master/LICENSE
+From Valentin "Moerill" Henkys
+the code is licensed under LGPL v3.
+Original is implemented in his module "Mess":
+https://github.com/Moerill/Mess
+LICENSE: https://github.com/Moerill/Mess/blob/master/LICENSE
 
 **Kind**: global class  
 <a name="KNOWN_GAME_SYSTEMS"></a>

@@ -131,9 +131,9 @@ export function registerSettings() {
         type: Boolean,
         default: false,
         config: true,
-        onChange: s => {
+        onChange: async s => {
             if (s) {
-                EnhancedConditions._onReady();
+                await EnhancedConditions._onReady();
             }
 
             EnhancedConditions._toggleLabButtonVisibility(s);
@@ -190,7 +190,7 @@ export function registerSettings() {
         hint: "SETTINGS.EnhancedConditions.DefaultMapsH",
         scope: "world",
         type: Object,
-        default: {},
+        default: [],
         onChange: s => {}
     });
 
@@ -199,9 +199,9 @@ export function registerSettings() {
         hint: "SETTINGS.EnhancedConditions.ActiveConditionMapH",
         scope: "world",
         type: Object,
-        default: {},
-        onChange: conditionMap => {
-            EnhancedConditions._updateStatusEffects(conditionMap);
+        default: [],
+        onChange: async conditionMap => {
+            await EnhancedConditions._updateStatusEffects(conditionMap);
 
             // Save the active condition map to a convenience property
             if (game.cub) {
@@ -240,6 +240,16 @@ export function registerSettings() {
         onChange: s => {
             EnhancedConditions._updateStatusEffects();
         }
+    });
+
+    Sidekick.registerSetting(BUTLER.SETTING_KEYS.enhancedConditions.suppressPreventativeSaveReminder, {
+        name: "SETTINGS.EnhancedConditions.SuppressPreventativeSaveReminderN",
+        hint: "SETTINGS.EnhancedConditions.SuppressPreventativeSaveReminderH",
+        scope: "world",
+        type: Boolean,
+        config: false,
+        default: false,
+        onChange: s => {}
     });
 
     /* -------------------------------------------- */
@@ -504,20 +514,6 @@ export function registerSettings() {
             ui.combat.render();
         }
     });
-
-    /* -------------------------------------------- */
-    /*                 ActorUtility                 */
-    /* -------------------------------------------- */
-
-    Sidekick.registerSetting(BUTLER.SETTING_KEYS.actorUtility.initiativeFromSheet, {
-        name: "SETTINGS.ActorUtility.InitiativeFromSheetN",
-        hint: "SETTINGS.ActorUtility.InitiativeFromSheetH",
-        default: BUTLER.DEFAULT_CONFIG.actorUtility.initiativeFromSheet,
-        scope: "world",
-        type: Boolean,
-        config: false,
-        onChange: s => {}
-    })
 
     /* -------------------------------------------- */
     /*                 TokenUtility                 */

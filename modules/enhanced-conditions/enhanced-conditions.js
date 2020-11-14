@@ -14,27 +14,37 @@ export class EnhancedConditions {
 
     /**
      * Ready Hook handler
+     * Steps:
+     * 1. Get default maps
+     * 2. Get mapType
+     * 3. Get Condition Map
+     * 4. Override status effects
      */
     static async _onReady() {
-        let defaultMaps = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.defaultMaps);
         const enable = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.enable);
+
+        // Return early if gadget not enabled
+        if (!enable) return;
+
+        let defaultMaps = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.defaultMaps) ?? {};
+        let conditionMap = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.map);
+
         const system = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.system);
         const mapType = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.mapType);
         const defaultMapType = Sidekick.getKeyByValue(BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes, BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes.default);
-        let conditionMap = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.map);
 
         // If there's no defaultMaps or defaultMaps doesn't include game system, check storage then set appropriately
         if (!defaultMaps || (defaultMaps instanceof Object && Object.keys(defaultMaps).length === 0) || (defaultMaps instanceof Object && !Object.keys(defaultMaps).includes(system))) {
             if (game.user.isGM) {
                 const storedMaps = await EnhancedConditions._loadDefaultMaps();
-                defaultMaps = await Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.defaultMaps, storedMaps);
+                defaultMaps = Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.defaultMaps, storedMaps, true);
             }
         }
 
         // If map type is not set and a default map exists for the system, set maptype to default
         if (!mapType && (defaultMaps instanceof Object && Object.keys(defaultMaps).includes(system))) {
             
-            Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.mapType, defaultMapType);
+            Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.mapType, defaultMapType, true);
         }
 
         // If there's no condition map, get the default one
@@ -43,14 +53,24 @@ export class EnhancedConditions {
 
             if (game.user.isGM) {
                 const preparedMap = EnhancedConditions._prepareMap(conditionMap);
-                Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.map, preparedMap);
+                Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.map, preparedMap, true);
             }
+        }
+
+        // If map type is not set, now set to default
+        if (!mapType && conditionMap.length) {
+            Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.mapType, defaultMapType, true);
         }
 
         // If the gadget is enabled, update status icons accordingly
         if (enable) {
             if (game.user.isGM) {
                 EnhancedConditions._backupCoreEffects();
+                // If the reminder is not suppressed, advise users to save the Condition Lab
+                const suppressPreventativeSaveReminder = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.suppressPreventativeSaveReminder);
+                if (!suppressPreventativeSaveReminder) {
+                    EnhancedConditions._preventativeSaveReminder();
+                }
             }
 
             EnhancedConditions._updateStatusEffects(conditionMap);
@@ -60,6 +80,8 @@ export class EnhancedConditions {
         if (game.cub) {
             game.cub.conditions = conditionMap;
         }
+
+        
     }
 
     /**
@@ -220,7 +242,7 @@ export class EnhancedConditions {
 
         const conditions = EnhancedConditions.getConditions(token, {warn: false});
 
-        if (!conditions || !conditions?.conditions.length) return;
+        if (!conditions || !conditions?.conditions?.length) return;
 
         const chatConditions = [];
 
@@ -566,7 +588,7 @@ export class EnhancedConditions {
      * @param {*} conditionMap 
      */
     static _prepareMap(conditionMap) {
-        if (!conditionMap.length) return;
+        if (!conditionMap || !conditionMap?.length) return;
 
         const preparedMap = duplicate(conditionMap);
 
@@ -575,6 +597,7 @@ export class EnhancedConditions {
 
         // Iterate through the map validating and fixing the data
         preparedMap.forEach(c => {
+            c.name = c.name ?? c.icon ? Sidekick.getNameFromFilePath(c.icon) : "";
             c.id = c.id || Sidekick.generateUniqueSlugId(c.name, existingIds);
             c.options = c.options || {};
         });
@@ -834,21 +857,38 @@ export class EnhancedConditions {
      * @todo #281 update for active effects
      */
     static buildDefaultMap(system) {
-        const coreIcons = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.coreIcons);
+        const coreEffectsSetting = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.coreEffects) 
+        const coreEffects = (coreEffectsSetting && coreEffectsSetting.length) ? coreEffectsSetting : CONFIG.statusEffects;
+        const map = EnhancedConditions._prepareMap(coreEffects);
 
-        // iterate over icons, set condition to icon file name, try to find a matching reference
-        const map = coreIcons.map(i => {
-            const icon = i;
-            let name = i.split("/").pop().split(".").shift();
-            name = name ? Sidekick.toTitleCase(name) : "";
-            
-            return {
-                name,
-                icon
+        return map;
+    }
+
+    /**
+     * Create a dialog reminding users to Save the Condition Lab as a preventation for issues arising from the transition to Active Effects
+     */
+    static async _preventativeSaveReminder() {
+        const content = await renderTemplate(`${BUTLER.PATH}/templates/preventative-save-dialog.hbs`);
+
+        const dialog = new Dialog({
+            title: game.i18n.localize("ENHANCED_CONDITIONS.PreventativeSaveReminder.Title"),
+            content,
+            buttons: {
+                ok: {
+                    label: game.i18n.localize("WORDS.IUnderstand"),
+                    icon: `<i class="fas fa-check"></i>`,
+                    callback: (html, event) => {
+                        const suppressCheckbox = html.find("input[name='suppress']");
+                        const suppress = suppressCheckbox.val();
+                        if (suppress) {
+                            Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.suppressPreventativeSaveReminder, true)
+                        }
+                    }
+                }
             }
         });
 
-        return map;
+        dialog.render(true);
     }
 
     /* -------------------------------------------- */
@@ -857,17 +897,22 @@ export class EnhancedConditions {
 
     /**
      * Applies the named condition to the provided entities (Actors or Tokens)
-     * @param {Actor | Token} entities  one or more Actors or Tokens to apply the Condition to
-     * @param {String} conditionName  the name of the condition to add
-     * @param {Boolean} options.warn  raise warnings on errors
+     * @param {String[] | String} conditionName  the name of the condition to add
+     * @param {(Actor[] | Token[] | Actor | Token)} [entities=null] one or more Actors or Tokens to apply the Condition to
+     * @param {Boolean} [options.warn=true]  raise warnings on errors
+     * @param {Boolean} [options.allowDuplicates=true]  if one or more of the Conditions specified is already active on the Entity, this will still add the Condition. Use in conjunction with `replaceExisting` to determine how duplicates are handled
+     * @param {Boolean} [options.replaceExisting=false]  whether or not to replace existing Conditions with any duplicates in the `conditionName` parameter. If `allowDuplicates` is true and `replaceExisting` is false then a duplicate condition is created. Has no effect is `keepDuplicates` is `false`
      * @example
      * // Add the Condition "Blinded" to an Actor named "Bob"
      * game.cub.addCondition("Blinded", game.actors.getName("Bob"));
      * @example
      * // Add the Condition "Charmed" to the currently controlled Token/s
      * game.cub.addCondition("Charmed");
+     * @example
+     * // Add the Conditions "Blinded" and "Charmed" to the targetted Token/s
+     * game.cub.addCondition(["Blinded", "Charmed"], [...game.user.targets])
      */
-    static async addCondition(conditionName, entities=null, {warn=true}={}) {
+    static async addCondition(conditionName, entities=null, {warn=true, allowDuplicates=true, replaceExisting=false}={}) {
         if (!entities) {
             // First check for any controlled tokens
             if (canvas?.tokens?.controlled.length) entities = canvas.tokens.controlled;
@@ -907,23 +952,56 @@ export class EnhancedConditions {
 
         for (let entity of entities) {
             const actor = entity instanceof Actor ? entity : entity instanceof Token ? entity.actor : null;
-            const existingConditions = EnhancedConditions.hasCondition(conditionNames, actor, {warn: false});
+            
+            if (!actor) continue;
 
-            if (existingConditions) {
+            const hasDuplicate = EnhancedConditions.hasCondition(conditionNames, actor, {warn: false});
+            const newEffects = [];
+            const updateEffects = [];
+            
+
+            // If there are duplicate Condition effects on the Actor, and duplicates should be kept, take extra steps
+            if (hasDuplicate && allowDuplicates) {
+
+                // @todo #348 determine the best way to raise warnings in this scenario
+                /*
                 if (warn) {
                     ui.notifications.warn(`${entity.name}: ${conditionName} ${game.i18n.localize("ENHANCED_CONDITIONS.ApplyCondition.Failed.AlreadyActive")}`);
                     console.log(`Combat Utility Belt - Enhanced Conditions | ${entity.name}: ${conditionName} ${game.i18n.localize("ENHANCED_CONDITIONS.ApplyCondition.Failed.AlreadyActive")}`);
                 }
-                continue;
+                */
+
+                // If existing Condition effects should be replaced, split the incoming effects into existing and new
+                if (replaceExisting) {
+
+                    // get the existing conditions on the actor
+                    let existingConditionEffects = EnhancedConditions.getConditionEffects(actor, {warn: false});
+                    existingConditionEffects = existingConditionEffects instanceof Array ? existingConditionEffects : [existingConditionEffects];
+   
+                    // loop through the effects sorting them into either existing or new effects
+                    for (const effect of effects) {
+                        const conditionId = getProperty(effect, `flags.${BUTLER.NAME}.${BUTLER.FLAGS.enhancedConditions.conditionId}`);
+                        const matchedConditionEffects = existingConditionEffects.filter(e => e.getFlag(BUTLER.NAME, BUTLER.FLAGS.enhancedConditions.conditionId) === conditionId);
+
+                        for (const matchedCondition of matchedConditionEffects) {
+                            updateEffects.push({_id: matchedCondition.data._id, ...effect});
+                        }
+
+                        if (!matchedConditionEffects.length) newEffects.push(effect);
+                    }
+                }
             }
 
             if (conditions.some(c => c?.options?.removeOthers)) {
                 await EnhancedConditions.removeAllConditions(actor, {warn: false});
             }
 
-            const createData = effects;
+            // if there's no update effects, then all the effects are new
+            const createData = !updateEffects.length ? effects : newEffects;
+            const updateData = updateEffects;
 
-            await actor.createEmbeddedEntity("ActiveEffect", createData);
+            if (createData.length) await actor.createEmbeddedEntity("ActiveEffect", createData);
+            if (updateData.length) await actor.updateEmbeddedEntity("ActiveEffect", updateData);
         }
         
     }
@@ -1136,10 +1214,10 @@ export class EnhancedConditions {
      * @param {Boolean} options.warn  whether or not to raise warnings on errors
      * @example 
      * // Remove Condition named "Blinded" from an Actor named Bob
-     * game.cub.removeCondition("Blinded", game.actors.getName("Bob"));
+     * game.cub.removeConditions("Blinded", game.actors.getName("Bob"));
      * @example 
      * // Remove Condition named "Charmed" from the currently controlled Token, but don't show any warnings if it fails.
-     * game.cub.removeCondition("Charmed", {warn=false});
+     * game.cub.removeConditions("Charmed", {warn=false});
      */
     static async removeCondition(conditionName, entities=null, {warn=true}={}) {
         if (!entities) {
