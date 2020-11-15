@@ -125,7 +125,7 @@ export class ConditionLab extends FormApplication {
         conditionMap.forEach((entry, index, map) => {
             // Check if the row exists in the saved map
             const existingEntry = this.initialMap.find(e => e.id === entry.id) ?? null;
-            entry.isNew = !existingEntry;            
+            entry.isNew = !existingEntry;
 
             // Set the Output to Chat checkbox
             entry.options = entry.options ?? {};
@@ -167,19 +167,20 @@ export class ConditionLab extends FormApplication {
                     break;
             }
 
-            entry.isChanged = existingEntry 
-                ? (entry.name != existingEntry.name 
-                    || entry.icon != existingEntry.icon 
-                    || JSON.stringify(entry.options) != JSON.stringify(existingEntry.options)
-                    || entry.referenceType != existingEntry.referenceType
-                    || entry.referenceId != existingEntry.referenceId
-                    || entry.applyTrigger != existingEntry.applyTrigger
-                    || entry.removeTrigger != existingEntry.removeTrigger
-                    || index != this.initialMap.indexOf(existingEntry)) 
+            // @todo #357 extract this into a function
+            entry.isChanged = existingEntry && entry
+                ? (entry?.name != existingEntry?.name 
+                    || entry?.icon != existingEntry?.icon 
+                    || JSON.stringify(entry?.options) != JSON.stringify(existingEntry?.options)
+                    || entry?.referenceType != existingEntry?.referenceType
+                    || entry?.referenceId != existingEntry?.referenceId
+                    || entry?.applyTrigger != existingEntry?.applyTrigger
+                    || entry?.removeTrigger != existingEntry?.removeTrigger
+                    || index != this?.initialMap.indexOf(existingEntry)) 
                 : false;
         });
 
-        const unsavedMap = this.initialMap.length != conditionMap.length || (conditionMap.length ? conditionMap.some(c => c.isNew || c.isChanged) : false);
+        const unsavedMap = this?.initialMap?.length != conditionMap?.length || (conditionMap?.length ? conditionMap?.some(c => c.isNew || c.isChanged) : false);
 
         const data = {
             mapTypeChoices,
