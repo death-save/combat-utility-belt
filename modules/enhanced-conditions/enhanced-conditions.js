@@ -511,7 +511,8 @@ export class EnhancedConditions {
      */
     static async _removeOtherConditions(entity, conditionId) {
         const entityConditions = EnhancedConditions.getConditions(entity, {warn: false});
-        const conditions = entityConditions ? entityConditions.conditions : [];
+        let conditions = entityConditions ? entityConditions.conditions : [];
+        conditions = conditions instanceof Array ? conditions : [conditions];
 
         if (!conditions.length) return;
 
