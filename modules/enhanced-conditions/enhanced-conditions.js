@@ -597,7 +597,7 @@ export class EnhancedConditions {
 
         // Iterate through the map validating and fixing the data
         preparedMap.forEach(c => {
-            c.name = c.name ?? c.icon ? Sidekick.getNameFromFilePath(c.icon) : "";
+            c.name = c.name ?? (c.icon ? Sidekick.getNameFromFilePath(c.icon) : "");
             c.id = c.id || Sidekick.generateUniqueSlugId(c.name, existingIds);
             c.options = c.options || {};
         });

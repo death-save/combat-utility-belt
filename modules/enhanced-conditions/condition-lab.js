@@ -123,7 +123,11 @@ export class ConditionLab extends FormApplication {
 
         // Transform data for each Condition Mapping entry to ensure it will display correctly
         conditionMap.forEach((entry, index, map) => {
-            // First set the Output to Chat checkbox
+            // Check if the row exists in the saved map
+            const existingEntry = this.initialMap.find(e => e.id === entry.id) ?? null;
+            entry.isNew = !existingEntry;
+
+            // Set the Output to Chat checkbox
             entry.options = entry.options ?? {};
             entry.options.outputChat = entry?.options?.outputChat ?? Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.outputChat);
 
@@ -162,7 +166,21 @@ export class ConditionLab extends FormApplication {
                 default:
                     break;
             }
+
+            // @todo #357 extract this into a function
+            entry.isChanged = existingEntry && entry
+                ? (entry?.name != existingEntry?.name 
+                    || entry?.icon != existingEntry?.icon 
+                    || JSON.stringify(entry?.options) != JSON.stringify(existingEntry?.options)
+                    || entry?.referenceType != existingEntry?.referenceType
+                    || entry?.referenceId != existingEntry?.referenceId
+                    || entry?.applyTrigger != existingEntry?.applyTrigger
+                    || entry?.removeTrigger != existingEntry?.removeTrigger
+                    || index != this?.initialMap.indexOf(existingEntry)) 
+                : false;
         });
+
+        const unsavedMap = this?.initialMap?.length != conditionMap?.length || (conditionMap?.length ? conditionMap?.some(c => c.isNew || c.isChanged) : false);
 
         const data = {
             mapTypeChoices,
@@ -176,7 +194,8 @@ export class ConditionLab extends FormApplication {
             journalCompendiaEntries,
             itemCompendiaEntries,
             triggers,
-            isDefault
+            isDefault,
+            unsavedMap
         }
         
         return data;
@@ -264,9 +283,14 @@ export class ConditionLab extends FormApplication {
         const uniqueRows = [...new Set(rows)];
 
         for (let i = 0; i < uniqueRows.length; i++) {
-            const activeEffect = existingMap[i] ? existingMap[i].activeEffect : {};
+            const name = conditions[i];
+            const existingCondition = existingMap ? EnhancedConditions.getCondition(name, existingMap, {warn: false}) : null;
+            const id = existingCondition ? existingCondition.id : null;
+            const activeEffect = existingCondition ? existingCondition.activeEffectect : null;
+
             const condition = {
-                name: conditions[i],
+                id,
+                name,
                 icon: icons[i],
                 referenceType: referenceTypes[i],
                 compendium: compendia[i],
@@ -304,7 +328,8 @@ export class ConditionLab extends FormApplication {
         //const defaultMap = defaultMaps[system] || [];
         const defaultMap = EnhancedConditions._prepareMap(EnhancedConditions.getDefaultMap(system));
         // If the mapType is other then the map should be empty, otherwise it's the default map for the system
-        this.map = this.mapType === otherMapType ? [] : await Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.map, defaultMap);
+        this.map = this.mapType === otherMapType ? [] : defaultMap;
+        //Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.map, this.map, true);
         this.render(true);
     }
 
@@ -518,12 +543,14 @@ export class ConditionLab extends FormApplication {
      */
     _onClickActiveEffectConfig(event) {
         const li = event.currentTarget.closest("li");
-        const row = li ? li.dataset.mappingRow : null;
+        //const row = li ? li.dataset.mappingRow : null;
+        const conditionId = li ? li.dataset.conditionId : null;
 
-        if (row === null) return;
+        //if (row === null) return;
+        if (!conditionId) return;
 
         const conditions = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.map);
-        const condition = conditions.length > 0 ? conditions[row] : null;
+        const condition = conditions.length ? conditions.find(c => c.id === conditionId) : null;
 
         if (!condition) return;
 
@@ -613,7 +640,7 @@ export class ConditionLab extends FormApplication {
         this.map = newMap;
         
         this.render();
-    }   
+    }
 
     /**
      * 
