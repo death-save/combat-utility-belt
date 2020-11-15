@@ -3,7 +3,7 @@ name: Bug report
 about: Create a report to help us improve
 title: ''
 labels: bug, unverified
-assignees: ''
+assignees: eclarke12
 
 ---
 
@@ -25,9 +25,10 @@ If applicable, add screenshots to help explain your problem.
 
 **Environment Info (please complete the following information):**
  - Foundry Version: [e.g. 0.5.5]
- - CUB Version [e.g. 22]
+ - Game System / Version: [e.g. dnd5e 1.0.0]
+ - CUB Version [e.g. 1.3.0]
  - Browser [e.g. chrome, safari]
-- OS [e.g. Windows 10]
+ - OS [e.g. Windows 10]
 
 **Additional context**
 Add any other context about the problem here.
