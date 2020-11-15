@@ -45,7 +45,11 @@
     "ENHANCED_CONDITIONS.RemoveAllConditions.Failed.NoToken": "Remove Conditions failed. No token/s provided",
     "ENHANCED_CONDITIONS.RemoveAllConditions.Failed.NoCondition": "Remove Conditions failed. There is no active Condition Map",
     
+    "ENHANCED_CONDITIONS.Lab.Title": "Condition Lab",
+    "ENHANCED_CONDITIONS.Lab.MappingType.Label": "Mapping Type",
+    "ENHANCED_CONDITIONS.Lab.MappingType.Unsaved": "(unsaved changes)",
     "ENHANCED_CONDITIONS.Lab.ActiveEffects.Title": "Active Effect Config",
+    "ENHANCED_CONDITIONS.Lab.ActiveEffects.TitleDisabled": "Active Effect Config (Disabled - Save Mapping First)",
     "ENHANCED_CONDITIONS.LAB.Import.NoFile": "You did not upload a data file!",
     "ENHANCED_CONDITIONS.Lab.ConfirmDeleteTitle": "Confirm Row Deletion",
     "ENHANCED_CONDITIONS.Lab.ConfirmDeleteContent": "Are you sure you want to delete this row?",
