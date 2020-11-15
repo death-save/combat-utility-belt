@@ -286,7 +286,7 @@ export class ConditionLab extends FormApplication {
             const name = conditions[i];
             const existingCondition = existingMap ? EnhancedConditions.getCondition(name, existingMap, {warn: false}) : null;
             const id = existingCondition ? existingCondition.id : null;
-            const activeEffect = existingCondition ? existingCondition.activeEffectect : null;
+            const activeEffect = existingCondition ? existingCondition.activeEffect : null;
 
             const condition = {
                 id,
