@@ -3,13 +3,24 @@
 ## [Known Issues]
 > Some issues related to the upgrade to Active Effects can be resolved/mitigated by **Saving your Condition Lab** after updating to a CUB version greater than 1.3.0. Please try this before reporting an issue!
 
-1. Active Effects cannot be added to some Conditions (lower in the Condition Lab)
+1. ~~Active Effects cannot be added to some Conditions (lower in the Condition Lab)~~ Resolved in CUB v1.3.5
 2. Loading a world with an existing Condition Lab mapping from pre CUB v1.3.0 may cause any Conditions added to a token to default to the first mapped condition. WORKAROUND: After loading your world, go into the Condition Lab and click Save.
 3. ~~Attempting to add multiple Conditions at the same time when one of those Conditions already exists on the Actor/Token will block all of them being added.~~ Resolved in CUB v1.3.4
 4. Enhanced Conditions chat output for linked Tokens and Actors is not aggregated, so you may see multiple messages when many conditions are added/removed from an Actor/Token.
 5. Overlay Effects added to a token will trigger the matching non-Overlay Condition to output to chat. The reverse is also true.
 6. **PF2e users**: Enhanced Conditions `Output to Chat` setting will cause duplicate chat messages due to similar function built into the system.
 7. Chat log may not re-render when Hide Names settings are changed. This may cause the old name to still show in the log for players. Advise players to reload Foundry if you change these settings mid-session.
+
+## [1.3.5] - 2020-11-14
+### Added
+- The Condition Lab now shows a reminder to Save when the current Mapping differs from the saved one. This feature is not fully complete, so you may not receive a reminder on every edit, but actions like changing the Mapping Type or Adding a Row will trigger the reminder.
+
+### Changed
+- You can no longer open the Active Effect config for a Condition Lab row until you save the Condition Lab mapping. This prevents issues related to the Condition not existing in the mapping when you try to save the Active Effect
+
+### Fixed
+- You can now edit Active Effects on all rows in the Condition Lab
+- Clicking the Active Effect button after moving a Condition in the Condition Lab now opens the Active Effect configuration for the correct Condition
 
 ## [1.3.4] - 2020-11-14
 ### Added
