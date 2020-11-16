@@ -11,6 +11,15 @@
 6. **PF2e users**: Enhanced Conditions `Output to Chat` setting will cause duplicate chat messages due to similar function built into the system.
 7. Chat log may not re-render when Hide Names settings are changed. This may cause the old name to still show in the log for players. Advise players to reload Foundry if you change these settings mid-session.
 
+## [1.3.6] - 2020-11-15
+### Changed
+- `addCondition` duplicate behaviour has been adjusted to behave more intuitively: when adding a condition with no additional parameters, duplicate conditions will **not** be created. Duplicates can be allowed using the `allowDuplicates` parameter, which now defaults to `false` (previously was `true`). `replaceExisting` parameter usage remains the same.
+- Updated 한국어 (Korean) translation (thanks @drdwing aka KLO#1490)
+
+### Fixed
+- Condition Lab was erasing all Active Effects from Conditions on Save due to a typographical error.
+- Triggler was adding duplicate conditions due the previous changes to the `addCondition` API method. The changes in this release fix the issue.
+
 ## [1.3.5] - 2020-11-14
 ### Added
 - The Condition Lab now shows a reminder to Save when the current Mapping differs from the saved one. This feature is not fully complete, so you may not receive a reminder on every edit, but actions like changing the Mapping Type or Adding a Row will trigger the reminder.

@@ -962,23 +962,23 @@ Applies the named condition to the provided entities (Actors or Tokens)
 | conditionName | <code>Array.&lt;String&gt;</code> \| <code>String</code> |  | the name of the condition to add |
 | [entities] | <code>Array.&lt;Actor&gt;</code> \| <code>Array.&lt;Token&gt;</code> \| <code>Actor</code> \| <code>Token</code> | <code></code> | one or more Actors or Tokens to apply the Condition to |
 | [options.warn] | <code>Boolean</code> | <code>true</code> | raise warnings on errors |
-| [options.allowDuplicates] | <code>Boolean</code> | <code>true</code> | if one or more of the Conditions specified is already active on the Entity, this will still add the Condition. Use in conjunction with `replaceExisting` to determine how duplicates are handled |
+| [options.allowDuplicates] | <code>Boolean</code> | <code>false</code> | if one or more of the Conditions specified is already active on the Entity, this will still add the Condition. Use in conjunction with `replaceExisting` to determine how duplicates are handled |
 | [options.replaceExisting] | <code>Boolean</code> | <code>false</code> | whether or not to replace existing Conditions with any duplicates in the `conditionName` parameter. If `allowDuplicates` is true and `replaceExisting` is false then a duplicate condition is created. Has no effect is `keepDuplicates` is `false` |
 
 **Example**  
 ```js
-// Add the Condition "Blinded" to an Actor named "Bob"
+// Add the Condition "Blinded" to an Actor named "Bob". Duplicates will not be created.
 game.cub.addCondition("Blinded", game.actors.getName("Bob"));
 ```
 **Example**  
 ```js
-// Add the Condition "Charmed" to the currently controlled Token/s
+// Add the Condition "Charmed" to the currently controlled Token/s. Duplicates will not be created.
 game.cub.addCondition("Charmed");
 ```
 **Example**  
 ```js
-// Add the Conditions "Blinded" and "Charmed" to the targetted Token/s
-game.cub.addCondition(["Blinded", "Charmed"], [...game.user.targets])
+// Add the Conditions "Blinded" and "Charmed" to the targeted Token/s and create duplicates, replacing any existing Conditions of the same names.
+game.cub.addCondition(["Blinded", "Charmed"], [...game.user.targets], {allowDuplicates: true, replaceExisting: true});
 ```
 <a name="EnhancedConditions.getCondition"></a>
 

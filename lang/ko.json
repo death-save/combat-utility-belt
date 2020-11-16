@@ -66,6 +66,9 @@
     "ENHANCED_CONDITIONS.Lab.Options.RemoveOthers.Title": "이 상태이상이 적용될 때 다른 상태이상을 제거한다.",
     "ENHANCED_CONDITIONS.Lab.Options.MarkDefeated.Title": "이 상태이상이 적용될 때 일치하는 전투원을 패배 표시한다.",
     "ENHANCED_CONDITIONS.Lab.Options.OutputChat.Title": "추가/제거시 채팅으로 상태이상을 출력한다.",
+    "ENHANCED_CONDITIONS.PreventativeSaveReminder.Title": "CUB - 고급 상태이상 | 예방적 저장 미리 알림",
+    "ENHANCED_CONDITIONS.PreventativeSaveReminder.Content": "<p><i>Active Effects</i>로 마이그레이션할 때 발생하는 일부 문제를 방지하려면 CUB v1.3.0 이후 아직 완료되지 않았을 경우 <strong>Condition Lab</strong>을 열고 <strong>Save Mapping</strong> 버튼을 클릭하십시오.</p><p>이렇게 할 경우 Condition Map이 올바르게 변환됩니다.</p>",
+    "ENHANCED_CONDITIONS.PreventativeSaveReminder.Suppress": "이 경고문을 다시 표시 안 함",
 
     "ENHANCED_CONDITIONS.ChatCard.Title.Active": "활성화 상태이상",
     "ENHANCED_CONDITIONS.ChatCard.Title.Added": "상태이상 추가됨",
@@ -84,7 +87,7 @@
     "SETTINGS.CUBPuter.ButtonH": "Combat Utility Belt에 대한 추가 설정을 제공한다",
 
     "SETTINGS.Concentrator.EnableN": "집중 활성화",
-    "SETTINGS.Concentrator.EnableH": "(D&D5e에서 시험됨)(강화된 상태이상 필요) 집중 중인 토큰이 피해를 입었을 때 집중 판정을 요구한다",
+    "SETTINGS.Concentrator.EnableH": "(D&D5e에서 시험됨)(고급 상태이상 필요) 집중 중인 토큰이 피해를 입었을 때 집중 판정을 요구한다",
     "SETTINGS.Concentrator.ConditionNameN": "집중 상태 이름",
     "SETTINGS.Concentrator.ConditionNameH": "집중을 추가 및 확인하기 위한 상태 이름 설정",
     "SETTINGS.Concentrator.OutputToChatN": "알림 채팅",
@@ -100,7 +103,7 @@
     "SETTINGS.Concentrator.NotifyDoubleN": "이중집중 알림",
     "SETTINGS.Concentrator.NotifyDoubleH": "다른 주문에 집중하는 동안 또 다른 집중 주문을 시전할 때 메시지를 보낸다.",
     
-    "SETTINGS.EnhancedConditions.EnableN": "강화된 상태이상 활성화",
+    "SETTINGS.EnhancedConditions.EnableN": "고급 상태이상 활성화",
     "SETTINGS.EnhancedConditions.EnableH": "스테이터스 아이콘과 상태이상을 연결한다",
     "SETTINGS.EnhancedConditions.CoreIconsN": "핵심 스테이터스 아이콘",
     "SETTINGS.EnhancedConditions.CoreIconsH": "핵심 스테이터스 아이콘의 복사본이다",
@@ -118,7 +121,9 @@
     "SETTINGS.EnhancedConditions.MapTypeH": "현재 사용하는 상태이상 맵 타입 -- 기본, 커스텀 혹은 기타",
     "SETTINGS.EnhancedConditions.ActiveConditionMapN": "상태이상 맵 활성화",
     "SETTINGS.EnhancedConditions.ActiveConditionMapH": "활성화한 상태이상 맵을 저장한다",
-    
+    "SETTINGS.EnhancedConditions.SuppressPreventativeSaveReminderN": "예방적 저장 미리 알림 표시 안 함",
+    "SETTINGS.EnhancedConditions.SuppressPreventativeSaveReminderH": "문제 방지를 위해 Condition Lab을 저장하라는 알림을 더 이상 표시하지 않는다.(예 : 사용자가 이미 저장한 경우)",
+
     "SETTINGS.GiveXP.EnableN": "XP 수여 활성화",
     "SETTINGS.GiveXP.EnableH": "전투 종료 시 자동으로 플레이어들에게 경험치를 배포하는 옵션을 추가한다",
 
@@ -176,7 +181,7 @@
     
     "SETTINGS.TokenUtility.AutoRollHostileHpN": "적대적 생물 자동 굴림 활성화",
     "SETTINGS.TokenUtility.AutoRollHostileHpH": "캔버스에 드롭된 적대적 토큰의 HP 수식을 굴린다.",
-        "SETTINGS.TokenUtility.HideAutoRollN": "자동 HP 굴림 숨김",
+    "SETTINGS.TokenUtility.HideAutoRollN": "자동 HP 굴림 숨김",
     "SETTINGS.TokenUtility.HideAutoRollH": "적대적 토큰의 HP가 자동으로 굴려질 경우 굴림을 플레이어로부터 숨긴다.",
     "SETTINGS.TokenUtility.TokenEffectSizeN": "토큰 효과 사이즈",
     "SETTINGS.TokenUtility.TokenEffectSizeH": "토큰에 표시되는 토큰 효과의 크기를 설정한다. 기본값: Small - 5x5",
@@ -184,6 +189,7 @@
     "SETTINGS.Triggler.TriggersN": "Triggler 트리거",
     "SETTINGS.Triggler.TriggersH": "Triggler Triggers를 저장한다",
     
+    "WORDS.IUnderstand": "이해했습니다",
     "WORDS.Import": "가져오기",
     "WORDS.Export": "내보내기",
     "WORDS.Cancel": "취소",
@@ -194,5 +200,6 @@
     "WORDS.None": "없음",
     "WORDS.GMOnly": "GM만",
     "WORDS.Everyone": "모두",
-    "WORDS.About": "About"
+    "WORDS.About": "About",
+    "WORDS.OK": "OK"
 }
