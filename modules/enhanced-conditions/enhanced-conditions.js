@@ -901,19 +901,19 @@ export class EnhancedConditions {
      * @param {String[] | String} conditionName  the name of the condition to add
      * @param {(Actor[] | Token[] | Actor | Token)} [entities=null] one or more Actors or Tokens to apply the Condition to
      * @param {Boolean} [options.warn=true]  raise warnings on errors
-     * @param {Boolean} [options.allowDuplicates=true]  if one or more of the Conditions specified is already active on the Entity, this will still add the Condition. Use in conjunction with `replaceExisting` to determine how duplicates are handled
+     * @param {Boolean} [options.allowDuplicates=false]  if one or more of the Conditions specified is already active on the Entity, this will still add the Condition. Use in conjunction with `replaceExisting` to determine how duplicates are handled
      * @param {Boolean} [options.replaceExisting=false]  whether or not to replace existing Conditions with any duplicates in the `conditionName` parameter. If `allowDuplicates` is true and `replaceExisting` is false then a duplicate condition is created. Has no effect is `keepDuplicates` is `false`
      * @example
-     * // Add the Condition "Blinded" to an Actor named "Bob"
+     * // Add the Condition "Blinded" to an Actor named "Bob". Duplicates will not be created.
      * game.cub.addCondition("Blinded", game.actors.getName("Bob"));
      * @example
-     * // Add the Condition "Charmed" to the currently controlled Token/s
+     * // Add the Condition "Charmed" to the currently controlled Token/s. Duplicates will not be created.
      * game.cub.addCondition("Charmed");
      * @example
-     * // Add the Conditions "Blinded" and "Charmed" to the targetted Token/s
-     * game.cub.addCondition(["Blinded", "Charmed"], [...game.user.targets])
+     * // Add the Conditions "Blinded" and "Charmed" to the targeted Token/s and create duplicates, replacing any existing Conditions of the same names.
+     * game.cub.addCondition(["Blinded", "Charmed"], [...game.user.targets], {allowDuplicates: true, replaceExisting: true});
      */
-    static async addCondition(conditionName, entities=null, {warn=true, allowDuplicates=true, replaceExisting=false}={}) {
+    static async addCondition(conditionName, entities=null, {warn=true, allowDuplicates=false, replaceExisting=false}={}) {
         if (!entities) {
             // First check for any controlled tokens
             if (canvas?.tokens?.controlled.length) entities = canvas.tokens.controlled;
@@ -956,14 +956,13 @@ export class EnhancedConditions {
             
             if (!actor) continue;
 
-            const hasDuplicate = EnhancedConditions.hasCondition(conditionNames, actor, {warn: false});
+            const hasDuplicates = EnhancedConditions.hasCondition(conditionNames, actor, {warn: false});
             const newEffects = [];
             const updateEffects = [];
             
 
-            // If there are duplicate Condition effects on the Actor, and duplicates should be kept, take extra steps
-            if (hasDuplicate && allowDuplicates) {
-
+            // If there are duplicate Condition effects on the Actor take extra steps
+            if (hasDuplicates) {
                 // @todo #348 determine the best way to raise warnings in this scenario
                 /*
                 if (warn) {
@@ -972,33 +971,41 @@ export class EnhancedConditions {
                 }
                 */
 
-                // If existing Condition effects should be replaced, split the incoming effects into existing and new
-                if (replaceExisting) {
+                // Get the existing conditions on the actor
+                let existingConditionEffects = EnhancedConditions.getConditionEffects(actor, {warn: false});
+                existingConditionEffects = existingConditionEffects instanceof Array ? existingConditionEffects : [existingConditionEffects];
 
-                    // get the existing conditions on the actor
-                    let existingConditionEffects = EnhancedConditions.getConditionEffects(actor, {warn: false});
-                    existingConditionEffects = existingConditionEffects instanceof Array ? existingConditionEffects : [existingConditionEffects];
-   
-                    // loop through the effects sorting them into either existing or new effects
-                    for (const effect of effects) {
-                        const conditionId = getProperty(effect, `flags.${BUTLER.NAME}.${BUTLER.FLAGS.enhancedConditions.conditionId}`);
-                        const matchedConditionEffects = existingConditionEffects.filter(e => e.getFlag(BUTLER.NAME, BUTLER.FLAGS.enhancedConditions.conditionId) === conditionId);
+                // Loop through the effects sorting them into either existing or new effects
+                for (const effect of effects) {
+                    // Scenario 1: if duplicates are allowed, but existing conditions are not replaced, everything is new
+                    if (allowDuplicates && !replaceExisting) {
+                        newEffects.push(effect);
+                        continue;
+                    }
 
+                    const conditionId = getProperty(effect, `flags.${BUTLER.NAME}.${BUTLER.FLAGS.enhancedConditions.conditionId}`);
+                    const matchedConditionEffects = existingConditionEffects.filter(e => e.getFlag(BUTLER.NAME, BUTLER.FLAGS.enhancedConditions.conditionId) === conditionId);
+
+                    // Scenario 2: if duplicates are allowed, and existing conditions should be replaced, add any existing conditions to update
+                    if (replaceExisting) {
                         for (const matchedCondition of matchedConditionEffects) {
                             updateEffects.push({_id: matchedCondition.data._id, ...effect});
                         }
-
-                        if (!matchedConditionEffects.length) newEffects.push(effect);
                     }
+                    
+                    // Scenario 2 cont'd: if the condition is not matched, it must be new, so add to the new effects
+                    // Scenario 3: if duplicates are not allowed, and existing conditions are not replaced, just add the new conditions
+                    if (!matchedConditionEffects.length) newEffects.push(effect);
                 }
             }
 
+            // If the any of the conditions remove others, remove all conditions
+            // @todo maybe add this to the logic above?
             if (conditions.some(c => c?.options?.removeOthers)) {
                 await EnhancedConditions.removeAllConditions(actor, {warn: false});
             }
 
-            // if there's no update effects, then all the effects are new
-            const createData = !updateEffects.length ? effects : newEffects;
+            const createData = hasDuplicates ? newEffects : effects;
             const updateData = updateEffects;
 
             if (createData.length) await actor.createEmbeddedEntity("ActiveEffect", createData);
