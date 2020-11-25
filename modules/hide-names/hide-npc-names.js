@@ -44,8 +44,15 @@ export class HideNPCNames {
                 return;
         }
 
-        const button = $(formButtonHtml)
-        nameField.parent().after(button);
+        const button = $(formButtonHtml);
+        const vttaDndbeyond = game.modules.has(`vtta-dndbeyond`);
+        const vttaDndbeyondActive = vttaDndbeyond ? game.modules.get(`vtta-dndbeyond`).active : false;
+
+        if (vttaDndbeyondActive) {
+            nameField.parent().append(button);
+        } else {
+            nameField.parent().after(button);
+        }
 
         button.on("click", event => {
             new HideNPCNamesActorForm(app.object).render(true);
