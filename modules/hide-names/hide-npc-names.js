@@ -27,23 +27,6 @@ export class HideNPCNames {
 
         if (!nameField) return;
 
-        switch (disposition) {
-            case CONST.TOKEN_DISPOSITIONS.HOSTILE:
-                if (!enableHostile) return;
-                break;
-                
-            case CONST.TOKEN_DISPOSITIONS.NEUTRAL:
-                if (!enableNeutral) return;
-                break;
-
-            case CONST.TOKEN_DISPOSITIONS.FRIENDLY:
-                if (!enableFriendly) return;
-                break;
-
-            default:
-                return;
-        }
-
         const button = $(formButtonHtml);
         const vttaDndbeyond = game.modules.has(`vtta-dndbeyond`);
         const vttaDndbeyondActive = vttaDndbeyond ? game.modules.get(`vtta-dndbeyond`).active : false;
