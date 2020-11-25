@@ -23,7 +23,7 @@ export class HideNPCNames {
         const enableNeutral = Sidekick.getSetting(SETTING_KEYS.hideNames.enableNeutral);
         const enableFriendly = Sidekick.getSetting(SETTING_KEYS.hideNames.enableFriendly);
 
-        const formButtonHtml = `<a style="flex: 0"><i class="fas fa-mask"></i></a>`; 
+        const formButtonHtml = `<a style="flex: 0" title="${game.i18n.localize("HIDE_NAMES.ActorSheetButton")}"><i class="fas fa-mask"></i></a>`; 
 
         if (!nameField) return;
 

@@ -86,6 +86,7 @@
     "HIDE_NAMES.ActorForm.ReplacementName": "Replacement Name",
     "HIDE_NAMES.ActorForm.ReplacementHint": "The name to use instead of the Actor's name",
     "HIDE_NAMES.ActorForm.DefaultSettingH": "This is the current default setting for this token's disposition (set in CUBputer)",
+    "HIDE_NAMES.ActorSheetButton": "Configure name hiding for this actor",
 
     "SETTINGS.CUBPuter.ButtonN": "Combat Utility Belt Config",
     "SETTINGS.CUBPuter.ButtonH": "Provides additional configuration for Combat Utility Belt",
