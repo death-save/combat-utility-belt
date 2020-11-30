@@ -43,6 +43,11 @@
       "lang": "es",
       "name": "Castellano",
       "path": "lang/es-ES.json"
+    },
+    {
+      "lang": "cn",
+      "name": "中文",
+      "path": "lang/cn.json"
     }
   ], 
   "packs": [
