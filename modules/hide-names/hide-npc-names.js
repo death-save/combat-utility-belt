@@ -3,6 +3,13 @@ import { SETTING_KEYS, NAME, PATH, FLAGS, DEFAULT_CONFIG } from "../butler.js";
 import { HideNPCNamesActorForm } from "./actor-form.js";
 
 export class HideNPCNames {
+    /**
+     * 
+     * @param {*} message 
+     * @param {*} data 
+     * @param {*} options 
+     * @param {*} user 
+     */
     static _onPreCreateChatMessage(message, data, options, user) {
         // use most of the logic from render
         // add a flag to the data payload marking the message as needing hiding
@@ -28,6 +35,8 @@ export class HideNPCNames {
         if (!nameField) return;
 
         const button = $(formButtonHtml);
+
+        // add support for vtta-dndbeyond
         const vttaDndbeyond = game.modules.has(`vtta-dndbeyond`);
         const vttaDndbeyondActive = vttaDndbeyond ? game.modules.get(`vtta-dndbeyond`).active : false;
 
@@ -37,9 +46,7 @@ export class HideNPCNames {
             nameField.parent().after(button);
         }
 
-        button.on("click", event => {
-            new HideNPCNamesActorForm(app.object).render(true);
-        });
+        button.on("click", event => new HideNPCNamesActorForm(app.object).render(true));
     }
 
     /**
@@ -48,12 +55,10 @@ export class HideNPCNames {
      * @param {Object} html - jQuery html object
      * @todo refactor required
      */
-    static _hookOnRenderCombatTracker(app, html, data) {
+    static _onRenderCombatTracker(app, html, data) {
         const enable = Sidekick.getSetting(SETTING_KEYS.hideNames.enable);
 
-        if (!enable) {
-            return;
-        }
+        if (!enable) return;
 
         // find the NPC combatants
         const combatants = app?.combat?.combatants;
@@ -86,7 +91,7 @@ export class HideNPCNames {
                 name: npc.name,
                 replacement: replacementName,
                 isOwner: npc.actor.owner
-            }             
+            }
         });
 
         if (!hideNPCs.length) return;
@@ -116,12 +121,16 @@ export class HideNPCNames {
     }
 
     /**
-     * Replaces instances of hidden name in chat
+     * Handles name replacement for chat messages
+     * @param {*} message 
+     * @param {*} html 
+     * @param {*} data 
      */
-    static _hookOnRenderChatMessage(message, html, data) {
+    static _onRenderChatMessage(message, html, data) {
         const enable = Sidekick.getSetting(SETTING_KEYS.hideNames.enable);
+        const name = data?.alias ?? null;
 
-        if (!enable) return;
+        if (!enable || !name) return;
 
         const messageActorId = message.data.speaker.actor;
         const messageSceneId = message.data.speaker.scene;
@@ -142,34 +151,63 @@ export class HideNPCNames {
         if (!shouldReplace) return;
 
         const replacementName = HideNPCNames.getReplacementName(actor);
+
+        // If we are the GM or the Actor's owner, simply apply the icon to the name and return
+        if (game.user.isGM || actor.owner) {
+            const senderName = html.find("header").children().first();
+            const icon = `<span> <i class="fas fa-mask" title="${replacementName}"></i></span>`;
+            return senderName.append(icon);
+        }
+
         const hideParts = Sidekick.getSetting(SETTING_KEYS.hideNames.hideParts);
-        const matchString = data.alias.includes(" ") && hideParts ? Sidekick.getTerms(data.alias.trim().split(" ")).map(e => Sidekick.escapeRegExp(e)).join("|") : Sidekick.escapeRegExp(data.alias);
-        const regex = `(${matchString})` + "(?=\\s|[\\W]|s\\W|'s\\W|$)";
+        let matchString = null;
+
+        // If there's a space in the name, and name parts should be hidden
+        // then perform additional manipulation
+        if (name.includes(" ") && hideParts) {
+            const parts = name.trim().split(/\s/).filter(w => w.length);
+            const terms = Sidekick.getTerms(parts);
+
+            // Ensure there is still terms
+            if (terms.length) {
+                // If the first term is not exactly the name provided, use the name instead
+                // this accounts for names with multiple consecutive spaces
+                if (terms[0] !== name) terms[0] = name;
+
+                matchString = terms
+                    .map(t => {
+                        t = t.trim();
+                        t = Sidekick.escapeRegExp(t);
+                        return t;
+                    })
+                    .filter(t => t.length)
+                    .join("|");
+            }
+        }
+        
+        // Escape regex in the match to ensure it is parsed correctly
+        matchString = matchString ?? Sidekick.escapeRegExp(name);
+
+        const regex = `(${matchString})(?=\\s|[\\W]|s\\W|'s\\W|$)`;
         const pattern = new RegExp(regex, "gim");
 
-        const senderName = html.find("header").children().first();
-        const icon = `<span> <i class="fas fa-mask" title="${replacementName}"></i></span>`;
-        //console.log("actor:",actor,"original name:",data.alias,"actor flag:",replacementFlag,"actor flag2:",actor.data.flags,"replacement name:",replacementName)
-        
-        if (!game.user.isGM || !actor.owner) {
-            Sidekick.replaceOnDocument(pattern, replacementName, {target: html[0]});
-            const hideFooter = Sidekick.getSetting(SETTING_KEYS.hideNames.hideFooter);
+        // Do a replacement on the document
+        Sidekick.replaceOnDocument(pattern, replacementName, {target: html[0]});
 
-            if (!hideFooter) {
-                return;
-            }
+        // Finally hide the footer if that option is enabled
+        const hideFooter = Sidekick.getSetting(SETTING_KEYS.hideNames.hideFooter);
 
+        if (hideFooter) {
             const cardFooter = html.find(".card-footer");
             return cardFooter.prop("hidden", true);
         }
-
-        senderName.append(icon);
     }
 
-        /**
+    /**
      * Replaces instances of hidden name in VIsual NOvel for Foundry (ViNo)
+     * @param {Object} chatDisplayData
      */
-    static _hookOnVinoPrepareChatDisplayData(chatDisplayData) {
+    static _onVinoPrepareChatDisplayData(chatDisplayData) {
         const enable = Sidekick.getSetting(SETTING_KEYS.hideNames.enable);
 
         if (!enable) {
