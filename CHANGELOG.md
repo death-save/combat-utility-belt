@@ -11,6 +11,18 @@
 6. **PF2e users**: Enhanced Conditions `Output to Chat` setting will cause duplicate chat messages due to similar function built into the system.
 7. Chat log may not re-render when Hide Names settings are changed. This may cause the old name to still show in the log for players. Advise players to reload Foundry if you change these settings mid-session.
 
+## [1.3.7] - 2020-12-02
+### Added
+- There is now a (translation-enabled) tooltip on the Hide Names icon on the actor sheet
+
+### Changed
+- You can now configure exceptions for Hide Names even if that disposition type is not hidden by default. For example if you choose not to hide `Friendly` names, you can now selectively hide an Actor's name from the Hide Names config for that actor
+
+### Fixed
+- Hide Names now processes names with multiple consecutive spaces correctly (eg. `Ancient  Black Dragon`)
+- Hide Names mask icon was being pushed into the next row by vtta-dndbeyond
+- Refined some logic in Concentrator, which should result in less errors
+
 ## [1.3.6] - 2020-11-15
 ### Changed
 - `addCondition` duplicate behaviour has been adjusted to behave more intuitively: when adding a condition with no additional parameters, duplicate conditions will **not** be created. Duplicates can be allowed using the `allowDuplicates` parameter, which now defaults to `false` (previously was `true`). `replaceExisting` parameter usage remains the same.
