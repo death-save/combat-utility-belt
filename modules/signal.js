@@ -188,7 +188,7 @@ export class Signal {
         /* ------------------- Chat ------------------- */
 
         Hooks.on("renderChatMessage", (app, html, data) => {
-            HideNPCNames._hookOnRenderChatMessage(app, html, data);
+            HideNPCNames._onRenderChatMessage(app, html, data);
             Concentrator._onRenderChatMessage(app, html, data);
             EnhancedConditions._onRenderChatMessage(app, html, data);
         });
@@ -202,7 +202,7 @@ export class Signal {
         /* -------------- Combat Tracker -------------- */
 
         Hooks.on("renderCombatTracker", (app, html, data) => {
-            HideNPCNames._hookOnRenderCombatTracker(app, html, data);
+            HideNPCNames._onRenderCombatTracker(app, html, data);
             TrackerUtility._onRenderCombatTracker(app, html, data);
             TemporaryCombatants._onRenderCombatTracker(app, html, data);
         });
@@ -218,7 +218,7 @@ export class Signal {
         });
 
         Hooks.on("vinoPrepareChatDisplayData", (chatDisplayData) => {
-            HideNPCNames._hookOnVinoPrepareChatDisplayData(chatDisplayData);
+            HideNPCNames._onVinoPrepareChatDisplayData(chatDisplayData);
         });
     }
 }
