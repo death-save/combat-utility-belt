@@ -40,6 +40,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "BrotherSharper",
+      "name": "Brother Sharp",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/41280723?v=4",
+      "profile": "https://github.com/BrotherSharper",
+      "contributions": [
+        "translation"
+      ]
     }
   ],
   "contributorsPerLine": 7,
