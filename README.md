@@ -1,6 +1,6 @@
 ![https://img.shields.io/badge/Foundry%20VTT-0.7.6=>0.7.7-green](https://img.shields.io/badge/Foundry%20VTT-0.7.6=>0.7.7-green)
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-7-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-8-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 # Combat Utility Belt
@@ -150,6 +150,9 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <td align="center"><a href="https://github.com/BrotherSharper"><img src="https://avatars3.githubusercontent.com/u/41280723?v=4" width="100px;" alt=""/><br /><sub><b>Brother Sharp</b></sub></a><br /><a href="#translation-BrotherSharper" title="Translation">🌍</a></td>
     <td align="center"><a href="https://github.com/drdwing"><img src="https://avatars1.githubusercontent.com/u/66671688?v=4" width="100px;" alt=""/><br /><sub><b>drdwing</b></sub></a><br /><a href="#translation-drdwing" title="Translation">🌍</a></td>
     <td align="center"><a href="https://github.com/rinnocenti"><img src="https://avatars3.githubusercontent.com/u/3178127?v=4" width="100px;" alt=""/><br /><sub><b>Renato Innocenti</b></sub></a><br /><a href="#translation-rinnocenti" title="Translation">🌍</a></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="https://github.com/HonzoNebro"><img src="https://avatars2.githubusercontent.com/u/5500663?v=4" width="100px;" alt=""/><br /><sub><b>HonzoNebro</b></sub></a><br /><a href="#translation-HonzoNebro" title="Translation">🌍</a></td>
   </tr>
 </table>
 
