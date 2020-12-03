@@ -139,7 +139,7 @@ Trigger the addition or removal of Conditions, and/or the execution of Macros ba
 # Thanks/Attribution
 Firstly thank you to all my [patrons](https://patreon.com/deathsave), you make module development extra special!
 
-Secondly I want to shout out the awesome contributors for this module (see: [contributors](#contributors)). Whether it's code, translations, or bugs/suggestions, without your help Combat Utility Belt would not be as awesome as it is! 
+Secondly I want to shout out the awesome contributors for this module (see: [contributors](#contributors-)). Whether it's code, translations, or bugs/suggestions, without your help Combat Utility Belt would not be as awesome as it is! 
 
 I would also like to acknowledge that many of the functions found in the Combat Utility Belt are inspired by [Roll20 API scripts](https://github.com/RobinKuiper/Roll20APIScripts) written by Robin Kuiper (namely the Combat Tracker, Death Tracker and StatusInfo ones).
 
