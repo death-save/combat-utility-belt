@@ -23,65 +23,54 @@ export class Concentrator {
     static _onRenderChatMessage(app, html, data) {
         const enableConcentrator = Sidekick.getSetting(SETTING_KEYS.concentrator.enable);
 
-        if (!enableConcentrator) return;
+        // Early return if basic conditions not met
+        if (!game.user.isGM || !enableConcentrator) return;
 
         const autoConcentrate = Sidekick.getSetting(SETTING_KEYS.concentrator.autoConcentrate);
         const concentrateFlag = app.getFlag(NAME, FLAGS.concentrator.chatMessage);
 
-        // Early return if basic conditions not met
-        if (!game.user.isGM || concentrateFlag || !autoConcentrate) {
-            return;
-        }
+        if (!autoConcentrate || concentrateFlag) return;
 
         const itemDiv = html.find("div[data-item-id]");
 
         // support Beyond20
         const concentrationDiv = html.find(":contains('Requires Concentration')");
 
-        if (itemDiv.length === 0 && concentrationDiv.length === 0) {
-            return;
-        }
+        if (!itemDiv.length && !concentrationDiv.length) return;
 
-        const actorId = app.data.speaker.actor || null;
-        const tokenId = app.data.speaker.token || null;
         const itemId = itemDiv.data("itemId") || null;
 
-        if (!tokenId && !actorId) {
-            return;
-        }
+        const messageActorId = app.data.speaker.actor;
+        const messageSceneId = app.data.speaker.scene;
+        const messageTokenId = app.data.speaker.token;
+        const scene = messageSceneId ? game.scenes.get(messageSceneId) : game.scenes.active;
+        const tokenData = scene ? scene.data.tokens.find(t => t._id === messageTokenId) : null;
+        const token = canvas?.tokens.get(messageTokenId) ?? (tokenData ? new Token(tokenData, scene) : null);
+        const actor = token ? token.actor : messageActorId ? game.actors.get(messageActorId) : null;
 
-        const actor = game.actors.get(actorId);
-        const tokens = tokenId ? [canvas.tokens.get(tokenId)] : actor ? actor.getActiveTokens() : [];
+        if (!actor) return;
 
-        if (tokens.length === 0) {
-            return;
-        }
+        // First check if the item is a spell
+        // note: Beyond20 bypasses this logic
+        const item = itemId ? actor.getOwnedItem(itemId) : null;
+        const isSpell = item ? item.type === "spell" : false;
 
-        for (const t of tokens) {
-            const item = itemId ? (tokenId ? t.actor.getOwnedItem(itemId) : actor.getOwnedItem(itemId)) : null;
-            const isSpell = (concentrationDiv.length > 0 && itemDiv.length === 0) ? true : (itemDiv.length > 0 ? item.type === "spell" : false);
-            const isConcentration = concentrationDiv.length > 0 ? true : (itemDiv.length > 0 && isSpell) ? item.data.data.components.concentration : false;
+        // If it is, check if it requires concentration
+        const isConcentration = concentrationDiv.length ? true : (isSpell ? !!getProperty(item, `data.data.components.concentration`) : false);
 
-            if (!isConcentration) {
-                continue;
-            }
+        if (!isConcentration) return;
 
-            const tokenEffects = getProperty(t, "data.effects");
-            const conditionName = Sidekick.getSetting(SETTING_KEYS.concentrator.conditionName);
-            const isAlreadyConcentrating = EnhancedConditions.hasCondition(conditionName, t, {warn: false});
+        const conditionName = Sidekick.getSetting(SETTING_KEYS.concentrator.conditionName);
+        const isAlreadyConcentrating = EnhancedConditions.hasCondition(conditionName, actor, {warn: false});
+        const notifyDoubleSetting = Sidekick.getSetting(SETTING_KEYS.concentrator.notifyDouble);
 
-            if (isAlreadyConcentrating) {
+        // If the actor/token-actor is already Concentrating, and the notification setting is enabled, fire a notification
+        if (isAlreadyConcentrating && notifyDoubleSetting !== "None") return Concentrator._notifyDoubleConcentration(actor);
 
-                if (Sidekick.getSetting(SETTING_KEYS.concentrator.notifyDouble) !== "None") {
-                    Concentrator._notifyDoubleConcentration(t);
-                }
+        // Otherwise, add the Concentrating condition
+        EnhancedConditions.addCondition(conditionName, actor, {warn: false});
 
-                continue;
-            }
-
-            EnhancedConditions.addCondition(conditionName, t, {warn: false});
-        }
-
+        // Finally, set a flag that this message has been processed
         app.setFlag(NAME, FLAGS.concentrator.chatMessage, true);
     }
 

@@ -240,13 +240,15 @@ export class EnhancedConditions {
 
         const token = canvas.tokens.get(game.combat.combatant.tokenId);
 
-        const conditions = EnhancedConditions.getConditions(token, {warn: false});
+        const tokenConditions = EnhancedConditions.getConditions(token, {warn: false});
+        let conditions = (tokenConditions && tokenConditions.conditions) ? tokenConditions.conditions : [];
+        conditions = conditions instanceof Array ? conditions : [conditions];
 
-        if (!conditions || !conditions?.conditions?.length) return;
+        if (!conditions.length) return;
 
         const chatConditions = [];
 
-        for (const condition of conditions.conditions) {
+        for (const condition of conditions) {
             const outputSetting = condition.options?.outputChat ?? Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.outputChat);
 
             if (outputSetting) {
