@@ -29,7 +29,7 @@
 **[📜Changelog](https://github.com/death-save/combat-utility-belt/blob/master/CHANGELOG.md)**    
 **[📦Installation](#installation)**    
 **[🛠 Gadgets](#gadgets)**    
-**[👏Thanks/Attribution](#thanks-attribution)**
+**[👏Thanks/Attribution](#thanksattribution)**
 
 ---
 > Every ~~hero~~ GM needs gadgets to keep their game safe from dastardly players up to no good! And where better to store those gadget than on your very own Combat Utility Belt!    
