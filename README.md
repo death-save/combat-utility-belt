@@ -1,6 +1,6 @@
 ![https://img.shields.io/badge/Foundry%20VTT-0.7.6=>0.7.7-green](https://img.shields.io/badge/Foundry%20VTT-0.7.6=>0.7.7-green)
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-11-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-12-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 # Combat Utility Belt
@@ -156,6 +156,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <td align="center"><a href="https://github.com/apoapostolov"><img src="https://avatars0.githubusercontent.com/u/4083812?v=4" width="100px;" alt=""/><br /><sub><b>Apostol Apostolov</b></sub></a><br /><a href="https://github.com/death-save/combat-utility-belt/issues?q=author%3Aapoapostolov" title="Bug reports">🐛</a></td>
     <td align="center"><a href="https://github.com/Zamrod"><img src="https://avatars1.githubusercontent.com/u/12570777?v=4" width="100px;" alt=""/><br /><sub><b>Zamrod</b></sub></a><br /><a href="https://github.com/death-save/combat-utility-belt/issues?q=author%3AZamrod" title="Bug reports">🐛</a></td>
     <td align="center"><a href="https://github.com/Rawrly85"><img src="https://avatars3.githubusercontent.com/u/53245027?v=4" width="100px;" alt=""/><br /><sub><b>Rawrly85</b></sub></a><br /><a href="https://github.com/death-save/combat-utility-belt/issues?q=author%3ARawrly85" title="Bug reports">🐛</a></td>
+    <td align="center"><a href="http://stu.scot"><img src="https://avatars1.githubusercontent.com/u/6506599?v=4" width="100px;" alt=""/><br /><sub><b>STU</b></sub></a><br /><a href="https://github.com/death-save/combat-utility-belt/commits?author=grandseiken" title="Code">💻</a></td>
   </tr>
 </table>
 
