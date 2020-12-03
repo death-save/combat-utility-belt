@@ -1,6 +1,6 @@
 ![https://img.shields.io/badge/Foundry%20VTT-0.7.6=>0.7.7-green](https://img.shields.io/badge/Foundry%20VTT-0.7.6=>0.7.7-green)
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-15-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-16-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 # Combat Utility Belt
@@ -162,6 +162,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
   </tr>
   <tr>
     <td align="center"><a href="https://github.com/tposney"><img src="https://avatars2.githubusercontent.com/u/4486143?v=4" width="100px;" alt=""/><br /><sub><b>tposney</b></sub></a><br /><a href="https://github.com/death-save/combat-utility-belt/commits?author=tposney" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/tpendragon"><img src="https://avatars1.githubusercontent.com/u/2806645?v=4" width="100px;" alt=""/><br /><sub><b>Trey Pendragon</b></sub></a><br /><a href="https://github.com/death-save/combat-utility-belt/commits?author=tpendragon" title="Code">💻</a></td>
   </tr>
 </table>
 
