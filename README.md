@@ -58,8 +58,11 @@ This handy-dandy combat aid comes packed with a bunch of gadgets to ensure you g
 2. Click Install Module and look for Combat Utility Belt
 3. Once the Combat Utility Belt is installed, open your desired world and ~~wreak havoc on your players~~ navigate to the **Settings > Manage Modules** and enable the module then **Settings > Module Settings** and enable the gadget settings you want!
 
-# Gadgets
 
+# Gadgets
+<details>
+  <summary>Click to show</summary>
+  
 ## Award XP
 Provides an option to distribute XP to player-characters at the end of combat
 
@@ -129,6 +132,7 @@ Track lair actions, environmental effects and more as Temporary Combatants that 
 
 ## Triggler
 Trigger the addition or removal of Conditions, and/or the execution of Macros based on changes to actor/token properties such as HP
+</details>
 
 ---
 
