@@ -3,24 +3,27 @@
 ## [Known Issues]
 > Some issues related to the upgrade to Active Effects can be resolved/mitigated by **Saving your Condition Lab** after updating to a CUB version greater than 1.3.0. Please try this before reporting an issue!
 
-1. ~~Active Effects cannot be added to some Conditions (lower in the Condition Lab)~~ Resolved in CUB v1.3.5
-2. Loading a world with an existing Condition Lab mapping from pre CUB v1.3.0 may cause any Conditions added to a token to default to the first mapped condition. WORKAROUND: After loading your world, go into the Condition Lab and click Save.
-3. ~~Attempting to add multiple Conditions at the same time when one of those Conditions already exists on the Actor/Token will block all of them being added.~~ Resolved in CUB v1.3.4
-4. Enhanced Conditions chat output for linked Tokens and Actors is not aggregated, so you may see multiple messages when many conditions are added/removed from an Actor/Token.
-5. Overlay Effects added to a token will trigger the matching non-Overlay Condition to output to chat. The reverse is also true.
-6. **PF2e users**: Enhanced Conditions `Output to Chat` setting will cause duplicate chat messages due to similar function built into the system.
-7. Chat log may not re-render when Hide Names settings are changed. This may cause the old name to still show in the log for players. Advise players to reload Foundry if you change these settings mid-session.
+1. Loading a world with an existing Condition Lab mapping from pre CUB v1.3.0 may cause any Conditions added to a token to default to the first mapped condition. WORKAROUND: After loading your world, go into the Condition Lab and click Save.
+2. Enhanced Conditions chat output for linked Tokens and Actors is not aggregated, so you may see multiple messages when many conditions are added/removed from an Actor/Token.
+3. Overlay Effects added to a token will trigger the matching non-Overlay Condition to output to chat. The reverse is also true.
+4. **PF2e users**: Enhanced Conditions `Output to Chat` setting will cause duplicate chat messages due to similar function built into the system.
+5. Chat log may not re-render when Hide Names settings are changed. This may cause the old name to still show in the log for players. Advise players to reload Foundry if you change these settings mid-session.
+6. Due to a possible bug in core/dnd5e Hide Names may show the Actor's prototype token disposition replacement name instead of the token disposition replacement when players load the game. Messages created during a session are not affected.
 
 ## [1.3.7] - 2020-12-02
 ### Added
+- 中文 (Chinese) translation (thanks @hmqgg !)
 - There is now a (translation-enabled) tooltip on the Hide Names icon on the actor sheet
 
 ### Changed
-- You can now configure exceptions for Hide Names even if that disposition type is not hidden by default. For example if you choose not to hide `Friendly` names, you can now selectively hide an Actor's name from the Hide Names config for that actor
+- You can now configure exceptions for Hide Names even if that disposition type is not hidden by default. For example if you choose not to hide `Friendly` names by default, you can now selectively hide an Actor's name from the Hide Names config for that actor
 
 ### Fixed
+- Hide Names now uses the token disposition from the token instead of the prototype token of the Actor. This resolves situations where you have a `Friendly` goblin, but by default goblins are `Hostile`
 - Hide Names now processes names with multiple consecutive spaces correctly (eg. `Ancient  Black Dragon`)
 - Hide Names mask icon was being pushed into the next row by vtta-dndbeyond
+- Active Conditions are now output during combat when setting enabled
+- Concentrator no longer adds two Concentrating conditions to actors that have multiple tokens on the scene
 - Refined some logic in Concentrator, which should result in less errors
 
 ## [1.3.6] - 2020-11-15
