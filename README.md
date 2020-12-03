@@ -1,6 +1,6 @@
 ![https://img.shields.io/badge/Foundry%20VTT-0.7.6=>0.7.7-green](https://img.shields.io/badge/Foundry%20VTT-0.7.6=>0.7.7-green)
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-14-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-15-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 # Combat Utility Belt
@@ -159,6 +159,9 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <td align="center"><a href="http://stu.scot"><img src="https://avatars1.githubusercontent.com/u/6506599?v=4" width="100px;" alt=""/><br /><sub><b>STU</b></sub></a><br /><a href="https://github.com/death-save/combat-utility-belt/commits?author=grandseiken" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/MikauSchekzen"><img src="https://avatars0.githubusercontent.com/u/2879734?v=4" width="100px;" alt=""/><br /><sub><b>Tijmen Bok</b></sub></a><br /><a href="https://github.com/death-save/combat-utility-belt/commits?author=MikauSchekzen" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/shaun-newsome"><img src="https://avatars0.githubusercontent.com/u/7287194?v=4" width="100px;" alt=""/><br /><sub><b>shaun-newsome</b></sub></a><br /><a href="https://github.com/death-save/combat-utility-belt/commits?author=shaun-newsome" title="Code">💻</a></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="https://github.com/tposney"><img src="https://avatars2.githubusercontent.com/u/4486143?v=4" width="100px;" alt=""/><br /><sub><b>tposney</b></sub></a><br /><a href="https://github.com/death-save/combat-utility-belt/commits?author=tposney" title="Code">💻</a></td>
   </tr>
 </table>
 
