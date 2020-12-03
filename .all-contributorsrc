@@ -166,6 +166,15 @@
       "contributions": [
         "bug"
       ]
+    },
+    {
+      "login": "bsleys",
+      "name": "Bob Sleys",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/105347?v=4",
+      "profile": "http://sleys.net/blog",
+      "contributions": [
+        "bug"
+      ]
     }
   ],
   "contributorsPerLine": 7,
