@@ -1,27 +1,27 @@
 ![https://img.shields.io/badge/Foundry%20VTT-0.7.6=>0.7.7-green](https://img.shields.io/badge/Foundry%20VTT-0.7.6=>0.7.7-green)
+
+![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/death-save/combat-utility-belt) 
+![GitHub Releases](https://img.shields.io/github/downloads/death-save/combat-utility-belt/latest/total) 
+![GitHub All Releases](https://img.shields.io/github/downloads/death-save/combat-utility-belt/total?label=Downloads+total)  
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 [![All Contributors](https://img.shields.io/badge/all_contributors-19-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 # Combat Utility Belt
-** WARNING THIS README IS OUT OF DATE **    
-*I apologise for any confusion this may cause. A full redesign of the README is planned*
-
 **Author**: Evan Clarke (errational#2007 on discord)
 
-**Code Contributors**: Jordan Williams (Reaver#4634), Jacob McAuley (JacobMcAuley#3461), (Moerill#7205)    
-**Translation Contributors**: (KLO#1490), (BrotherSharp#6921), @rinnocenti    
+> Every ~~hero~~ GM needs gadgets to keep their game safe from dastardly players up to no good!
+
+> And where better to store those gadget than on your very own Combat Utility Belt!
+
+> This handy-dandy combat aid comes packed with a bunch of gadgets to ensure you get a TPK every time...
 
 [Installation](#Installation)    
-[Module Manifest](https://raw.githubusercontent.com/death-save/combat-utility-belt/master/module.json)    
+[Module Manifest](https://raw.githubusercontent.com/death-save/combat-utility-belt/releases/latest/download/module.json)    
 [Changelog](https://github.com/death-save/combat-utility-belt/blob/master/CHANGELOG.md)    
 [System Compatibility](https://docs.google.com/spreadsheets/d/1DUFZb7DniTJYNPXgHYpU5RGfB1p6qY7q8JxUAG4N9hU/edit?usp=sharing)
 
-Every ~~hero~~ GM needs gadgets to keep their game safe from dastardly players up to no good!
 
-And where better to store those gadget than on your very own Combat Utility Belt!
-
-This handy-dandy combat aid comes packed with a bunch of gadgets to ensure you get a TPK every time...
 
 **Featuring**
 * Auto-distribute XP
