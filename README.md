@@ -1,6 +1,6 @@
 ![https://img.shields.io/badge/Foundry%20VTT-0.7.6=>0.7.7-green](https://img.shields.io/badge/Foundry%20VTT-0.7.6=>0.7.7-green)
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-5-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-6-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 # Combat Utility Belt
@@ -148,6 +148,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <td align="center"><a href="https://github.com/JacobMcAuley"><img src="https://avatars2.githubusercontent.com/u/12160735?v=4" width="100px;" alt=""/><br /><sub><b>Jacob McAuley</b></sub></a><br /><a href="https://github.com/death-save/combat-utility-belt/commits?author=JacobMcAuley" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/Moerill"><img src="https://avatars1.githubusercontent.com/u/26152015?v=4" width="100px;" alt=""/><br /><sub><b>Moerill</b></sub></a><br /><a href="https://github.com/death-save/combat-utility-belt/commits?author=Moerill" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/BrotherSharper"><img src="https://avatars3.githubusercontent.com/u/41280723?v=4" width="100px;" alt=""/><br /><sub><b>Brother Sharp</b></sub></a><br /><a href="#translation-BrotherSharper" title="Translation">🌍</a></td>
+    <td align="center"><a href="https://github.com/drdwing"><img src="https://avatars1.githubusercontent.com/u/66671688?v=4" width="100px;" alt=""/><br /><sub><b>drdwing</b></sub></a><br /><a href="#translation-drdwing" title="Translation">🌍</a></td>
   </tr>
 </table>
 
