@@ -23,8 +23,8 @@
 
 
 ---
-**[📚Wiki/How-To](/wiki/)**    
-**[🐛Issues/Bugs](/issues)**    
+**[📚Wiki/How-To](https://github.com/death-save/combat-utility-belt/wiki)**    
+**[🐛Issues/Bugs](https://github.com/death-save/combat-utility-belt/issues)**    
 **[💬Contact](#death-save-social)**    
 **[📜Changelog](https://github.com/death-save/combat-utility-belt/blob/master/CHANGELOG.md)**    
 **[📦Installation](#installation)**    
