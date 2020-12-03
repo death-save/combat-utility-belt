@@ -1,6 +1,6 @@
 ![https://img.shields.io/badge/Foundry%20VTT-0.7.6=>0.7.7-green](https://img.shields.io/badge/Foundry%20VTT-0.7.6=>0.7.7-green)
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-18-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-19-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 # Combat Utility Belt
@@ -165,6 +165,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <td align="center"><a href="https://github.com/tpendragon"><img src="https://avatars1.githubusercontent.com/u/2806645?v=4" width="100px;" alt=""/><br /><sub><b>Trey Pendragon</b></sub></a><br /><a href="https://github.com/death-save/combat-utility-belt/commits?author=tpendragon" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/hmqgg"><img src="https://avatars1.githubusercontent.com/u/36689909?v=4" width="100px;" alt=""/><br /><sub><b>hmqgg</b></sub></a><br /><a href="#translation-hmqgg" title="Translation">🌍</a></td>
     <td align="center"><a href="https://github.com/SalieriC"><img src="https://avatars1.githubusercontent.com/u/1230041?v=4" width="100px;" alt=""/><br /><sub><b>SalieriC</b></sub></a><br /><a href="https://github.com/death-save/combat-utility-belt/issues?q=author%3ASalieriC" title="Bug reports">🐛</a></td>
+    <td align="center"><a href="http://sleys.net/blog"><img src="https://avatars2.githubusercontent.com/u/105347?v=4" width="100px;" alt=""/><br /><sub><b>Bob Sleys</b></sub></a><br /><a href="https://github.com/death-save/combat-utility-belt/issues?q=author%3Absleys" title="Bug reports">🐛</a></td>
   </tr>
 </table>
 
