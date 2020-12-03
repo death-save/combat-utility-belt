@@ -144,6 +144,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <table>
   <tr>
     <td align="center"><a href="https://github.com/Reaver01"><img src="https://avatars3.githubusercontent.com/u/1864450?v=4" width="100px;" alt=""/><br /><sub><b>Reaver01</b></sub></a><br /><a href="https://github.com/death-save/combat-utility-belt/commits?author=Reaver01" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/Moerill"><img src="https://avatars1.githubusercontent.com/u/26152015?v=4" width="100px;" alt=""/><br /><sub><b>Moerill</b></sub></a><br /><a href="https://github.com/death-save/combat-utility-belt/commits?author=Moerill" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/JacobMcAuley"><img src="https://avatars2.githubusercontent.com/u/12160735?v=4" width="100px;" alt=""/><br /><sub><b>Jacob McAuley</b></sub></a><br /><a href="https://github.com/death-save/combat-utility-belt/commits?author=JacobMcAuley" title="Code">💻</a></td>
   </tr>
 </table>
