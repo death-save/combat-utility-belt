@@ -103,6 +103,15 @@
       "contributions": [
         "bug"
       ]
+    },
+    {
+      "login": "grandseiken",
+      "name": "STU",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/6506599?v=4",
+      "profile": "http://stu.scot",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
