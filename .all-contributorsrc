@@ -76,6 +76,15 @@
       "contributions": [
         "translation"
       ]
+    },
+    {
+      "login": "apoapostolov",
+      "name": "Apostol Apostolov",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/4083812?v=4",
+      "profile": "https://github.com/apoapostolov",
+      "contributions": [
+        "bug"
+      ]
     }
   ],
   "contributorsPerLine": 7,
