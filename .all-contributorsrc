@@ -195,6 +195,17 @@
         "bug",
         "question"
       ]
+    },
+    {
+      "login": "DanOrc",
+      "name": "DanOrc",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/9914380?v=4",
+      "profile": "https://github.com/DanOrc",
+      "contributions": [
+        "ideas",
+        "bug",
+        "question"
+      ]
     }
   ],
   "contributorsPerLine": 7,
