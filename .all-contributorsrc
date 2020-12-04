@@ -184,6 +184,17 @@
       "contributions": [
         "ideas"
       ]
+    },
+    {
+      "login": "kandashi",
+      "name": "kandashi",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/1347785?v=4",
+      "profile": "https://github.com/kandashi",
+      "contributions": [
+        "ideas",
+        "bug",
+        "question"
+      ]
     }
   ],
   "contributorsPerLine": 7,
