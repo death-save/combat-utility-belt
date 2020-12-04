@@ -10,7 +10,7 @@
 </div><br/>
 
 ![https://img.shields.io/badge/Foundry%20VTT%20compatibility-0.7.6=>0.7.7-green](https://img.shields.io/badge/Foundry%20VTT%20compatibility-0.7.6=>0.7.7-green)<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-20-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-21-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 ![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/death-save/combat-utility-belt) 
@@ -181,6 +181,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <td align="center"><a href="https://github.com/SalieriC"><img src="https://avatars1.githubusercontent.com/u/1230041?v=4" width="100px;" alt=""/><br /><sub><b>SalieriC</b></sub></a><br /><a href="https://github.com/death-save/combat-utility-belt/issues?q=author%3ASalieriC" title="Bug reports">🐛</a></td>
     <td align="center"><a href="http://sleys.net/blog"><img src="https://avatars2.githubusercontent.com/u/105347?v=4" width="100px;" alt=""/><br /><sub><b>Bob Sleys</b></sub></a><br /><a href="https://github.com/death-save/combat-utility-belt/issues?q=author%3Absleys" title="Bug reports">🐛</a></td>
     <td align="center"><a href="https://github.com/trdischat"><img src="https://avatars1.githubusercontent.com/u/52774325?v=4" width="100px;" alt=""/><br /><sub><b>trdischat</b></sub></a><br /><a href="#ideas-trdischat" title="Ideas, Planning, & Feedback">🤔</a></td>
+    <td align="center"><a href="https://github.com/DanOrc"><img src="https://avatars1.githubusercontent.com/u/9914380?v=4" width="100px;" alt=""/><br /><sub><b>danorc</b></sub></a><br /><a href="#ideas-danorc" title="Ideas, Planning, & Feedback">🤔</a> <a href="https://github.com/death-save/combat-utility-belt/issues?q=author%3Adanorc" title="Bug reports">🐛</a> <a href="#question-danorc" title="Answering Questions">💬</a></td>
   </tr>
 </table>
 
