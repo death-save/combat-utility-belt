@@ -65,13 +65,15 @@ export class Concentrator {
         const notifyDoubleSetting = Sidekick.getSetting(SETTING_KEYS.concentrator.notifyDouble);
 
         // If the actor/token-actor is already Concentrating, and the notification setting is enabled, fire a notification
-        if (isAlreadyConcentrating && notifyDoubleSetting !== "None") return Concentrator._notifyDoubleConcentration(actor);
-
-        // Otherwise, add the Concentrating condition
-        EnhancedConditions.addCondition(conditionName, actor, {warn: false});
+        if (isAlreadyConcentrating && notifyDoubleSetting !== "None") {
+            Concentrator._notifyDoubleConcentration(actor);
+        } else {
+            // Otherwise, add the Concentrating condition
+            EnhancedConditions.addCondition(conditionName, actor, {warn: false});
+        }
 
         // Finally, set a flag that this message has been processed
-        app.setFlag(NAME, FLAGS.concentrator.chatMessage, true);
+        return app.setFlag(NAME, FLAGS.concentrator.chatMessage, true);
     }
 
     /**
