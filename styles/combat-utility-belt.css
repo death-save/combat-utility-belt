@@ -523,6 +523,16 @@ li.condition-lab.row {
     flex-grow: 0;
 }
 
+#combat-utility-belt-about .readme {
+  text-align: center;
+
+}
+
+#combat-utility-belt-about a {
+  text-shadow: 1px 1px black;
+}
+
+
 #combat-utility-belt-about div.patrons {
     width: 100%;
 }

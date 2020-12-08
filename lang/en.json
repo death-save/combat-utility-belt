@@ -88,6 +88,8 @@
     "HIDE_NAMES.ActorForm.DefaultSettingH": "This is the current default setting for this token's disposition (set in CUBputer)",
     "HIDE_NAMES.ActorSheetButton": "Configure name hiding for this actor",
 
+    "SETTINGS.AboutApp.ButtonN": "About Combat Utility Belt",
+    "SETTINGS.AboutApp.ButtonH": "More info about Combat Utility Belt",
     "SETTINGS.CUBPuter.ButtonN": "Combat Utility Belt Config",
     "SETTINGS.CUBPuter.ButtonH": "Provides additional configuration for Combat Utility Belt",
     
