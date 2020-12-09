@@ -10,7 +10,7 @@
 </div><br/>
 
 ![https://img.shields.io/badge/Foundry%20VTT%20compatibility-0.7.6=>0.7.8-green](https://img.shields.io/badge/Foundry%20VTT%20compatibility-0.7.6=>0.7.7-green)<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-22-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-23-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 ![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/death-save/combat-utility-belt) 
@@ -185,6 +185,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
   </tr>
   <tr>
     <td align="center"><a href="https://github.com/DanOrc"><img src="https://avatars1.githubusercontent.com/u/9914380?v=4" width="100px;" alt=""/><br /><sub><b>DanOrc</b></sub></a><br /><a href="#ideas-DanOrc" title="Ideas, Planning, & Feedback">🤔</a> <a href="https://github.com/death-save/combat-utility-belt/issues?q=author%3ADanOrc" title="Bug reports">🐛</a> <a href="#question-DanOrc" title="Answering Questions">💬</a></td>
+    <td align="center"><a href="https://github.com/acd-jake"><img src="https://avatars1.githubusercontent.com/u/67855941?v=4" width="100px;" alt=""/><br /><sub><b>acd-jake</b></sub></a><br /><a href="#translation-acd-jake" title="Translation">🌍</a></td>
   </tr>
 </table>
 
