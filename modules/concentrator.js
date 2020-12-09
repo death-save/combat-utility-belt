@@ -65,7 +65,7 @@ export class Concentrator {
         const notifyDoubleSetting = Sidekick.getSetting(SETTING_KEYS.concentrator.notifyDouble);
 
         // If the actor/token-actor is already Concentrating, and the notification setting is enabled, fire a notification
-        if (isAlreadyConcentrating && notifyDoubleSetting !== "None") {
+        if (isAlreadyConcentrating && notifyDoubleSetting !== "none") {
             Concentrator._notifyDoubleConcentration(actor);
         } else {
             // Otherwise, add the Concentrating condition
