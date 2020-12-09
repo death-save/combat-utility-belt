@@ -4,8 +4,22 @@ import { Sidekick } from "./sidekick.js";
 import { TokenUtility } from "./utils/token.js";
 import { Concentrator } from "./concentrator.js";
 import { CUBPuter } from "./cub-puter.js";
+import AboutApp from "./about.mjs";
 
 export function registerSettings() {
+
+    /* -------------------------------------------- */
+    /*                     About                    */
+    /* -------------------------------------------- */
+
+    Sidekick.registerMenu(BUTLER.SETTING_KEYS.aboutApp.menu, {
+        name: "SETTINGS.AboutApp.ButtonN",
+        label: BUTLER.DEFAULT_CONFIG.aboutApp.title,
+        hint: "SETTINGS.AboutApp.ButtonH",
+        icon: "fas fa-question",
+        type: AboutApp,
+        restricted: false
+    });
 
     /* -------------------------------------------- */
     /*                   CUBPuter                   */

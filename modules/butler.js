@@ -119,6 +119,9 @@ export const HEALTH_STATES = {
 }
 
 export const DEFAULT_CONFIG = {
+    aboutApp: {
+        title: "About Combat Utility Belt"
+    },
     concentrator: {
         conditionName: "Concentrating",
         enable: false,
@@ -335,6 +338,9 @@ export const FLAGS = {
 }
 
 export const SETTING_KEYS = {
+    aboutApp: {
+        menu: "aboutApp"
+    },
     concentrator: {
         enable: "enableConcentrator",
         conditionName: "concentratorConditionName",

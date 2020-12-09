@@ -1,18 +1,20 @@
 <form autocomplete="off" onsubmit="event.preventDefault()">
     <div class="flexrow">
-        <strong>Combat Utility Belt</strong>
+        <h1>Combat Utility Belt</h1>
         <span class="version"><strong>v{{version}}</strong></span>
-    </div>
-    <div class="readme">
-        <p><a href="https://github.com/death-save/combat-utility-belt/wiki" title="Wiki"><i class="fas fa-book"></i> Wiki / More Info</a></p>
     </div>
     <div class="made-by flexcol">
         <span class="made">
             Made with <span class="heart">❤</span> by <strong>DEATH SAVE DEVELOPMENT</strong>
         </span>
     </div>
+    <div class="readme flexrow">
+        <a href="https://github.com/death-save/combat-utility-belt#readme" title="ReadMe"><i class="fas fa-book-open"></i> ReadMe</a>
+        <a href="https://github.com/death-save/combat-utility-belt/wiki" title="Wiki"><i class="fas fa-book"></i> Wiki / More Info</a>
+        <a href="https://github.com/death-save/combat-utility-belt/issues" title="Issues"><i class="fas fa-exclamation-circle"></i> Issues</a>
+    </div>
     <div class="patrons">
-        <p>Thanks to the support of these awesome people:</p>
+        <p>CUB is made in part thanks to the support of these awesome people who were founders on my Patreon:</p>
         <ol class="patrons">
         {{#each patrons}}
             <li class="patron">{{this.name}}</li>

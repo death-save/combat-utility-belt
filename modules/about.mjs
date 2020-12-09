@@ -25,7 +25,7 @@ export default class AboutApp extends FormApplication {
             template: `${PATH}/templates/about.hbs`,
             popOut: true,
             width: 500,
-            height: 605
+            height: 505
         });
     }
 
