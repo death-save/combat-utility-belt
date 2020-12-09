@@ -10,6 +10,19 @@
 5. Chat log may not re-render when Hide Names settings are changed. This may cause the old name to still show in the log for players. Advise players to reload Foundry if you change these settings mid-session.
 6. Due to a possible bug in core/dnd5e Hide Names may show the Actor's prototype token disposition replacement name instead of the token disposition replacement when players load the game. Messages created during a session are not affected.
 
+## [1.3.8] - 2020-12-08
+### Added
+- Deutsch (German) translation thanks to Acd-Jake#9087 on discord!
+- You can now reach the `About Combat Utility Belt` app from the Module Settings menu as well from the CUBputer
+
+### Changed
+- Some minor changes to the formatting and structure of the `About Combat Utility Belt` app
+
+### Fixed
+- Concentrator no longers duplicates output
+- Concentrator respects the `Notify Double Concentration` setting when it is set to `None`
+- Castellano (Spanish) translation now points to the correct file
+
 ## [1.3.7] - 2020-12-02
 ### Added
 - 中文 (Chinese) translation (thanks @hmqgg !)
