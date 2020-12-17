@@ -15,7 +15,7 @@
 
 ![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/death-save/combat-utility-belt) 
 ![GitHub Releases](https://img.shields.io/github/downloads/death-save/combat-utility-belt/latest/total) 
-![GitHub All Releases](https://img.shields.io/github/downloads/death-save/combat-utility-belt/total?label=Downloads+total)  
+![GitHub All Releases](https://img.shields.io/github/downloads/death-save/combat-utility-belt/total?label=total+downloads)  
 
 
 # Combat Utility Belt
