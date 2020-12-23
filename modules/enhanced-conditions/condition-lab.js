@@ -480,6 +480,17 @@ export class ConditionLab extends FormApplication {
         iconPath.on("change", event => this._onChangeIconPath(event));
         compendiumSelector.on("change", event => this._onChangeCompendium(event));
 
+        //Because of how DraggableList encompasses all elements within a condition, it effects being able to select text within a 
+        //input. In order prevent this from occuring, we need to turn the draggable attribute to false when focusing on the text based inputs
+        html.find(".text-input").focus(() => {
+            html.find(".row").attr("draggable", false)
+        });
+
+        //Once the text input is no longer in focus, we set the element to be draggable again. 
+        html.find(".text-input").blur(() => {
+            html.find(".row").attr("draggable", true)
+        });
+
         // Init the DraggableList
         new DraggableList(html[0].querySelector(".list"), ".row");
 
