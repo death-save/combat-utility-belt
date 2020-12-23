@@ -32,14 +32,14 @@
                     <div class="flexcol text-entry">
                         <div class="flexrow">
                             <div class="condition">
-                                <input type="text" name="condition-{{@index}}" title="Condition" value="{{condition.name}}" class="condition text-input" placeholder="Condition Name" data-dtype="String" {{#if ../isDefault}}disabled{{/if}}>
+                                <input type="text" name="condition-{{@index}}" title="Condition" value="{{condition.name}}" class="condition condition-text-input" placeholder="Condition Name" data-dtype="String" {{#if ../isDefault}}disabled{{/if}}>
                             </div>
                             <div class="active-effect">
                                 <button type="button" class="active-effect-config" title="{{#if condition.isNew}}{{localize "ENHANCED_CONDITIONS.Lab.ActiveEffects.TitleDisabled"}}{{else}}{{localize "ENHANCED_CONDITIONS.Lab.ActiveEffects.Title"}}{{/if}}" {{#if condition.isNew}}disabled{{else}}{{/if}}><i class="fas fa-hand-sparkles"></i></button>
                             </div>
                         </div>
                         <div class="path">
-                            <input type="text" name="icon-{{@index}}" title="Status Icon Path" class="icon-path" value="{{condition.icon}}" placeholder="/icons/example.svg" data-dtype="String" {{#if ../isDefault}}disabled{{/if}}>
+                            <input type="text" name="icon-{{@index}}" title="Status Icon Path" class="icon-path condition-text-input" value="{{condition.icon}}" placeholder="/icons/example.svg" data-dtype="String" {{#if ../isDefault}}disabled{{/if}}>
                             <button type="button" name="file-picker-{{@index}}" class="file-picker" data-type="image" data-target="icon-{{@index}}" title="Browse Files" tabindex="-1" {{#if ../isDefault}}hidden{{/if}}>
                                 <i class="fas fa-file-import fa-fw"></i>
                             </button>
