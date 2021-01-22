@@ -717,9 +717,11 @@ export class EnhancedConditions {
         const statusEffects = conditionMap.map((c, i, a) => {
             const existingIds = a.length ? a.filter(c => c.id).map(c => c.id) : [];
             const id = c.id ? `${BUTLER.NAME}.${c.id}` : Sidekick.generateUniqueSlugId(c.name, existingIds);
+
             return {
                 id,
                 flags: {
+                    ...c.activeEffect?.flags,
                     core: {
                         statusId: `${[BUTLER.NAME]}.${c.id}` ?? `${[BUTLER.NAME]}.${c.name?.slugify()}`
                     },
@@ -731,7 +733,7 @@ export class EnhancedConditions {
                 label: c.name,
                 icon: c.icon,
                 changes: c.activeEffect?.changes || [],
-                duration: c.duration || {}
+                duration: c.duration || c.activeEffect?.duration || {}
             }
         });
 
