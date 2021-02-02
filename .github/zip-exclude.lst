@@ -1,0 +1,11 @@
+./dist/*
+./out/*
+./jsdoc/*
+./node_modules/*
+*.git*
+*.vscode*
+gulpfile.js
+package.json
+package-lock.json
+tsconfig.json
+foundry.js
