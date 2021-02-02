@@ -14,8 +14,8 @@
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 ![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/death-save/combat-utility-belt) 
-![GitHub Releases](https://img.shields.io/github/downloads/death-save/combat-utility-belt/latest/total) 
-![GitHub All Releases](https://img.shields.io/github/downloads/death-save/combat-utility-belt/total?label=total+downloads)  
+[![GitHub downloads (latest)](https://img.shields.io/badge/dynamic/json?label=Downloads@latest&query=assets[?(@.name.includes('zip'))].download_count&url=https://api.github.com/repos/death-save/combat-utility-belt/releases/latest&color=green)](https://github.com/death-save/combat-utility-belt/releases/latest)
+[![Forge Installs](https://img.shields.io/badge/dynamic/json?label=Forge%20Install%20Base&query=package.installs&suffix=%&url=https://forge-vtt.com/api/bazaar/package/combat-utility-belt&colorB=brightgreen)](https://forge-vtt.com/)
 
 
 # Combat Utility Belt
