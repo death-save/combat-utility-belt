@@ -19,7 +19,7 @@
 
 
 # Combat Utility Belt
-*made with ❤ by ([DEATH SAVE DEVELOPMENT](https://deathsave.dev))*
+*made with ❤ by [DEATH SAVE DEVELOPMENT](https://deathsave.dev)*
 
 
 ---
