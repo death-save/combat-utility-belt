@@ -23,6 +23,10 @@ export class HideNPCNames {
      * @param {*} data 
      */
     static _onRenderActorSheet(app, html, data) {
+        const enableSetting = Sidekick.getSetting(SETTING_KEYS.hideNames.enable);
+
+        if (!enableSetting) return;
+        
         const disposition = app.object.data.token.disposition;
         const nameField = html.find("input[name='name']");
         
