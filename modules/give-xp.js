@@ -43,13 +43,14 @@ export class GiveXP {
         const defeatedEnemies = combat.turns.filter(object => (!object.actor.hasPlayerOwner && object.defeated && object.token.disposition === -1));
         const playerCombatants = combat.turns.filter(object => (object.actor.hasPlayerOwner && !object.defeated));
         let experience = 0;
+        const modifier = Sidekick.getSetting(SETTING_KEYS.giveXP.modifier);
 
         if (defeatedEnemies.length === 0 || playerCombatants.length === 0) {
             return;
         }
 
         defeatedEnemies.forEach(enemy => experience += enemy.actor.data.data.details.xp.value);
-        const dividedExperience = Math.floor(experience / playerCombatants.length);
+        const dividedExperience = Math.floor(modifier * experience / playerCombatants.length);
 
         let experienceMessage = "<b>Experience Awarded!</b> (" + experience + "xp)<p><b>" + dividedExperience + "xp </b> added to:</br>";
 

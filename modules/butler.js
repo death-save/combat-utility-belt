@@ -194,7 +194,8 @@ export const DEFAULT_CONFIG = {
         }
     },
     giveXP: {
-        enable: false
+        enable: false,
+        modifier: 1
     },
     hideNames: {
         enable: false,
@@ -369,7 +370,8 @@ export const SETTING_KEYS = {
         suppressPreventativeSaveReminder: "conditionsSuppressPreventativeSaveReminder"
     },
     giveXP: {
-        enable: "enableGiveXP"
+        enable: "enableGiveXP",
+        modifier: "giveXpModifier"
     },
     hideNames: {
         enable: "enableHideNPCNames",
