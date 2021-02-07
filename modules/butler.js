@@ -325,6 +325,9 @@ export const FLAGS = {
         conditionId: "conditionId",
         overlay: "overlay"
     },
+    giveXP: {
+        deselectByDefault: "deselectByDefault"
+    },
     mightySummoner: {
         mightySummoner: "mightySummoner"
     },

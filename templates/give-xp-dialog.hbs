@@ -1,3 +1,11 @@
+{{#*inline "tokenListItem"}}
+<label data-token-id="{{this.token._id}}" data-actor-name="{{this.actor.name}}" data-xp-amount="{{this.actor.data.data.details.xp.value}}">
+    <input type="checkbox" name="{{this.token._id}}" {{#if isChecked}}checked="checked"{{/if}}>
+    <div class="give-xp--actor-icon" style="background-image: url({{this.token.img}})"></div>
+    <span class="give-xp--actor-xp">+0 XP</span>
+</label>
+{{/inline}}
+
 <form>
     <h2>{{ localize "WORDS.Configuration" }}</h2>
     <div class="form-group">
@@ -19,26 +27,18 @@
     <section id="actor-select-tabs">
         <div data-tab="friendlies">
             <p class="notes">{{ localize "GIVE_XP.DistributeForm.SelectFriendlies" }}</p>
-            <div class="give-xp--actor-list">
-                {{#each friendlyCombatants}}
-                <label data-player-id="{{this.actor.id}}" data-actor-name="{{this.actor.name}}">
-                    <input type="checkbox" name="player-{{this.actor.id}}" checked>
-                    <div class="give-xp--actor-icon" style="background-image: url({{this.actor.data.img}})"></div>
-                    <span class="give-xp--actor-xp">+0 XP</span>
-                </label>
+            <div id="friendly-actor-list" class="give-xp--actor-list">
+                {{#each friendlies}}
+                    {{> tokenListItem isChecked=(lookup ../defaultSelectedFriendlies @index)}}
                 {{/each}}
             </div>
         </div>
 
         <div data-tab="hostiles" style="display: none;">
             <p class="notes">{{ localize "GIVE_XP.DistributeForm.SelectHostiles" }}</p>
-            <div class="give-xp--actor-list">
-                {{#each defeatedHostiles}}
-                <label data-enemy-id="{{this.actor.id}}" data-actor-name="{{this.actor.name}}" data-xp-amount="{{this.actor.data.data.details.xp.value}}">
-                    <input type="checkbox" name="enemy-{{this.actor.id}}" checked>
-                    <div class="give-xp--actor-icon" style="background-image: url({{this.actor.data.img}})"></div>
-                    <span class="give-xp--actor-xp">+0 XP</span>
-                </label>
+            <div id="hostile-actor-list" class="give-xp--actor-list">
+                {{#each hostiles}}
+                    {{> tokenListItem isChecked=true}}
                 {{/each}}
             </div>
         </div>

@@ -1,5 +1,5 @@
 import { Sidekick } from "./sidekick.js";
-import { SETTING_KEYS, PATH as BUTLERPATH } from "./butler.js";
+import { NAME, FLAGS, SETTING_KEYS, PATH as BUTLERPATH } from "./butler.js";
 
 export class GiveXP {
 
@@ -50,10 +50,11 @@ export class GiveXP {
      */
     static async _giveXP(combat) {
         const xpModifier = Sidekick.getSetting(SETTING_KEYS.giveXP.modifier);
-        const defeatedHostiles = combat.turns.filter(object => object.defeated && object.token.disposition === -1);
-        const friendlyCombatants = combat.turns.filter(object => !object.defeated && object.token.disposition === 1);
+        const hostiles = combat.turns.filter(turn => turn.defeated && turn.token.disposition === -1);
+        const friendlies = combat.turns.filter(turn => !turn.defeated && turn.token.disposition === 1);
+        const defaultSelectedFriendlies = friendlies.map(turn => !turn.actor.getFlag(NAME, FLAGS.giveXP.deselectByDefault));
 
-        const combatData = { combat, xpModifier, defeatedHostiles, friendlyCombatants };
+        const combatData = { combat, xpModifier, hostiles, friendlies, defaultSelectedFriendlies };
         const content = await renderTemplate(`${BUTLERPATH}/templates/give-xp-dialog.hbs`, combatData);
 
         new Dialog({
@@ -63,7 +64,7 @@ export class GiveXP {
             buttons: {
                 okay: {
                     label: "OK",
-                    callback: html => this._distributeXP(html, combat)
+                    callback: html => this._distributeXP(html, combatData)
                 },
                 cancel: {
                     label: "Cancel",
@@ -88,15 +89,15 @@ export class GiveXP {
         });
         
         // Name hover tooltip for all creatures
-        html.find('[data-actor-name]').on("mouseover", function() {
+        html.find('.give-xp--actor-list label').on("mouseover", function() {
             html.find('#hovered-creature').text($(this).data("actorName"));
         });
-        html.find('[data-actor-name]').on("mouseout", function() {
+        html.find('.give-xp--actor-list label').on("mouseout", function() {
             html.find('#hovered-creature').html("&nbsp;");
         });
         
         // When a creature is selected/deselected or XP modifier is updated, recalc everything
-        html.find('#xp-modifier, [data-player-id] input, [data-enemy-id] input').on("input", updateXp);
+        html.find('#xp-modifier, .give-xp--actor-list input').on("input", updateXp);
 
         // Initial XP calculation
         updateXp();
@@ -105,7 +106,7 @@ export class GiveXP {
             const modifier = +html.find('#xp-modifier').val()
 
             let totalXp = 0;
-            html.find("[data-enemy-id]").each((_, el) => {
+            html.find("#hostile-actor-list [data-xp-amount]").each((_, el) => {
                 // Update XP amount on each enemy's display with modifier
                 let enemyXp = Math.floor($(el).data("xpAmount") * modifier);
                 $(el).find('.give-xp--actor-xp').text(`+${enemyXp} XP`);
@@ -117,11 +118,11 @@ export class GiveXP {
             });
             
             // Count players receiving, and work out per-player amount
-            const numDivisors = html.find("[data-player-id] input:checked").length;
+            const numDivisors = html.find("#friendly-actor-list input:checked").length;
             const xpPerDivisor = numDivisors !== 0 ? totalXp / numDivisors : 0;
             
             // Update text for each friendly token icon
-            html.find("[data-player-id]").each((_, el) => {
+            html.find("#friendly-actor-list label").each((_, el) => {
                 const giveXp = $(el).find("input").is(":checked");
                 $(el).find(".give-xp--actor-xp").text(`+${giveXp ? xpPerDivisor : 0} XP`)
             });
@@ -138,26 +139,39 @@ export class GiveXP {
      * @param {*} html -- html for the distribution config dialog
      * @param {*} combat -- the combat instance being deleted
      */
-    static async _distributeXP(html, combat) {
-        const getSelectedTokens = (type) => html.find(`[data-${type}-id]`).has("input:checked").map((_, el) => game.actors.get($(el).data(`${type}Id`))).get();
-        
-        const selectedFriendlies = getSelectedTokens("player");
-        const selectedHostiles = getSelectedTokens("enemy");
+    static async _distributeXP(html, { combat, friendlies }) {
+        const getSelectedTokens = type => html.find(`#${type}-actor-list label`).has("input:checked").map((_, el) => canvas.tokens.get($(el).data("tokenId"))).get();
+        const selectedFriendlyTokens = getSelectedTokens("friendly");
+        const selectedHostileTokens = getSelectedTokens("hostile");        
         const xpModifier = +html.find("#xp-modifier").val();
-
-        if (selectedFriendlies.length !== 0 && selectedHostiles.length !== 0) {
-            const totalXp = selectedHostiles.reduce((total, actor) => total + actor.data.data.details.xp.value, 0) * xpModifier;
-            const perFriendly = Math.floor(totalXp / selectedFriendlies.length);
+        
+        if (selectedFriendlyTokens.length !== 0 && selectedHostileTokens.length !== 0) {
+            const totalXp = selectedHostileTokens.reduce((total, token) => total + token.actor.data.data.details.xp.value, 0) * xpModifier;
+            const perFriendly = Math.floor(totalXp / selectedFriendlyTokens.length);
 
             let xpMessage = `<p><strong>Experience Awarded!</strong> (${totalXp} XP)</p><p><strong>${perFriendly} XP</strong> given to:</p><ul>`;
 
-            for (const friendly of selectedFriendlies) {
+            for (const friendly of selectedFriendlyTokens) {
                 xpMessage += `<li>${friendly.name}</li>`;
-                await this.applyXP(friendly, perFriendly);
+                await this.applyXP(friendly.actor, perFriendly);
             }
             xpMessage += "</ul>";
 
             this.outputToChat(xpMessage);
+        }
+
+        // If there are any deselected friendlies, add a flag to them to not select them by default next time
+        // If any selected friendlies DO have the deselect by default flag, clear it
+        // E.G. if a summon/companion is deselected, learn to not select it by default next time
+        for (const friendly of friendlies) {
+            const hasFlag = friendly.actor.getFlag(NAME, FLAGS.giveXP.deselectByDefault);
+            const isSelected = selectedFriendlyTokens.find(selected => selected.actor._id === friendly.actor._id);
+
+            if (!hasFlag && !isSelected) {
+                await friendly.actor.setFlag(NAME, FLAGS.giveXP.deselectByDefault, true);
+            } else if (hasFlag && isSelected) {
+                await friendly.actor.unsetFlag(NAME, FLAGS.giveXP.deselectByDefault);
+            }
         }
 
         // Now creatures have been updated, actually delete combat
