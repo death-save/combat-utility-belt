@@ -79,9 +79,35 @@
             <label for="triggler-trigger-type-advanced"><strong>{{localize "CUB.TRIGGLER.App.TriggerType.Advanced.Label"}}</strong></label>
         </div>
         <div class="form-group">
-            <label for="triggler-advanced-property">{{localize "CUB.TRIGGLER.App.AdvancedTrigger.Property.Label"}}</label>
-            <input id="triggler-advanced-property" name="advancedProperty" type="text" value="{{advancedProperty}}" placeholder="{{localize "CUB.TRIGGLER.App.AdvancedTrigger.Property.Placeholder"}}" {{#unless isAdvancedTrigger}}disabled{{/unless}}>
+            <label for="triggler-advanced-name">{{localize "CUB.TRIGGLER.App.AdvancedTrigger.Name.Label"}}</label>
+            <input id="triggler-advanced-name" name="advancedName" type="text" value="{{advancedName}}" placeholder="{{localize "CUB.TRIGGLER.App.AdvancedTrigger.Name.Placeholder"}}" {{#unless isAdvancedTrigger}}disabled{{/unless}}>
         </div>
+        <h3>{{localize "CUB.WORDS.Actor"}}</h3>
+        <div class="form-group">
+            <label for="triggler-advanced-actor-property">{{localize "CUB.TRIGGLER.App.AdvancedTrigger.ActorProperty.Label"}}</label>
+            <input id="triggler-advanced-actor-property" name="advancedActorProperty" type="text" value="{{advancedActorProperty}}" placeholder="{{localize "CUB.TRIGGLER.App.AdvancedTrigger.ActorProperty.Placeholder"}}" {{#unless isAdvancedTrigger}}disabled{{/unless}}>
+            <p class="notes">{{localize "CUB.TRIGGLER.App.AdvancedTrigger.Actor.Note"}}</p>
+        </div>
+        <div class="form-group">
+            <label for="triggler-advanced-actor-property2">{{localize "CUB.TRIGGLER.App.AdvancedTrigger.ActorProperty2.Label"}}</label>
+            <input id="triggler-advanced-actor-property2" name="advancedActorProperty2" type="text" value="{{advancedActorProperty2}}" placeholder="{{localize "CUB.TRIGGLER.App.AdvancedTrigger.ActorProperty2.Placeholder"}}" {{#unless isAdvancedTrigger}}disabled{{/unless}}>
+            <p class="notes">{{localize "CUB.TRIGGLER.App.AdvancedTrigger.Actor.Note2"}}</p>
+        </div>
+        <br>
+        <h3>{{localize "CUB.WORDS.Token"}}</h3>
+        <div class="form-group">
+            <label for="triggler-advanced-token-property">{{localize "CUB.TRIGGLER.App.AdvancedTrigger.TokenProperty.Label"}}</label>
+            <input id="triggler-advanced-token-property" name="advancedTokenProperty" type="text" value="{{advancedTokenProperty}}" placeholder="{{localize "CUB.TRIGGLER.App.AdvancedTrigger.TokenProperty.Placeholder"}}" {{#unless isAdvancedTrigger}}disabled{{/unless}}>
+            <p class="notes">{{localize "CUB.TRIGGLER.App.AdvancedTrigger.Token.Note"}}</p>
+        </div>
+        <div class="form-group">
+            <label for="triggler-advanced-token-property2">{{localize "CUB.TRIGGLER.App.AdvancedTrigger.TokenProperty2.Label"}}</label>
+            <input id="triggler-advanced-token-property2" name="advancedTokenProperty2" type="text" value="{{advancedTokenProperty2}}" placeholder="{{localize "CUB.TRIGGLER.App.AdvancedTrigger.TokenProperty2.Placeholder"}}" {{#unless isAdvancedTrigger}}disabled{{/unless}}>
+            <p class="notes">{{localize "CUB.TRIGGLER.App.AdvancedTrigger.Token.Note2"}}</p>
+        </div>
+        <br>
+        <h3>{{localize "CUB.TRIGGLER.App.AdvancedTrigger.OperatorValue.Heading"}}</h3>
+        <p class="notes">{{localize "CUB.TRIGGLER.App.AdvancedTrigger.OperatorValue.Note"}}</p>
         <div class="flexrow">
             <select name="advancedOperator" class="advanced-trigger-operator" {{#unless isAdvancedTrigger}}disabled{{/unless}}>
                 {{#select advancedOperator}}
@@ -91,17 +117,12 @@
                 {{/each}}
                 {{/select}}
             </select>
-            <input type="text" name="advancedValue" class="value" placeholder="--Value--" value="{{advancedValue}}"/>   
-        </div>
-        
-        <div class="form-group">
-            <label for="triggler-advanced-property2">{{localize "CUB.TRIGGLER.App.AdvancedTrigger.Property2.Label"}}</label>
-            <input id="triggler-advanced-property2" name="advancedProperty2" type="text" value="{{advancedProperty2}}" placeholder="{{localize "CUB.TRIGGLER.App.AdvancedTrigger.Property2.Placeholder"}}" {{#unless isAdvancedTrigger}}disabled{{/unless}}>
+            <input type="text" name="advancedValue" class="advanced-trigger-value" placeholder="--Value--" value="{{advancedValue}}" {{#unless isAdvancedTrigger}}disabled{{/unless}}/>   
         </div>
     </div>
-    
     <hr>
     <h3>{{localize "CUB.TRIGGLER.App.Options.Title"}}</h3>
+    
     <div class="flexrow triggler">
         <div class="form-group options" title="Trigger for player-owned Actors only">
             <input type="checkbox" name="pcOnly" {{checked pcOnly}}>
@@ -117,7 +138,7 @@
         </div>
     </div>
     <footer class="flexrow">
-        <button type="submit" name="save"><i class="fas fa-save"></i> {{localize "CUB.Words.Save"}}</button>
-        <button type="reset" name="reset"><i class="fas fa-undo"></i> {{localize "CUB.Words.Reset"}}</button>
+        <button type="submit" name="save"><i class="fas fa-save"></i> {{localize "CUB.WORDS.Save"}}</button>
+        <button type="reset" name="reset"><i class="fas fa-undo"></i> {{localize "CUB.WORDS.Reset"}}</button>
     </footer>
 </form>

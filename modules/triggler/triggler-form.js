@@ -47,8 +47,11 @@ export class TrigglerForm extends FormApplication {
         const operator = this.data.operator || null;
         const value = this.data.value || null;
         const property2 = this.data.property2 || null;
-        const advancedProperty = this.data.advancedProperty || null;
-        const advancedProperty2 = this.data.advancedProperty2 || null;
+        const advancedName = this.data.advancedName || null;
+        const advancedActorProperty = this.data.advancedActorProperty || null;
+        const advancedActorProperty2 = this.data.advancedActorProperty2 || null;
+        const advancedTokenProperty = this.data.advancedTokenProperty || null;
+        const advancedTokenProperty2 = this.data.advancedTokenProperty2 || null;
         const advancedOperator = this.data.advancedOperator || null;
         const advancedValue = this.data.advancedValue || null;
         const pcOnly = this.data.pcOnly || null;
@@ -85,8 +88,11 @@ export class TrigglerForm extends FormApplication {
             operators,
             value,
             property2,
-            advancedProperty,
-            advancedProperty2,
+            advancedName,
+            advancedActorProperty,
+            advancedActorProperty2,
+            advancedTokenProperty,
+            advancedTokenProperty2,
             advancedOperator,
             advancedValue,
             pcOnly,
@@ -129,7 +135,7 @@ export class TrigglerForm extends FormApplication {
             updatedTriggers.splice(triggerIndex, 1);
 
             await Sidekick.setSetting(SETTING_KEYS.triggler.triggers, updatedTriggers);
-            this.data.id = null;
+            this.data = {};
             this.render();
         });
 
@@ -166,44 +172,53 @@ export class TrigglerForm extends FormApplication {
      * @param {*} formData 
      */
     async _updateObject(event, formData) {
-        if (!formData.category && !formData.advancedProperty) {
+        if (!formData.category && (!formData.advancedActorProperty && !formData.advancedTokenProperty)) {
             return;
+        }
+
+        const triggerType = formData?.triggerType;
+
+        if (triggerType === "advanced" && !formData.advancedName.length) {
+            ui.notifications.warn(game.i18n.localize("CUB.TRIGGLER.App.AdvancedTrigger.Name.Warning"));
+            return false;
         }
 
         const triggers = Sidekick.getSetting(SETTING_KEYS.triggler.triggers);
         const existingIds = triggers ? triggers.map(t => t.id) : null;
-        const text = this._constructString(formData);
+        const text = triggerType === "simple" ? this._constructString(formData) : formData.advancedName;
 
         if (!text) return false;
 
         const id = this.data.id;
         const newData = duplicate(formData);
         delete newData.triggers;
-        const updatedTriggers = duplicate(triggers);
 
-        let updatedTrigger = {}
-        if (id) {
-            const existingTrigger = triggers.find(t => t.id === id);
-            if (existingTrigger) {
-                updatedTrigger = mergeObject(existingTrigger, newData);
-                updatedTrigger.text = text;
-                updatedTriggers[triggers.indexOf(existingTrigger)] = updatedTrigger;
-            }
-            
+        const updatedTriggers = duplicate(triggers);
+        const existingTrigger = triggers.find(t => t.id === id);
+        const isNew = existingTrigger ? (triggerType === "simple" || existingTrigger.advancedName !== text) : true;
+
+
+        if (!isNew) {
+            const updatedTrigger = mergeObject(existingTrigger, newData);
+            updatedTrigger.text = text;
+            updatedTriggers[triggers.indexOf(existingTrigger)] = updatedTrigger;
+            this.data = updatedTrigger;
         }
 
-        let newTrigger = {};
-        if (!id) {
-            newTrigger = {
+        if (isNew) {
+            const newTrigger = {
                 id: Sidekick.createId(existingIds),
                 ...newData,
                 text
             }
             updatedTriggers.push(newTrigger);
+            this.data = newTrigger;
         }
 
         const setting = await Sidekick.setSetting(SETTING_KEYS.triggler.triggers, updatedTriggers);
         if (!!setting) ui.notifications.info(game.i18n.localize("CUB.TRIGGLER.App.SaveSuccessful"));
+
+        this.render();
 
         // Determine if ConditionLab is open and push the value back
         //const conditionLab = Object.values(ui.windows).find(v => v.id === DEFAULT_CONFIG.enhancedConditions.conditionLab.id);

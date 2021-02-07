@@ -511,7 +511,7 @@ li.condition-lab.row {
 }
 
 #cub-triggler-form .advanced-trigger-operator {
-  margin-left: 40%;
+  flex: 0;
 }
 
 /* ABOUT */
