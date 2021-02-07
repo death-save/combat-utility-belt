@@ -81,6 +81,16 @@
     "ENHANCED_CONDITIONS.ChatCard.Buttons.Undo": "Undo Remove Condition",
     "ENHANCED_CONDITIONS.ChatCard.Buttons.Remove": "Remove Condition",
 
+    "GIVE_XP.DistributeForm.XPModifier": "XP Modifier",
+    "GIVE_XP.DistributeForm.Friendlies": "Friendlies",
+    "GIVE_XP.DistributeForm.Hostiles": "Hostiles",
+    "GIVE_XP.DistributeForm.SelectFriendlies": "Select which friendlies will receive XP.",
+    "GIVE_XP.DistributeForm.SelectHostiles": "Select which hostiles will give XP.",
+    "GIVE_XP.DistributeForm.Distribution": "Distribution",
+    "GIVE_XP.DistributeForm.TotalXp": "Total XP",
+    "GIVE_XP.DistributeForm.CreaturesReceiving": "Creatures receiving",
+    "GIVE_XP.DistributeForm.XpPerCreature": "XP per friendly creature",
+
     "HIDE_NAMES.ActorForm.Enable": "Hide Actor Name",
     "HIDE_NAMES.ActorForm.EnableHint": "Enable hiding of this actor's name in Combat Tracker and Chat Messages (overrides default)",
     "HIDE_NAMES.ActorForm.ReplacementName": "Replacement Name",
@@ -210,5 +220,6 @@
     "WORDS.GMOnly": "GM Only",
     "WORDS.Everyone": "Everyone",
     "WORDS.About": "About",
-    "WORDS.OK": "OK"
+    "WORDS.OK": "OK",
+    "WORDS.Configuration": "Configuration"
 }

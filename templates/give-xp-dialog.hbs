@@ -1,24 +1,24 @@
 <form>
-    <h2>Configuration</h2>
+    <h2>{{ localize "WORDS.Configuration" }}</h2>
     <div class="form-group">
-        <label for="xp-modifier">XP Modifier</label>
+        <label for="xp-modifier">{{ localize "GIVE_XP.DistributeForm.XPModifier" }}</label>
         <input id="xp-modifier" type="number" value="{{xpModifier}}">
     </div>
 
     <nav class="tabs">
         <a class="item active" data-tab="friendlies">
             <i class="fas fa-users"></i>
-            Friendlies
+            {{ localize "GIVE_XP.DistributeForm.Friendlies" }}
         </a>
         <a class="item" data-tab="hostiles">
             <i class="fas fa-skull"></i>
-            Hostiles
+            {{ localize "GIVE_XP.DistributeForm.Hostiles" }}
         </a>
     </nav>
 
     <section id="actor-select-tabs">
         <div data-tab="friendlies">
-            <p class="notes">Select which friendlies will receive XP.</p>
+            <p class="notes">{{ localize "GIVE_XP.DistributeForm.SelectFriendlies" }}</p>
             <div class="give-xp--actor-list">
                 {{#each friendlyCombatants}}
                 <label data-player-id="{{this.actor.id}}" data-actor-name="{{this.actor.name}}">
@@ -31,7 +31,7 @@
         </div>
 
         <div data-tab="hostiles" style="display: none;">
-            <p class="notes">Select which hostiles will give XP.</p>
+            <p class="notes">{{ localize "GIVE_XP.DistributeForm.SelectHostiles" }}</p>
             <div class="give-xp--actor-list">
                 {{#each defeatedHostiles}}
                 <label data-enemy-id="{{this.actor.id}}" data-actor-name="{{this.actor.name}}" data-xp-amount="{{this.actor.data.data.details.xp.value}}">
@@ -45,17 +45,17 @@
     </section>
     <p id="hovered-creature" style="text-align: center;">&nbsp;</p>
 
-    <h2>Distribution</h2>
+    <h2>{{ localize "GIVE_XP.DistributeForm.Distribution" }}</h2>
     <div class="form-group">
-        <label>Total XP:</label>
+        <label>{{ localize "GIVE_XP.DistributeForm.TotalXp" }}</label>
         <span id="total-xp">-</span>
     </div>
     <div class="form-group">
-        <label>Creatures receiving:</label>
+        <label>{{ localize "GIVE_XP.DistributeForm.CreaturesReceiving" }}</label>
         <span id="friend-receive-count">-</span>
     </div>
     <div class="form-group">
-        <label>XP per friendly creature:</label>
+        <label>{{ localize "GIVE_XP.DistributeForm.XpPerCreature" }}</label>
         <span id="divisor-xp">-</span>
     </div>
 </form>
