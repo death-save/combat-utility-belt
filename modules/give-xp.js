@@ -149,15 +149,28 @@ export class GiveXP {
             const totalXp = selectedHostileTokens.reduce((total, token) => total + token.actor.data.data.details.xp.value, 0) * xpModifier;
             const perFriendly = Math.floor(totalXp / selectedFriendlyTokens.length);
 
-            let xpMessage = `<p><strong>Experience Awarded!</strong> (${totalXp} XP)</p><p><strong>${perFriendly} XP</strong> given to:</p><ul>`;
-
             for (const friendly of selectedFriendlyTokens) {
-                xpMessage += `<li>${friendly.name}</li>`;
                 await this.applyXP(friendly.actor, perFriendly);
             }
-            xpMessage += "</ul>";
 
-            this.outputToChat(xpMessage);
+            await this.outputToChat(`
+                <p><strong>Experience awarded!</strong> (${totalXp} XP)</p>
+                <p><strong>${perFriendly} XP</strong> given to:</p>
+                <ul>
+                    ${selectedFriendlyTokens.map(({actor}) => `<li>${actor.name}</li>`).join("")}
+                </ul>
+            `);
+
+            let levelUps = selectedFriendlyTokens.filter(({actor}) => actor.data.data.details.xp.value >= actor.data.data.details.xp.max);
+            if (levelUps.length) {
+                await this.outputToChat(`
+                    <p><strong>Level ups!</strong></p>
+                    <p>The following characters have enough XP to level up:</p>
+                    <ul>
+                        ${levelUps.map(({actor}) => `<li>${actor.name}</li>`).join("")}
+                    </ul>
+                `);
+            }
         }
 
         // If there are any deselected friendlies, add a flag to them to not select them by default next time
@@ -191,12 +204,12 @@ export class GiveXP {
     /**
      * Creates a chat message and outputs to chat
      */
-    static outputToChat(content) {
+    static async outputToChat(content) {
         const user = game.userId,
             alias = "CUB Experience",
             type = CONST.CHAT_MESSAGE_TYPES.OTHER;
 
-        ChatMessage.create({
+        await ChatMessage.create({
             user,
             speaker: {
                 alias
