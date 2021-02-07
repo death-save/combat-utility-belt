@@ -10,6 +10,27 @@
 5. Chat log may not re-render when Hide Names settings are changed. This may cause the old name to still show in the log for players. Advise players to reload Foundry if you change these settings mid-session.
 6. Due to a possible bug in core/dnd5e Hide Names may show the Actor's prototype token disposition replacement name instead of the token disposition replacement when players load the game. Messages created during a session are not affected.
 
+## [1.4.0] - 2021-02-07
+### Added
+- Triggler now includes an **Advanced Trigger** type and associated fields that allow you to manually enter the path to the Actor/Token properties you want to listen for in your trigger. This provides compatibility for game systems not previously supported by Triggler, as well as allowing for listening for changes to properties that were not previously exposed in the dropdown menus.
+*Note: This functionality will require some knowledge of the data model for your game system. Please check in the game system documentation or contact game system developers before contacting Death Save Development for assistance.*
+
+### Changed
+- Triggler form no longer closes when you click Save
+- Triggler Cancel button replaced with a Reset button that resets the form back to its saved values
+- Hide Names button on Actor sheets has been moved to the title bar (aka window header) 
+- Updated Japanese translation (thanks @brothersharper !)
+
+### Fixed
+- Triggler is now compatible with all game systems via the **Advanced Trigger** functionality (see above)
+- Triggler now provides access to all Token/Actor properties (see **Advanced Trigger** functionality above)
+- Brazilian (pt-BR) translation now points to the correct folder
+- Hide Names icon no longer shows on Actor sheet when gadget is disabled
+- Combat Tracker no longer has an error related to non-existent tokens. (Thanks @awerries !)
+- Dragging to highlight text in Condition Lab no longer also selects items on the canvas underneath (eg. tokens) (Thanks @Rawrly85 !)
+- Beginning an Encounter with no Combatants no longer causes an error (Thanks @xdy !)
+- Active Effect: Durations and flags are now saved as part of the Condition (Thanks @wmudge !)
+
 ## [1.3.8] - 2020-12-08
 ### Added
 - Deutsch (German) translation thanks to Acd-Jake#9087 on discord!

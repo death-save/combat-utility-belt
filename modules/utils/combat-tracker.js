@@ -55,10 +55,12 @@ export class TrackerUtility {
      * @param {*} options 
      */
     static _onDeleteCombatant(combat, combatant, options, userId) {
-        const tokenData = combatant.token.data || null;
+        if (combatant.token){
+            const tokenData = combatant.token.data || null;
 
-        if (hasProperty(tokenData, `flags.${BUTLER.FLAGS.temporaryCombatants.temporaryCombatant}`)) {
-            TemporaryCombatants._removeTemporaryCombatant(combatant, combat.scene);
+            if (hasProperty(tokenData, `flags.${BUTLER.FLAGS.temporaryCombatants.temporaryCombatant}`)) {
+                TemporaryCombatants._removeTemporaryCombatant(combatant, combat.scene);
+            }
         }
     }
 

@@ -60,9 +60,9 @@ export class Triggler {
      * @param {*} entryPoint2
      */
     static async _processUpdate(entity, update, entryPoint1, entryPoint2) {
-        if (entryPoint1 && !hasProperty(update, entryPoint1)) {
-            return;
-        }
+        // if (entryPoint1 && !hasProperty(update, entryPoint1)) {
+        //     return;
+        // }
         
         const triggers = Sidekick.getSetting(SETTING_KEYS.triggler.triggers);
         const entityType = entity instanceof Actor ? "Actor" : entity instanceof Token ? "Token" : null;
@@ -80,6 +80,7 @@ export class Triggler {
          * @todo reduce this down to just mapped triggers at least
          */
         for (let trigger of triggers) {
+            const triggerType = trigger.triggerType || "simple";
             const pcOnly = trigger.pcOnly;
             const npcOnly = trigger.npcOnly;
             const notZero = trigger.notZero;
@@ -92,11 +93,25 @@ export class Triggler {
                 continue;
             }
 
-            // example : actorData.data.attributes.hp.value or actorData.data.status.isShaken
-            const matchString1 = `${entryPoint1}.${trigger.category}${trigger.attribute ? `.${trigger.attribute}` : ``}${trigger.property1 ? `.${trigger.property1}` : ``}`;
+            let matchString1,
+                matchString2;
 
-            // example: actor.data.data.hp.max -- note this is unlikely to be in the update data
-            const matchString2 = `${entryPoint2}.${trigger.category}${trigger.attribute ? `.${trigger.attribute}` : ``}${trigger.property2 ? `.${trigger.property2}` : ``}`;
+            if (triggerType === "simple") {
+                // example : actorData.data.attributes.hp.value or actorData.data.status.isShaken
+                matchString1 = `${entryPoint1}.${trigger.category}${trigger.attribute ? `.${trigger.attribute}` : ``}${trigger.property1 ? `.${trigger.property1}` : ``}`;
+
+                // example: actor.data.data.hp.max -- note this is unlikely to be in the update data
+                matchString2 = `${entryPoint2}.${trigger.category}${trigger.attribute ? `.${trigger.attribute}` : ``}${trigger.property2 ? `.${trigger.property2}` : ``}`;
+            }
+
+            if (triggerType === "advanced") {
+                // entry point differs based on actor vs token
+                matchString1 = entityType === "Actor" ? trigger?.advancedActorProperty : trigger?.advancedTokenProperty;
+                matchString2 = entityType === "Actor" ? trigger?.advancedActorProperty2 : trigger?.advancedTokenProperty2;
+                trigger.value = trigger.advancedValue;
+                trigger.operator = trigger.advancedOperator;
+            }
+            
 
             // If the update doesn't have a value that matches the 1st property this trigger should be skipped
             if (!hasProperty(update, matchString1)) {
@@ -267,9 +282,9 @@ export class Triggler {
             return;
         }
 
-        if (!hasProperty(update, "actorData.data")) {
-            return;
-        }
+        // if (!hasProperty(update, "actorData.data")) {
+        //     return;
+        // }
 
         const token = canvas.tokens.get(tokenData._id);
         const actorDataProp = `actorData.data`;

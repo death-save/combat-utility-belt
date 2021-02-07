@@ -23,7 +23,7 @@ jobs:
         download: https://github.com/${{github.repository}}/releases/download/${{github.event.release.tag_name}}/module.zip
 
     # create a zip file with all files required by the module to add to the release
-    - run: zip -r ./module.zip module.json API.md CHANGELOG.md combat-utility-belt.js LICENSE patrons.json README.md condition-maps/ icons/ img/ lang/ library/ modules/ packs/ styles/ scripts/ templates/
+    - run: zip -r ./module.zip . -x@.github/zip-exclude.lst
 
     # Create a release for this specific version
     - name: Update Release with Files
