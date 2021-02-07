@@ -28,28 +28,19 @@ export class HideNPCNames {
         if (!enableSetting) return;
         
         const disposition = app.object.data.token.disposition;
-        const nameField = html.find("input[name='name']");
-        
+                
         const enableHostile = Sidekick.getSetting(SETTING_KEYS.hideNames.enableHostile);
         const enableNeutral = Sidekick.getSetting(SETTING_KEYS.hideNames.enableNeutral);
         const enableFriendly = Sidekick.getSetting(SETTING_KEYS.hideNames.enableFriendly);
 
-        const formButtonHtml = `<a style="flex: 0" title="${game.i18n.localize("HIDE_NAMES.ActorSheetButton")}"><i class="fas fa-mask"></i></a>`; 
-
-        if (!nameField) return;
+        const formButtonHtml = `<a style="flex: 0" title="${game.i18n.localize("HIDE_NAMES.ActorSheetButton")}"><i class="fas fa-mask"></i></a>`;
 
         const button = $(formButtonHtml);
+        const header = html.find("header.window-header");
+        const title = header.find(".window-title");
 
-        // add support for vtta-dndbeyond
-        const vttaDndbeyond = game.modules.has(`vtta-dndbeyond`);
-        const vttaDndbeyondActive = vttaDndbeyond ? game.modules.get(`vtta-dndbeyond`).active : false;
-
-        if (vttaDndbeyondActive) {
-            nameField.parent().append(button);
-        } else {
-            nameField.parent().after(button);
-        }
-
+        title.prepend(button);
+        
         button.on("click", event => new HideNPCNamesActorForm(app.object).render(true));
     }
 
