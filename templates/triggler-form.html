@@ -15,58 +15,93 @@
         {{/if}}
     </div>
     <hr>
-    <div class="flexrow">
-        <span>Category</span>
-        <span>Attribute</span>
-        <span>Property 1</span>
-        <span>Operator</span>
-        <span>Value</span>
-        <span>Property 2</span>
+    <div class="simple-trigger">
+        <div class="type-select">
+            <input id="triggler-trigger-type-simple" type="radio" name="triggerType" value="simple" {{checked isSimpleTrigger}}>
+            <label for="triggler-trigger-type-simple"><strong>{{localize "CUB.TRIGGLER.App.TriggerType.Simple.Label"}}</strong></label>
+        </div>
+        <div class="flexrow">
+            <span>Category</span>
+            <span>Attribute</span>
+            <span>Property 1</span>
+            <span>Operator</span>
+            <span>Value</span>
+            <span>Property 2</span>
+        </div>
+        <div class="flexrow">
+            <select name="category" {{#unless isSimpleTrigger}}disabled{{/unless}}>
+                {{#select category}}
+                <option value="">--Category--</option>
+                {{#each categories}}
+                    <option value="{{this}}">{{this}}</option>
+                {{/each}}
+                {{/select}}
+            </select>
+            <select name="attribute" {{#unless isSimpleTrigger}}disabled{{/unless}}>
+                {{#select attribute}}
+                <option value="">--Attribute--</option>
+                {{#each attributes}}
+                    <option value="{{this}}">{{this}}</option>
+                {{/each}}
+                {{/select}}
+            </select>
+            <select name="property1" {{#unless isSimpleTrigger}}disabled{{/unless}}>
+                {{#select property1}}
+                <option value="">--Property 1--</option>
+                {{#each properties}}
+                    <option value="{{this}}">{{this}}</option>
+                {{/each}}
+                {{/select}}
+            </select>
+            <select name="operator" {{#unless isSimpleTrigger}}disabled{{/unless}}>
+                {{#select operator}}
+                <option value="">--Operator--</option>
+                {{#each operators as |name key|}}
+                    <option value="{{key}}">{{name}}</option>
+                {{/each}}
+                {{/select}}
+            </select>
+            <input type="text" name="value" class="value" placeholder="--Value--" value="{{value}}" {{#unless isSimpleTrigger}}disabled{{/unless}}/>
+            <select name="property2" {{#unless isSimpleTrigger}}disabled{{/unless}}>
+                {{#select property2}}
+                <option value="">--Property 2--</option>
+                {{#each properties}}
+                    <option value="{{this}}">{{this}}</option>
+                {{/each}}
+                {{/select}}
+            </select>
+        </div>
     </div>
-    <div class="flexrow">
-        <select name="category">
-            {{#select category}}
-            <option value="">--Category--</option>
-            {{#each categories}}
-                <option value="{{this}}">{{this}}</option>
-            {{/each}}
-            {{/select}}
-        </select>
-        <select name="attribute">
-            {{#select attribute}}
-            <option value="">--Attribute--</option>
-            {{#each attributes}}
-                <option value="{{this}}">{{this}}</option>
-            {{/each}}
-            {{/select}}
-        </select>
-        <select name="property1">
-            {{#select property1}}
-            <option value="">--Property 1--</option>
-            {{#each properties}}
-                <option value="{{this}}">{{this}}</option>
-            {{/each}}
-            {{/select}}
-        </select>
-        <select name="operator">
-            {{#select operator}}
-            <option value="">--Operator--</option>
-            {{#each operators as |name key|}}
-                <option value="{{key}}">{{name}}</option>
-            {{/each}}
-            {{/select}}
-        </select>
-        <input type="text" name="value" class="value" placeholder="--Value--" value="{{value}}"/>
-        <select name="property2">
-            {{#select property2}}
-            <option value="">--Property 2--</option>
-            {{#each properties}}
-                <option value="{{this}}">{{this}}</option>
-            {{/each}}
-            {{/select}}
-        </select>
+    <br>
+    <div class="advanced-trigger">
+        <div class="type-select">
+            <input id="triggler-trigger-type-advanced" type="radio" name="triggerType" value="advanced" {{checked isAdvancedTrigger}}>
+            <label for="triggler-trigger-type-advanced"><strong>{{localize "CUB.TRIGGLER.App.TriggerType.Advanced.Label"}}</strong></label>
+        </div>
+        <div class="form-group">
+            <label for="triggler-advanced-property">{{localize "CUB.TRIGGLER.App.AdvancedTrigger.Property.Label"}}</label>
+            <input id="triggler-advanced-property" name="advancedProperty" type="text" value="{{advancedProperty}}" placeholder="{{localize "CUB.TRIGGLER.App.AdvancedTrigger.Property.Placeholder"}}" {{#unless isAdvancedTrigger}}disabled{{/unless}}>
+        </div>
+        <div class="flexrow">
+            <select name="advancedOperator" class="advanced-trigger-operator" {{#unless isAdvancedTrigger}}disabled{{/unless}}>
+                {{#select advancedOperator}}
+                <option value="">--Operator--</option>
+                {{#each operators as |name key|}}
+                    <option value="{{key}}">{{name}}</option>
+                {{/each}}
+                {{/select}}
+            </select>
+            <input type="text" name="advancedValue" class="value" placeholder="--Value--" value="{{advancedValue}}"/>   
+        </div>
+        
+        <div class="form-group">
+            <label for="triggler-advanced-property2">{{localize "CUB.TRIGGLER.App.AdvancedTrigger.Property2.Label"}}</label>
+            <input id="triggler-advanced-property2" name="advancedProperty2" type="text" value="{{advancedProperty2}}" placeholder="{{localize "CUB.TRIGGLER.App.AdvancedTrigger.Property2.Placeholder"}}" {{#unless isAdvancedTrigger}}disabled{{/unless}}>
+        </div>
     </div>
+    
     <hr>
+    <h3>{{localize "CUB.TRIGGLER.App.Options.Title"}}</h3>
     <div class="flexrow triggler">
         <div class="form-group options" title="Trigger for player-owned Actors only">
             <input type="checkbox" name="pcOnly" {{checked pcOnly}}>
@@ -82,7 +117,7 @@
         </div>
     </div>
     <footer class="flexrow">
-        <button type="submit" name="save"><i class="fas fa-save"></i> Save and Close</button>
-        <button type="button" name="cancel"><i class="fas fa-times"></i> Cancel</button>
+        <button type="submit" name="save"><i class="fas fa-save"></i> {{localize "CUB.Words.Save"}}</button>
+        <button type="reset" name="reset"><i class="fas fa-undo"></i> {{localize "CUB.Words.Reset"}}</button>
     </footer>
 </form>

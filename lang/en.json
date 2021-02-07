@@ -88,6 +88,15 @@
     "HIDE_NAMES.ActorForm.DefaultSettingH": "This is the current default setting for this token's disposition (set in CUBputer)",
     "HIDE_NAMES.ActorSheetButton": "Configure name hiding for this actor",
 
+    "CUB.TRIGGLER.App.AdvancedTrigger.Property.Label": "Property Path",
+    "CUB.TRIGGLER.App.AdvancedTrigger.Property.Placeholder": "eg. data.data.attributes.hp.value",
+    "CUB.TRIGGLER.App.AdvancedTrigger.Property2.Label": "Property 2 Path",
+    "CUB.TRIGGLER.App.AdvancedTrigger.Property2.Placeholder": "eg. data.data.attributes.hp.max",
+    "CUB.TRIGGLER.App.TriggerType.Simple.Label": "Simple Trigger",
+    "CUB.TRIGGLER.App.TriggerType.Advanced.Label": "Advanced Trigger",
+    "CUB.TRIGGLER.App.Options.Title": "Options",
+    "CUB.TRIGGLER.App.SaveSuccessful": "Trigger successfully saved!",
+
     "SETTINGS.AboutApp.ButtonN": "About Combat Utility Belt",
     "SETTINGS.AboutApp.ButtonH": "More info about Combat Utility Belt",
     "SETTINGS.CUBPuter.ButtonN": "Combat Utility Belt Config",
@@ -208,5 +217,8 @@
     "WORDS.GMOnly": "GM Only",
     "WORDS.Everyone": "Everyone",
     "WORDS.About": "About",
-    "WORDS.OK": "OK"
+    "WORDS.OK": "OK",
+    "CUB.Words.Save": "Save",
+    "CUB.Words.Cancel": "Cancel",
+    "CUB.Words.Reset": "Reset"
 }
