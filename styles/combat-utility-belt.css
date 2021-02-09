@@ -510,6 +510,10 @@ li.condition-lab.row {
     margin: 2px 5px 2px 0px;
 }
 
+#cub-triggler-form .advanced-trigger-operator {
+  flex: 0;
+}
+
 /* ABOUT */
 #combat-utility-belt-about img {
     border: none;
