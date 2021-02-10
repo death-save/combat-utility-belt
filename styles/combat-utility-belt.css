@@ -514,6 +514,10 @@ li.condition-lab.row {
   flex: 0;
 }
 
+#combat-utility-belt {
+  margin: 0;
+}
+
 /* ABOUT */
 #combat-utility-belt-about img {
     border: none;
