@@ -954,13 +954,17 @@ export class EnhancedConditions {
 
         effects = effects instanceof Array ? EnhancedConditions._prepareActiveEffects(effects) : EnhancedConditions._prepareActiveEffects([effects]);
         
-        // for all effects of this condition, set up the duration according to the {seconds, rounds, turns} params
-        for (let effect of effects){
-            if (seconds > 0) effect.duration.seconds = seconds;
-            if (rounds > 0) effect.duration.rounds = rounds;
-            if (turns > 0) effect.duration.turns = turns;
+        if (seconds > 0 || rounds > 0 || turns > 0){
+            // for all effects of this condition, set up the duration according to the {seconds, rounds, turns} params, if any
+            for (let effect of effects){
+                // if any duration is specified, remove all the duration data that is already predefined and prepared, because we want to override it.
+                effect.duration = {};
+                if (seconds > 0) effect.duration.seconds = seconds;
+                if (rounds > 0) effect.duration.rounds = rounds;
+                if (turns > 0) effect.duration.turns = turns;
+            }
         }
-
+        
         if (entities && !(entities instanceof Array)) {
             entities = [entities];
         }
