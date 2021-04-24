@@ -132,8 +132,7 @@ export class HideNPCNames {
         const messageTokenId = message.data.speaker.token;
         const scene = messageSceneId ? game.scenes.get(messageSceneId) : null;
         const tokenData = scene ? scene.data.tokens.find(t => t._id === messageTokenId) : null;
-        const token = canvas?.tokens.get(messageTokenId) ?? (tokenData ? new Token(tokenData, scene) : null);
-        const actor = token ? token.actor : messageActorId ? game.actors.get(messageActorId) : null;
+        const actor = canvas?.tokens.get(messageTokenId)?.actor ?? game.actors.get(tokenData?.actorId) ?? game.actors.get(messageActorId);
 
         if (!actor) return;
         
@@ -214,8 +213,7 @@ export class HideNPCNames {
         const messageTokenId = chatDisplayData.message.data.speaker.token;
         const scene = messageSceneId ? game.scenes.get(messageSceneId) : null;
         const tokenData = scene ? scene.data.tokens.find(t => t._id === messageTokenId) : null;
-        const token = canvas.tokens.get(messageTokenId) ?? (tokenData ? new Token(tokenData, scene) : null);
-        const actor = token ? token.actor : game.actors.get(messageActorId);
+        const actor = canvas?.tokens.get(messageTokenId)?.actor ?? game.actors.get(tokenData?.actorId) ?? game.actors.get(messageActorId);
         const speakerIsNPC = actor && !actor.hasPlayerOwner;
 
         if (!speakerIsNPC) return;
