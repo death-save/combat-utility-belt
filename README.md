@@ -9,7 +9,7 @@
 <a href="https://www.youtube.com/channel/UCxhr66d1sjfXU4SQ5MEqPvg" title="YouTube"><img height="32" width="32" src="https://cdn.jsdelivr.net/npm/simple-icons@v4/icons/youtube.svg" /></a></span>
 </div><br/>
 
-![https://img.shields.io/badge/Foundry%20VTT%20compatibility-0.7.6=>0.7.9-green](https://img.shields.io/badge/Foundry%20VTT%20compatibility-0.7.6=>0.7.9-green)<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+![https://img.shields.io/badge/Foundry%20VTT%20compatibility-0.8.5-green](https://img.shields.io/badge/Foundry%20VTT%20compatibility-0.8.5-green)<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 [![All Contributors](https://img.shields.io/badge/all_contributors-23-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
