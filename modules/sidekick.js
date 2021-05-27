@@ -11,8 +11,8 @@ export class Sidekick {
                 </div>`
         );
 
-        const setupButton = html.find("button[data-action='setup']");
-        setupButton.after(cubDiv);
+        const setupButton = html.find("div#settings-game");
+        setupButton.append(cubDiv);
 
     }
 
