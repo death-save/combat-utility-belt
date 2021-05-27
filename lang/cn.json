@@ -86,7 +86,33 @@
     "HIDE_NAMES.ActorForm.ReplacementName": "替换名字",
     "HIDE_NAMES.ActorForm.ReplacementHint": "取代角色名的名字",
     "HIDE_NAMES.ActorForm.DefaultSettingH": "这是目前该指示物倾向的默认设置（在CUBputer中设置）",
+    "HIDE_NAMES.ActorSheetButton": "为此角色隐藏名称",
 
+    "CUB.TRIGGLER.App.AdvancedTrigger.Actor.Note": "设置用于Actor更新的属性路径——该路径相对于传递给更新角色钩子的更新对象。",
+    "CUB.TRIGGLER.App.AdvancedTrigger.Actor.Note2": "可以选择设置第二个属性来比较第一个属性——此路径相对于角色对象本身",
+    "CUB.TRIGGLER.App.AdvancedTrigger.Token.Note": "设置用于令牌更新的属性路径——该路径相对于传递给更新指示物钩子的更新对象。",
+    "CUB.TRIGGLER.App.AdvancedTrigger.Token.Note2": "可以选择设置第二个属性来比较第一个属性——此路径相对于指示物对象本身",
+    "CUB.TRIGGLER.App.AdvancedTrigger.ActorProperty.Label": "角色更新属性",
+    "CUB.TRIGGLER.App.AdvancedTrigger.ActorProperty.Placeholder": "例如 data.attributes.hp.value (如果未设置角色更新属性，则为必需)",
+    "CUB.TRIGGLER.App.AdvancedTrigger.ActorProperty2.Label": "角色比较属性",
+    "CUB.TRIGGLER.App.AdvancedTrigger.ActorProperty2.Placeholder": "例如 data.data.attributes.hp.max (可选择的)",
+    "CUB.TRIGGLER.App.AdvancedTrigger.TokenProperty.Label": "指示物更新属性",
+    "CUB.TRIGGLER.App.AdvancedTrigger.TokenProperty.Placeholder": "例如 actorData.attributes.hp.value (如果未设置指示物更新属性，则为必需)",
+    "CUB.TRIGGLER.App.AdvancedTrigger.TokenProperty2.Label": "指示物比较属性",
+    "CUB.TRIGGLER.App.AdvancedTrigger.TokenProperty2.Placeholder": "例如 actor.data.attributes.hp.max (可选择的)",
+    "CUB.TRIGGLER.App.AdvancedTrigger.Property.Hint": "要侦听的已更新属性的路径。角色和指示物入口点值告诉触发器在哪里查找每个实体类型", 
+    "CUB.TRIGGLER.App.TriggerType.Simple.Label": "简单触发器",
+    "CUB.TRIGGLER.App.TriggerType.Advanced.Label": "高级触发器",
+    "CUB.TRIGGLER.App.Options.Title": "选项",
+    "CUB.TRIGGLER.App.SaveSuccessful": "触发器成功保存！",
+    "CUB.TRIGGLER.App.AdvancedTrigger.OperatorValue.Heading": "Operator/Value",
+    "CUB.TRIGGLER.App.AdvancedTrigger.OperatorValue.Note": "总是必需的。运算符和值应用于上面设置的角色和指示物属性",
+    "CUB.TRIGGLER.App.AdvancedTrigger.Name.Label": "触发器名称",
+    "CUB.TRIGGLER.App.AdvancedTrigger.Name.Placeholder": "(高级触发器需要)",
+    "CUB.TRIGGLER.App.AdvancedTrigger.Name.Warning": "高级触发器需要名称!",
+
+    "SETTINGS.AboutApp.ButtonN": "关于 Combat Utility Belt",
+    "SETTINGS.AboutApp.ButtonH": "相关详细信息 Combat Utility Belt",
     "SETTINGS.CUBPuter.ButtonN": "Combat Utility Belt配置",
     "SETTINGS.CUBPuter.ButtonH": "提供Combat Utility Belt额外的配置",
     
@@ -176,7 +202,7 @@
     "SETTINGS.RerollInitiative.EnableH": "在每轮为所有参战者重骰先攻",
     "SETTINGS.RerollInitiative.RerollTempCombatantsN": "重骰临时参战者",
     "SETTINGS.RerollInitiative.RerollTempCombatantsH": "设定临时参战者启用时是否为它们重骰先攻",
-
+    
     "SETTINGS.TemporaryCombatants.EnableN": "启用临时参战者",
     "SETTINGS.TemporaryCombatants.EnableH": "允许在战斗板上创建临时/自由参战者",
     
@@ -205,5 +231,10 @@
     "WORDS.GMOnly": "仅限GM",
     "WORDS.Everyone": "所有人",
     "WORDS.About": "关于",
-    "WORDS.OK": "OK"
+    "WORDS.OK": "OK",
+    "CUB.WORDS.Save": "保存",
+    "CUB.WORDS.Cancel": "关闭",
+    "CUB.WORDS.Reset": "重置",
+    "CUB.WORDS.Actor": "角色",
+    "CUB.WORDS.Token": "指示物"
 }
