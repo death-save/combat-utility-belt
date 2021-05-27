@@ -81,6 +81,16 @@
     "ENHANCED_CONDITIONS.ChatCard.Buttons.Undo": "Undo Remove Condition",
     "ENHANCED_CONDITIONS.ChatCard.Buttons.Remove": "Remove Condition",
 
+    "GIVE_XP.DistributeForm.XPModifier": "XP Modifier",
+    "GIVE_XP.DistributeForm.Friendlies": "Friendlies",
+    "GIVE_XP.DistributeForm.Hostiles": "Hostiles",
+    "GIVE_XP.DistributeForm.SelectFriendlies": "Select which friendlies will receive XP.",
+    "GIVE_XP.DistributeForm.SelectHostiles": "Select which hostiles will give XP.",
+    "GIVE_XP.DistributeForm.Distribution": "Distribution",
+    "GIVE_XP.DistributeForm.TotalXp": "Total XP",
+    "GIVE_XP.DistributeForm.CreaturesReceiving": "Creatures receiving",
+    "GIVE_XP.DistributeForm.XpPerCreature": "XP per friendly creature",
+
     "HIDE_NAMES.ActorForm.Enable": "Hide Actor Name",
     "HIDE_NAMES.ActorForm.EnableHint": "Enable hiding of this actor's name in Combat Tracker and Chat Messages (overrides default)",
     "HIDE_NAMES.ActorForm.ReplacementName": "Replacement Name",
@@ -156,6 +166,8 @@
     
     "SETTINGS.GiveXP.EnableN": "Enable Award XP",
     "SETTINGS.GiveXP.EnableH": "Adds an option at the end of combat to automatically distribute xp from the combat to the players",
+    "SETTINGS.GiveXP.ModifierN": "Modifer",
+    "SETTINGS.GiveXP.ModifierH": "Multiplies awarded XP by this value",
 
     "SETTINGS.HideNames.EnableN": "Enable Hide Actor Names",
     "SETTINGS.HideNames.EnableH": "Hides Actor names in various places such as Combat Tracker and Chat",
@@ -236,5 +248,6 @@
     "CUB.WORDS.Cancel": "Cancel",
     "CUB.WORDS.Reset": "Reset",
     "CUB.WORDS.Actor": "Actor",
-    "CUB.WORDS.Token": "Token"
+    "CUB.WORDS.Token": "Token",
+    "WORDS.Configuration": "Configuration"
 }

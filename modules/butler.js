@@ -194,7 +194,8 @@ export const DEFAULT_CONFIG = {
         }
     },
     giveXP: {
-        enable: false
+        enable: false,
+        modifier: 1
     },
     hideNames: {
         enable: false,
@@ -324,6 +325,9 @@ export const FLAGS = {
         conditionId: "conditionId",
         overlay: "overlay"
     },
+    giveXP: {
+        deselectByDefault: "deselectByDefault"
+    },
     mightySummoner: {
         mightySummoner: "mightySummoner"
     },
@@ -369,7 +373,8 @@ export const SETTING_KEYS = {
         suppressPreventativeSaveReminder: "conditionsSuppressPreventativeSaveReminder"
     },
     giveXP: {
-        enable: "enableGiveXP"
+        enable: "enableGiveXP",
+        modifier: "giveXpModifier"
     },
     hideNames: {
         enable: "enableHideNPCNames",

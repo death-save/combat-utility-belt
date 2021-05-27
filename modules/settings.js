@@ -280,6 +280,16 @@ export function registerSettings() {
         onChange: s => {}
     });
 
+    Sidekick.registerSetting(BUTLER.SETTING_KEYS.giveXP.modifier, {
+        name: "SETTINGS.GiveXP.ModifierN",
+        hint: "SETTINGS.GiveXP.ModifierH",
+        default: BUTLER.DEFAULT_CONFIG.giveXP.modifier,
+        scope: "world",
+        type: Number,
+        config: true,
+        onChange: s => {}
+    });
+
     /* -------------------------------------------- */
     /*                 HideNPCNames                 */
     /* -------------------------------------------- */
