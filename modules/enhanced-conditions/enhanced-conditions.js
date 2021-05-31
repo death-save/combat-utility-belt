@@ -500,7 +500,7 @@ export class EnhancedConditions {
 
             const update = combatants.map(c => {
                 return {
-                    _id: c._id,
+                    id: c.id,
                     defeated: markDefeated
                 }
             });
@@ -1001,7 +1001,7 @@ export class EnhancedConditions {
                     // Scenario 2: if duplicates are allowed, and existing conditions should be replaced, add any existing conditions to update
                     if (replaceExisting) {
                         for (const matchedCondition of matchedConditionEffects) {
-                            updateEffects.push({_id: matchedCondition.data._id, ...effect});
+                            updateEffects.push({id: matchedCondition.data.id, ...effect});
                         }
                     }
                     

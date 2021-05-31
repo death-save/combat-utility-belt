@@ -26,7 +26,7 @@ export class PanSelect {
             return;
         }
 
-        const tracker = combat.entities ? combat.entities.find(tr => tr._id === update._id) : combat;
+        const tracker = combat.entities ? combat.entities.find(tr => tr.id === update.id) : combat;
         const token = hasProperty(update, "turn") ? tracker.turns[update.turn].token : tracker.turns[0].token;
 
         if (!game.user.isGM && panPlayers !== Sidekick.getKeyByValue(BUTLER.DEFAULT_CONFIG.panSelect.panPlayers, BUTLER.DEFAULT_CONFIG.panSelect.panPlayers.none)) {
@@ -154,7 +154,7 @@ export class PanSelect {
             return;
         }
 
-        const tracker = combat.entities ? combat.entities.find(tr => tr._id === update._id) : combat;
+        const tracker = combat.entities ? combat.entities.find(tr => tr.id === update.id) : combat;
         const token = hasProperty(update, "turn") ? tracker.turns[update.turn].token : tracker.turns[0].token;
 
         if (!token) {

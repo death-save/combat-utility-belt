@@ -49,7 +49,7 @@ export class TemporaryCombatants {
     static _removeTemporaryCombatants(combatants, scene) {
         
         const tokenIds = combatants.map(c => c.tokenId);
-        const actorIds = combatants.map(c => c.actor._id);
+        const actorIds = combatants.map(c => c.actor.id);
 
         if (tokenIds) {
             scene.deleteManyEmbeddedEntities("Token", tokenIds);
@@ -68,7 +68,7 @@ export class TemporaryCombatants {
      */
     static _removeTemporaryCombatant(combatant, scene) {
         const tokenId = combatant.tokenId;
-        const actor = game.actors.get(combatant.actor._id);
+        const actor = game.actors.get(combatant.actor.id);
 
         if (tokenId){
             scene.deleteEmbeddedEntity("Token", tokenId);

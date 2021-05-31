@@ -52,8 +52,8 @@ export class RerollInitiative {
         if (!shouldReroll || game.userId != rerollUserId) return;
 
         const combatantIds = rerollTemp ? 
-            combat.combatants.map(c => c._id) : 
-            combat.combatants.filter(c => !hasProperty(c, `flags.${NAME}.${FLAGS.temporaryCombatants.temporaryCombatant}`)).map(c => c._id);
+            combat.combatants.map(c => c.id) : 
+            combat.combatants.filter(c => !hasProperty(c, `flags.${NAME}.${FLAGS.temporaryCombatants.temporaryCombatant}`)).map(c => c.id);
 
         await combat.rollInitiative(combatantIds);
         await combat.update({turn: 0});
