@@ -511,7 +511,7 @@ export class EnhancedConditions {
         if (!updates.length) return;
 
         // update all combatants at once
-        combat.updateEmbeddedEntity("Combatant", updates.length > 1 ? update : updates.shift());
+        combat.updateEmbeddedDocuments("Combatant", updates.length > 1 ? update : updates.shift());
     }
 
     /**
@@ -1020,8 +1020,8 @@ export class EnhancedConditions {
             const createData = hasDuplicates ? newEffects : effects;
             const updateData = updateEffects;
 
-            if (createData.length) await actor.createEmbeddedEntity("ActiveEffect", createData);
-            if (updateData.length) await actor.updateEmbeddedEntity("ActiveEffect", updateData);
+            if (createData.length) await actor.createEmbeddedDocuments("ActiveEffect", createData);
+            if (updateData.length) await actor.updateEmbeddedDocuments("ActiveEffect", updateData);
         }
         
     }
