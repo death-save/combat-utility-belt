@@ -327,7 +327,7 @@ export class Concentrator {
         const isActor = entity instanceof Actor;
         const isToken = entity instanceof Token || entity instanceof TokenDocument;
         const speaker = isActor ? ChatMessage.getSpeaker({actor: entity}) : isToken ? ChatMessage.getSpeaker({token: entity}) : ChatMessage.getSpeaker();
-        const whisper = isWhisper ? game.users.entities.filter(u => u.isGM) : "";
+        const whisper = isWhisper ? game.users.entities.filter(u => u.isGM) : [];
         const content =  `<h3>Concentrator</h3><p>${entity.name} cast a spell requiring Concentration while concentrating on another spell. Concentration on the original spell is lost.`;
         const type = CONST.CHAT_MESSAGE_TYPES.OTHER;
 
