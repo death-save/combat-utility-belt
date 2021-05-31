@@ -34,11 +34,12 @@ export class TokenUtility {
             return true;
         }
 
-        const formula = null;
-        const newHP = TokenUtility.rollHP(actor, formula);
+        const newHP = TokenUtility.rollHP(actor);
         const hpUpdate = TokenUtility._buildHPData(newHP);
-        const newData = mergeObject(tokenData, hpUpdate);
-        return newData;
+
+        if (!hpUpdate) return true;
+
+        return token.data.update(hpUpdate);
     }
 
     
@@ -75,7 +76,7 @@ export class TokenUtility {
      * @param {*} hp 
      */
     static _buildHPData(hp) {
-        return {
+        const hpData = {
             actorData: {
                 data: {
                     attributes: {
@@ -87,6 +88,8 @@ export class TokenUtility {
                 }
             }
         };
+
+        return hpData;
     }
 
     /**
