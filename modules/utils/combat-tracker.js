@@ -110,8 +110,13 @@ export class TrackerUtility {
         // Find the parent list element
         const li = event.target.closest("li");
 
-        // Get the tokenId from the list element
-        const tokenId = li.dataset.tokenId;
+        if (!li) return;
+
+        // Get the combatant from the list element
+        const combatantId = li?.dataset?.combatantId;
+        const combatant = combatantId ? game.combat.combatants.find(c => c.id === combatantId) : null;
+
+        if (!combatant) return;
 
         // Find the token and update
         const actor = combatant?.token?.actor;
