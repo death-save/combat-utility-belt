@@ -3,7 +3,6 @@ import { Sidekick } from "./sidekick.js";
 
 /**
  * Rerolls initiative for all combatants
- * @todo refactor to preUpdate hook
  */
 export class RerollInitiative {
 
