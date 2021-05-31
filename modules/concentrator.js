@@ -44,7 +44,7 @@ export class Concentrator {
         const messageSceneId = app.data.speaker.scene;
         const messageTokenId = app.data.speaker.token;
         const scene = messageSceneId ? game.scenes.get(messageSceneId) : game.scenes.active;
-        const tokenData = scene ? scene.data.tokens.find(t => t._id === messageTokenId) : null;
+        const tokenData = scene ? scene.data.tokens.find(t => t.id === messageTokenId) : null;
         const token = canvas?.tokens.get(messageTokenId) ?? (tokenData ? new Token(tokenData, scene) : null);
         const actor = token ? token.actor : messageActorId ? game.actors.get(messageActorId) : null;
 
@@ -52,7 +52,7 @@ export class Concentrator {
 
         // First check if the item is a spell
         // note: Beyond20 bypasses this logic
-        const item = itemId ? actor.getOwnedItem(itemId) : null;
+        const item = itemId ? actor.items.get(itemId) : null;
         const isSpell = item ? item.type === "spell" : false;
 
         // If it is, check if it requires concentration
