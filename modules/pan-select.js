@@ -185,6 +185,8 @@ export class PanSelect {
             token = canvas.tokens.get(token.id);
         }
 
+        if (!token) return;
+
         const selectGM = Sidekick.getSetting(BUTLER.SETTING_KEYS.panSelect.selectGM);
         const actor = token?.actor;
 
@@ -210,8 +212,7 @@ export class PanSelect {
                 return;
         }
 
-        const canvasToken = canvas.tokens.get(token._id) || null;
-        return canvasToken.control();
+        return token.control();
     }
 
     /**
