@@ -188,7 +188,7 @@ export class PanSelect {
         const selectGM = Sidekick.getSetting(BUTLER.SETTING_KEYS.panSelect.selectGM);
         const actor = token?.actor;
 
-        if (!actor) {
+        if (!actor || !selectGM) {
             return;
         }
 
