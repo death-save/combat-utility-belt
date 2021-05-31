@@ -49,12 +49,11 @@ export class TrackerUtility {
 
     /**
      * Handler for deleteCombatant hook
-     * @param {*} combat 
-     * @param {*} combatId 
      * @param {*} combatantId 
      * @param {*} options 
+     * @param {String} userId
      */
-    static _onDeleteCombatant(combat, combatant, options, userId) {
+    static _onDeleteCombatant(combatant, options, userId) {
         if (combatant.token){
             const tokenData = combatant.token.data || null;
 

@@ -98,62 +98,62 @@ export class Signal {
 
         /* ------------------- Actor ------------------ */
 
-        Hooks.on("preUpdateActor", (actor, update, options, userId) => {
-            Concentrator._onPreUpdateActor(actor, update, options, userId);
+        Hooks.on("preUpdateActor", (actor, updateData, options, userId) => {
+            Concentrator._onPreUpdateActor(actor, updateData, options, userId);
         });
 
-        Hooks.on("updateActor", (actor, update, options, userId) => {
+        Hooks.on("updateActor", (actor, updateData, options, userId) => {
             // Workaround for actor array returned in hook for non triggering clients
             if (actor instanceof Collection) {
-                actor = actor.entities.find(a => a._id === update._id);
+                actor = actor.entities.find(a => a.id === update.id);
             }
-            Concentrator._onUpdateActor(actor, update, options, userId);
-            Triggler._onUpdateActor(actor, update, options, userId);
+            Concentrator._onUpdateActor(actor, updateData, options, userId);
+            Triggler._onUpdateActor(actor, updateData, options, userId);
         });
 
-        Hooks.on("createActiveEffect", (actor, createData, options, userId) => {
-            EnhancedConditions._onCreateActiveEffect(actor, createData, options, userId);
+        Hooks.on("createActiveEffect", (effect, options, userId) => {
+            EnhancedConditions._onCreateActiveEffect(effect, options, userId);
         });
 
-        Hooks.on("deleteActiveEffect", (actor, deleteData, options, userId) => {
-            EnhancedConditions._onDeleteActiveEffect(actor, deleteData, options, userId);
+        Hooks.on("deleteActiveEffect", (effect, options, userId) => {
+            EnhancedConditions._onDeleteActiveEffect(effect, options, userId);
         });
 
         /* ------------------- Token ------------------ */
 
-        Hooks.on("preCreateToken", (scene, tokenData, options, userId) => {
-            return TokenUtility._onPreCreateToken(scene, tokenData, options, userId);
+        Hooks.on("preCreateToken", (tokenDocument, createData, options, userId) => {
+            return TokenUtility._onPreCreateToken(tokenDocument, createData, options, userId);
         });
 
-        Hooks.on("preUpdateToken", (scene, tokenData, updateData, options, userId) => {
-            Concentrator._onPreUpdateToken(scene, tokenData, updateData, options, userId);
-            EnhancedConditions._onPreUpdateToken(scene, tokenData, updateData, options, userId);
+        Hooks.on("preUpdateToken", (tokenDocument, updateData, options, userId) => {
+            Concentrator._onPreUpdateToken(tokenDocument, updateData, options, userId);
+            EnhancedConditions._onPreUpdateToken(tokenDocument, updateData, options, userId);
         });
 
-        Hooks.on("updateToken", (scene, token, updateData, options, userId) => {
-            EnhancedConditions._onUpdateToken(scene, token, updateData, options, userId);
-            Concentrator._onUpdateToken(scene, token, updateData, options, userId);
-            Triggler._onUpdateToken(scene, token, updateData, options, userId);
+        Hooks.on("updateToken", (tokenDocument, updateData, options, userId) => {
+            EnhancedConditions._onUpdateToken(tokenDocument, updateData, options, userId);
+            Concentrator._onUpdateToken(tokenDocument, updateData, options, userId);
+            Triggler._onUpdateToken(tokenDocument, updateData, options, userId);
         });
 
         /* ------------------ Combat ------------------ */
 
-        Hooks.on("preUpdateCombat", (combat, update, options) => {
-            RerollInitiative._onPreUpdateCombat(combat, update, options);
+        Hooks.on("preUpdateCombat", (combat, updateData, options, userId) => {
+            RerollInitiative._onPreUpdateCombat(combat, updateData, options, userId);
         });
 
-        Hooks.on("updateCombat", (combat, update, options, userId) => {
-            RerollInitiative._onUpdateCombat(combat, update, options, userId);
-            EnhancedConditions._onUpdateCombat(combat, update, options, userId);
-            TrackerUtility._hookOnUpdateCombat(combat, update);
+        Hooks.on("updateCombat", (combat, updateData, options, userId) => {
+            RerollInitiative._onUpdateCombat(combat, updateData, options, userId);
+            EnhancedConditions._onUpdateCombat(combat, updateData, options, userId);
+            TrackerUtility._hookOnUpdateCombat(combat, updateData, options, userId);
         });
 
         Hooks.on("deleteCombat", (combat, options, userId) => {
             TrackerUtility._onDeleteCombat(combat, options, userId);
         });
         
-        Hooks.on("preDeleteCombatant", (combat, combatant, options, userId) => {
-            TrackerUtility._onDeleteCombatant(combat, combatant, options, userId);
+        Hooks.on("preDeleteCombatant", (combatant, options, userId) => {
+            TrackerUtility._onDeleteCombatant(combatant, options, userId);
         });
 
         /* -------------------------------------------- */

@@ -88,21 +88,20 @@ export class EnhancedConditions {
      * Handle PreUpdate Token Hook.
      * If the update includes effect data, add an `option` for the update hook handler to look for
      * @param {*} scene 
-     * @param {*} tokenData 
      * @param {*} update 
      * @param {*} options 
      * @param {*} userId 
      */
-    static _onPreUpdateToken(scene, tokenData, update, options, userId) {
+    static _onPreUpdateToken(token, update, options, userId) {
         const cubOption = options[BUTLER.NAME] = options[BUTLER.NAME] ?? {};
 
         if (hasProperty(update, "actorData.effects")) {
-            cubOption.existingEffects = tokenData.actorData.effects ?? [];
+            cubOption.existingEffects = token.data.actorData.effects ?? [];
             cubOption.updateEffects = update.actorData.effects ?? [];
         }
 
         if (hasProperty(update, "overlayEffect")) {
-            cubOption.existingOverlay = tokenData.overlayEffect ?? null;
+            cubOption.existingOverlay = token.data.overlayEffect ?? null;
             cubOption.updateOverlay = update.overlayEffect ?? null;
         }
 
@@ -112,7 +111,7 @@ export class EnhancedConditions {
     /**
      * Hooks on token updates. If the update includes effects, calls the journal entry lookup
      */
-    static _onUpdateToken(scene, tokenData, update, options, userId) {
+    static _onUpdateToken(token, update, options, userId) {
         const enable = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.enable);
 
         if (!enable || !game.user.isGM || (game.users.get(userId).isGM && game.userId !== userId)) {
@@ -164,7 +163,6 @@ export class EnhancedConditions {
 
         if (!addConditions.length && !removeConditions.length) return;
 
-        const token = canvas.tokens.get(tokenData._id);
         const outputChatSetting = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.outputChat);
 
         // If any of the addConditions Marks Defeated, mark the token's combatants defeated
@@ -196,14 +194,19 @@ export class EnhancedConditions {
      * @param {*} options 
      * @param {*} userId 
      */
-    static _onCreateActiveEffect(actor, createData, options, userId) {
+    static _onCreateActiveEffect(effect, options, userId) {
         const enable = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.enable);
 
         if (!enable || !game.user.isGM || (game.users.get(userId).isGM && game.userId !== userId)) {
             return;
         }
 
-        EnhancedConditions._processActiveEffectChange(actor, createData, "create");
+        const actor = effect.parent;
+
+        // Handled in Token Update handler
+        if (actor?.isToken) return;
+
+        EnhancedConditions._processActiveEffectChange(effect, "create");
     }
 
     /**
@@ -213,14 +216,19 @@ export class EnhancedConditions {
      * @param {*} options 
      * @param {*} userId 
      */
-    static _onDeleteActiveEffect(actor, deleteData, options, userId) {
+    static _onDeleteActiveEffect(effect, options, userId) {
         const enable = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.enable);
 
         if (!enable || !game.user.isGM || (game.users.get(userId).isGM && game.userId !== userId)) {
             return;
         }
 
-        EnhancedConditions._processActiveEffectChange(actor, deleteData, "delete");
+        const actor = effect.parent;
+
+        // Handled in Token Update handler
+        if (actor?.isToken) return;
+
+        EnhancedConditions._processActiveEffectChange(effect, "delete");
     }
 
     /**

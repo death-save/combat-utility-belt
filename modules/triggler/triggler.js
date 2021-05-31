@@ -271,22 +271,16 @@ export class Triggler {
 
     /**
      * Update token handler
-     * @param {*} scene 
-     * @param {*} tokenData 
+     * @param {Token} token
      * @param {*} update 
      * @param {*} options 
      * @param {*} userId 
      */
-    static _onUpdateToken(scene, tokenData, update, options, userId) {
+    static _onUpdateToken(token, update, options, userId) {
         if (game.userId !== userId) {
             return;
         }
 
-        // if (!hasProperty(update, "actorData.data")) {
-        //     return;
-        // }
-
-        const token = canvas.tokens.get(tokenData._id);
         const actorDataProp = `actorData.data`;
         const actorProp = `actor.data.data`;
         

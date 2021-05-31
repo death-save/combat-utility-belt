@@ -139,7 +139,7 @@ export class Concentrator {
      * @param {*} update 
      * @param {*} options 
      */
-    static _onPreUpdateToken(scene, tokenData, update, options, userId){
+    static _onPreUpdateToken(token, update, options, userId){
         const enableConcentrator = Sidekick.getSetting(SETTING_KEYS.concentrator.enable);
 
         if (!enableConcentrator) return true;
@@ -169,7 +169,7 @@ export class Concentrator {
      * @param {*} options 
      * @param {*} userId 
      */
-    static _onUpdateToken(scene, tokenData, update, options, userId){
+    static _onUpdateToken(token, update, options, userId){
         const damageTaken = getProperty(options, `${NAME}.${FLAGS.concentrator.damageTaken}`);
 
         if (!damageTaken || (!game.user.isGM && userId !== game.userId)) return;

@@ -13,7 +13,7 @@ export class RerollInitiative {
      * @param {*} update 
      * @param {*} options 
      */
-    static _onPreUpdateCombat(combat, update, options) {
+    static _onPreUpdateCombat(combat, update, options, userId) {
         const reroll = Sidekick.getSetting(SETTING_KEYS.rerollInitiative.enable);
 
         // Return early if we are NOT a GM OR we are not the player that triggered the update AND that player IS a GM

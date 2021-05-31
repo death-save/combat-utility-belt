@@ -4,16 +4,14 @@ import { MightySummoner } from "../mighty-summoner.js";
 
 export class TokenUtility {
     /**
-     * Hook on token create
+     * Pre-create Token Hook Handler
      * @param {Object} scene
      * @param {Object} tokenData  
      * @param {Object} options 
      * @param {String} userId 
-     * @todo move this to a preCreate hook to avoid a duplicate call to the db
      */
-    static _onPreCreateToken(scene, tokenData, options, userId) {
-        //const token = canvas.tokens.get(tokenData._id);
-        const actor = game.actors.get(tokenData.actorId);
+    static _onPreCreateToken(token, tokenData, options, userId) {
+        const actor = token.actor;
         const autoRollHP = Sidekick.getSetting(SETTING_KEYS.tokenUtility.autoRollHP);
         const mightySummonerSetting = Sidekick.getSetting(SETTING_KEYS.tokenUtility.mightySummoner);
         const mightySummonerFlag = getProperty(tokenData, `flags.${NAME}.${FLAGS.mightySummoner.mightySummoner}`);
