@@ -136,10 +136,8 @@ export class Concentrator {
 
         if (!enableConcentrator) return true;
 
-        const token = scene.data.tokens.find(t => t._id === update._id);
-
         const newHealth = getProperty(update, `actorData.data.${Sidekick.getSetting(SETTING_KEYS.concentrator.healthAttribute)}.value`);
-        const oldHealth = getProperty(token, `actorData.data.${Sidekick.getSetting(SETTING_KEYS.concentrator.healthAttribute)}.value`);
+        const oldHealth = getProperty(token, `actor.data.data.${Sidekick.getSetting(SETTING_KEYS.concentrator.healthAttribute)}.value`);
         
         const damageTaken = Concentrator._wasDamageTaken(newHealth, oldHealth);
 
@@ -147,7 +145,7 @@ export class Concentrator {
             const cubOption = options[NAME] = options[NAME] ?? {};
             cubOption[FLAGS.concentrator.damageTaken] = true;
             cubOption[FLAGS.concentrator.damageAmount] = Concentrator._calculateDamage(newHealth, oldHealth);
-            cubOption[FLAGS.concentrator.isDead] =  newHealth <= 0;
+            cubOption[FLAGS.concentrator.isDead] = newHealth <= 0;
         }
 
         return true;
