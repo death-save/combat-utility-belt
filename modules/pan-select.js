@@ -224,6 +224,8 @@ export class PanSelect {
             token = canvas.tokens.get(token.id);
         }
 
+        if (!token) return;
+
         const actor = token?.actor;
         const actorPermission = actor ? actor.data.permission[game.userId] || 0 : null;
 
@@ -231,8 +233,7 @@ export class PanSelect {
             return;
         }
 
-        const canvasToken = canvas.tokens.get(token._id) || null;
-        return canvasToken.control();
+        return token.control();
     }
 
     /**
