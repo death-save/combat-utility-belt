@@ -10,7 +10,6 @@ export class TrackerUtility {
      * Pans or selects the current token
      */
     static _hookOnUpdateCombat(combat, update, options, userId) {
-        //let tracker = combat.entities ? combat.entities.find(tr => tr._id === update._id) : combat;
 
         if (!game.combat || game.combat.turns.length === 0) {
             return;
