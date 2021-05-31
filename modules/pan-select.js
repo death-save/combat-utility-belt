@@ -241,7 +241,7 @@ export class PanSelect {
      * @param {*} token 
      */
     static _checkObserverDeselect(token) {
-        const actor = token ? game.actors.get(token.actorId) : null;
+        const actor = token?.actor;
         const actorPermission = actor ? actor.data.permission[game.userId] || 0 : null;
 
         if (actorPermission === null) {

@@ -115,7 +115,10 @@ export class TrackerUtility {
         const tokenId = li.dataset.tokenId;
 
         // Find the token and update
-        const token = canvas.tokens.get(tokenId);
-        await token.actor.update({["data." + resource]: event.target.value});
+        const actor = combatant?.token?.actor;
+
+        if (!actor) return;
+
+        return await actor.update({["data." + resource]: event.target.value});
     }
 }
