@@ -88,6 +88,9 @@ export class Concentrator {
 
         if (!enableConcentrator) return true;
 
+        // Update handled in token hooks
+        if (actor.isToken) return true;
+
         const newHealth = getProperty(update, `data.${Sidekick.getSetting(SETTING_KEYS.concentrator.healthAttribute)}.value`);
         const oldHealth = getProperty(actor, `data.data.${Sidekick.getSetting(SETTING_KEYS.concentrator.healthAttribute)}.value`);
 

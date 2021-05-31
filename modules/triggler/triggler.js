@@ -259,7 +259,7 @@ export class Triggler {
      * @param {*} userId 
      */
     static _onUpdateActor(actor, update, options, userId) {
-        if (game.userId !== userId) {
+        if (game.userId !== userId || actor.isToken) {
             return;
         }
 
