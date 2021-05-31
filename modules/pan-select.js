@@ -85,7 +85,13 @@ export class PanSelect {
      * @param {*} token
      */
     static _checkGMPan(token) {
-        const actor = token ? game.actors.get(token.actorId) : null;
+        if (token instanceof TokenDocument) {
+            token = canvas.tokens.get(token.id);
+        }
+
+        if (!token) return;
+
+        const actor = token?.actor;
         const panGM = Sidekick.getSetting(BUTLER.SETTING_KEYS.panSelect.panGM);
 
         if (!actor) {
@@ -175,8 +181,12 @@ export class PanSelect {
      * @param {*} token 
      */
     static _checkGMSelect(token) {
+        if (token instanceof TokenDocument) {
+            token = canvas.tokens.get(token.id);
+        }
+
         const selectGM = Sidekick.getSetting(BUTLER.SETTING_KEYS.panSelect.selectGM);
-        const actor = token ? game.actors.get(token.actorId) : null;
+        const actor = token?.actor;
 
         if (!actor) {
             return;
@@ -209,7 +219,11 @@ export class PanSelect {
      * @param {*} token 
      */
     static _checkPlayerSelect(token) {
-        const actor = token ? game.actors.get(token.actorId) : null;
+        if (token instanceof TokenDocument) {
+            token = canvas.tokens.get(token.id);
+        }
+
+        const actor = token?.actor;
         const actorPermission = actor ? actor.data.permission[game.userId] || 0 : null;
 
         if (!actor || actorPermission === null || actorPermission < CONST.ENTITY_PERMISSIONS.OWNER) {

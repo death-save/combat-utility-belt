@@ -411,7 +411,7 @@ export class EnhancedConditions {
      */
     static async outputChatMessage(entity, entries, options={type: "active"}) {
         const isActorEntity = entity instanceof Actor;
-        const isTokenEntity = entity instanceof Token;
+        const isTokenEntity = entity instanceof Token || entity instanceof TokenDocument;
         // Turn a single condition mapping entry into an array
         entries = entries instanceof Array ? entries : [entries];
 
@@ -964,7 +964,7 @@ export class EnhancedConditions {
         }
 
         for (let entity of entities) {
-            const actor = entity instanceof Actor ? entity : entity instanceof Token ? entity.actor : null;
+            const actor = entity instanceof Actor ? entity : entity instanceof Token || entity instanceof TokenDocument ? entity.actor : null;
             
             if (!actor) continue;
 
@@ -1085,7 +1085,7 @@ export class EnhancedConditions {
         const results = [];
 
         for (let entity of entities) {
-            const actor = entity instanceof Actor ? entity : entity instanceof Token ? entity.actor : null;
+            const actor = entity instanceof Actor ? entity : (entity instanceof Token || entity instanceof TokenDocument) ? entity.actor : null;
 
             const effects = actor.effects.entries;
 
@@ -1147,8 +1147,8 @@ export class EnhancedConditions {
         let results = new Collection();
 
         for (const entity of entities) {
-            const actor = entity instanceof Actor ? entity : entity instanceof Token ? entity.actor : null;
-            const activeEffects = actor.effects.entries;
+            const actor = entity instanceof Actor ? entity : (entity instanceof Token || entity instanceof TokenDocument) ? entity.actor : null;
+            const activeEffects = actor.effects.contents;
 
             if (!activeEffects.length) continue;
             
@@ -1212,7 +1212,7 @@ export class EnhancedConditions {
         conditions = conditions instanceof Array ? conditions : [conditions];
 
         for (let entity of entities) {
-            const actor = entity instanceof Actor ? entity : entity instanceof Token ? entity.actor : null;
+            const actor = entity instanceof Actor ? entity : (entity instanceof Token || entity instanceof TokenDocument) ? entity.actor : null;
 
             if (!actor.effects.size) continue;
 
@@ -1277,8 +1277,8 @@ export class EnhancedConditions {
         if (entities && !(entities instanceof Array)) entities = [entities];
 
         for (let entity of entities) {
-            const actor = entity instanceof Actor ? entity : entity instanceof Token ? entity.actor : null;
-            const activeEffects = actor.effects.entries.filter(e => effects.map(e => e.flags[BUTLER.NAME].conditionId).includes(e.getFlag(BUTLER.NAME, BUTLER.FLAGS.enhancedConditions.conditionId)));
+            const actor = entity instanceof Actor ? entity : (entity instanceof Token || entity instanceof TokenDocument) ? entity.actor : null;
+            const activeEffects = actor.effects.contents.filter(e => effects.map(e => e.flags[BUTLER.NAME].conditionId).includes(e.getFlag(BUTLER.NAME, BUTLER.FLAGS.enhancedConditions.conditionId)));
 
             if (!activeEffects || (activeEffects && !activeEffects.length)) {
                 if (warn) ui.notifications.warn(`${conditionName} ${game.i18n.localize("ENHANCED_CONDITIONS.RemoveCondition.Failed.NotActive")}`);
@@ -1319,7 +1319,7 @@ export class EnhancedConditions {
         entities = entities instanceof Array ? entities : [entities];
 
         for (let entity of entities) {
-            const actor = entity instanceof Actor ? entity : entity instanceof Token ? entity.actor : null;
+            const actor = entity instanceof Actor ? entity : (entity instanceof Token || entity instanceof TokenDocument) ? entity.actor : null;
 
             let actorConditionEffects = EnhancedConditions.getConditionEffects(actor, {warn: false});
 

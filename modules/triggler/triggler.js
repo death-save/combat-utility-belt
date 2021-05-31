@@ -65,7 +65,7 @@ export class Triggler {
         // }
         
         const triggers = Sidekick.getSetting(SETTING_KEYS.triggler.triggers);
-        const entityType = entity instanceof Actor ? "Actor" : entity instanceof Token ? "Token" : null;
+        const entityType = entity instanceof Actor ? "Actor" : entity instanceof Token || entity instanceof TokenDocument ? "Token" : null;
 
         if (!entityType) {
             return;

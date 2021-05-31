@@ -292,7 +292,7 @@ export class Concentrator {
         if (!game.user.isGM) return;
 
         const isActor = entity instanceof Actor;
-        const isToken = entity instanceof Token;
+        const isToken = entity instanceof Token || entity instanceof TokenDocument;
         const halfDamage = Math.floor(damage / 2);
         const dc = halfDamage > 10 ? halfDamage : 10;
         const user = game.userId;
@@ -311,7 +311,7 @@ export class Concentrator {
         if (!game.user.isGM) return;
 
         const isActor = entity instanceof Actor;
-        const isToken = entity instanceof Token;
+        const isToken = entity instanceof Token || entity instanceof TokenDocument;
         const user =  game.userId;
         const speaker = isActor ? ChatMessage.getSpeaker({actor: entity}) : isToken ? ChatMessage.getSpeaker({token: entity}) : ChatMessage.getSpeaker();
         const content = `<h3>Concentrator</header></h3>${entity.name} is incapacitated and the spell they were concentrating on is lost!</p>`;
@@ -327,7 +327,7 @@ export class Concentrator {
     static _notifyDoubleConcentration(entity) {
         const isWhisper = Sidekick.getSetting(SETTING_KEYS.concentrator.notifyDouble) === "GM Only";
         const isActor = entity instanceof Actor;
-        const isToken = entity instanceof Token;
+        const isToken = entity instanceof Token || entity instanceof TokenDocument;
         const speaker = isActor ? ChatMessage.getSpeaker({actor: entity}) : isToken ? ChatMessage.getSpeaker({token: entity}) : ChatMessage.getSpeaker();
         const whisper = isWhisper ? game.users.entities.filter(u => u.isGM) : "";
         const content =  `<h3>Concentrator</h3><p>${entity.name} cast a spell requiring Concentration while concentrating on another spell. Concentration on the original spell is lost.`;
