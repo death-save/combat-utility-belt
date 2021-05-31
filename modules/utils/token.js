@@ -41,16 +41,7 @@ export class TokenUtility {
         return newData;
     }
 
-    /**
-     * 
-     * @param {*} scene 
-     * @param {*} tokenData 
-     * @param {*} options 
-     * @param {*} userId 
-     */
-    static _onCreateToken(scene, tokenData, options, userId) {
-        
-    }
+    
 
     
 
