@@ -246,7 +246,7 @@ export class EnhancedConditions {
             return;
         }
 
-        const token = canvas.tokens.get(game.combat.combatant.tokenId);
+        const token = combat.combatant.token;
 
         const tokenConditions = EnhancedConditions.getConditions(token, {warn: false});
         let conditions = (tokenConditions && tokenConditions.conditions) ? tokenConditions.conditions : [];
