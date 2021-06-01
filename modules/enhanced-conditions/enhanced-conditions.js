@@ -274,7 +274,7 @@ export class EnhancedConditions {
      * @param {*} data 
      * @todo move to chatlog render?
      */
-    static _onRenderChatMessage(app, html, data) {
+    static async _onRenderChatMessage(app, html, data) {
         if (data.message.content && !data.message.content.match("enhanced-conditions")) {
             return;
         }
@@ -283,13 +283,13 @@ export class EnhancedConditions {
 
         if (!speaker) return;
 
-        const actor = game.actors.get(speaker.actor) ?? null;
-        const scene = game.scenes.get(speaker.scene) ?? null;
-        const token = (canvas ? canvas?.tokens.get(speaker.token) : null) ?? (scene ? scene.data.tokens.find(t => t._id === speaker.token) : null);
+        const actor = ChatMessage.getSpeakerActor(speaker);
+        const token = (speaker.scene && speaker.token) ? await fromUuid(`Scene.${speaker.scene}.Token.${speaker.token}`) : null;
+
         const removeConditionAnchor = html.find("a[name='remove-row']");
         const undoRemoveAnchor = html.find("a[name='undo-remove']");
 
-        if (!token || (token && !game.user.isGM)) {
+        if (!game.user.isGM) {
             removeConditionAnchor.parent().hide();
             undoRemoveAnchor.parent().hide();
         }
@@ -306,17 +306,9 @@ export class EnhancedConditions {
 
             if (!message) return;
 
-            const speaker = message?.data?.speaker;
+            const actor = ChatMessage.getSpeakerActor(message.data?.speaker);
 
-            if (!speaker) return;
-
-            const token = canvas.tokens.get(speaker.token);
-            const actor = game.actors.get(speaker.actor);
-            const entity = token ?? actor;
-
-            if (!entity) return;
-
-            EnhancedConditions.removeCondition(conditionName, entity, {warn: false});
+            EnhancedConditions.removeCondition(conditionName, actor, {warn: false});
         });
 
         undoRemoveAnchor.on("click", event => {
