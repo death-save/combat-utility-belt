@@ -44,7 +44,7 @@ export class Concentrator {
         const messageSceneId = app.data.speaker.scene;
         const messageTokenId = app.data.speaker.token;
         const scene = messageSceneId ? game.scenes.get(messageSceneId) : game.scenes.active;
-        const tokenData = scene ? scene.data.tokens.find(t => t._id === messageTokenId) : null;
+        const tokenData = scene ? scene.data.tokens.find(t => t.id === messageTokenId) : null;
         const token = canvas?.tokens.get(messageTokenId) ?? (tokenData ? new Token(tokenData, scene) : null);
         const actor = token ? token.actor : messageActorId ? game.actors.get(messageActorId) : null;
 
@@ -52,7 +52,7 @@ export class Concentrator {
 
         // First check if the item is a spell
         // note: Beyond20 bypasses this logic
-        const item = itemId ? actor.getOwnedItem(itemId) : null;
+        const item = itemId ? actor.items.get(itemId) : null;
         const isSpell = item ? item.type === "spell" : false;
 
         // If it is, check if it requires concentration
@@ -88,6 +88,9 @@ export class Concentrator {
 
         if (!enableConcentrator) return true;
 
+        // Update handled in token hooks
+        if (actor.isToken) return true;
+
         const newHealth = getProperty(update, `data.${Sidekick.getSetting(SETTING_KEYS.concentrator.healthAttribute)}.value`);
         const oldHealth = getProperty(actor, `data.data.${Sidekick.getSetting(SETTING_KEYS.concentrator.healthAttribute)}.value`);
 
@@ -113,23 +116,12 @@ export class Concentrator {
     static _onUpdateActor(actor, update, options, userId){
         const damageTaken = getProperty(options, `${NAME}.${FLAGS.concentrator.damageTaken}`);
 
-        if (!damageTaken || (!game.user.isGM && !game.userId)) return;
+        if (!damageTaken || (!game.user.isGM && userId !== game.userId)) return;
 
-        const displayPrompt = Sidekick.getSetting(SETTING_KEYS.concentrator.prompt);
-        const outputChat = Sidekick.getSetting(SETTING_KEYS.concentrator.outputChat);
-        const damageAmount = getProperty(options, `${NAME}.${FLAGS.concentrator.damageAmount}`);
-        const isDead = getProperty(options, `${NAME}.${FLAGS.concentrator.isDead}`);
-        const isConcentrating = Concentrator._isConcentrating(actor);
+        // Update handled in token hooks
+        if (actor.isToken) return;
 
-        if (!isConcentrating) return;
-
-        if (outputChat) {
-            if (isDead) return Concentrator._processDeath(actor);
-
-            Concentrator._displayChat(actor, damageAmount);
-        }
-
-        if (displayPrompt) Concentrator._determinePromptedUsers(actor.id);
+        return Concentrator._processDamage(actor, options);
     }
 
     /**
@@ -139,15 +131,13 @@ export class Concentrator {
      * @param {*} update 
      * @param {*} options 
      */
-    static _onPreUpdateToken(scene, tokenData, update, options, userId){
+    static _onPreUpdateToken(token, update, options, userId){
         const enableConcentrator = Sidekick.getSetting(SETTING_KEYS.concentrator.enable);
 
         if (!enableConcentrator) return true;
 
-        const token = scene.data.tokens.find(t => t._id === update._id);
-
         const newHealth = getProperty(update, `actorData.data.${Sidekick.getSetting(SETTING_KEYS.concentrator.healthAttribute)}.value`);
-        const oldHealth = getProperty(token, `actorData.data.${Sidekick.getSetting(SETTING_KEYS.concentrator.healthAttribute)}.value`);
+        const oldHealth = getProperty(token, `actor.data.data.${Sidekick.getSetting(SETTING_KEYS.concentrator.healthAttribute)}.value`);
         
         const damageTaken = Concentrator._wasDamageTaken(newHealth, oldHealth);
 
@@ -155,7 +145,7 @@ export class Concentrator {
             const cubOption = options[NAME] = options[NAME] ?? {};
             cubOption[FLAGS.concentrator.damageTaken] = true;
             cubOption[FLAGS.concentrator.damageAmount] = Concentrator._calculateDamage(newHealth, oldHealth);
-            cubOption[FLAGS.concentrator.isDead] =  newHealth <= 0;
+            cubOption[FLAGS.concentrator.isDead] = newHealth <= 0;
         }
 
         return true;
@@ -169,41 +159,46 @@ export class Concentrator {
      * @param {*} options 
      * @param {*} userId 
      */
-    static _onUpdateToken(scene, tokenData, update, options, userId){
+    static _onUpdateToken(token, update, options, userId){
         const damageTaken = getProperty(options, `${NAME}.${FLAGS.concentrator.damageTaken}`);
 
         if (!damageTaken || (!game.user.isGM && userId !== game.userId)) return;
 
-        const tokenId = tokenData._id;
-        const newTokenData = duplicate(tokenData);
-        delete newTokenData._id;
-        
-        const token = canvas.tokens.get(tokenData._id) ?? new Token(tokenData);
-        const actor = token.actor;
-
-        if (!actor) return;
-
-        const isConcentrating = Concentrator._isConcentrating(actor);
-
-        if (!isConcentrating) return;
-
-        const displayPrompt = Sidekick.getSetting(SETTING_KEYS.concentrator.prompt);
-        const outputChat = Sidekick.getSetting(SETTING_KEYS.concentrator.outputChat);
-        const damageAmount = getProperty(options, `${NAME}.${FLAGS.concentrator.damageAmount}`);
-        const isDead = getProperty(options, `${NAME}.${FLAGS.concentrator.isDead}`);
-
-        if (outputChat) {
-            if (isDead) return Concentrator._processDeath(actor);
-
-            Concentrator._displayChat(actor, damageAmount);
-        }
-
-        if (displayPrompt) Concentrator._determinePromptedUsers(actor.id);
+        return Concentrator._processDamage(token, options);
     }
 
     /* -------------------------------------------- */
     /*                    Workers                   */
     /* -------------------------------------------- */
+
+    /**
+     * Processes a damage event for Concentration purposes
+     * @param {*} entity
+     * @param {*} options 
+     * @returns 
+     */
+    static _processDamage(entity, options) {
+        const isConcentrating = Concentrator._isConcentrating(entity);
+        const displayPrompt = Sidekick.getSetting(SETTING_KEYS.concentrator.prompt);
+        const outputChat = Sidekick.getSetting(SETTING_KEYS.concentrator.outputChat);
+
+        if (!isConcentrating || (!displayPrompt && !outputChat)) return;
+
+        const damageAmount = getProperty(options, `${NAME}.${FLAGS.concentrator.damageAmount}`);
+        const isDead = getProperty(options, `${NAME}.${FLAGS.concentrator.isDead}`);
+
+        if (outputChat) {
+            if (isDead) return Concentrator._processDeath(entity);
+
+            Concentrator._displayChat(entity, damageAmount);
+        }
+
+        if (displayPrompt) {
+            const actor = entity instanceof Actor ? entity : entity.actor;
+
+            return Concentrator._determinePromptedUsers(actor.id);
+        }
+    }
 
     /**
      * Processes the steps necessary when the concentrating token is dead
@@ -295,7 +290,7 @@ export class Concentrator {
         if (!game.user.isGM) return;
 
         const isActor = entity instanceof Actor;
-        const isToken = entity instanceof Token;
+        const isToken = entity instanceof Token || entity instanceof TokenDocument;
         const halfDamage = Math.floor(damage / 2);
         const dc = halfDamage > 10 ? halfDamage : 10;
         const user = game.userId;
@@ -314,7 +309,7 @@ export class Concentrator {
         if (!game.user.isGM) return;
 
         const isActor = entity instanceof Actor;
-        const isToken = entity instanceof Token;
+        const isToken = entity instanceof Token || entity instanceof TokenDocument;
         const user =  game.userId;
         const speaker = isActor ? ChatMessage.getSpeaker({actor: entity}) : isToken ? ChatMessage.getSpeaker({token: entity}) : ChatMessage.getSpeaker();
         const content = `<h3>Concentrator</header></h3>${entity.name} is incapacitated and the spell they were concentrating on is lost!</p>`;
@@ -330,9 +325,9 @@ export class Concentrator {
     static _notifyDoubleConcentration(entity) {
         const isWhisper = Sidekick.getSetting(SETTING_KEYS.concentrator.notifyDouble) === "GM Only";
         const isActor = entity instanceof Actor;
-        const isToken = entity instanceof Token;
+        const isToken = entity instanceof Token || entity instanceof TokenDocument;
         const speaker = isActor ? ChatMessage.getSpeaker({actor: entity}) : isToken ? ChatMessage.getSpeaker({token: entity}) : ChatMessage.getSpeaker();
-        const whisper = isWhisper ? game.users.entities.filter(u => u.isGM) : "";
+        const whisper = isWhisper ? game.users.entities.filter(u => u.isGM) : [];
         const content =  `<h3>Concentrator</h3><p>${entity.name} cast a spell requiring Concentration while concentrating on another spell. Concentration on the original spell is lost.`;
         const type = CONST.CHAT_MESSAGE_TYPES.OTHER;
 

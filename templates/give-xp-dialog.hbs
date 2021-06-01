@@ -1,0 +1,108 @@
+{{#*inline "tokenListItem"}}
+<label data-token-id="{{this.token.id}}" data-actor-name="{{this.actor.name}}" data-xp-amount="{{this.actor.data.data.details.xp.value}}">
+    <input type="checkbox" name="{{this.token.id}}" {{#if isChecked}}checked="checked"{{/if}}>
+    <div class="give-xp--actor-icon" style="background-image: url({{this.img}})"></div>
+    <span class="give-xp--actor-xp">+0 XP</span>
+</label>
+{{/inline}}
+
+<form>
+    <h2>{{ localize "WORDS.Configuration" }}</h2>
+    <div class="form-group">
+        <label for="xp-modifier">{{ localize "GIVE_XP.DistributeForm.XPModifier" }}</label>
+        <input id="xp-modifier" type="number" value="{{xpModifier}}">
+    </div>
+
+    <nav class="tabs">
+        <a class="item active" data-tab="friendlies">
+            <i class="fas fa-users"></i>
+            {{ localize "GIVE_XP.DistributeForm.Friendlies" }}
+        </a>
+        <a class="item" data-tab="hostiles">
+            <i class="fas fa-skull"></i>
+            {{ localize "GIVE_XP.DistributeForm.Hostiles" }}
+        </a>
+    </nav>
+
+    <section id="actor-select-tabs">
+        <div data-tab="friendlies">
+            <p class="notes">{{ localize "GIVE_XP.DistributeForm.SelectFriendlies" }}</p>
+            <div id="friendly-actor-list" class="give-xp--actor-list">
+                {{#each friendlies}}
+                    {{> tokenListItem isChecked=(lookup ../defaultSelectedFriendlies @index)}}
+                {{/each}}
+            </div>
+        </div>
+
+        <div data-tab="hostiles" style="display: none;">
+            <p class="notes">{{ localize "GIVE_XP.DistributeForm.SelectHostiles" }}</p>
+            <div id="hostile-actor-list" class="give-xp--actor-list">
+                {{#each hostiles}}
+                    {{> tokenListItem isChecked=true}}
+                {{/each}}
+            </div>
+        </div>
+    </section>
+    <p id="hovered-creature" style="text-align: center;">&nbsp;</p>
+
+    <h2>{{ localize "GIVE_XP.DistributeForm.Distribution" }}</h2>
+    <div class="form-group">
+        <label>{{ localize "GIVE_XP.DistributeForm.TotalXp" }}</label>
+        <span id="total-xp">-</span>
+    </div>
+    <div class="form-group">
+        <label>{{ localize "GIVE_XP.DistributeForm.CreaturesReceiving" }}</label>
+        <span id="friend-receive-count">-</span>
+    </div>
+    <div class="form-group">
+        <label>{{ localize "GIVE_XP.DistributeForm.XpPerCreature" }}</label>
+        <span id="divisor-xp">-</span>
+    </div>
+</form>
+
+<style>
+    .give-xp--actor-list {
+        display: flex;
+        height: 276px;
+        flex-wrap: wrap;
+        overflow-y: scroll;
+        margin-top: 6px;
+        align-content: flex-start;
+    }
+
+    .give-xp--actor-list label {
+        position: relative;
+        cursor: pointer;
+    }
+
+    .give-xp--actor-list .give-xp--actor-icon {
+        display: block;
+        width: 82px;
+        height: 82px;
+        margin: 5px;
+        border: 2px solid transparent;
+        border-radius: 2px;
+        background-size: contain;
+        background-repeat: no-repeat;
+    }
+    .give-xp--actor-list :checked + .give-xp--actor-icon {
+        background-color: #3CF23C55;
+        box-shadow: 0 0 2px 2px #3CF23C;
+    }
+
+    .give-xp--actor-list input {
+        display: none;
+    }
+
+    .give-xp--actor-list .give-xp--actor-xp {
+        color: #FFFFFF;
+        text-shadow: 0 0 3px black;
+        display: block;
+        position: absolute;
+        bottom: 4px;
+        left: 50%;
+        max-width: 95%;
+        transform: translateX(-50%);
+        white-space: nowrap;
+    }
+</style>

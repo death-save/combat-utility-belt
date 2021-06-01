@@ -56,19 +56,12 @@ export class HideNPCNames {
         if (!enable) return;
 
         // find the NPC combatants
-        const combatants = app?.combat?.combatants;
+        const combatants = app?.viewed?.combatants?.contents;
 
         if (!combatants || !combatants?.length) return;
 
-        const combatantTokens = combatants.map(c => c.token);
-        const tokens = combatantTokens.map(c => {
-            const viewedSceneId = game.user.viewedScene ?? game.scenes.active.id;
-            const scene = game.scenes.get(viewedSceneId);
-            const tokenData = scene.data.tokens.find(t => t._id === c._id);
-            const token = canvas?.tokens?.placeables?.find(t => t.id === c._id) ?? tokenData ? new Token(tokenData, scene) : null;
-            // Combatants can only come from the viewed scene
-            return token;
-        });
+        const tokens = combatants.map(c => c.token);
+        
         const npcs = tokens.filter(t => {
             const actor = t.actor || game.actors.entities.find(a => a.id === t.actorId);
             
@@ -82,37 +75,37 @@ export class HideNPCNames {
             const replacementName = HideNPCNames.getReplacementName(npc.actor);
             
             return {
-                id: npc._id ?? npc.id,
+                id: npc.id ?? npc.id,
                 name: npc.name,
                 replacement: replacementName,
-                isOwner: npc.actor.owner
+                isOwner: npc.actor.isOwner
             }
         });
 
         if (!hideNPCs.length) return;
-        
+
+        const hideNPCIds = hideNPCs.map(n => n.id);
+
         // for each replacement, find the matching element and replace
         const combatantListElement = html.find("li");
-        const hideNPCElements = combatantListElement.filter((i, el) => {
-            const tokenId = el.dataset.tokenId;
-            const hideNPCIds = hideNPCs.map(n => n.id);
 
-            if (hideNPCIds.includes(tokenId)) return true;
-        });
+        for (const el of combatantListElement) {
+            const combatantId = el.dataset.combatantId;
+            const combatant = game.combat.combatants.get(combatantId);
+            const npcToken = hideNPCs.find(n => n.id === combatant?.token?.id);
+            
+            if (!npcToken) continue;
 
-        if (!hideNPCElements.length) return;
-
-        for (const el of hideNPCElements) {
-            const hideNPC = hideNPCs.find(n => n.id === el.dataset.tokenId);
-
-            if (!game.user.isGM && !hideNPC.isOwner) {
-                $(el).find(".token-name").text(hideNPC.replacement);
-                $(el).find(".token-image").attr("title", hideNPC.replacement);
+            if (game.user.isGM || npcToken.isOwner) {
+                const icon = `<span> <i class="fas fa-mask" title="${npcToken.replacement}"></i></span>`;
+                $(el).find(".token-name").children().first().append(icon);
+                continue;
             }
 
-            const icon = `<span> <i class="fas fa-mask" title="${hideNPC.replacement}"></i></span>`;
-            $(el).find(".token-name").children().first().append(icon);
+            $(el).find(".token-name").text(npcToken.replacement);
+            $(el).find(".token-image").attr("title", npcToken.replacement);            
         }
+        
     }
 
     /**
@@ -121,23 +114,18 @@ export class HideNPCNames {
      * @param {*} html 
      * @param {*} data 
      */
-    static _onRenderChatMessage(message, html, data) {
+    static async _onRenderChatMessage(message, html, data) {
         const enable = Sidekick.getSetting(SETTING_KEYS.hideNames.enable);
         const name = data?.alias ?? null;
+        const speaker = message.data.speaker;
 
-        if (!enable || !name) return;
+        if (!enable || !name || !speaker) return;
 
-        const messageActorId = message.data.speaker.actor;
-        const messageSceneId = message.data.speaker.scene;
-        const messageTokenId = message.data.speaker.token;
-        const scene = messageSceneId ? game.scenes.get(messageSceneId) : null;
-        const tokenData = scene ? scene.data.tokens.find(t => t._id === messageTokenId) : null;
-        const token = canvas?.tokens.get(messageTokenId) ?? (tokenData ? new Token(tokenData, scene) : null);
-        const actor = token ? token.actor : messageActorId ? game.actors.get(messageActorId) : null;
+        const actor = ChatMessage.getSpeakerActor(speaker);
 
         if (!actor) return;
         
-        const speakerIsNPC = actor && !actor.hasPlayerOwner;
+        const speakerIsNPC = !actor.hasPlayerOwner;
 
         if (!speakerIsNPC) return;
 
@@ -148,7 +136,7 @@ export class HideNPCNames {
         const replacementName = HideNPCNames.getReplacementName(actor);
 
         // If we are the GM or the Actor's owner, simply apply the icon to the name and return
-        if (game.user.isGM || actor.owner) {
+        if (game.user.isGM || actor.isOwner) {
             const senderName = html.find("header").children().first();
             const icon = `<span> <i class="fas fa-mask" title="${replacementName}"></i></span>`;
             return senderName.append(icon);
@@ -204,19 +192,16 @@ export class HideNPCNames {
      */
     static _onVinoPrepareChatDisplayData(chatDisplayData) {
         const enable = Sidekick.getSetting(SETTING_KEYS.hideNames.enable);
+        const name = chatDisplayData?.name;
+        const speaker = chatDisplayData.message?.data?.speaker;
 
-        if (!enable) {
-            return;
-        }
+        if (!enable || !chatDisplayData || !name || !speaker) return;
 
-        const messageActorId = chatDisplayData.message.data.speaker.actor;
-        const messageSceneId = chatDisplayData.message.data.speaker.scene;
-        const messageTokenId = chatDisplayData.message.data.speaker.token;
-        const scene = messageSceneId ? game.scenes.get(messageSceneId) : null;
-        const tokenData = scene ? scene.data.tokens.find(t => t._id === messageTokenId) : null;
-        const token = canvas.tokens.get(messageTokenId) ?? (tokenData ? new Token(tokenData, scene) : null);
-        const actor = token ? token.actor : game.actors.get(messageActorId);
-        const speakerIsNPC = actor && !actor.hasPlayerOwner;
+        const actor = ChatMessage.getSpeakerActor(speaker);
+
+        if (!actor) return;
+        
+        const speakerIsNPC = !actor.hasPlayerOwner;
 
         if (!speakerIsNPC) return;
 
@@ -226,7 +211,7 @@ export class HideNPCNames {
 
         const replacementName = HideNPCNames.getReplacementName(actor);
         
-        if (!game.user.isGM || !actor.owner) {
+        if (!game.user.isGM || !actor.isOwner) {
            chatDisplayData.name = replacementName;
         }
     }
@@ -239,10 +224,10 @@ export class HideNPCNames {
      */
     static _onRenderImagePopout(app, html, data) {
         const enable = Sidekick.getSetting(SETTING_KEYS.hideNames.enable);
+        const uuid = app.options?.uuid;
+        const actor = uuid.startsWith("Actor") ? game.actors.get(uuid.replace("Actor.", "")) : null;
 
-        if (app._related.entity !== "Actor" || !enable) return;
-
-        const actor = app._related;
+        if (!actor || !enable) return;
 
         const shouldReplace = HideNPCNames.shouldReplaceName(actor);
 
@@ -254,19 +239,21 @@ export class HideNPCNames {
 
         if (windowTitle.length === 0) return;
 
-        if (!game.user.isGM || !actor.owner) {
+        if (!game.user.isGM || !actor.isOwner) {
             windowTitle.text(replacement);
 
-            const img = html.find("img");
+            const imgDiv = html.find("div.lightbox-image");
 
-            if (!img.length) return;
+            if (!imgDiv.length) return;
 
-            img.attr("title", replacement);
+            imgDiv.attr("title", replacement);
+        } else {
+            const icon = `<span> <i class="fas fa-mask" title="${replacement}"></i></span>`;
+
+            windowTitle.append(icon);
         }
 
-        const icon = `<span> <i class="fas fa-mask" title="${replacement}"></i></span>`;
-
-        windowTitle.append(icon);
+        
     }
 
     /**
@@ -286,7 +273,7 @@ export class HideNPCNames {
             const actor = token.actor;
 
             // @todo append mask icon
-            if (game.user.isGM || actor.owner) continue;
+            if (game.user.isGM || actor.isOwner) continue;
 
             if (HideNPCNames.shouldReplaceName(actor)) {
                 const nameDiv = $card.find("div.name");

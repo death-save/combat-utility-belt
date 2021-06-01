@@ -10,7 +10,6 @@ export class TrackerUtility {
      * Pans or selects the current token
      */
     static _hookOnUpdateCombat(combat, update, options, userId) {
-        //let tracker = combat.entities ? combat.entities.find(tr => tr._id === update._id) : combat;
 
         if (!game.combat || game.combat.turns.length === 0) {
             return;
@@ -49,12 +48,11 @@ export class TrackerUtility {
 
     /**
      * Handler for deleteCombatant hook
-     * @param {*} combat 
-     * @param {*} combatId 
      * @param {*} combatantId 
      * @param {*} options 
+     * @param {String} userId
      */
-    static _onDeleteCombatant(combat, combatant, options, userId) {
+    static _onDeleteCombatant(combatant, options, userId) {
         if (combatant.token){
             const tokenData = combatant.token.data || null;
 
@@ -112,11 +110,19 @@ export class TrackerUtility {
         // Find the parent list element
         const li = event.target.closest("li");
 
-        // Get the tokenId from the list element
-        const tokenId = li.dataset.tokenId;
+        if (!li) return;
+
+        // Get the combatant from the list element
+        const combatantId = li?.dataset?.combatantId;
+        const combatant = combatantId ? game.combat.combatants.find(c => c.id === combatantId) : null;
+
+        if (!combatant) return;
 
         // Find the token and update
-        const token = canvas.tokens.get(tokenId);
-        await token.actor.update({["data." + resource]: event.target.value});
+        const actor = combatant?.token?.actor;
+
+        if (!actor) return;
+
+        return await actor.update({["data." + resource]: event.target.value});
     }
 }

@@ -52,7 +52,7 @@ export class TemporaryCombatantForm extends FormApplication {
         tokenData.flags = flags;
         const token = await Token.create(tokenData);
 
-        const combatant = await game.combat.createEmbeddedEntity("Combatant", {
+        const combatant = await game.combat.createEmbeddedDocuments("Combatant", {
             tokenId: token.id, 
             hidden: formData.hidden, 
             initiative: formData.init,

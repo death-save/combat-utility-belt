@@ -4,16 +4,14 @@ import { MightySummoner } from "../mighty-summoner.js";
 
 export class TokenUtility {
     /**
-     * Hook on token create
+     * Pre-create Token Hook Handler
      * @param {Object} scene
      * @param {Object} tokenData  
      * @param {Object} options 
      * @param {String} userId 
-     * @todo move this to a preCreate hook to avoid a duplicate call to the db
      */
-    static _onPreCreateToken(scene, tokenData, options, userId) {
-        //const token = canvas.tokens.get(tokenData._id);
-        const actor = game.actors.get(tokenData.actorId);
+    static _onPreCreateToken(token, tokenData, options, userId) {
+        const actor = token.actor;
         const autoRollHP = Sidekick.getSetting(SETTING_KEYS.tokenUtility.autoRollHP);
         const mightySummonerSetting = Sidekick.getSetting(SETTING_KEYS.tokenUtility.mightySummoner);
         const mightySummonerFlag = getProperty(tokenData, `flags.${NAME}.${FLAGS.mightySummoner.mightySummoner}`);
@@ -36,23 +34,15 @@ export class TokenUtility {
             return true;
         }
 
-        const formula = null;
-        const newHP = TokenUtility.rollHP(actor, formula);
+        const newHP = TokenUtility.rollHP(actor);
         const hpUpdate = TokenUtility._buildHPData(newHP);
-        const newData = mergeObject(tokenData, hpUpdate);
-        return newData;
+
+        if (!hpUpdate) return true;
+
+        return token.data.update(hpUpdate);
     }
 
-    /**
-     * 
-     * @param {*} scene 
-     * @param {*} tokenData 
-     * @param {*} options 
-     * @param {*} userId 
-     */
-    static _onCreateToken(scene, tokenData, options, userId) {
-        
-    }
+    
 
     
 
@@ -86,7 +76,7 @@ export class TokenUtility {
      * @param {*} hp 
      */
     static _buildHPData(hp) {
-        return {
+        const hpData = {
             actorData: {
                 data: {
                     attributes: {
@@ -98,6 +88,8 @@ export class TokenUtility {
                 }
             }
         };
+
+        return hpData;
     }
 
     /**

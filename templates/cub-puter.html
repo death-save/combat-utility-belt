@@ -46,7 +46,7 @@
         <div class="console-panel terminal" {{#if config.terminal}}{{else}}hidden{{/if}}>
         </div>
         <div class="gadget-select">
-            <h2 class="terminal">{{currentGadget.name}} <a id="expand-gadgets"><i class="fas fa-angle-right"></i></a></h2>
+            <a id="expand-gadgets"><h2 class="terminal">{{currentGadget.name}} <i class="fas fa-angle-right"></i></h2></a>
             <ul id="gadget-list" class="gadget-list terminal" hidden>
                 {{#each gadgets}}
                 <a id="{{@key}}" title="Switch to gadget: {{this.name}}"><li>{{this.name}}</li></a>

@@ -4,6 +4,10 @@ ul.chat-message.condition-list {
     padding: 0;
 }
 
+ul.chat-message.condition-list li {
+    align-items: center;
+}
+
 .chat-message.condition-list .remove-row,
 .chat-message.condition-list .undo-remove {
    flex: 0 0 20px;
@@ -26,6 +30,7 @@ img.condition-icon {
 }
 
 .enhanced-conditions div.condition-icon {
+    display: flex;
     flex: 0 0 24px; 
     margin: 0px 6px 0px 0px;
 }
@@ -512,6 +517,10 @@ li.condition-lab.row {
 
 #cub-triggler-form .advanced-trigger-operator {
   flex: 0;
+}
+
+#settings div#combat-utility-belt {
+  margin: 0;
 }
 
 /* ABOUT */

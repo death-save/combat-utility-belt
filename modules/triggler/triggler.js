@@ -65,7 +65,7 @@ export class Triggler {
         // }
         
         const triggers = Sidekick.getSetting(SETTING_KEYS.triggler.triggers);
-        const entityType = entity instanceof Actor ? "Actor" : entity instanceof Token ? "Token" : null;
+        const entityType = entity instanceof Actor ? "Actor" : entity instanceof Token || entity instanceof TokenDocument ? "Token" : null;
 
         if (!entityType) {
             return;
@@ -259,7 +259,7 @@ export class Triggler {
      * @param {*} userId 
      */
     static _onUpdateActor(actor, update, options, userId) {
-        if (game.userId !== userId) {
+        if (game.userId !== userId || actor.isToken) {
             return;
         }
 
@@ -271,22 +271,16 @@ export class Triggler {
 
     /**
      * Update token handler
-     * @param {*} scene 
-     * @param {*} tokenData 
+     * @param {Token} token
      * @param {*} update 
      * @param {*} options 
      * @param {*} userId 
      */
-    static _onUpdateToken(scene, tokenData, update, options, userId) {
+    static _onUpdateToken(token, update, options, userId) {
         if (game.userId !== userId) {
             return;
         }
 
-        // if (!hasProperty(update, "actorData.data")) {
-        //     return;
-        // }
-
-        const token = canvas.tokens.get(tokenData._id);
         const actorDataProp = `actorData.data`;
         const actorProp = `actor.data.data`;
         

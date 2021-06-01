@@ -88,21 +88,20 @@ export class EnhancedConditions {
      * Handle PreUpdate Token Hook.
      * If the update includes effect data, add an `option` for the update hook handler to look for
      * @param {*} scene 
-     * @param {*} tokenData 
      * @param {*} update 
      * @param {*} options 
      * @param {*} userId 
      */
-    static _onPreUpdateToken(scene, tokenData, update, options, userId) {
+    static _onPreUpdateToken(token, update, options, userId) {
         const cubOption = options[BUTLER.NAME] = options[BUTLER.NAME] ?? {};
 
         if (hasProperty(update, "actorData.effects")) {
-            cubOption.existingEffects = tokenData.actorData.effects ?? [];
+            cubOption.existingEffects = token.data.actorData.effects ?? [];
             cubOption.updateEffects = update.actorData.effects ?? [];
         }
 
         if (hasProperty(update, "overlayEffect")) {
-            cubOption.existingOverlay = tokenData.overlayEffect ?? null;
+            cubOption.existingOverlay = token.data.overlayEffect ?? null;
             cubOption.updateOverlay = update.overlayEffect ?? null;
         }
 
@@ -112,7 +111,7 @@ export class EnhancedConditions {
     /**
      * Hooks on token updates. If the update includes effects, calls the journal entry lookup
      */
-    static _onUpdateToken(scene, tokenData, update, options, userId) {
+    static _onUpdateToken(token, update, options, userId) {
         const enable = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.enable);
 
         if (!enable || !game.user.isGM || (game.users.get(userId).isGM && game.userId !== userId)) {
@@ -164,7 +163,6 @@ export class EnhancedConditions {
 
         if (!addConditions.length && !removeConditions.length) return;
 
-        const token = canvas.tokens.get(tokenData._id);
         const outputChatSetting = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.outputChat);
 
         // If any of the addConditions Marks Defeated, mark the token's combatants defeated
@@ -196,14 +194,19 @@ export class EnhancedConditions {
      * @param {*} options 
      * @param {*} userId 
      */
-    static _onCreateActiveEffect(actor, createData, options, userId) {
+    static _onCreateActiveEffect(effect, options, userId) {
         const enable = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.enable);
 
         if (!enable || !game.user.isGM || (game.users.get(userId).isGM && game.userId !== userId)) {
             return;
         }
 
-        EnhancedConditions._processActiveEffectChange(actor, createData, "create");
+        const actor = effect.parent;
+
+        // Handled in Token Update handler
+        if (actor?.isToken) return;
+
+        EnhancedConditions._processActiveEffectChange(effect, "create");
     }
 
     /**
@@ -213,14 +216,19 @@ export class EnhancedConditions {
      * @param {*} options 
      * @param {*} userId 
      */
-    static _onDeleteActiveEffect(actor, deleteData, options, userId) {
+    static _onDeleteActiveEffect(effect, options, userId) {
         const enable = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.enable);
 
         if (!enable || !game.user.isGM || (game.users.get(userId).isGM && game.userId !== userId)) {
             return;
         }
 
-        EnhancedConditions._processActiveEffectChange(actor, deleteData, "delete");
+        const actor = effect.parent;
+
+        // Handled in Token Update handler
+        if (actor?.isToken) return;
+
+        EnhancedConditions._processActiveEffectChange(effect, "delete");
     }
 
     /**
@@ -238,7 +246,7 @@ export class EnhancedConditions {
             return;
         }
 
-        const token = canvas.tokens.get(game.combat.combatant.tokenId);
+        const token = combat.combatant.token;
 
         const tokenConditions = EnhancedConditions.getConditions(token, {warn: false});
         let conditions = (tokenConditions && tokenConditions.conditions) ? tokenConditions.conditions : [];
@@ -266,7 +274,7 @@ export class EnhancedConditions {
      * @param {*} data 
      * @todo move to chatlog render?
      */
-    static _onRenderChatMessage(app, html, data) {
+    static async _onRenderChatMessage(app, html, data) {
         if (data.message.content && !data.message.content.match("enhanced-conditions")) {
             return;
         }
@@ -275,13 +283,13 @@ export class EnhancedConditions {
 
         if (!speaker) return;
 
-        const actor = game.actors.get(speaker.actor) ?? null;
-        const scene = game.scenes.get(speaker.scene) ?? null;
-        const token = (canvas ? canvas?.tokens.get(speaker.token) : null) ?? (scene ? scene.data.tokens.find(t => t._id === speaker.token) : null);
+        const actor = ChatMessage.getSpeakerActor(speaker);
+        const token = (speaker.scene && speaker.token) ? await fromUuid(`Scene.${speaker.scene}.Token.${speaker.token}`) : null;
+
         const removeConditionAnchor = html.find("a[name='remove-row']");
         const undoRemoveAnchor = html.find("a[name='undo-remove']");
 
-        if (!token || (token && !game.user.isGM)) {
+        if (!game.user.isGM) {
             removeConditionAnchor.parent().hide();
             undoRemoveAnchor.parent().hide();
         }
@@ -298,17 +306,9 @@ export class EnhancedConditions {
 
             if (!message) return;
 
-            const speaker = message?.data?.speaker;
+            const actor = ChatMessage.getSpeakerActor(message.data?.speaker);
 
-            if (!speaker) return;
-
-            const token = canvas.tokens.get(speaker.token);
-            const actor = game.actors.get(speaker.actor);
-            const entity = token ?? actor;
-
-            if (!entity) return;
-
-            EnhancedConditions.removeCondition(conditionName, entity, {warn: false});
+            EnhancedConditions.removeCondition(conditionName, actor, {warn: false});
         });
 
         undoRemoveAnchor.on("click", event => {
@@ -339,16 +339,15 @@ export class EnhancedConditions {
     /* -------------------------------------------- */
 
     /**
-     * 
-     * @param {*} actor  the entity
-     * @param {*} update  the update data
+     * Process the addition/removal of an Active Effect
+     * @param {ActiveEffect} effect  the effect
      * @param {String} type  the type of change to process
      */
-    static _processActiveEffectChange(actor, changeData, type) {
-
-        if (!hasProperty(changeData, `flags.${BUTLER.NAME}.${BUTLER.FLAGS.enhancedConditions.conditionId}`)) return;
+    static _processActiveEffectChange(effect, type="create") {
+        if (!(effect instanceof ActiveEffect)) return;
         
-        const effectId = changeData.flags[BUTLER.NAME][BUTLER.FLAGS.enhancedConditions.conditionId];
+        const effectId = effect.getFlag(`${BUTLER.NAME}`, `${BUTLER.FLAGS.enhancedConditions.conditionId}`);
+        if (!effectId) return;
 
         const condition = EnhancedConditions.lookupEntryMapping(effectId);
 
@@ -356,7 +355,8 @@ export class EnhancedConditions {
 
         const outputSetting = condition.options.outputChat ?? Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.outputChat);
         const outputType = type === "delete" ? "removed" : "added";
-
+        const actor = effect.parent;
+        
         if (outputSetting) EnhancedConditions.outputChatMessage(actor, condition, {type: outputType});
         
         switch (type) {
@@ -403,9 +403,11 @@ export class EnhancedConditions {
      */
     static async outputChatMessage(entity, entries, options={type: "active"}) {
         const isActorEntity = entity instanceof Actor;
-        const isTokenEntity = entity instanceof Token;
+        const isTokenEntity = entity instanceof Token || entity instanceof TokenDocument;
         // Turn a single condition mapping entry into an array
         entries = entries instanceof Array ? entries : [entries];
+
+        if (!entity || !entries.length) return;
 
         const type = {};
 
@@ -427,11 +429,13 @@ export class EnhancedConditions {
         const chatUser = game.userId;
         //const token = token || this.currentToken;
         const chatType = CONST.CHAT_MESSAGE_TYPES.OTHER;
-        
-        const speaker = isActorEntity ? ChatMessage.getSpeaker({actor: entity}) : ChatMessage.getSpeaker({token: entity});
+        let speaker;
 
-        if (entries.length === 0) {
-            return;
+        if (isActorEntity) {
+            speaker = ChatMessage.getSpeaker({actor: entity});
+        } else {
+            const token = canvas.tokens.get(entity.id);
+            speaker = token ? ChatMessage.getSpeaker({token}) : ChatMessage.getSpeaker({actor: entity.actor});
         }
 
         // iterate over the entries and mark any with references for use in the template
@@ -446,7 +450,7 @@ export class EnhancedConditions {
             entityId: entity.id,
             alias: speaker.alias,
             conditions: entries,
-            isOwner: entity.owner || game.user.isGM
+            isOwner: entity.isOwner || game.user.isGM
         };
 
         const content = await renderTemplate(BUTLER.DEFAULT_CONFIG.enhancedConditions.templates.chatOutput, templateData);
@@ -479,20 +483,20 @@ export class EnhancedConditions {
 
         entities = entities instanceof Array ? entities : [entities];
 
-        const tokens = entities.flatMap(e => e instanceof Token ? e : e instanceof Actor ? e.getActiveTokens() : null);
+        const tokens = entities.flatMap(e => (e instanceof Token || e instanceof TokenDocument) ? e : e instanceof Actor ? e.getActiveTokens() : null);
 
         const updates = [];
 
         // loop through tokens, and if there's matching combatants, add them to the update
         for (const token of tokens) {
             
-            const combatants = combat ? game.combat?.combatants.filter(c => c.tokenId === token.id && c.defeated != markDefeated) : [];
+            const combatants = combat ? combat.combatants?.contents?.filter(c => c.data.tokenId === token.id && c.data.defeated != markDefeated) : [];
 
             if (!combatants.length) return;
 
             const update = combatants.map(c => {
                 return {
-                    _id: c._id,
+                    _id: c.id,
                     defeated: markDefeated
                 }
             });
@@ -503,7 +507,7 @@ export class EnhancedConditions {
         if (!updates.length) return;
 
         // update all combatants at once
-        combat.updateEmbeddedEntity("Combatant", updates.length > 1 ? update : updates.shift());
+        combat.updateEmbeddedDocuments("Combatant", updates.length > 1 ? update : updates.shift());
     }
 
     /**
@@ -956,7 +960,7 @@ export class EnhancedConditions {
         }
 
         for (let entity of entities) {
-            const actor = entity instanceof Actor ? entity : entity instanceof Token ? entity.actor : null;
+            const actor = entity instanceof Actor ? entity : entity instanceof Token || entity instanceof TokenDocument ? entity.actor : null;
             
             if (!actor) continue;
 
@@ -993,7 +997,7 @@ export class EnhancedConditions {
                     // Scenario 2: if duplicates are allowed, and existing conditions should be replaced, add any existing conditions to update
                     if (replaceExisting) {
                         for (const matchedCondition of matchedConditionEffects) {
-                            updateEffects.push({_id: matchedCondition.data._id, ...effect});
+                            updateEffects.push({id: matchedCondition.data.id, ...effect});
                         }
                     }
                     
@@ -1012,8 +1016,8 @@ export class EnhancedConditions {
             const createData = hasDuplicates ? newEffects : effects;
             const updateData = updateEffects;
 
-            if (createData.length) await actor.createEmbeddedEntity("ActiveEffect", createData);
-            if (updateData.length) await actor.updateEmbeddedEntity("ActiveEffect", updateData);
+            if (createData.length) await actor.createEmbeddedDocuments("ActiveEffect", createData);
+            if (updateData.length) await actor.updateEmbeddedDocuments("ActiveEffect", updateData);
         }
         
     }
@@ -1077,9 +1081,9 @@ export class EnhancedConditions {
         const results = [];
 
         for (let entity of entities) {
-            const actor = entity instanceof Actor ? entity : entity instanceof Token ? entity.actor : null;
+            const actor = entity instanceof Actor ? entity : (entity instanceof Token || entity instanceof TokenDocument) ? entity.actor : null;
 
-            const effects = actor.effects.entries;
+            const effects = actor.effects.contents;
 
             if (!effects) continue;
 
@@ -1139,8 +1143,8 @@ export class EnhancedConditions {
         let results = new Collection();
 
         for (const entity of entities) {
-            const actor = entity instanceof Actor ? entity : entity instanceof Token ? entity.actor : null;
-            const activeEffects = actor.effects.entries;
+            const actor = entity instanceof Actor ? entity : (entity instanceof Token || entity instanceof TokenDocument) ? entity.actor : null;
+            const activeEffects = actor.effects.contents;
 
             if (!activeEffects.length) continue;
             
@@ -1204,11 +1208,11 @@ export class EnhancedConditions {
         conditions = conditions instanceof Array ? conditions : [conditions];
 
         for (let entity of entities) {
-            const actor = entity instanceof Actor ? entity : entity instanceof Token ? entity.actor : null;
+            const actor = entity instanceof Actor ? entity : (entity instanceof Token || entity instanceof TokenDocument) ? entity.actor : null;
 
             if (!actor.effects.size) continue;
 
-            const conditionEffect = actor.effects.entries.some(ae => {
+            const conditionEffect = actor.effects.contents.some(ae => {
                 return conditions.some(e => e?.flags[BUTLER.NAME][BUTLER.FLAGS.enhancedConditions.conditionId] === ae.getFlag(BUTLER.NAME, BUTLER.FLAGS.enhancedConditions.conditionId));
             });
 
@@ -1269,8 +1273,8 @@ export class EnhancedConditions {
         if (entities && !(entities instanceof Array)) entities = [entities];
 
         for (let entity of entities) {
-            const actor = entity instanceof Actor ? entity : entity instanceof Token ? entity.actor : null;
-            const activeEffects = actor.effects.entries.filter(e => effects.map(e => e.flags[BUTLER.NAME].conditionId).includes(e.getFlag(BUTLER.NAME, BUTLER.FLAGS.enhancedConditions.conditionId)));
+            const actor = entity instanceof Actor ? entity : (entity instanceof Token || entity instanceof TokenDocument) ? entity.actor : null;
+            const activeEffects = actor.effects.contents.filter(e => effects.map(e => e.flags[BUTLER.NAME].conditionId).includes(e.getFlag(BUTLER.NAME, BUTLER.FLAGS.enhancedConditions.conditionId)));
 
             if (!activeEffects || (activeEffects && !activeEffects.length)) {
                 if (warn) ui.notifications.warn(`${conditionName} ${game.i18n.localize("ENHANCED_CONDITIONS.RemoveCondition.Failed.NotActive")}`);
@@ -1311,7 +1315,7 @@ export class EnhancedConditions {
         entities = entities instanceof Array ? entities : [entities];
 
         for (let entity of entities) {
-            const actor = entity instanceof Actor ? entity : entity instanceof Token ? entity.actor : null;
+            const actor = entity instanceof Actor ? entity : (entity instanceof Token || entity instanceof TokenDocument) ? entity.actor : null;
 
             let actorConditionEffects = EnhancedConditions.getConditionEffects(actor, {warn: false});
 

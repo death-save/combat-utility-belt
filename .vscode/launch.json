@@ -8,7 +8,7 @@
             "type": "chrome",
             "request": "launch",
             "name": "Launch Chrome",
-            "url": "http://192.168.1.69:59999",
+            "url": "http://localhost:59998",
             "pathMapping": {
                 "/modules/combat-utility-belt": "${workspaceFolder}"
             }

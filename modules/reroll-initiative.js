@@ -3,7 +3,6 @@ import { Sidekick } from "./sidekick.js";
 
 /**
  * Rerolls initiative for all combatants
- * @todo refactor to preUpdate hook
  */
 export class RerollInitiative {
 
@@ -13,7 +12,7 @@ export class RerollInitiative {
      * @param {*} update 
      * @param {*} options 
      */
-    static _onPreUpdateCombat(combat, update, options) {
+    static _onPreUpdateCombat(combat, update, options, userId) {
         const reroll = Sidekick.getSetting(SETTING_KEYS.rerollInitiative.enable);
 
         // Return early if we are NOT a GM OR we are not the player that triggered the update AND that player IS a GM
@@ -52,8 +51,8 @@ export class RerollInitiative {
         if (!shouldReroll || game.userId != rerollUserId) return;
 
         const combatantIds = rerollTemp ? 
-            combat.combatants.map(c => c._id) : 
-            combat.combatants.filter(c => !hasProperty(c, `flags.${NAME}.${FLAGS.temporaryCombatants.temporaryCombatant}`)).map(c => c._id);
+            combat.combatants.map(c => c.id) : 
+            combat.combatants.filter(c => !hasProperty(c, `flags.${NAME}.${FLAGS.temporaryCombatants.temporaryCombatant}`)).map(c => c.id);
 
         await combat.rollInitiative(combatantIds);
         await combat.update({turn: 0});

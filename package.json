@@ -1,10 +1,9 @@
 {
   "name": "combat-utility-belt",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "Combat-focused module for Foundry vtt",
   "main": "combat-utility-belt.js",
-  "dependencies": {
-  },
+  "dependencies": {},
   "devDependencies": {
     "gulp": "^4.0.2",
     "@pixi/jsdoc-template": "^2.6.0",

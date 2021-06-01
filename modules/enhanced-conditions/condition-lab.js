@@ -95,7 +95,7 @@ export class ConditionLab extends FormApplication {
             const index = await c.getIndex();
             const entries = index.map(e => {
                 return {
-                    id: `@Compendium[${c.collection}.${e._id}]`,
+                    id: `@Compendium[${c.collection}.${e.id}]`,
                     collection: c.collection,
                     name: e.name
                 }
@@ -107,7 +107,7 @@ export class ConditionLab extends FormApplication {
             const index = await c.getIndex();
             const entries = index.map(e => {
                 return {
-                    id: `@Compendium[${c.collection}.${e._id}]`,
+                    id: `@Compendium[${c.collection}.${e.id}]`,
                     collection: c.collection,
                     name: e.name
                 }
