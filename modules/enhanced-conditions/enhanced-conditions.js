@@ -407,6 +407,8 @@ export class EnhancedConditions {
         // Turn a single condition mapping entry into an array
         entries = entries instanceof Array ? entries : [entries];
 
+        if (!entity || !entries.length) return;
+
         const type = {};
 
         switch (options.type) {
