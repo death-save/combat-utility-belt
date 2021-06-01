@@ -339,16 +339,15 @@ export class EnhancedConditions {
     /* -------------------------------------------- */
 
     /**
-     * 
-     * @param {*} actor  the entity
-     * @param {*} update  the update data
+     * Process the addition/removal of an Active Effect
+     * @param {ActiveEffect} effect  the effect
      * @param {String} type  the type of change to process
      */
-    static _processActiveEffectChange(actor, changeData, type) {
-
-        if (!hasProperty(changeData, `flags.${BUTLER.NAME}.${BUTLER.FLAGS.enhancedConditions.conditionId}`)) return;
+    static _processActiveEffectChange(effect, type="create") {
+        if (!(effect instanceof ActiveEffect)) return;
         
-        const effectId = changeData.flags[BUTLER.NAME][BUTLER.FLAGS.enhancedConditions.conditionId];
+        const effectId = effect.getFlag(`${BUTLER.NAME}`, `${BUTLER.FLAGS.enhancedConditions.conditionId}`);
+        if (!effectId) return;
 
         const condition = EnhancedConditions.lookupEntryMapping(effectId);
 
@@ -356,7 +355,8 @@ export class EnhancedConditions {
 
         const outputSetting = condition.options.outputChat ?? Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.outputChat);
         const outputType = type === "delete" ? "removed" : "added";
-
+        const actor = effect.parent;
+        
         if (outputSetting) EnhancedConditions.outputChatMessage(actor, condition, {type: outputType});
         
         switch (type) {
