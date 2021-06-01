@@ -45,9 +45,34 @@ export class GiveXP {
      */
     static async _giveXP(combat) {
         const xpModifier = Sidekick.getSetting(SETTING_KEYS.giveXP.modifier);
-        const hostiles = combat.turns.filter(turn => turn.defeated && turn.token.disposition === -1);
-        const friendlies = combat.turns.filter(turn => !turn.defeated && turn.token.disposition === 1);
-        const defaultSelectedFriendlies = friendlies.map(turn => !turn.actor.getFlag(NAME, FLAGS.giveXP.deselectByDefault));
+        const hostiles = [];
+        const friendlies = [];
+        const defaultSelectedFriendlies = [];
+
+        for (const turn of combat.turns) {
+            const turnData = {
+                actor: turn.actor,
+                token: turn.token,
+                name: turn.name,
+                img: turn.img
+            };
+
+            switch (turn.token.data.disposition) {
+                case -1:
+                    hostiles.push(turnData);
+                    continue;
+                
+                case 1:
+                    friendlies.push(turnData);
+                    const deselectByDefault = turn.actor.getFlag(NAME, FLAGS.giveXP.deselectByDefault);
+
+                    if (!deselectByDefault) defaultSelectedFriendlies.push(turnData);
+                    continue;
+
+                default:
+                    continue;
+            }
+        }
 
         const combatData = { combat, xpModifier, hostiles, friendlies, defaultSelectedFriendlies };
         const content = await renderTemplate(`${BUTLERPATH}/templates/give-xp-dialog.hbs`, combatData);

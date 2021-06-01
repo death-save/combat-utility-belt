@@ -1,7 +1,7 @@
 {{#*inline "tokenListItem"}}
-<label data-token-id="{{this.token._id}}" data-actor-name="{{this.actor.name}}" data-xp-amount="{{this.actor.data.data.details.xp.value}}">
-    <input type="checkbox" name="{{this.token._id}}" {{#if isChecked}}checked="checked"{{/if}}>
-    <div class="give-xp--actor-icon" style="background-image: url({{this.token.img}})"></div>
+<label data-token-id="{{this.token.id}}" data-actor-name="{{this.actor.name}}" data-xp-amount="{{this.actor.data.data.details.xp.value}}">
+    <input type="checkbox" name="{{this.token.id}}" {{#if isChecked}}checked="checked"{{/if}}>
+    <div class="give-xp--actor-icon" style="background-image: url({{this.img}})"></div>
     <span class="give-xp--actor-xp">+0 XP</span>
 </label>
 {{/inline}}
