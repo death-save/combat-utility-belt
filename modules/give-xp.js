@@ -24,21 +24,16 @@ export class GiveXP {
 
         app.setPosition(mergeObject(app.position, {height: app.position.height + 30}));
 
-        // Disable encounter delete - this happens *before* the dialog is closed
-        let _combat = null;
-        Hooks.once("preDeleteCombat", (combat, update, options, userId) => {
-            _combat = combat;
-            return false;
-        });
-
         yesButton.on("click", event => {
             const xpCheckbox = xpCheckboxGroup.find("input");
 
             // Start custom flow if giving XP, otherwise just delete combat
             if (xpCheckbox.is(":checked")) {
-                this._giveXP(_combat);
-            } else {
-                _combat.delete();
+                Hooks.once("preDeleteCombat", (combat, options, userId) => {
+                    GiveXP._giveXP(combat);
+
+                    return false;
+                });
             }
         });
 
