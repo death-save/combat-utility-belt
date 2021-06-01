@@ -114,23 +114,18 @@ export class HideNPCNames {
      * @param {*} html 
      * @param {*} data 
      */
-    static _onRenderChatMessage(message, html, data) {
+    static async _onRenderChatMessage(message, html, data) {
         const enable = Sidekick.getSetting(SETTING_KEYS.hideNames.enable);
         const name = data?.alias ?? null;
+        const speaker = message.data.speaker;
 
-        if (!enable || !name) return;
+        if (!enable || !name || !speaker) return;
 
-        const messageActorId = message.data.speaker.actor;
-        const messageSceneId = message.data.speaker.scene;
-        const messageTokenId = message.data.speaker.token;
-        const scene = messageSceneId ? game.scenes.get(messageSceneId) : null;
-        const tokenData = scene ? scene.data.tokens.find(t => t._id === messageTokenId) : null;
-        const token = canvas?.tokens.get(messageTokenId) ?? (tokenData ? new Token(tokenData, scene) : null);
-        const actor = token ? token.actor : messageActorId ? game.actors.get(messageActorId) : null;
+        const actor = ChatMessage.getSpeakerActor(speaker);
 
         if (!actor) return;
         
-        const speakerIsNPC = actor && !actor.hasPlayerOwner;
+        const speakerIsNPC = !actor.hasPlayerOwner;
 
         if (!speakerIsNPC) return;
 
@@ -141,7 +136,7 @@ export class HideNPCNames {
         const replacementName = HideNPCNames.getReplacementName(actor);
 
         // If we are the GM or the Actor's owner, simply apply the icon to the name and return
-        if (game.user.isGM || actor.owner) {
+        if (game.user.isGM || actor.isOwner) {
             const senderName = html.find("header").children().first();
             const icon = `<span> <i class="fas fa-mask" title="${replacementName}"></i></span>`;
             return senderName.append(icon);
