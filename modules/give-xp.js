@@ -139,7 +139,7 @@ export class GiveXP {
             
             // Count players receiving, and work out per-player amount
             const numDivisors = html.find("#friendly-actor-list input:checked").length;
-            const xpPerDivisor = numDivisors !== 0 ? totalXp / numDivisors : 0;
+            const xpPerDivisor = numDivisors !== 0 ? Math.floor(totalXp / numDivisors) : 0;
             
             // Update text for each friendly token icon
             html.find("#friendly-actor-list label").each((_, el) => {
