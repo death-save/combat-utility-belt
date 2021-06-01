@@ -56,19 +56,12 @@ export class HideNPCNames {
         if (!enable) return;
 
         // find the NPC combatants
-        const combatants = app?.combat?.combatants;
+        const combatants = app?.viewed?.combatants?.contents;
 
         if (!combatants || !combatants?.length) return;
 
-        const combatantTokens = combatants.map(c => c.token);
-        const tokens = combatantTokens.map(c => {
-            const viewedSceneId = game.user.viewedScene ?? game.scenes.active.id;
-            const scene = game.scenes.get(viewedSceneId);
-            const tokenData = scene.data.tokens.find(t => t._id === c._id);
-            const token = canvas?.tokens?.placeables?.find(t => t.id === c._id) ?? tokenData ? new Token(tokenData, scene) : null;
-            // Combatants can only come from the viewed scene
-            return token;
-        });
+        const tokens = combatants.map(c => c.token);
+        
         const npcs = tokens.filter(t => {
             const actor = t.actor || game.actors.entities.find(a => a.id === t.actorId);
             
@@ -85,34 +78,34 @@ export class HideNPCNames {
                 id: npc.id ?? npc.id,
                 name: npc.name,
                 replacement: replacementName,
-                isOwner: npc.actor.owner
+                isOwner: npc.actor.isOwner
             }
         });
 
         if (!hideNPCs.length) return;
-        
+
+        const hideNPCIds = hideNPCs.map(n => n.id);
+
         // for each replacement, find the matching element and replace
         const combatantListElement = html.find("li");
-        const hideNPCElements = combatantListElement.filter((i, el) => {
-            const tokenId = el.dataset.tokenId;
-            const hideNPCIds = hideNPCs.map(n => n.id);
 
-            if (hideNPCIds.includes(tokenId)) return true;
-        });
+        for (const el of combatantListElement) {
+            const combatantId = el.dataset.combatantId;
+            const combatant = game.combat.combatants.get(combatantId);
+            const npcToken = hideNPCs.find(n => n.id === combatant?.token?.id);
+            
+            if (!npcToken) continue;
 
-        if (!hideNPCElements.length) return;
-
-        for (const el of hideNPCElements) {
-            const hideNPC = hideNPCs.find(n => n.id === el.dataset.tokenId);
-
-            if (!game.user.isGM && !hideNPC.isOwner) {
-                $(el).find(".token-name").text(hideNPC.replacement);
-                $(el).find(".token-image").attr("title", hideNPC.replacement);
+            if (game.user.isGM || npcToken.isOwner) {
+                const icon = `<span> <i class="fas fa-mask" title="${npcToken.replacement}"></i></span>`;
+                $(el).find(".token-name").children().first().append(icon);
+                continue;
             }
 
-            const icon = `<span> <i class="fas fa-mask" title="${hideNPC.replacement}"></i></span>`;
-            $(el).find(".token-name").children().first().append(icon);
+            $(el).find(".token-name").text(npcToken.replacement);
+            $(el).find(".token-image").attr("title", npcToken.replacement);            
         }
+        
     }
 
     /**
