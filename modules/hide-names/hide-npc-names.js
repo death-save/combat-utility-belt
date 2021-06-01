@@ -192,19 +192,16 @@ export class HideNPCNames {
      */
     static _onVinoPrepareChatDisplayData(chatDisplayData) {
         const enable = Sidekick.getSetting(SETTING_KEYS.hideNames.enable);
+        const name = chatDisplayData?.name;
+        const speaker = chatDisplayData.message?.data?.speaker;
 
-        if (!enable) {
-            return;
-        }
+        if (!enable || !chatDisplayData || !name || !speaker) return;
 
-        const messageActorId = chatDisplayData.message.data.speaker.actor;
-        const messageSceneId = chatDisplayData.message.data.speaker.scene;
-        const messageTokenId = chatDisplayData.message.data.speaker.token;
-        const scene = messageSceneId ? game.scenes.get(messageSceneId) : null;
-        const tokenData = scene ? scene.data.tokens.find(t => t.id === messageTokenId) : null;
-        const token = canvas.tokens.get(messageTokenId) ?? (tokenData ? new Token(tokenData, scene) : null);
-        const actor = token ? token.actor : game.actors.get(messageActorId);
-        const speakerIsNPC = actor && !actor.hasPlayerOwner;
+        const actor = ChatMessage.getSpeakerActor(speaker);
+
+        if (!actor) return;
+        
+        const speakerIsNPC = !actor.hasPlayerOwner;
 
         if (!speakerIsNPC) return;
 
@@ -214,7 +211,7 @@ export class HideNPCNames {
 
         const replacementName = HideNPCNames.getReplacementName(actor);
         
-        if (!game.user.isGM || !actor.owner) {
+        if (!game.user.isGM || !actor.isOwner) {
            chatDisplayData.name = replacementName;
         }
     }
