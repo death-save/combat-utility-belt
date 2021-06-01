@@ -1087,7 +1087,7 @@ export class EnhancedConditions {
         for (let entity of entities) {
             const actor = entity instanceof Actor ? entity : (entity instanceof Token || entity instanceof TokenDocument) ? entity.actor : null;
 
-            const effects = actor.effects.entries;
+            const effects = actor.effects.contents;
 
             if (!effects) continue;
 
@@ -1216,7 +1216,7 @@ export class EnhancedConditions {
 
             if (!actor.effects.size) continue;
 
-            const conditionEffect = actor.effects.entries.some(ae => {
+            const conditionEffect = actor.effects.contents.some(ae => {
                 return conditions.some(e => e?.flags[BUTLER.NAME][BUTLER.FLAGS.enhancedConditions.conditionId] === ae.getFlag(BUTLER.NAME, BUTLER.FLAGS.enhancedConditions.conditionId));
             });
 
