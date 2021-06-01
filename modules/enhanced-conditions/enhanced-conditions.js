@@ -483,20 +483,20 @@ export class EnhancedConditions {
 
         entities = entities instanceof Array ? entities : [entities];
 
-        const tokens = entities.flatMap(e => e instanceof Token ? e : e instanceof Actor ? e.getActiveTokens() : null);
+        const tokens = entities.flatMap(e => (e instanceof Token || e instanceof TokenDocument) ? e : e instanceof Actor ? e.getActiveTokens() : null);
 
         const updates = [];
 
         // loop through tokens, and if there's matching combatants, add them to the update
         for (const token of tokens) {
             
-            const combatants = combat ? game.combat?.combatants.filter(c => c.tokenId === token.id && c.defeated != markDefeated) : [];
+            const combatants = combat ? combat.combatants?.contents?.filter(c => c.data.tokenId === token.id && c.data.defeated != markDefeated) : [];
 
             if (!combatants.length) return;
 
             const update = combatants.map(c => {
                 return {
-                    id: c.id,
+                    _id: c.id,
                     defeated: markDefeated
                 }
             });
