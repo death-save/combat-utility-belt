@@ -198,7 +198,7 @@ export class GiveXP {
         // E.G. if a summon/companion is deselected, learn to not select it by default next time
         for (const friendly of friendlies) {
             const hasFlag = friendly.actor.getFlag(NAME, FLAGS.giveXP.deselectByDefault);
-            const isSelected = selectedFriendlyTokens.find(selected => selected.actor._id === friendly.actor._id);
+            const isSelected = selectedFriendlyTokens.find(selected => selected.actor.id === friendly.actor.id);
 
             if (!hasFlag && !isSelected) {
                 await friendly.actor.setFlag(NAME, FLAGS.giveXP.deselectByDefault, true);
