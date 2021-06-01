@@ -454,7 +454,7 @@ export class EnhancedConditions {
             entityId: entity.id,
             alias: speaker.alias,
             conditions: entries,
-            isOwner: entity.owner || game.user.isGM
+            isOwner: entity.isOwner || game.user.isGM
         };
 
         const content = await renderTemplate(BUTLER.DEFAULT_CONFIG.enhancedConditions.templates.chatOutput, templateData);

@@ -273,7 +273,7 @@ export class HideNPCNames {
             const actor = token.actor;
 
             // @todo append mask icon
-            if (game.user.isGM || actor.owner) continue;
+            if (game.user.isGM || actor.isOwner) continue;
 
             if (HideNPCNames.shouldReplaceName(actor)) {
                 const nameDiv = $card.find("div.name");
