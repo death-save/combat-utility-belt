@@ -429,11 +429,13 @@ export class EnhancedConditions {
         const chatUser = game.userId;
         //const token = token || this.currentToken;
         const chatType = CONST.CHAT_MESSAGE_TYPES.OTHER;
-        
-        const speaker = isActorEntity ? ChatMessage.getSpeaker({actor: entity}) : ChatMessage.getSpeaker({token: entity});
+        let speaker;
 
-        if (entries.length === 0) {
-            return;
+        if (isActorEntity) {
+            speaker = ChatMessage.getSpeaker({actor: entity});
+        } else {
+            const token = canvas.tokens.get(entity.id);
+            speaker = token ? ChatMessage.getSpeaker({token}) : ChatMessage.getSpeaker({actor: entity.actor});
         }
 
         // iterate over the entries and mark any with references for use in the template
