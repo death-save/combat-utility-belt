@@ -8,7 +8,16 @@
 3. Overlay Effects added to a token will trigger the matching non-Overlay Condition to output to chat. The reverse is also true.
 4. **PF2e users**: Enhanced Conditions `Output to Chat` setting will cause duplicate chat messages due to similar function built into the system.
 5. Chat log may not re-render when Hide Names settings are changed. This may cause the old name to still show in the log for players. Advise players to reload Foundry if you change these settings mid-session.
-6. Due to a possible bug in core/dnd5e Hide Names may show the Actor's prototype token disposition replacement name instead of the token disposition replacement when players load the game. Messages created during a session are not affected.
+
+## [1.5.0] - 2021-05-31
+> Note: due to the large-scale changes introduced in [Foundry VTT v0.8.6](https://foundryvtt.com/releases/0.8.6) you may experience some 🐛bugs with this release. Please install the [Bug Reporter](https://foundryvtt.com/packages/bug-reporter) module to report issues, or file them on Github directly*
+- Added compatibility for Foundry VTT v0.8.6
+- **Award XP** now features a swish 🌟 new interface for selecting exactly which player and non-player characters are awarded/grant XP. Thanks to @wibble199 for this awesome addition! 🎉
+- Improved the robustness 💪 of some of the logic throughout the module
+- **CUBputer** gadget selector now extends to the title of the gadget, making it more intuitive for new users
+- Slightly improved the alignment of condition rows in **Enhanced Conditions** chat output. Also a border appeared around them somehow...? Let's just go with it!
+- 한국어 (Korean) translation updated! Thanks @drdwing! 🎉
+- 中文 (Chinese) translation updated! Thanks @fuyuennju 🎉
 
 ## [1.4.0] - 2021-02-07
 ### Added
