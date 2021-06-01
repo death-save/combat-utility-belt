@@ -224,10 +224,10 @@ export class HideNPCNames {
      */
     static _onRenderImagePopout(app, html, data) {
         const enable = Sidekick.getSetting(SETTING_KEYS.hideNames.enable);
+        const uuid = app.options?.uuid;
+        const actor = uuid.startsWith("Actor") ? game.actors.get(uuid.replace("Actor.", "")) : null;
 
-        if (app._related.entity !== "Actor" || !enable) return;
-
-        const actor = app._related;
+        if (!actor || !enable) return;
 
         const shouldReplace = HideNPCNames.shouldReplaceName(actor);
 
@@ -239,19 +239,21 @@ export class HideNPCNames {
 
         if (windowTitle.length === 0) return;
 
-        if (!game.user.isGM || !actor.owner) {
+        if (!game.user.isGM || !actor.isOwner) {
             windowTitle.text(replacement);
 
-            const img = html.find("img");
+            const imgDiv = html.find("div.lightbox-image");
 
-            if (!img.length) return;
+            if (!imgDiv.length) return;
 
-            img.attr("title", replacement);
+            imgDiv.attr("title", replacement);
+        } else {
+            const icon = `<span> <i class="fas fa-mask" title="${replacement}"></i></span>`;
+
+            windowTitle.append(icon);
         }
 
-        const icon = `<span> <i class="fas fa-mask" title="${replacement}"></i></span>`;
-
-        windowTitle.append(icon);
+        
     }
 
     /**
