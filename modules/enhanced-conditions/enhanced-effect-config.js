@@ -4,12 +4,12 @@ import { EnhancedConditions } from "./enhanced-conditions.js";
 
 export default class EnhancedEffectConfig extends ActiveEffectConfig {
 
-
     /**
      * Get data for template rendering
      * @param {*} options 
      * @override
      */
+    /*
     getData(options) {
         const data = super.getData(options);
         const conditions = Sidekick.getSetting(SETTING_KEYS.enhancedConditions.map);
@@ -19,6 +19,7 @@ export default class EnhancedEffectConfig extends ActiveEffectConfig {
 
         return data;
     }
+    */
 
     /**
      * Override default update object behaviour

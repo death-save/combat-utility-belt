@@ -552,7 +552,7 @@ export class ConditionLab extends FormApplication {
      * Handle click Active Effect Config button
      * @param {*} event 
      */
-    _onClickActiveEffectConfig(event) {
+    async _onClickActiveEffectConfig(event) {
         const li = event.currentTarget.closest("li");
         //const row = li ? li.dataset.mappingRow : null;
         const conditionId = li ? li.dataset.conditionId : null;
@@ -565,13 +565,11 @@ export class ConditionLab extends FormApplication {
 
         if (!condition) return;
 
-        const effect = condition.activeEffect ?? EnhancedConditions.getActiveEffect(condition);
-        condition.data = effect;
-        condition.parent = {
-            entity: "Actor"
-        }
+        const conditionEffect = condition.activeEffect ?? EnhancedConditions.getActiveEffect(condition);        
+        const tempActor = await Actor.create({name: "CUB_AETemp", type: game.system.entityTypes.Actor[0]}, {temporary: true});
+        const effect = await ActiveEffect.create(conditionEffect, {parent: tempActor, temporary: true});
 
-        new EnhancedEffectConfig(condition).render(true);
+        new EnhancedEffectConfig(effect).render(true);
     }
     
     /**
