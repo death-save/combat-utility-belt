@@ -60,18 +60,20 @@ export class Triggler {
      * @param {*} entryPoint2
      */
     static async _processUpdate(entity, update, entryPoint1, entryPoint2) {
+        if (!entity || !update) return;
+
         // if (entryPoint1 && !hasProperty(update, entryPoint1)) {
         //     return;
         // }
         
         const triggers = Sidekick.getSetting(SETTING_KEYS.triggler.triggers);
-        const entityType = entity instanceof Actor ? "Actor" : entity instanceof Token || entity instanceof TokenDocument ? "Token" : null;
+        const entityType = entity instanceof Actor ? "Actor" : (entity instanceof Token || entity instanceof TokenDocument) ? "Token" : null;
 
         if (!entityType) {
             return;
         }
 
-        const hasPlayerOwner = !!(entityType === "Actor" ? entity.hasPlayerOwner : entityType === "Token" ? entity.actor.hasPlayerOwner : null);
+        const hasPlayerOwner = !!(entity.hasPlayerOwner ?? entity.document?.hasPlayerOwner);
 
         /**
          * process each trigger in turn, checking for a match in the update payload,
@@ -85,11 +87,7 @@ export class Triggler {
             const npcOnly = trigger.npcOnly;
             const notZero = trigger.notZero;
 
-            if (pcOnly && !hasPlayerOwner) {
-                continue;
-            }
-
-            if (npcOnly && hasPlayerOwner) {
+            if ((pcOnly && !hasPlayerOwner) || (npcOnly && hasPlayerOwner)) {
                 continue;
             }
 
