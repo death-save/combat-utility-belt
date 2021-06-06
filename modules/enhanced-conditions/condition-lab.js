@@ -62,7 +62,8 @@ export class ConditionLab extends FormApplication {
         });
 
         const isDefault = mapType === Sidekick.getKeyByValue(BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes, BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes.default);
-        
+        const outputChatSetting = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.outputChat);
+
         // Transform data for each Condition Mapping entry to ensure it will display correctly
         conditionMap.forEach((entry, index, map) => {
             // Check if the row exists in the saved map
@@ -87,13 +88,15 @@ export class ConditionLab extends FormApplication {
         });
 
         const unsavedMap = this?.initialMap?.length != conditionMap?.length || (conditionMap?.length ? conditionMap?.some(c => c.isNew || c.isChanged) : false);
-
+        const disableChatOutput = isDefault || !outputChatSetting;
+        
         const data = {
             mapTypeChoices,
             mapType,
             conditionMap,
             triggers,
             isDefault,
+            disableChatOutput,
             unsavedMap
         }
         

@@ -91,7 +91,7 @@
                         <label>{{localize "ENHANCED_CONDITIONS.Lab.Options.RemoveOthers.Label"}}</label>
                     </div>
                     <div class="formgroup" title="{{localize "ENHANCED_CONDITIONS.Lab.Options.OutputChat.Title"}}">
-                        <input type="checkbox" name="options-output-chat-{{@index}}" {{checked condition.options.outputChat}} {{#if ../isDefault}}disabled{{/if}}>
+                        <input type="checkbox" name="options-output-chat-{{@index}}" {{checked condition.options.outputChat}} {{#if ../disableChatOutput}}disabled{{/if}}>
                         <label>{{localize "ENHANCED_CONDITIONS.Lab.Options.OutputChat.Label"}}</label>
                     </div>
                     <div class="formgroup" title="{{localize "ENHANCED_CONDITIONS.Lab.Options.MarkDefeated.Title"}}">
