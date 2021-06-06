@@ -116,6 +116,11 @@ li.condition-lab.row {
     margin: 0px 0px 3px 0px;
 }
 
+.condition-lab .reference div.enriched-link {
+  flex: 0 1 0%;
+  margin: 3px;
+}
+
 .condition-lab .reference-type {
     flex: 0 0 115px;
     margin: 0px 3px 0px 0px;

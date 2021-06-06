@@ -33,8 +33,7 @@ export class ConditionLab extends FormApplication {
             resizable: true,
             closeOnSubmit: false,
             scrollY: ["ol.condition-lab"],
-            // Use default FVTT drag drop implementation here
-            dragDrop: [{ dragSelector: ".row",  dropSelector: ".list"}]
+            dragDrop: [{dropSelector: "input[name^='reference-item']"}]
         });
     }
 
@@ -58,69 +57,12 @@ export class ConditionLab extends FormApplication {
         const mapType = this.mapType || Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.mapType) || "other";
         const system = this.system || game.system.id;
         let conditionMap = this.map ? this.map : this.map = this.initialMap;
-        const referenceTypes = BUTLER.DEFAULT_CONFIG.enhancedConditions.referenceTypes;
-        const journalEntries = game.journal.entities.sort((a, b) => a.sort - b.sort).map(e => {
-                return {
-                    id: `@JournalEntry[${e.id}]`, 
-                    name: e.name
-                }
-        });
-        const itemEntries = game.items.entities.sort((a, b) => a.sort - b.sort).map(e => {
-            return {
-                id: `@Item[${e.id}]`,
-                name: e.name
-            }
-        });
-        const itemCompendia = game.packs.filter(p => p.entity === "Item");
-        const journalCompendia = game.packs.filter(p => p.entity === "JournalEntry");
-
-        const itemCompendiaChoices = itemCompendia.map(p => {
-            return {
-                id: p.collection, 
-                name: p.metadata.label
-            }
-        });
-
-        const journalCompendiaChoices = journalCompendia.map(p => {
-            return {
-                id: p.collection,
-                name: p.metadata.label
-            }
-        });
-
-        const journalCompendiaEntries = [];
-        const itemCompendiaEntries = [];
-
-        for (let c of journalCompendia) {
-            const index = await c.getIndex();
-            const entries = index.map(e => {
-                return {
-                    id: `@Compendium[${c.collection}.${e.id}]`,
-                    collection: c.collection,
-                    name: e.name
-                }
-            });
-            journalCompendiaEntries.push(...entries);
-        }
-
-        for (let c of itemCompendia) {
-            const index = await c.getIndex();
-            const entries = index.map(e => {
-                return {
-                    id: `@Compendium[${c.collection}.${e.id}]`,
-                    collection: c.collection,
-                    name: e.name
-                }
-            })
-            itemCompendiaEntries.push(...entries);
-        }
-
         const triggers = Sidekick.getSetting(BUTLER.SETTING_KEYS.triggler.triggers).map(t => {
             return [t.id, t.text]
         });
 
         const isDefault = mapType === Sidekick.getKeyByValue(BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes, BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes.default);
-
+        
         // Transform data for each Condition Mapping entry to ensure it will display correctly
         conditionMap.forEach((entry, index, map) => {
             // Check if the row exists in the saved map
@@ -129,50 +71,14 @@ export class ConditionLab extends FormApplication {
 
             // Set the Output to Chat checkbox
             entry.options = entry.options ?? {};
-            entry.options.outputChat = entry?.options?.outputChat ?? Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.outputChat);
-
-            const referenceType = entry.referenceType || "journalEntry";
-            const collectionRegex = new RegExp(/\[(.*\..*)(?=\..*])/);
-            
-            const compendium = entry.compendium || null;
-
-            if (!compendium && (referenceType === "compendium.journalEntry" || referenceType === "compendium.item")) {
-                map[index].compendium = entry.referenceId.match(collectionRegex) ? entry.referenceId.match(collectionRegex)[0].substring(1) : null;
-            }
-            
-            map[index].referenceTypeIcon = BUTLER.DEFAULT_CONFIG.enhancedConditions.referenceTypes.find(r => r.id === referenceType).icon;
-            
-            switch (referenceType) {
-                case "journalEntry":
-                    map[index].isJournalReference = true;
-                    break;
-                
-                case "item":
-                    map[index].isItemReference = true;
-                    break;
-
-                case "compendium.journalEntry":
-                    map[index].isCompendiumReference = true;
-                    map[index].isJournalCompendium = true;
-                    map[index].compendiumEntries = journalCompendiaEntries.filter(e => e.collection === entry.compendium);
-                    break;
-
-                case "compendium.item":
-                    map[index].isCompendiumReference = true;
-                    map[index].isItemCompendium = true;
-                    map[index].compendiumEntries = itemCompendiaEntries.filter(e => e.collection === entry.compendium);
-                    break;
-
-                default:
-                    break;
-            }
+            entry.options.outputChat = entry?.options?.outputChat;
+            entry.enrichedReference = entry.referenceId ? TextEditor.enrichHTML(entry.referenceId) : "";
 
             // @todo #357 extract this into a function
             entry.isChanged = existingEntry && entry
                 ? (entry?.name != existingEntry?.name 
                     || entry?.icon != existingEntry?.icon 
                     || JSON.stringify(entry?.options) != JSON.stringify(existingEntry?.options)
-                    || entry?.referenceType != existingEntry?.referenceType
                     || entry?.referenceId != existingEntry?.referenceId
                     || entry?.applyTrigger != existingEntry?.applyTrigger
                     || entry?.removeTrigger != existingEntry?.removeTrigger
@@ -186,13 +92,6 @@ export class ConditionLab extends FormApplication {
             mapTypeChoices,
             mapType,
             conditionMap,
-            referenceTypes,
-            journalEntries,
-            itemEntries,
-            journalCompendiaChoices,
-            itemCompendiaChoices,
-            journalCompendiaEntries,
-            itemCompendiaEntries,
             triggers,
             isDefault,
             unsavedMap
@@ -215,9 +114,7 @@ export class ConditionLab extends FormApplication {
     _processFormData(formData) {
         let conditions = [];
         let icons = [];
-        let referenceTypes = [];
         let references = [];
-        let compendia = [];
         let applyTriggers = [];
         let removeTriggers = [];
         let optionsOverlay = [];
@@ -232,9 +129,7 @@ export class ConditionLab extends FormApplication {
         //need to tighten these up to check for the existence of digits after the word
         const conditionRegex = new RegExp("condition", "i");
         const iconRegex = new RegExp("icon", "i");
-        const referenceTypeRegex = new RegExp("reference-type", "i");
         const referenceRegex = new RegExp("reference", "i");
-        const compendiumRegex = new RegExp("compendium", "i");
         const applyTriggerRegex = new RegExp("apply-trigger", "i");
         const removeTriggerRegex = new RegExp("remove-trigger", "i");
         const optionsOverlayRegex = new RegExp("options-overlay", "i");
@@ -259,10 +154,6 @@ export class ConditionLab extends FormApplication {
                 conditions[row] = formData[e];
             } else if (e.match(iconRegex)) {
                 icons[row] = formData[e];
-            } else if (e.match(referenceTypeRegex)) {
-                referenceTypes[row] = formData[e];
-            } else if (e.match(compendiumRegex)) {
-                compendia[row] = formData[e];
             } else if (e.match(referenceRegex)) {
                 references[row] = formData[e]; 
             } else if (e.match(applyTriggerRegex)) {
@@ -292,8 +183,6 @@ export class ConditionLab extends FormApplication {
                 id,
                 name,
                 icon: icons[i],
-                referenceType: referenceTypes[i],
-                compendium: compendia[i],
                 referenceId: references[i],
                 applyTrigger: applyTriggers[i],
                 removeTrigger: removeTriggers[i],
@@ -462,10 +351,9 @@ export class ConditionLab extends FormApplication {
         const addRowAnchor = html.find("a[name='add-row']");
         const removeRowAnchor = html.find("a[class='remove-row']");
         const iconPath = html.find("input[class='icon-path']");
+        const referenceInput = html.find("input[name^='reference-item']");
         const restoreDefaultsButton = html.find("button[class='restore-defaults']");
         const resetFormButton = html.find("button[name='reset']");
-        const referenceTypeSelector = html.find("select[name^='reference-type']");
-        const compendiumSelector = html.find("select[name^='compendium']");
         const saveCloseButton = html.find("button[name='save-close']");
 
         mapTypeSelector.on("change", event => this._onChangeMapType(event));
@@ -473,26 +361,11 @@ export class ConditionLab extends FormApplication {
         triggerAnchor.on("click", event => this._onOpenTrigglerForm(event));            
         addRowAnchor.on("click", async event => this._onAddRow(event));
         removeRowAnchor.on("click", async event => this._onRemoveRow(event));
+        referenceInput.on("change", event => this._onChangeReferenceId(event));
         restoreDefaultsButton.on("click", async event => this._onRestoreDefaults(event));
         resetFormButton.on("click", event => this._onResetForm(event));
         saveCloseButton.on("click", event => this._onSaveClose(event));
-        referenceTypeSelector.on("change", event => this._onChangeReferenceType(event));
         iconPath.on("change", event => this._onChangeIconPath(event));
-        compendiumSelector.on("change", event => this._onChangeCompendium(event));
-
-        //Because of how DraggableList encompasses all elements within a condition, it effects being able to select text within a 
-        //input. In order prevent this from occuring, we need to turn the draggable attribute to false when focusing on the text based inputs
-        html.find(".condition-text-input").focus(() => {
-            html.find(".row").attr("draggable", false)
-        });
-
-        //Once the text input is no longer in focus, we set the element to be draggable again. 
-        html.find(".condition-text-input").blur(() => {
-            html.find(".row").attr("draggable", true)
-        });
-
-        // Init the DraggableList
-        new DraggableList(html[0].querySelector(".list"), ".row");
 
         super.activateListeners(html);     
     }
@@ -571,27 +444,26 @@ export class ConditionLab extends FormApplication {
 
         new EnhancedEffectConfig(effect).render(true);
     }
-    
-    /**
-     * Handle Reference type change
-     * @param {*} event 
-     */
-    _onChangeReferenceType(event) {
-        /*
-        const formData = this._captureForm();
-        this.map = this._processFormData(formData);
-        */
-        this.map = this._processFormData(this._getSubmitData());
-        this.render();
-    }
 
     /**
-     * Handle Compendium change
+     * Reference Link change handler
      * @param {*} event 
      */
-    _onChangeCompendium(event) {
-        this.map = this._processFormData(this._getSubmitData());
-        this.render();
+    _onChangeReferenceId(event) {
+        event.preventDefault();
+        
+        const input = event.currentTarget;
+
+        // Update the enriched link
+        const $linkDiv = $(input.nextElementSibling);
+        const $link = $linkDiv.first();   
+        const newLink = TextEditor.enrichHTML(input.value);
+
+        if (!$link.length) {
+            $linkDiv.append(newLink);
+        } else {
+            $linkDiv.html(newLink);
+        }
     }
 
     /**
@@ -639,7 +511,6 @@ export class ConditionLab extends FormApplication {
             name: `newCondition${newConditionIndex}`,
             icon: "icons/svg/d20-black.svg",
             referenceId: "",
-            referenceType: "journalEntry",
             trigger: ""
         });
         
@@ -760,31 +631,31 @@ export class ConditionLab extends FormApplication {
         
     }
 
-    _onDragStart(event) {
-        const sourceElement = event.currentTarget;
-        // save the index of the currently dragged element
-        this._draggedIndex = Array.from(sourceElement.parentNode.children).indexOf(sourceElement);
-    }
+    async _onDrop(event) {
+        event.preventDefault();
+	    const data = JSON.parse(event.dataTransfer.getData('text/plain'));
+	    if ( !data?.id ) return;
+        const targetInput = event.currentTarget;
 
-    _onDrop(event) {
-        const oldIndex = this._draggedIndex;
-        const draggedItem = game.cub.conditionLab.map[oldIndex];
-        const newMap = duplicate(game.cub.conditionLab.map);
-        // remove element from list first
-        newMap.splice(oldIndex, 1);
+	    // Case 1 - Document from Compendium Pack
+        if ( data.pack ) {
+            const pack = game.packs.get(data.pack);
+            if (!pack) return;
+            const entity = await pack.getDocument(data.id);
+            const link = `@Compendium[${data.pack}.${data.id}]{${entity.name}}`;
+            targetInput.value = link;
+            this._onChangeReferenceId(event);
+        }
 
-        const sourceElement = event.target;
-        let newIndex = Array.from(sourceElement.parentNode.children).indexOf(sourceElement); 
-        // If dragged from above, one element is missing in the sourcenode list, so reduce index by one
-        if (oldIndex < newIndex)
-            newIndex--;
-        newMap.splice(newIndex, 0, draggedItem);
-
-        // since rerender can be slow on e.g. firefox, put the node to the correct position already.
-        const origNode = Array.from(sourceElement.parentNode.children)[oldIndex];
-        sourceElement.parentNode.insertBefore(origNode, sourceElement);
-
-        game.cub.conditionLab.map = newMap;
-        game.cub.conditionLab.render();
+        // Case 2 - Document from World
+        else if ( data.type ) {
+            const config = CONFIG[data.type];
+            if ( !config ) return false;
+            const entity = config.collection.instance.get(data.id);
+            if ( !entity ) return false;
+            const link = `@${data.type}[${entity._id}]{${entity.name}}`;
+            targetInput.value = link;
+            this._onChangeReferenceId(event);
+        }
     }
 }
