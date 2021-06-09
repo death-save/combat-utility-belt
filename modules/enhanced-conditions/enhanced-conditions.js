@@ -439,6 +439,10 @@ export class EnhancedConditions {
         // iterate over the entries and mark any with references for use in the template
         entries.forEach((v, i, a) => {
             if (v.referenceId) {
+                if (!v.referenceId.match(/\{.+\}/)) {
+                    v.referenceId += `{${v.name}}`;
+                }
+
                 a[i].hasReference = true;
             }
         });
