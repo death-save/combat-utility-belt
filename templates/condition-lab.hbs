@@ -15,13 +15,13 @@
         {{#each conditionMap as |condition key|}}
         <li class="row flexrow" data-mapping-row="{{@index}}" data-condition-id="{{condition.id}}">
             <!--column 1-->
-            <div class="flexcol grabber">
-                <span>
-                    <i class="fas fa-bars"></i>
-                </span>
+            <div class="flexcol change-order">
+                {{#unless (eq key 0)}}<a class="move-up"><i class="fas fa-chevron-up"></i></a>{{/unless}}
+                {{#unless (eq key conditionMap.length)}}<a class="move-down"><i class="fas fa-chevron-down"></i></a>{{/unless}}
             </div>
             <!--column 2-->
             <div class="flexcol content1">
+                
                 <!--row 1 icon + text-->
                 <div class="flexrow">
                     <!--row 1 col 1 icon-->

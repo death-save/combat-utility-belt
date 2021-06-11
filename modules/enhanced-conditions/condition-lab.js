@@ -353,6 +353,7 @@ export class ConditionLab extends FormApplication {
         const triggerAnchor = html.find("a[class='trigger']");
         const addRowAnchor = html.find("a[name='add-row']");
         const removeRowAnchor = html.find("a[class='remove-row']");
+        const changeOrderAnchor = html.find(".change-order a");
         const iconPath = html.find("input[class='icon-path']");
         const referenceInput = html.find("input[name^='reference-item']");
         const restoreDefaultsButton = html.find("button[class='restore-defaults']");
@@ -364,6 +365,7 @@ export class ConditionLab extends FormApplication {
         triggerAnchor.on("click", event => this._onOpenTrigglerForm(event));            
         addRowAnchor.on("click", async event => this._onAddRow(event));
         removeRowAnchor.on("click", async event => this._onRemoveRow(event));
+        changeOrderAnchor.on("click", event => this._onChangeSortOrder(event));
         referenceInput.on("change", event => this._onChangeReferenceId(event));
         restoreDefaultsButton.on("click", async event => this._onRestoreDefaults(event));
         resetFormButton.on("click", event => this._onResetForm(event));
@@ -561,6 +563,41 @@ export class ConditionLab extends FormApplication {
         });
 
         dialog.render(true);
+    }
+
+    /**
+     * Handle a change sort order click
+     * @param {*} event 
+     */
+    _onChangeSortOrder(event) {
+        event.preventDefault();
+        
+        const anchor = event.currentTarget;
+        const liRow = anchor?.closest("li");
+        const rowNumber = parseInt(liRow?.dataset.mappingRow);
+        const type = anchor?.className;
+        const newMap = deepClone(this.map);
+        const mappingRow = newMap?.splice(rowNumber, 1) ?? [];
+        let newIndex = -1;
+
+        switch (type) {
+            case "move-up":
+                newIndex = rowNumber - 1;
+                break;
+            
+            case "move-down":
+                newIndex = rowNumber + 1;
+                break;
+
+            default:
+                break;
+        }
+
+        if (newIndex <= -1) return;
+
+        newMap.splice(newIndex, 0, ...mappingRow);
+        this.map = newMap;
+        this.render();
     }
 
     /**
