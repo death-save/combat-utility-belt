@@ -37,7 +37,7 @@ export class HideNPCNames {
 
         const button = $(formButtonHtml);
         const header = html.find("header.window-header");
-        const title = header.find(".window-title");
+        const title = header.length ? header.find(".window-title") : html.closest(".app").find(".window-title");
 
         title.prepend(button);
         
