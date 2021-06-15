@@ -457,7 +457,7 @@ export class ConditionLab extends FormApplication {
     _onChangeReferenceId(event) {
         event.preventDefault();
         
-        const input = event.currentTarget;
+        const input = event.currentTarget ?? event.target;
 
         // Update the enriched link
         const $linkDiv = $(input.nextElementSibling);
