@@ -443,9 +443,25 @@ export class ConditionLab extends FormApplication {
 
         if (!condition) return;
 
-        const conditionEffect = condition.activeEffect ?? EnhancedConditions.getActiveEffect(condition);        
-        const tempActor = await Actor.create({name: "CUB_AETemp", type: game.system.entityTypes.Actor[0]}, {temporary: true});
-        const effect = await ActiveEffect.create(conditionEffect, {parent: tempActor, temporary: true});
+        const conditionEffect = condition.activeEffect ?? EnhancedConditions.getActiveEffect(condition);
+        
+        if (!conditionEffect) return;
+
+        if (!hasProperty(conditionEffect, `flags.${BUTLER.NAME}.${BUTLER.FLAGS.enhancedConditions.conditionId}`)) {
+            setProperty(conditionEffect, `flags.${BUTLER.NAME}.${BUTLER.FLAGS.enhancedConditions.conditionId}`, conditionId);
+        }
+
+        // Build a fake effect object for the ActiveEffectConfig sheet
+        // @todo #544 make Conditions an ActiveEffect extension?
+        const effect = {
+            data: conditionEffect,
+            testUserPermission: (...args) => { return true},
+            parent: {
+                entity: "Actor"
+            },
+            apps: {},
+            isOwner: true
+        }
 
         new EnhancedEffectConfig(effect).render(true);
     }
