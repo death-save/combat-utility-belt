@@ -13,6 +13,8 @@
 ## [1.6.0] - 2021-06-15
 ### Enhanced Conditions
 - `Active Effects Config` can be opened from the **Condition Lab** again!
+- Changes made in the `Active Effects Config` are shown without closing and reopening the form, and are saved to the attached Condition on Submit.
+- `Active Effects` attached to Conditions can now be Exported and Imported in the Condition Lab
 - **Condition Lab** `reference` entries for Conditions are now a text-input (Id) field linking to any entity in your Foundry instance (eg. Actor, Item, JournalEntry, Compendium JournalEntry etc). The field is in the format of `@EntityType[entityId]{DisplayName}` This field now accepts drag-drop similar to dropping an entity into a Journal Entry (or other enriched text entry). If the dropped Id resolves correctly, a link to the entity will show up next to the Id. You can also put good ol' plain text in this field if you want.
 > Note: the reference entry's `DisplayName` or text will override the Condition Name.
 - The drag handles in the **Condition Lab** have been removed in favour of simpler up/down arrows ("chevrons" if we're being pedantic). A future update may add drag handles or more advanced order-sorting to the Lab
