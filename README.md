@@ -10,7 +10,7 @@
 </div><br/>
 
 ![https://img.shields.io/badge/Foundry%20VTT%20compatibility-0.8.5-green](https://img.shields.io/badge/Foundry%20VTT%20compatibility-0.8.5-green)<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-26-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-27-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 ![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/death-save/combat-utility-belt) 
@@ -189,6 +189,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <td align="center"><a href="https://github.com/FuyuEnnju"><img src="https://avatars.githubusercontent.com/u/55729032?v=4?s=100" width="100px;" alt=""/><br /><sub><b>长耳</b></sub></a><br /><a href="#translation-FuyuEnnju" title="Translation">🌍</a></td>
     <td align="center"><a href="https://github.com/Wibble199"><img src="https://avatars.githubusercontent.com/u/3984322?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Will Bennion</b></sub></a><br /><a href="https://github.com/death-save/combat-utility-belt/commits?author=Wibble199" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/flamewave000"><img src="https://avatars.githubusercontent.com/u/3588046?v=4?s=100" width="100px;" alt=""/><br /><sub><b>flamewave000</b></sub></a><br /><a href="https://github.com/death-save/combat-utility-belt/commits?author=flamewave000" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/Hertzila"><img src="https://avatars.githubusercontent.com/u/7857080?v=4?s=100" width="100px;" alt=""/><br /><sub><b>hertzila</b></sub></a><br /><a href="https://github.com/death-save/combat-utility-belt/commits?author=hertzila" title="Code">💻</a></td>
   </tr>
 </table>
 
