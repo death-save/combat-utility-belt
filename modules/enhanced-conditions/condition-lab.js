@@ -454,10 +454,12 @@ export class ConditionLab extends FormApplication {
         // Build a fake effect object for the ActiveEffectConfig sheet
         // @todo #544 make Conditions an ActiveEffect extension?
         const effect = {
+            documentName: "ActiveEffect",
             data: conditionEffect,
             testUserPermission: (...args) => { return true},
             parent: {
-                entity: "Actor"
+                entity: "Actor", // backwards compatibility
+                documentName: "Actor"
             },
             apps: {},
             isOwner: true
