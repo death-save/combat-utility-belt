@@ -8,6 +8,27 @@
 3. Overlay Effects added to a token will trigger the matching non-Overlay Condition to output to chat. The reverse is also true.
 4. **PF2e users**: Enhanced Conditions `Output to Chat` setting will cause duplicate chat messages due to similar function built into the system.
 5. Chat log may not re-render when Hide Names settings are changed. This may cause the old name to still show in the log for players. Advise players to reload Foundry if you change these settings mid-session.
+6. *️⃣The Default/Inferred Condition Lab Mappings for game systems may not correctly import all data. Importing the map from the CUB Condition Maps folder imports correctly.
+
+## [1.6.0] - 2021-06-15
+### Enhanced Conditions
+- `Active Effects Config` can be opened from the **Condition Lab** again!
+- **Condition Lab** `reference` entries for Conditions are now a text-input (Id) field linking to any entity in your Foundry instance (eg. Actor, Item, JournalEntry, Compendium JournalEntry etc). The field is in the format of `@EntityType[entityId]{DisplayName}` This field now accepts drag-drop similar to dropping an entity into a Journal Entry (or other enriched text entry). If the dropped Id resolves correctly, a link to the entity will show up next to the Id. You can also put good ol' plain text in this field if you want.
+> Note: the reference entry's `DisplayName` or text will override the Condition Name.
+- The drag handles in the **Condition Lab** have been removed in favour of simpler up/down arrows ("chevrons" if we're being pedantic). A future update may add drag handles or more advanced order-sorting to the Lab
+- Added support for the `Ironclaw 2e` system. Thanks to @hertzila! 🎉
+- Conditions are no longer output to chat if the `Output to Chat` setting is disabled in **CUBputer**. Additionally, When this setting is disabled the related checkboxes in the **Condition Lab** cannot be changed.
+### Triggler
+- When **Triggler** executes a macro it now passes the triggering token/actor to the macro for downstream usage.
+- Fixed logic in **Triggler** related to checking the ownership of the triggering actor/token.
+### Temporary Combatants
+- **Temporary Combatants** now work with Foundry VTT v0.8.x
+### Hide Names
+- **Hide Names** Actor button no longer disappears (🐱‍👤 ninja-style) after saving the form.
+
+### Translations
+- Updated `한국어` (Korean) translation (thanks @drdwing! 🎉)
+- Replaced `Castellano` (`es-ES`) translation with `Español` (`es`) (thanks @wallacemcgregor! 🎉)
 
 ## [1.5.0] - 2021-05-31
 > Note: due to the large-scale changes introduced in [Foundry VTT v0.8.6](https://foundryvtt.com/releases/0.8.6) you may experience some 🐛bugs with this release. Please install the [Bug Reporter](https://foundryvtt.com/packages/bug-reporter) module to report issues, or file them on Github directly*
