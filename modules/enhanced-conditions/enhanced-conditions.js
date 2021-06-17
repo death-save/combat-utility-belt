@@ -179,8 +179,8 @@ export class EnhancedConditions {
             }
         }); 
 
-        const chatAddConditions = addConditions.filter(c => c.options?.outputChat ?? outputChatSetting);
-        const chatRemoveConditions = removeConditions.filter(c => c.options?.outputChat ?? outputChatSetting);
+        const chatAddConditions = addConditions.filter(c => outputChatSetting && c.options?.outputChat);
+        const chatRemoveConditions = removeConditions.filter(c => outputChatSetting && c.options?.outputChat);
         
         // If there's any conditions to output to chat, do so
         if (chatAddConditions.length) EnhancedConditions.outputChatMessage(token, chatAddConditions, {type: "added"});
@@ -257,11 +257,9 @@ export class EnhancedConditions {
         const chatConditions = [];
 
         for (const condition of conditions) {
-            const outputSetting = condition.options?.outputChat ?? Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.outputChat);
+            const shouldOutput = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.outputChat) && condition.options?.outputChat;
 
-            if (outputSetting) {
-                chatConditions.push(condition);
-            }
+            if (shouldOutput) chatConditions.push(condition);
         }
 
         EnhancedConditions.outputChatMessage(token, chatConditions, {type: "active"});
@@ -353,11 +351,11 @@ export class EnhancedConditions {
 
         if (!condition) return;
 
-        const outputSetting = condition.options.outputChat ?? Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.outputChat);
+        const shouldOutput = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.outputChat) && condition.options.outputChat;
         const outputType = type === "delete" ? "removed" : "added";
         const actor = effect.parent;
         
-        if (outputSetting) EnhancedConditions.outputChatMessage(actor, condition, {type: outputType});
+        if (shouldOutput) EnhancedConditions.outputChatMessage(actor, condition, {type: outputType});
         
         switch (type) {
             case "create":
@@ -441,6 +439,10 @@ export class EnhancedConditions {
         // iterate over the entries and mark any with references for use in the template
         entries.forEach((v, i, a) => {
             if (v.referenceId) {
+                if (!v.referenceId.match(/\{.+\}/)) {
+                    v.referenceId += `{${v.name}}`;
+                }
+
                 a[i].hasReference = true;
             }
         });

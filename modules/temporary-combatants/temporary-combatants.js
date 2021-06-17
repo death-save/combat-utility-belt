@@ -1,5 +1,5 @@
 import { Sidekick } from "../sidekick.js";
-import { SETTING_KEYS } from "../butler.js";
+import { FLAGS, NAME, SETTING_KEYS } from "../butler.js";
 import { TemporaryCombatantForm } from "./form.js";
 
 export class TemporaryCombatants {
@@ -17,7 +17,7 @@ export class TemporaryCombatants {
         }
 
         const combatantList = html.find("#combat-tracker.directory-list");
-        const listItemHtml = `<div class="flexrow"><a class="add-temporary"><i class="fa fa-plus"></i> Add Temporary Combatant</a></div>`
+        const listItemHtml = `<div class="flexrow"><a class="add-temporary"><i class="fa fa-plus"></i> Add Temporary Combatant</a></div>`;
 
         if (!game.combat || !combatantList.length) {
             return;
@@ -47,16 +47,18 @@ export class TemporaryCombatants {
      * @param {*} scene 
      */
     static _removeTemporaryCombatants(combatants, scene) {
+        const tempCombatants = combatants.filter(c => c.getFlag(NAME, FLAGS.temporaryCombatants.temporaryCombatant));
         
-        const tokenIds = combatants.map(c => c.tokenId);
-        const actorIds = combatants.map(c => c.actor.id);
+        const tokens = tempCombatants.map(c => c.tokenId);
+        const actors = tempCombatants.map(c => c.actor.Id);
+        const tokenClass = getDocumentName("Token");
 
-        if (tokenIds) {
-            scene.deleteManyEmbeddedEntities("Token", tokenIds);
+        if (tokenClass && tokenIds) {
+            tokenClass.deleteDocuments(tokenIds);
         }
         
         if (actorIds) {
-            Actor.deleteMany(actorIds);
+            Actor.deleteDocuments(actorIds);
         }
         
     }
@@ -67,16 +69,9 @@ export class TemporaryCombatants {
      * @param {*} scene 
      */
     static _removeTemporaryCombatant(combatant, scene) {
-        const tokenId = combatant.tokenId;
-        const actor = game.actors.get(combatant.actor.id);
+        if (!combatant.getFlag(NAME, FLAGS.temporaryCombatants.temporaryCombatant)) return;
 
-        if (tokenId){
-            scene.deleteEmbeddedEntity("Token", tokenId);
-        }
-        
-        if (actor){
-            actor.delete();
-        }
-        
+        combatant.actor?.delete();
+        combatant.token?.delete();
     }
 }

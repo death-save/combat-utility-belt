@@ -73,7 +73,7 @@ ol.condition-lab {
     padding: 0px;
 }
 
-li.condition-lab.row {
+.condition-lab li.row {
     border-bottom: 2px groove beige;
 }
 
@@ -114,6 +114,11 @@ li.condition-lab.row {
 .condition-lab .flexcol.text-entry.journal {
     flex: 2;
     margin: 0px 0px 3px 0px;
+}
+
+.condition-lab .reference div.enriched-link {
+  flex: 0 1 0%;
+  margin: 3px;
 }
 
 .condition-lab .reference-type {
@@ -212,6 +217,23 @@ li.condition-lab.row {
     cursor: grab;
     line-height: 60px;
     opacity: 0.5;
+}
+
+.condition-lab div.change-order {
+    position: relative;
+    max-width: 25px;
+}
+
+.condition-lab .change-order a {
+    position: absolute;
+}
+
+.condition-lab .change-order a.move-up {
+    top: 20%;
+}
+
+.condition-lab .change-order a.move-down {
+    bottom: 20%;
 }
 
 .condition-lab .options {

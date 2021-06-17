@@ -15,13 +15,13 @@
         {{#each conditionMap as |condition key|}}
         <li class="row flexrow" data-mapping-row="{{@index}}" data-condition-id="{{condition.id}}">
             <!--column 1-->
-            <div class="flexcol grabber">
-                <span>
-                    <i class="fas fa-bars"></i>
-                </span>
+            <div class="flexcol change-order">
+                {{#unless (eq key 0)}}<a class="move-up"><i class="fas fa-chevron-up"></i></a>{{/unless}}
+                {{#unless (eq key conditionMap.length)}}<a class="move-down"><i class="fas fa-chevron-down"></i></a>{{/unless}}
             </div>
             <!--column 2-->
             <div class="flexcol content1">
+                
                 <!--row 1 icon + text-->
                 <div class="flexrow">
                     <!--row 1 col 1 icon-->
@@ -48,63 +48,8 @@
                 </div>
                 <!--row 2 reference-->
                 <div class="flexrow condition-lab text-entry reference">
-                    <!--<input type="text" name="reference-item-{{@index}}" value="{{condition.reference}}" title="Condition Reference" placeholder="--No Condition Reference--">-->
-                    <div class="reference-type"> 
-                        <i class="{{condition.referenceTypeIcon}}"></i>
-                        <select name="reference-type-{{@index}}" title="Select reference source type" {{#if ../isDefault}}disabled{{/if}}>
-                            {{#select condition.referenceType}}
-                            {{#each ../referenceTypes}}
-                            <option value="{{this.id}}">{{this.name}}</option>
-                            {{/each}}
-                            {{/select}}
-                        </select>
-                    </div>
-                    {{#if condition.isCompendiumReference}}
-                    <div class="compendium"> 
-                        <select name="compendium-{{@index}}" title="Select compendium" {{#if ../isDefault}}disabled{{/if}}>
-                            {{#select condition.compendium}}
-                            <option value="">--Compendium--</option>
-                            {{#if condition.isJournalCompendium}}
-                            {{#each ../journalCompendiaChoices}}
-                                <option value="{{this.id}}">{{this.name}}</option>
-                            {{/each}}
-                            {{/if}}
-                            {{#if condition.isItemCompendium}}
-                            {{#each ../itemCompendiaChoices}}
-                                <option value="{{this.id}}">{{this.name}}</option>
-                            {{/each}}
-                            {{/if}}
-                            {{/select}}
-                        </select>
-                    </div>
-                    {{/if}}
-                    <div class="reference-item">
-                        <select name="reference-{{@index}}" title="Condition Reference Source" data-dtype="String" {{#if ../isDefault}}disabled{{/if}}>
-                            {{#select condition.referenceId}}
-                            <option value="">--No Reference Entry--</option>
-                            {{#if condition.isJournalReference}}
-                            {{#each ../journalEntries}}
-                                <option value="{{this.id}}">{{this.name}}</option>
-                            {{/each}}
-                            {{/if}}
-                            {{#if condition.isItemReference}}
-                            {{#each ../itemEntries}}
-                                <option value="{{this.id}}">{{this.name}}</option>
-                            {{/each}}
-                            {{/if}}
-                            {{#if condition.isJournalCompendium}}
-                            {{#each condition.compendiumEntries}}
-                                <option value="{{this.id}}">{{this.name}}</option>
-                            {{/each}}
-                            {{/if}}
-                            {{#if condition.isItemCompendium}}
-                            {{#each condition.compendiumEntries}}
-                                <option value="{{this.id}}">{{this.name}}</option>
-                            {{/each}}
-                            {{/if}}
-                            {{/select}}
-                        </select>
-                    </div>
+                    <input type="text" name="reference-item-{{@index}}" value="{{condition.referenceId}}" title="Condition Reference" placeholder="--No Condition Reference--">
+                    <div class="enriched-link">{{{condition.enrichedReference}}}</div>
                 </div>
             </div>
             <!--column 3-->
@@ -146,7 +91,7 @@
                         <label>{{localize "ENHANCED_CONDITIONS.Lab.Options.RemoveOthers.Label"}}</label>
                     </div>
                     <div class="formgroup" title="{{localize "ENHANCED_CONDITIONS.Lab.Options.OutputChat.Title"}}">
-                        <input type="checkbox" name="options-output-chat-{{@index}}" {{checked condition.options.outputChat}} {{#if ../isDefault}}disabled{{/if}}>
+                        <input type="checkbox" name="options-output-chat-{{@index}}" {{checked condition.options.outputChat}} {{#if ../disableChatOutput}}disabled{{/if}}>
                         <label>{{localize "ENHANCED_CONDITIONS.Lab.Options.OutputChat.Label"}}</label>
                     </div>
                     <div class="formgroup" title="{{localize "ENHANCED_CONDITIONS.Lab.Options.MarkDefeated.Title"}}">

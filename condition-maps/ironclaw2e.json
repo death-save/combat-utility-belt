@@ -1,0 +1,679 @@
+{
+  "system": "ironclaw2e",
+  "map": [
+    {
+      "id": "focused",
+      "name": "Focused",
+      "icon": "icons/svg/upgrade.svg",
+      "referenceType": "compendium.journalEntry",
+      "compendium": "ironclaw2e.statuseffects",
+      "referenceId": "@Compendium[ironclaw2e.statuseffects.WGljaB1SMqPtXDwC]",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "activeEffect": null,
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": false,
+        "markDefeated": false
+      }
+    },
+    {
+      "id": "guarding",
+      "name": "Guarding",
+      "icon": "icons/svg/shield.svg",
+      "referenceType": "compendium.journalEntry",
+      "compendium": "ironclaw2e.statuseffects",
+      "referenceId": "@Compendium[ironclaw2e.statuseffects.ZzpRbp4XIFV5y8rW]",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "activeEffect": null,
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": false,
+        "markDefeated": false
+      }
+    },
+    {
+      "id": "reeling",
+      "name": "Reeling",
+      "icon": "icons/svg/lightning.svg",
+      "referenceType": "compendium.journalEntry",
+      "compendium": "ironclaw2e.statuseffects",
+      "referenceId": "@Compendium[ironclaw2e.statuseffects.2RqmHH9RbzJKjdKA]",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "activeEffect": null,
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": false,
+        "markDefeated": false
+      }
+    },
+    {
+      "id": "hurt",
+      "name": "Hurt",
+      "icon": "icons/svg/acid.svg",
+      "referenceType": "compendium.journalEntry",
+      "compendium": "ironclaw2e.statuseffects",
+      "referenceId": "@Compendium[ironclaw2e.statuseffects.7buKwZrZVy8OwPhx]",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "activeEffect": null,
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": false,
+        "markDefeated": false
+      }
+    },
+    {
+      "id": "afraid",
+      "name": "Afraid",
+      "icon": "systems/ironclaw2e/icons/status/afraid.svg",
+      "referenceType": "compendium.journalEntry",
+      "compendium": "ironclaw2e.statuseffects",
+      "referenceId": "@Compendium[ironclaw2e.statuseffects.krkg0YwKTNyD8BPM]",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "activeEffect": null,
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": false,
+        "markDefeated": false
+      }
+    },
+    {
+      "id": "injured",
+      "name": "Injured",
+      "icon": "icons/svg/blood.svg",
+      "referenceType": "compendium.journalEntry",
+      "compendium": "ironclaw2e.statuseffects",
+      "referenceId": "@Compendium[ironclaw2e.statuseffects.XZ1nn0BJoBGtHSYt]",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "activeEffect": null,
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": false,
+        "markDefeated": false
+      }
+    },
+    {
+      "id": "dying",
+      "name": "Dying",
+      "icon": "systems/ironclaw2e/icons/status/dying.svg",
+      "referenceType": "compendium.journalEntry",
+      "compendium": "ironclaw2e.statuseffects",
+      "referenceId": "@Compendium[ironclaw2e.statuseffects.1Jg9RzQ24bpHnh7A]",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "activeEffect": null,
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": false,
+        "markDefeated": true
+      }
+    },
+    {
+      "id": "dead",
+      "name": "Dead",
+      "icon": "icons/svg/skull.svg",
+      "referenceType": "compendium.journalEntry",
+      "compendium": "ironclaw2e.statuseffects",
+      "referenceId": "@Compendium[ironclaw2e.statuseffects.JsnatC5y42DGbPP3]",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "activeEffect": null,
+      "options": {
+        "overlay": true,
+        "removeOthers": false,
+        "outputChat": false,
+        "markDefeated": true
+      }
+    },
+    {
+      "id": "overkilled",
+      "name": "Overkilled",
+      "icon": "systems/ironclaw2e/icons/status/overkilled.svg",
+      "referenceType": "compendium.journalEntry",
+      "compendium": "ironclaw2e.statuseffects",
+      "referenceId": "@Compendium[ironclaw2e.statuseffects.iL6ssGkLXwHPqRLh]",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "activeEffect": null,
+      "options": {
+        "overlay": true,
+        "removeOthers": false,
+        "outputChat": false,
+        "markDefeated": true
+      }
+    },
+    {
+      "id": "asleep",
+      "name": "Asleep",
+      "icon": "icons/svg/sleep.svg",
+      "referenceType": "compendium.journalEntry",
+      "compendium": "ironclaw2e.statuseffects",
+      "referenceId": "@Compendium[ironclaw2e.statuseffects.fy5EtGmfIZbpbqd1]",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "activeEffect": null,
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": false,
+        "markDefeated": true
+      }
+    },
+    {
+      "id": "unconscious",
+      "name": "Unconscious",
+      "icon": "icons/svg/unconscious.svg",
+      "referenceType": "compendium.journalEntry",
+      "compendium": "ironclaw2e.statuseffects",
+      "referenceId": "@Compendium[ironclaw2e.statuseffects.y17nrzjqcBNdnyVo]",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "activeEffect": null,
+      "options": {
+        "overlay": true,
+        "removeOthers": false,
+        "outputChat": false,
+        "markDefeated": true
+      }
+    },
+    {
+      "id": "burdened",
+      "name": "Burdened",
+      "icon": "systems/ironclaw2e/icons/status/burdened.svg",
+      "referenceType": "compendium.journalEntry",
+      "compendium": "ironclaw2e.statuseffects",
+      "referenceId": "@Compendium[ironclaw2e.statuseffects.pJTP7nRDfLCXTAzO]",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "activeEffect": null,
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": false,
+        "markDefeated": false
+      }
+    },
+    {
+      "id": "over-burdened",
+      "name": "Over-Burdened",
+      "icon": "systems/ironclaw2e/icons/status/overburdened.svg",
+      "referenceType": "compendium.journalEntry",
+      "compendium": "ironclaw2e.statuseffects",
+      "referenceId": "@Compendium[ironclaw2e.statuseffects.Ms6nfCALR2RxiwFc]",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "activeEffect": null,
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": false,
+        "markDefeated": false
+      }
+    },
+    {
+      "id": "cannot-move",
+      "name": "Cannot Move",
+      "icon": "systems/ironclaw2e/icons/status/cantmove.svg",
+      "referenceType": "compendium.journalEntry",
+      "compendium": "ironclaw2e.statuseffects",
+      "referenceId": "@Compendium[ironclaw2e.statuseffects.8X3gh1U1g5NQxwbA]",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "activeEffect": null,
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": false,
+        "markDefeated": false
+      }
+    },
+    {
+      "id": "fatigued",
+      "name": "Fatigued",
+      "icon": "icons/svg/degen.svg",
+      "referenceType": "compendium.journalEntry",
+      "compendium": "ironclaw2e.statuseffects",
+      "referenceId": "@Compendium[ironclaw2e.statuseffects.O8Cf7H1AoijQfdmL]",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "activeEffect": null,
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": false,
+        "markDefeated": false
+      }
+    },
+    {
+      "id": "sick",
+      "name": "Sick",
+      "icon": "icons/svg/poison.svg",
+      "referenceType": "compendium.journalEntry",
+      "compendium": "ironclaw2e.statuseffects",
+      "referenceId": "@Compendium[ironclaw2e.statuseffects.HFHtUwuSoZ6wQutn]",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "activeEffect": null,
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": false,
+        "markDefeated": false
+      }
+    },
+    {
+      "id": "confused",
+      "name": "Confused",
+      "icon": "icons/svg/daze.svg",
+      "referenceType": "compendium.journalEntry",
+      "compendium": "ironclaw2e.statuseffects",
+      "referenceId": "@Compendium[ironclaw2e.statuseffects.E156mwoPTBUaagBB]",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "activeEffect": null,
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": false,
+        "markDefeated": false
+      }
+    },
+    {
+      "id": "terrified",
+      "name": "Terrified",
+      "icon": "systems/ironclaw2e/icons/status/terrified.svg",
+      "referenceType": "compendium.journalEntry",
+      "compendium": "ironclaw2e.statuseffects",
+      "referenceId": "@Compendium[ironclaw2e.statuseffects.soFkqUQFGaY3Q8IM]",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "activeEffect": null,
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": false,
+        "markDefeated": false
+      }
+    },
+    {
+      "id": "enraged",
+      "name": "Enraged",
+      "icon": "icons/svg/explosion.svg",
+      "referenceType": "compendium.journalEntry",
+      "compendium": "ironclaw2e.statuseffects",
+      "referenceId": "@Compendium[ironclaw2e.statuseffects.2TtNJmDXp79MvLk9]",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "activeEffect": null,
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": false,
+        "markDefeated": false
+      }
+    },
+    {
+      "id": "knockdown",
+      "name": "Knockdown",
+      "icon": "icons/svg/falling.svg",
+      "referenceType": "compendium.journalEntry",
+      "compendium": "ironclaw2e.statuseffects",
+      "referenceId": "@Compendium[ironclaw2e.statuseffects.Rs6XYXEEYOIbUVZo]",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "activeEffect": null,
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": false,
+        "markDefeated": false
+      }
+    },
+    {
+      "id": "berserk",
+      "name": "Berserk",
+      "icon": "icons/svg/hazard.svg",
+      "referenceType": "compendium.journalEntry",
+      "compendium": "ironclaw2e.statuseffects",
+      "referenceId": "@Compendium[ironclaw2e.statuseffects.dtpk97W1sWJY68zF]",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "activeEffect": null,
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": false,
+        "markDefeated": false
+      }
+    },
+    {
+      "id": "blinded",
+      "name": "Blinded",
+      "icon": "icons/svg/blind.svg",
+      "referenceType": "compendium.journalEntry",
+      "compendium": "ironclaw2e.statuseffects",
+      "referenceId": "@Compendium[ironclaw2e.statuseffects.XW0PM0eiepT2fqcD]",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "activeEffect": null,
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": false,
+        "markDefeated": false
+      }
+    },
+    {
+      "id": "silence",
+      "name": "Silenced",
+      "icon": "icons/svg/silenced.svg",
+      "referenceType": "compendium.journalEntry",
+      "compendium": "ironclaw2e.statuseffects",
+      "referenceId": "@Compendium[ironclaw2e.statuseffects.8WNaDcPi0IJbaJAk]",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "activeEffect": null,
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": false,
+        "markDefeated": false
+      }
+    },
+    {
+      "id": "full-tilt",
+      "name": "Full Tilt",
+      "icon": "icons/svg/up.svg",
+      "referenceType": "compendium.journalEntry",
+      "compendium": "ironclaw2e.statuseffects",
+      "referenceId": "@Compendium[ironclaw2e.statuseffects.C9275OGG3YcLz1cb]",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "activeEffect": null,
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": false,
+        "markDefeated": false
+      }
+    },
+    {
+      "id": "slowed",
+      "name": "Slowed",
+      "icon": "icons/svg/down.svg",
+      "referenceType": "compendium.journalEntry",
+      "compendium": "ironclaw2e.statuseffects",
+      "referenceId": "@Compendium[ironclaw2e.statuseffects.nbQkEI0uPTHdQtPk]",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "activeEffect": null,
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": false,
+        "markDefeated": false
+      }
+    },
+    {
+      "id": "immobilized",
+      "name": "Immobilized",
+      "icon": "icons/svg/mountain.svg",
+      "referenceType": "compendium.journalEntry",
+      "compendium": "ironclaw2e.statuseffects",
+      "referenceId": "@Compendium[ironclaw2e.statuseffects.lveZKbwsOHC8wg25]",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "activeEffect": null,
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": false,
+        "markDefeated": false
+      }
+    },
+    {
+      "id": "half-buried",
+      "name": "Half-Buried",
+      "icon": "icons/svg/ruins.svg",
+      "referenceType": "compendium.journalEntry",
+      "compendium": "ironclaw2e.statuseffects",
+      "referenceId": "@Compendium[ironclaw2e.statuseffects.2oqPSchTRfNviHhm]",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "activeEffect": null,
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": false,
+        "markDefeated": false
+      }
+    },
+    {
+      "id": "on-fire",
+      "name": "On Fire",
+      "icon": "icons/svg/fire.svg",
+      "referenceType": "compendium.journalEntry",
+      "compendium": "ironclaw2e.statuseffects",
+      "referenceId": "@Compendium[ironclaw2e.statuseffects.9SQeyWG4sy1vaXO4]",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "activeEffect": null,
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": false,
+        "markDefeated": false
+      }
+    },
+    {
+      "id": "mesmerized",
+      "name": "Mesmerized",
+      "icon": "icons/svg/ice-aura.svg",
+      "referenceType": "compendium.journalEntry",
+      "compendium": "ironclaw2e.statuseffects",
+      "referenceId": "@Compendium[ironclaw2e.statuseffects.EMsCXyLEv1SEXIT4]",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "activeEffect": null,
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": false,
+        "markDefeated": false
+      }
+    },
+    {
+      "id": "marionette",
+      "name": "Marionette",
+      "icon": "icons/svg/paralysis.svg",
+      "referenceType": "compendium.journalEntry",
+      "compendium": "ironclaw2e.statuseffects",
+      "referenceId": "@Compendium[ironclaw2e.statuseffects.QJyebhpwRNfvkFEi]",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "activeEffect": null,
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": false,
+        "markDefeated": false
+      }
+    },
+    {
+      "id": "controlled",
+      "name": "Controlled",
+      "icon": "icons/svg/statue.svg",
+      "referenceType": "compendium.journalEntry",
+      "compendium": "ironclaw2e.statuseffects",
+      "referenceId": "@Compendium[ironclaw2e.statuseffects.rjHftAZgQQTg41ag]",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "activeEffect": null,
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": false,
+        "markDefeated": false
+      }
+    },
+    {
+      "id": "all-fours",
+      "name": "All Fours",
+      "icon": "icons/svg/pawprint.svg",
+      "referenceType": "compendium.journalEntry",
+      "compendium": "ironclaw2e.statuseffects",
+      "referenceId": "@Compendium[ironclaw2e.statuseffects.MItXHxvNgfSCFenc]",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "activeEffect": null,
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": false,
+        "markDefeated": false
+      }
+    },
+    {
+      "id": "flying",
+      "name": "Flying",
+      "icon": "icons/svg/wing.svg",
+      "referenceType": "compendium.journalEntry",
+      "compendium": "ironclaw2e.statuseffects",
+      "referenceId": "@Compendium[ironclaw2e.statuseffects.zghrfBq4iiKosTKu]",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "activeEffect": null,
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": false,
+        "markDefeated": false
+      }
+    },
+    {
+      "id": "grappled",
+      "name": "Grappled",
+      "icon": "icons/svg/net.svg",
+      "referenceType": "compendium.journalEntry",
+      "compendium": "ironclaw2e.statuseffects",
+      "referenceId": "@Compendium[ironclaw2e.statuseffects.lQRKvbZYOo7izSdT]",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "activeEffect": null,
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": false,
+        "markDefeated": false
+      }
+    },
+    {
+      "id": "misc-a",
+      "name": "Misc-A",
+      "icon": "icons/svg/eye.svg",
+      "referenceType": "journalEntry",
+      "referenceId": "",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "activeEffect": null,
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": false,
+        "markDefeated": false
+      }
+    },
+    {
+      "id": "misc-b",
+      "name": "Misc-B",
+      "icon": "icons/svg/clockwork.svg",
+      "referenceType": "journalEntry",
+      "referenceId": "",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "activeEffect": null,
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": false,
+        "markDefeated": false
+      }
+    },
+    {
+      "id": "misc-c",
+      "name": "Misc-C",
+      "icon": "icons/svg/castle.svg",
+      "referenceType": "journalEntry",
+      "referenceId": "",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "activeEffect": null,
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": false,
+        "markDefeated": false
+      }
+    },
+    {
+      "id": "misc-d",
+      "name": "Misc-D",
+      "icon": "icons/svg/book.svg",
+      "referenceType": "journalEntry",
+      "referenceId": "",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "activeEffect": null,
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": false,
+        "markDefeated": false
+      }
+    },
+    {
+      "id": "misc-e",
+      "name": "Misc-E",
+      "icon": "icons/svg/coins.svg",
+      "referenceType": "journalEntry",
+      "referenceId": "",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "activeEffect": null,
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": false,
+        "markDefeated": false
+      }
+    },
+    {
+      "id": "misc-f",
+      "name": "Misc-F",
+      "icon": "icons/svg/sound.svg",
+      "referenceType": "journalEntry",
+      "referenceId": "",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "activeEffect": null,
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": false,
+        "markDefeated": false
+      }
+    }
+  ]
+}

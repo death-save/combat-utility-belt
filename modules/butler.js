@@ -102,6 +102,13 @@ export const KNOWN_GAME_SYSTEMS = {
         healthAttribute: "attributes.hp",
         initiative: "attributes.init.mod"
     },
+    ironclaw2e: {
+        id: "ironclaw2e",
+        name: "Ironclaw Second Edition",
+        concentrationAttribute: "",
+        healthAttribute: "",
+        initiative: ""
+    },
     other: {
         id: "other",
         name: "Custom/Other",
