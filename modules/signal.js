@@ -152,7 +152,7 @@ export class Signal {
             TrackerUtility._onDeleteCombat(combat, options, userId);
         });
         
-        Hooks.on("preDeleteCombatant", (combatant, options, userId) => {
+        Hooks.on("deleteCombatant", (combatant, options, userId) => {
             TrackerUtility._onDeleteCombatant(combatant, options, userId);
         });
 
