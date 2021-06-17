@@ -81,6 +81,16 @@
     "ENHANCED_CONDITIONS.ChatCard.Buttons.Undo": "상태이상 제거 취소",
     "ENHANCED_CONDITIONS.ChatCard.Buttons.Remove": "상태이상 제거",
 
+    "GIVE_XP.DistributeForm.XPModifier": "XP 수정자",
+    "GIVE_XP.DistributeForm.Friendlies": "우호적",
+    "GIVE_XP.DistributeForm.Hostiles": "적대적",
+    "GIVE_XP.DistributeForm.SelectFriendlies": "XP를 분배할 동료를 선택한다",
+    "GIVE_XP.DistributeForm.SelectHostiles": "XP를 줄 적을 선택한다",
+    "GIVE_XP.DistributeForm.Distribution": "분배",
+    "GIVE_XP.DistributeForm.TotalXp": "총합 XP",
+    "GIVE_XP.DistributeForm.CreaturesReceiving": "크리쳐들이 수령중",
+    "GIVE_XP.DistributeForm.XpPerCreature": "XP / 우호적 생물",
+
     "HIDE_NAMES.ActorForm.Enable": "액터 이름 숨기기",
     "HIDE_NAMES.ActorForm.EnableHint": "컴뱃 트래커와 채팅 메시지에서 이 액터의 이름 숨기기를 활성화함(기본값 덮어쓰기)",
     "HIDE_NAMES.ActorForm.ReplacementName": "대체명",
@@ -156,6 +166,8 @@
 
     "SETTINGS.GiveXP.EnableN": "XP 수여 활성화",
     "SETTINGS.GiveXP.EnableH": "전투 종료 시 자동으로 플레이어들에게 경험치를 배포하는 옵션을 추가한다",
+    "SETTINGS.GiveXP.ModifierN": "수정자",
+    "SETTINGS.GiveXP.ModifierH": "이 값을 수여될 XP에 곱한다",
 
     "SETTINGS.HideNames.EnableN": "NPC 이름 숨김 활성화",
     "SETTINGS.HideNames.EnableH": "컴뱃 트래커에서 NPC의 이름을 숨긴다",
@@ -236,5 +248,6 @@
     "CUB.WORDS.Cancel": "취소",
     "CUB.WORDS.Reset": "리셋",
     "CUB.WORDS.Actor": "액터",
-    "CUB.WORDS.Token": "토큰"
+    "CUB.WORDS.Token": "토큰",
+    "WORDS.Configuration": "설정"
 }
