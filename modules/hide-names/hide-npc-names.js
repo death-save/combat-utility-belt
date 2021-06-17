@@ -60,12 +60,12 @@ export class HideNPCNames {
 
         if (!combatants || !combatants?.length) return;
 
-        const tokens = combatants.map(c => c.token);
+        const tokens = combatants.filter(c => c.token).map(c => c.token);
         
         const npcs = tokens.filter(t => {
-            const actor = t.actor || game.actors.entities.find(a => a.id === t.actorId);
+            const actor = t.actor || game.actors.get(t.actorId);
             
-            if (actor.hasPlayerOwner === false) return true;
+            if (actor?.hasPlayerOwner === false) return true;
         });
 
         if (!npcs.length) return;
