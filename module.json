@@ -49,9 +49,9 @@
       "path": "lang/pt-BR.json"
     },
     {
-      "lang": "es-ES",
-      "name": "Castellano",
-      "path": "lang/es-ES.json"
+      "lang": "es",
+      "name": "Español",
+      "path": "lang/es.json"
     },
     {
       "lang": "cn",
