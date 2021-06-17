@@ -23,18 +23,20 @@ export class TemporaryCombatantForm extends FormApplication {
     }
 
     async _updateObject(event, formData) {
+        // @todo #547 store a ref to the folder id in a module constant
         const folderName = "Temporary Combatants";
-        const flags = {
-            [NAME] : {
-                [FLAGS.temporaryCombatants.temporaryCombatant]: true
-            }
-        }
-        let folder = game.folders.entities.find(f => f.name === folderName);
+        let folder = game.folders.getName(folderName);
+
         if (!folder) {
             folder = await Folder.create({name: "Temporary Combatants", type: "Actor", parent: null}, {displaySheet: false});
         }
         
         const actorType = game.system.entityTypes.Actor.includes("npc") ? "npc" : game.system.entityTypes.Actor[0];
+        const flags = {
+            [NAME]: {
+                [FLAGS.temporaryCombatants.temporaryCombatant]: true
+            }
+        }
 
         const actor = await Actor.create({
             name: formData.name, 
@@ -44,20 +46,33 @@ export class TemporaryCombatantForm extends FormApplication {
             flags
         },{displaySheet: false});
 
-        const tokenData = duplicate(actor.data.token);
-        tokenData.x = 0;
-        tokenData.y = 0;
-        tokenData.disposition = 0;
-        tokenData.img = formData.icon;
-        tokenData.flags = flags;
-        const token = await Token.create(tokenData);
+        const tokenData = await actor.getTokenData();
+        if (!tokenData) return;
 
-        const combatant = await game.combat.createEmbeddedDocuments("Combatant", {
+        tokenData.update({
+            x: 0,
+            y: 0,
+            disposition: 0,
+            img: formData.icon,
+            flags: flags,
+            actorLink: true
+        });
+       
+
+        //let token = await Token.create(tokenData);
+        const cls = getDocumentClass("Token");
+        const token = await cls.create(tokenData, {parent: canvas.scene});
+
+        if (!token) return;
+
+        //token = token instanceof Array ? token[0] : token;
+
+        const combatant = await game.combat.createEmbeddedDocuments("Combatant", [{
             tokenId: token.id, 
             hidden: formData.hidden, 
             initiative: formData.init,
             flags
-        });
+        }]);
         
     }
 
