@@ -913,6 +913,9 @@ export class EnhancedConditions {
      * @param {Boolean} [options.warn=true]  raise warnings on errors
      * @param {Boolean} [options.allowDuplicates=false]  if one or more of the Conditions specified is already active on the Entity, this will still add the Condition. Use in conjunction with `replaceExisting` to determine how duplicates are handled
      * @param {Boolean} [options.replaceExisting=false]  whether or not to replace existing Conditions with any duplicates in the `conditionName` parameter. If `allowDuplicates` is true and `replaceExisting` is false then a duplicate condition is created. Has no effect is `keepDuplicates` is `false`
+     * @param {Number} [options.seconds=0] duration *in seconds* of the Active Effects of this condition;
+     * @param {Number} [options.turns=0] duration *in turns* of the Active Effects of this condition;
+     * @param {Number} [options.rounds=0] duration *in rounds* of the Active Effects of this condition;
      * @example
      * // Add the Condition "Blinded" to an Actor named "Bob". Duplicates will not be created.
      * game.cub.addCondition("Blinded", game.actors.getName("Bob"));
@@ -923,7 +926,7 @@ export class EnhancedConditions {
      * // Add the Conditions "Blinded" and "Charmed" to the targeted Token/s and create duplicates, replacing any existing Conditions of the same names.
      * game.cub.addCondition(["Blinded", "Charmed"], [...game.user.targets], {allowDuplicates: true, replaceExisting: true});
      */
-    static async addCondition(conditionName, entities=null, {warn=true, allowDuplicates=false, replaceExisting=false}={}) {
+    static async addCondition(conditionName, entities=null, {warn=true, allowDuplicates=false, replaceExisting=false, seconds=0, turns=0, rounds=0}={}) {
         if (!entities) {
             // First check for any controlled tokens
             if (canvas?.tokens?.controlled.length) entities = canvas.tokens.controlled;
@@ -956,6 +959,17 @@ export class EnhancedConditions {
         }
 
         effects = effects instanceof Array ? EnhancedConditions._prepareActiveEffects(effects) : EnhancedConditions._prepareActiveEffects([effects]);
+        
+        if (seconds > 0 || rounds > 0 || turns > 0){
+            // for all effects of this condition, set up the duration according to the {seconds, rounds, turns} params, if any
+            for (let effect of effects){
+                // if any duration is specified, remove all the duration data that is already predefined and prepared, because we want to override it.
+                effect.duration = {};
+                if (seconds > 0) effect.duration.seconds = seconds;
+                if (rounds > 0) effect.duration.rounds = rounds;
+                if (turns > 0) effect.duration.turns = turns;
+            }
+        }
         
         if (entities && !(entities instanceof Array)) {
             entities = [entities];
