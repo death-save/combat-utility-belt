@@ -45,7 +45,7 @@ export class Concentrator {
         const messageTokenId = app.data.speaker.token;
         const scene = messageSceneId ? game.scenes.get(messageSceneId) : game.scenes.active;
         const tokenData = scene ? scene.data.tokens.find(t => t.id === messageTokenId) : null;
-        const token = canvas?.tokens.get(messageTokenId) ?? (tokenData ? new Token(tokenData, scene) : null);
+        const token = canvas?.tokens?.get(messageTokenId) ?? (tokenData ? new Token(tokenData, scene) : null);
         const actor = token ? token.actor : messageActorId ? game.actors.get(messageActorId) : null;
 
         if (!actor) return;
