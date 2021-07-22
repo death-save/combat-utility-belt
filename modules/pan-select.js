@@ -43,13 +43,23 @@ export class PanSelect {
      * @param {*} token
      */
     static _checkPlayerPan(token) {
-        const actor = token ? game.actors.get(token.data.actorId) : null;
-        const actorPermission = actor ? actor.data.permission[game.userId] || 0 : null;
-        const panPlayers = Sidekick.getSetting(BUTLER.SETTING_KEYS.panSelect.panPlayers);
+        if (token instanceof TokenDocument) {
+            token = canvas.tokens.get(token.id);
+        }
+
+        if (!token) return;
+
+        const actor = token?.actor;
+
+        if (!actor) return;
+
+        const actorPermission = actor ? (actor.data.permission[game.userId] || 0) : null;
 
         if (actorPermission === null) {
             return;
         }
+
+        const panPlayers = Sidekick.getSetting(BUTLER.SETTING_KEYS.panSelect.panPlayers);
         // all - pan always, owner - pan when i own, observer - pan when i own OR observe, none - return
 
         switch (BUTLER.DEFAULT_CONFIG.panSelect.panPlayers[panPlayers]) {
