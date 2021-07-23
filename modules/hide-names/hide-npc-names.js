@@ -102,7 +102,7 @@ export class HideNPCNames {
                 continue;
             }
 
-            $(el).find(".token-name").text(npcToken.replacement);
+            $(el).find(".token-name h4").text(npcToken.replacement);
             $(el).find(".token-image").attr("title", npcToken.replacement);            
         }
         
