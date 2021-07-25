@@ -326,7 +326,8 @@ export const FLAGS = {
         chatMessage: "concentratorChatMessageParsed",
         damageTaken: "damageWasTaken",
         damageAmount: "damageAmount",
-        isDead: "isDead"
+        isDead: "isDead",
+        updateProcessed: "concentrationUpdateProcessed"
     },
     enhancedConditions: {
         conditionId: "conditionId",
