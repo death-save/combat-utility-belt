@@ -195,7 +195,7 @@ export class Signal {
         });
         
         Hooks.on("renderDialog", (app, html, data) => {
-            if (app.title === "End Combat Encounter?") {
+            if (app.title === game.i18n.localize("COMBAT.EndTitle")) {
                 GiveXP._onRenderDialog(app, html, data);
             }
         });
