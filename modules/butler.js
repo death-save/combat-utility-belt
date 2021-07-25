@@ -346,6 +346,10 @@ export const FLAGS = {
         enable: "enableHideName",
         replacementType: "hideNameReplacementType",
         replacementName: "hideNameReplacement"
+    },
+    panSelect: {
+        shouldPan: "shouldPan",
+        shouldSelect: "shouldSelect"
     }
 }
 

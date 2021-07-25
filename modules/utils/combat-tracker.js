@@ -1,32 +1,8 @@
 import { Sidekick } from "../sidekick.js";
 import * as BUTLER from "../butler.js";
 import { TemporaryCombatants } from "../temporary-combatants/temporary-combatants.js";
-import { PanSelect } from "../pan-select.js";
 
 export class TrackerUtility {
-
-    /**
-     * Hook on the combat update,
-     * Pans or selects the current token
-     */
-    static _hookOnUpdateCombat(combat, update, options, userId) {
-
-        if (!game.combat || game.combat.turns.length === 0) {
-            return;
-        }
-
-        const enablePan = Sidekick.getSetting(BUTLER.SETTING_KEYS.panSelect.enablePan);
-        const enableSelect = Sidekick.getSetting(BUTLER.SETTING_KEYS.panSelect.enableSelect);
-
-        if (enablePan) {
-            PanSelect._panHandler(combat, update);
-        }
-
-        if (enableSelect) {
-            PanSelect._selectHandler(combat, update);
-        }
-    }
-
     /**
      * Handler for deleteCombat hook
      * @param {*} combat 

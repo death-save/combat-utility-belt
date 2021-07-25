@@ -140,12 +140,13 @@ export class Signal {
 
         Hooks.on("preUpdateCombat", (combat, updateData, options, userId) => {
             RerollInitiative._onPreUpdateCombat(combat, updateData, options, userId);
+            PanSelect._onPreUpdateCombat(combat, updateData, options, userId);
         });
 
         Hooks.on("updateCombat", (combat, updateData, options, userId) => {
             RerollInitiative._onUpdateCombat(combat, updateData, options, userId);
             EnhancedConditions._onUpdateCombat(combat, updateData, options, userId);
-            TrackerUtility._hookOnUpdateCombat(combat, updateData, options, userId);
+            PanSelect._onUpdateCombat(combat, updateData, options, userId);
         });
 
         Hooks.on("deleteCombat", (combat, options, userId) => {
