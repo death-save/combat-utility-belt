@@ -342,6 +342,24 @@ export class ConditionLab extends FormApplication {
         return buttons
     }
 
+    /* -------------------------------------------- */
+    /*                 Hook Handlers                */
+    /* -------------------------------------------- */
+
+    /**
+     * Condition Lab Render handler
+     * @param {*} app 
+     * @param {*} html 
+     * @param {*} data 
+     */
+     static _onRender(app, html, data) {
+        ui.cub.conditionLab = app;
+    }
+
+    /* -------------------------------------------- */
+    /*                Event Handlers                */
+    /* -------------------------------------------- */
+
     /**
      * Activate app listeners
      * @param {*} html 
@@ -374,10 +392,6 @@ export class ConditionLab extends FormApplication {
 
         super.activateListeners(html);     
     }
-
-    /* -------------------------------------------- */
-    /*                Event Handlers                */
-    /* -------------------------------------------- */
 
     /**
      * Change Map Type event handler

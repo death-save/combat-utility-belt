@@ -215,6 +215,10 @@ export class Signal {
             CUBPuter._onRender(app, html, data);
         });
 
+        Hooks.on("renderConditionLab", (app, html, data) => {
+            ConditionLab._onRender(app, html, data);
+        });
+
         Hooks.on("renderCombatCarousel", (app, html, data) => {
             HideNPCNames._onRenderCombatCarousel(app, html, data);
         });
