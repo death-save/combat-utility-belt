@@ -613,17 +613,30 @@ export class EnhancedConditions {
     static _prepareMap(conditionMap) {
         if (!conditionMap || !conditionMap?.length) return;
 
-        const preparedMap = duplicate(conditionMap);
+        const preparedMap = [];
+        const outputChatSetting = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.outputChat);
 
         // Map existing ids for ease of access
-        const existingIds = conditionMap.map(c => c.id);
+        const existingIds = conditionMap.filter(c => c.id).map(c => c.id);
+        
+        // Iterate through the map validating/preparing the data
+        for (let i = conditionMap.length; i--;) {           
+            let condition = duplicate(conditionMap[i]);
 
-        // Iterate through the map validating and fixing the data
-        preparedMap.forEach(c => {
-            c.name = c.name ?? (c.icon ? Sidekick.getNameFromFilePath(c.icon) : "");
-            c.id = c.id || Sidekick.generateUniqueSlugId(c.name, existingIds);
-            c.options = c.options || {};
-        });
+            // Delete falsy values
+            if (!condition) preparedMap.splice(i, 1);
+
+            // Convert string values (eg. icon path) to condition/effect object
+            // @todo #580 Consider re-adding support for systems that use simple icons for status effects
+            //condition = typeof condition == "string" ? {icon: condition} : condition;
+            if (typeof condition == "string") continue;
+
+            condition.name = condition.name ?? (condition.icon ? Sidekick.getNameFromFilePath(condition.icon) : "");
+            condition.id = condition.id || Sidekick.generateUniqueSlugId(condition.name, existingIds);
+            condition.options = condition.options || {};
+            if (condition.options.outputChat === undefined) condition.options.outputChat = outputChatSetting;
+            preparedMap.push(condition);
+        }
 
         return preparedMap;
     }
