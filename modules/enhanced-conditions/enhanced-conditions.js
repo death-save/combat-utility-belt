@@ -248,12 +248,16 @@ export class EnhancedConditions {
     static _onUpdateCombat(combat, update, options, userId) {
         const enableEnhancedConditions = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.enable);
         const enableOutputCombat = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.outputCombat);
+        const outputChatSetting = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.outputChat);
+        const combatant = combat.combatant;
 
-        if (!hasProperty(update, "turn") || !enableEnhancedConditions || !enableOutputCombat|| !game.user.isGM || !game.combat.combatant) {
+        if (!hasProperty(update, "turn") || !combatant || !enableEnhancedConditions || !outputChatSetting || !enableOutputCombat|| !game.user.isGM) {
             return;
         }
 
-        const token = combat.combatant.token;
+        const token = combatant.token;
+
+        if (!token) return;
 
         const tokenConditions = EnhancedConditions.getConditions(token, {warn: false});
         let conditions = (tokenConditions && tokenConditions.conditions) ? tokenConditions.conditions : [];
@@ -261,13 +265,9 @@ export class EnhancedConditions {
 
         if (!conditions.length) return;
 
-        const chatConditions = [];
+        const chatConditions = conditions.filter(c => c.options?.outputChat);
 
-        for (const condition of conditions) {
-            const shouldOutput = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.outputChat) && condition.options?.outputChat;
-
-            if (shouldOutput) chatConditions.push(condition);
-        }
+        if (!chatConditions.length) return;
 
         EnhancedConditions.outputChatMessage(token, chatConditions, {type: "active"});
     }
