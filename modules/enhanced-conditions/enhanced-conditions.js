@@ -21,10 +21,16 @@ export class EnhancedConditions {
      * 4. Override status effects
      */
     static async _onReady() {
+        game.cub.enhancedConditions.supported = false;
         const enable = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.enable);
 
         // Return early if gadget not enabled
         if (!enable) return;
+
+        if (CONFIG.statusEffects.length && typeof CONFIG.statusEffects[0] == "string") {
+            console.warn(game.i18n.localize(`ENHANCED_CONDITIONS.SimpleIconsNotSupported`));           
+            return;
+        }
 
         let defaultMaps = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.defaultMaps) ?? {};
         let conditionMap = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.map);
@@ -53,6 +59,7 @@ export class EnhancedConditions {
 
             if (game.user.isGM) {
                 const preparedMap = EnhancedConditions._prepareMap(conditionMap);
+                conditionMap = preparedMap && preparedMap.length ? preparedMap : conditionMap;
                 Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.map, preparedMap, true);
             }
         }
@@ -73,7 +80,7 @@ export class EnhancedConditions {
                 }
             }
 
-            EnhancedConditions._updateStatusEffects(conditionMap);
+            if (conditionMap.length) EnhancedConditions._updateStatusEffects(conditionMap);
         }
 
         // Save the active condition map to a convenience property
@@ -81,7 +88,7 @@ export class EnhancedConditions {
             game.cub.conditions = conditionMap;
         }
 
-        
+        game.cub.enhancedConditions.supported = true;
     }
 
     /**
@@ -550,7 +557,14 @@ export class EnhancedConditions {
         
         cubDiv.append(labButton);
 
-        labButton.on("click", event => game.cub.conditionLab = new ConditionLab().render(true));
+        labButton.on("click", event => {
+            if (game.cub.enhancedConditions.supported) {
+                return game.cub.conditionLab = new ConditionLab().render(true)
+            } else {
+                ui.notifications.warn(game.i18n.localize(`ENHANCED_CONDITIONS.GameSystemNotSupported`));
+            }
+            
+        });
     }
 
     /**
