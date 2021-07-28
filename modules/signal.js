@@ -45,6 +45,7 @@ export class Signal {
 
         Hooks.on("init", () => {
             // Assign the namespace Object if it already exists or instantiate it as an object if not
+            game.cub = game.cub ?? {};
             ui.cub = ui.cub ?? {};
 
             // Execute housekeeping
