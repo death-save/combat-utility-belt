@@ -869,7 +869,7 @@ export class EnhancedConditions {
             ui.notifications.warn(game.i18n.localize("ENHANCED_CONDITIONS.MapMismatch"));
         }
         
-        const map = json.map;
+        const map = json.map ? EnhancedConditions._prepareMap(json.map) : [];
 
         return map;
     }
