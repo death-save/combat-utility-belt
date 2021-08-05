@@ -76,15 +76,28 @@ export class ConditionLab extends FormApplication {
             entry.enrichedReference = entry.referenceId ? TextEditor.enrichHTML(entry.referenceId) : "";
 
             // @todo #357 extract this into a function
-            entry.isChanged = existingEntry && entry
-                ? (entry?.name != existingEntry?.name 
-                    || entry?.icon != existingEntry?.icon 
-                    || JSON.stringify(entry?.options) != JSON.stringify(existingEntry?.options)
-                    || entry?.referenceId != existingEntry?.referenceId
-                    || entry?.applyTrigger != existingEntry?.applyTrigger
-                    || entry?.removeTrigger != existingEntry?.removeTrigger
-                    || index != this?.initialMap.indexOf(existingEntry)) 
-                : false;
+            const propsToCheck = [
+                "name",
+                "icon",
+                "options",
+                "referenceId",
+                "applyTrigger",
+                "removeTrigger",
+                "activeEffect"
+            ];
+            entry.isChanged = entry.isNew || (index != this.initialMap?.indexOf(existingEntry));
+
+            if (!entry.isChanged) {
+                for (const prop of propsToCheck) {
+                    if  (existingEntry[prop] && !entry[prop]) {
+                        entry.isChanged = true;
+                        break;
+                    } else if (existingEntry && (JSON.stringify(existingEntry[prop]) != JSON.stringify(entry[prop]))) {
+                        entry.isChanged = true;
+                        break;
+                    }
+                }
+            }
         });
 
         const unsavedMap = this?.initialMap?.length != conditionMap?.length || (conditionMap?.length ? conditionMap?.some(c => c.isNew || c.isChanged) : false);
