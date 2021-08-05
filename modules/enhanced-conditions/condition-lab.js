@@ -38,7 +38,7 @@ export class ConditionLab extends FormApplication {
     }
 
     /**
-     * 
+     * Prepare data for form rendering
      */
     async prepareData() {
         const defaultMaps = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.defaultMaps);
