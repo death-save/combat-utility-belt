@@ -452,7 +452,7 @@ export class ConditionLab extends FormApplication {
         //if (row === null) return;
         if (!conditionId) return;
 
-        const conditions = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.map);
+        const conditions = this.map ?? Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.map);
         const condition = conditions.length ? conditions.find(c => c.id === conditionId) : null;
 
         if (!condition) return;
