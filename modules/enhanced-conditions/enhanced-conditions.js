@@ -620,7 +620,7 @@ export class EnhancedConditions {
         const existingIds = conditionMap.filter(c => c.id).map(c => c.id);
         
         // Iterate through the map validating/preparing the data
-        for (let i = conditionMap.length; i--;) {           
+        for (let i = 0; i < conditionMap.length; i++) {           
             let condition = duplicate(conditionMap[i]);
 
             // Delete falsy values
