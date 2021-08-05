@@ -139,7 +139,7 @@ export class ConditionLab extends FormApplication {
         let optionsDefeated = [];
         let newMap = [];
         const rows = [];
-        const existingMap = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.map);
+        const existingMap = this.map ?? Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.map);
 
 
         //need to tighten these up to check for the existence of digits after the word
