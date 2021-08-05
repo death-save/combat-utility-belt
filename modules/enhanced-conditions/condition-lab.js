@@ -322,7 +322,7 @@ export class ConditionLab extends FormApplication {
         const json = JSON.parse(jsonFile);
         const map = EnhancedConditions.mapFromJson(json);
 
-        if (!map) {
+        if (!map || !map?.length) {
             return;
         }
 
