@@ -8,7 +8,30 @@
 3. Overlay Effects added to a token will trigger the matching non-Overlay Condition to output to chat. The reverse is also true.
 4. **PF2e users**: Enhanced Conditions `Output to Chat` setting will cause duplicate chat messages due to similar function built into the system.
 5. Chat log may not re-render when Hide Names settings are changed. This may cause the old name to still show in the log for players. Advise players to reload Foundry if you change these settings mid-session.
-6. *️⃣The Default/Inferred Condition Lab Mappings for game systems may not correctly import all data. Importing the map from the CUB Condition Maps folder imports correctly.
+6. The Default/Inferred Condition Lab Mappings for game systems may not correctly import all data. Importing the map from the CUB Condition Maps folder imports correctly.
+
+## [1.6.1] - 2021-08-05
+### Enhanced Conditions
+- Active Effects saved in an exported Condition Mapping can now be imported 📥!
+- Unsaved changes in the Condition Lab are more accurately reported. This includes actions such as renaming a Condition or toggling an Option.
+- [BREAKING] Removed compatibility with game systems that use simple status effect icons instead of active effects. This was necessary to resolve issues caused by this interaction that prevent basic system features working. If your system is not supported by Enhanced Conditions, a warning will popup when you click the Condition Lab button. A future update may restore this functionality.
+
+### Concentrator
+- Fixed an issue that could cause errors when loading Foundry
+- Added a check to see if the update had already been processed when damage occurs
+
+### Hide Names
+- Status effect icons are no longer removed when name is hidden
+- Combat Carousel names are hidden again
+
+### Pan/Select
+- Panning works for Players again
+
+### Award XP
+- Fixed detection of `End Combat` dialog for non-English languages (thanks @daimakaicho)!
+
+### Translations
+- Updated 日本語 (Japanese) translation (thanks touge and @brothersharper)
 
 ## [1.6.0] - 2021-06-15
 ### Enhanced Conditions
