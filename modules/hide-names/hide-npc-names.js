@@ -102,7 +102,7 @@ export class HideNPCNames {
                 continue;
             }
 
-            $(el).find(".token-name").text(npcToken.replacement);
+            $(el).find(".token-name h4").text(npcToken.replacement);
             $(el).find(".token-image").attr("title", npcToken.replacement);            
         }
         
@@ -268,12 +268,12 @@ export class HideNPCNames {
         for (const card of combatantCards) {
             const $card = $(card);
             const combatantId = card.dataset.combatantId;
-            const combatant = game.combat.getCombatant(combatantId);
-            const token = canvas.tokens.get(combatant.tokenId);
-            const actor = token.actor;
+            const combatant = game.combat.combatants.get(combatantId);
+            const token = combatant?.token;
+            const actor = token?.actor;
 
             // @todo append mask icon
-            if (game.user.isGM || actor.isOwner) continue;
+            if (!actor || game.user.isGM || actor.isOwner) continue;
 
             if (HideNPCNames.shouldReplaceName(actor)) {
                 const nameDiv = $card.find("div.name");

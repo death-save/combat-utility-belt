@@ -2,39 +2,96 @@ import * as BUTLER from "./butler.js";
 import { Sidekick } from "./sidekick.js";
 
 /**
- * 
+ * Pan/Select Gadget
  */
 export class PanSelect {
     /**
-     * Determines if a panning workflow should begin
-     * @param {Object} combat
-     * @param {Object} update 
+     * Pre-update Combat handler
+     * @param {*} combat 
+     * @param {*} update 
+     * @param {*} options 
+     * @param {*} userId 
+     * @returns 
      */
-    static _panHandler(combat, update) {
+    static _onPreUpdateCombat(combat, update, options, userId) {
         const enablePan = Sidekick.getSetting(BUTLER.SETTING_KEYS.panSelect.enablePan);
-        const panGM = Sidekick.getSetting(BUTLER.SETTING_KEYS.panSelect.panGM);
-        const panPlayers = Sidekick.getSetting(BUTLER.SETTING_KEYS.panSelect.panPlayers);
+        const enableSelect = Sidekick.getSetting(BUTLER.SETTING_KEYS.panSelect.enableSelect);
 
-        if (!hasProperty(update, "turn") || !enablePan) {
-            return;
+        if (!enablePan && !enableSelect) return;
+
+        if (hasProperty(update, "turn") || getProperty(update, "started")) {
+            options[BUTLER.NAME] = options[BUTLER.NAME] ?? {};
+            setProperty(options, `${BUTLER.NAME}.${BUTLER.FLAGS.panSelect.shouldPan}`,  enablePan);
+            setProperty(options, `${BUTLER.NAME}.${BUTLER.FLAGS.panSelect.shouldSelect}`,  enableSelect);
+        } 
+    }
+
+    /**
+     * Update Combat handler
+     * @param {*} combat 
+     * @param {*} update 
+     * @param {*} options 
+     * @param {*} userId 
+     * @returns 
+     */
+    static _onUpdateCombat(combat, update, options, userId) {
+        const combatant = update.turn ? combat.turns[update.turn] : combat.combatant;
+
+        if (!combatant) return;
+
+        if (getProperty(options, `${BUTLER.NAME}.${BUTLER.FLAGS.panSelect.shouldPan}`)) {
+            PanSelect._updateHandler(combatant, "pan");
         }
 
-        const combatant = combat.combatant;
+        if (getProperty(options, `${BUTLER.NAME}.${BUTLER.FLAGS.panSelect.shouldSelect}`)) {
+            PanSelect._updateHandler(combatant, "select");
+        }
+    }
+
+    /**
+     * Determines if a pan/select workflow should begin
+     * @param {Combatant} combatant
+     */
+    static _updateHandler(combatant, type) {
+        const token = combatant.token;
         const temporary = hasProperty(combatant, `flags.${BUTLER.NAME}.${BUTLER.FLAGS.temporaryCombatants.temporaryCombatant}`);
 
-        if (temporary) {
-            return;
-        }
+        if (!type || !token || temporary) return;
 
-        const tracker = combat.entities ? combat.entities.find(tr => tr.id === update.id) : combat;
-        const token = hasProperty(update, "turn") ? tracker.turns[update.turn].token : tracker.turns[0].token;
+        switch (type) {
+            case "pan":
+                const panGM = Sidekick.getSetting(BUTLER.SETTING_KEYS.panSelect.panGM);
+                const panPlayers = Sidekick.getSetting(BUTLER.SETTING_KEYS.panSelect.panPlayers);
 
-        if (!game.user.isGM && panPlayers !== Sidekick.getKeyByValue(BUTLER.DEFAULT_CONFIG.panSelect.panPlayers, BUTLER.DEFAULT_CONFIG.panSelect.panPlayers.none)) {
-            return PanSelect._checkPlayerPan(token);
-        }
+                if (!game.user.isGM && panPlayers !== Sidekick.getKeyByValue(BUTLER.DEFAULT_CONFIG.panSelect.panPlayers, BUTLER.DEFAULT_CONFIG.panSelect.panPlayers.none)) {
+                    return PanSelect._checkPlayerPan(token);
+                }
+        
+                if (game.user.isGM && panGM !== Sidekick.getKeyByValue(BUTLER.DEFAULT_CONFIG.panSelect.panGM, BUTLER.DEFAULT_CONFIG.panSelect.panGM.none)) {
+                    return PanSelect._checkGMPan(token);
+                }
+                break;
+            
+            case "select":
+                const selectGM = Sidekick.getSetting(BUTLER.SETTING_KEYS.panSelect.selectGM);
+                const selectPlayers = Sidekick.getSetting(BUTLER.SETTING_KEYS.panSelect.selectPlayers);
+                const observerDeselect = Sidekick.getSetting(BUTLER.SETTING_KEYS.panSelect.observerDeselect);
+                
+                if (game.user.isGM && selectGM !== Sidekick.getKeyByValue(BUTLER.DEFAULT_CONFIG.panSelect.panGM, BUTLER.DEFAULT_CONFIG.panSelect.panGM.none)) {
+                    return PanSelect._checkGMSelect(token);
+                }
+        
+                if (observerDeselect) {
+                    PanSelect._checkObserverDeselect(token);
+                }
+        
+                if (selectPlayers) {
+                    PanSelect._checkPlayerSelect(token);
+                }
+                break;
 
-        if (game.user.isGM && panGM !== Sidekick.getKeyByValue(BUTLER.DEFAULT_CONFIG.panSelect.panGM, BUTLER.DEFAULT_CONFIG.panSelect.panGM.none)) {
-            return PanSelect._checkGMPan(token);
+            default:
+                return;
         }
     }
 
@@ -43,13 +100,23 @@ export class PanSelect {
      * @param {*} token
      */
     static _checkPlayerPan(token) {
-        const actor = token ? game.actors.get(token.actorId) : null;
-        const actorPermission = actor ? actor.data.permission[game.userId] || 0 : null;
-        const panPlayers = Sidekick.getSetting(BUTLER.SETTING_KEYS.panSelect.panPlayers);
+        if (token instanceof TokenDocument) {
+            token = canvas.tokens.get(token.id);
+        }
+
+        if (!token) return;
+
+        const actor = token?.actor;
+
+        if (!actor) return;
+
+        const actorPermission = actor ? (actor.data.permission[game.userId] || 0) : null;
 
         if (actorPermission === null) {
             return;
         }
+
+        const panPlayers = Sidekick.getSetting(BUTLER.SETTING_KEYS.panSelect.panPlayers);
         // all - pan always, owner - pan when i own, observer - pan when i own OR observe, none - return
 
         switch (BUTLER.DEFAULT_CONFIG.panSelect.panPlayers[panPlayers]) {
@@ -77,7 +144,7 @@ export class PanSelect {
                 }
         }
 
-        return PanSelect._panToToken(token);
+        return PanSelect._panToToken(token.data);
     }
 
     /**
@@ -130,50 +197,6 @@ export class PanSelect {
                 x: xCoord,
                 y: yCoord
         });
-    }
-
-    /**
-     * Selects the current token in the turn tracker
-     * @param {Object} combat 
-     * @param {Object} update 
-     */
-    static async _selectHandler(combat, update) {
-        const enableSelect = Sidekick.getSetting(BUTLER.SETTING_KEYS.panSelect.enableSelect);
-        const selectGM = Sidekick.getSetting(BUTLER.SETTING_KEYS.panSelect.selectGM);
-        const selectPlayers = Sidekick.getSetting(BUTLER.SETTING_KEYS.panSelect.selectPlayers);
-        const observerDeselect = Sidekick.getSetting(BUTLER.SETTING_KEYS.panSelect.observerDeselect);
-
-        if (!hasProperty(update, "turn") || !enableSelect) {
-            return;
-        }
-
-        const combatant = combat.combatant;
-        const temporary = hasProperty(combatant, `flags.${BUTLER.NAME}.${BUTLER.FLAGS.temporaryCombatants.temporaryCombatant}`);
-
-        if (temporary) {
-            return;
-        }
-
-        const tracker = combat.entities ? combat.entities.find(tr => tr.id === update.id) : combat;
-        const token = hasProperty(update, "turn") ? tracker.turns[update.turn].token : tracker.turns[0].token;
-
-        if (!token) {
-            return;
-        }
-
-        if (game.user.isGM && selectGM !== Sidekick.getKeyByValue(BUTLER.DEFAULT_CONFIG.panSelect.panGM, BUTLER.DEFAULT_CONFIG.panSelect.panGM.none)) {
-            return PanSelect._checkGMSelect(token);
-        }
-
-        if (observerDeselect) {
-            PanSelect._checkObserverDeselect(token);
-        }
-
-        if (selectPlayers) {
-            PanSelect._checkPlayerSelect(token);
-        }
-        
-        return;
     }
 
     /**

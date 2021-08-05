@@ -45,7 +45,8 @@ export class Signal {
 
         Hooks.on("init", () => {
             // Assign the namespace Object if it already exists or instantiate it as an object if not
-            game.cub = game.cub || {};
+            game.cub = game.cub ?? {};
+            ui.cub = ui.cub ?? {};
 
             // Execute housekeeping
             Sidekick.handlebarsHelpers();
@@ -140,12 +141,13 @@ export class Signal {
 
         Hooks.on("preUpdateCombat", (combat, updateData, options, userId) => {
             RerollInitiative._onPreUpdateCombat(combat, updateData, options, userId);
+            PanSelect._onPreUpdateCombat(combat, updateData, options, userId);
         });
 
         Hooks.on("updateCombat", (combat, updateData, options, userId) => {
             RerollInitiative._onUpdateCombat(combat, updateData, options, userId);
             EnhancedConditions._onUpdateCombat(combat, updateData, options, userId);
-            TrackerUtility._hookOnUpdateCombat(combat, updateData, options, userId);
+            PanSelect._onUpdateCombat(combat, updateData, options, userId);
         });
 
         Hooks.on("deleteCombat", (combat, options, userId) => {
@@ -194,7 +196,7 @@ export class Signal {
         });
         
         Hooks.on("renderDialog", (app, html, data) => {
-            if (app.title === "End Combat Encounter?") {
+            if (app.title === game.i18n.localize("COMBAT.EndTitle")) {
                 GiveXP._onRenderDialog(app, html, data);
             }
         });
@@ -211,6 +213,10 @@ export class Signal {
 
         Hooks.on("renderCUBPuter", (app, html, data) => {
             CUBPuter._onRender(app, html, data);
+        });
+
+        Hooks.on("renderConditionLab", (app, html, data) => {
+            ConditionLab._onRender(app, html, data);
         });
 
         Hooks.on("renderCombatCarousel", (app, html, data) => {

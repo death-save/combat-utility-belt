@@ -27,6 +27,8 @@
     "CONCENTRATOR.ConditionName": "Concentrating",
     "CONCENTRATOR.Alias": "Concentrator",
 
+    "ENHANCED_CONDITIONS.GameSystemNotSupported": "CUB Enhanced Conditions does not work with this game system. Please check the CUB Wiki for more info",
+    "ENHANCED_CONDITIONS.SimpleIconsNotSupported": "CUB Enhanced Conditions does not support game systems that use simple status effect icons.",
     "ENHANCED_CONDITIONS.MapMismatch": "This map does not match your game system and may not work as expected.",
     "ENHANCED_CONDITIONS.ApplyCondition.Failed.NoToken": "Apply Condition failed. No token provided",
     "ENHANCED_CONDITIONS.ApplyCondition.Failed.NoCondition": "Apply Condition failed. Could not find condition:",

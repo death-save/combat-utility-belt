@@ -45,7 +45,7 @@ export class Concentrator {
         const messageTokenId = app.data.speaker.token;
         const scene = messageSceneId ? game.scenes.get(messageSceneId) : game.scenes.active;
         const tokenData = scene ? scene.data.tokens.find(t => t.id === messageTokenId) : null;
-        const token = canvas?.tokens.get(messageTokenId) ?? (tokenData ? new Token(tokenData, scene) : null);
+        const token = canvas?.tokens?.get(messageTokenId) ?? (tokenData ? new Token(tokenData, scene) : null);
         const actor = token ? token.actor : messageActorId ? game.actors.get(messageActorId) : null;
 
         if (!actor) return;
@@ -95,15 +95,15 @@ export class Concentrator {
         const oldHealth = getProperty(actor, `data.data.${Sidekick.getSetting(SETTING_KEYS.concentrator.healthAttribute)}.value`);
 
         const damageTaken = Concentrator._wasDamageTaken(newHealth, oldHealth);
+        options[NAME] = options[NAME] ?? {};
 
         if (damageTaken) {
-            options[NAME] = {
-                [FLAGS.concentrator.damageTaken]: true,
-                [FLAGS.concentrator.damageAmount]: Concentrator._calculateDamage(newHealth, oldHealth),
-                [FLAGS.concentrator.isDead]:  newHealth <= 0
-            }
+            options[NAME][FLAGS.concentrator.damageTaken] = true;
+            options[NAME][FLAGS.concentrator.damageAmount] = Concentrator._calculateDamage(newHealth, oldHealth);
+            options[NAME][FLAGS.concentrator.isDead] = newHealth <= 0;
         }
 
+        setProperty(options, `${NAME}.${FLAGS.concentrator.updateProcessed}`, false);
         return true;
     }
 
@@ -115,12 +115,14 @@ export class Concentrator {
      */
     static _onUpdateActor(actor, update, options, userId){
         const damageTaken = getProperty(options, `${NAME}.${FLAGS.concentrator.damageTaken}`);
+        const updateProcessed = getProperty(options, `${NAME}.${FLAGS.concentrator.updateProcessed}`);
 
-        if (!damageTaken || (!game.user.isGM && userId !== game.userId)) return;
+        if (!damageTaken || updateProcessed || (!game.user.isGM && userId !== game.userId)) return;
 
         // Update handled in token hooks
         if (actor.isToken) return;
 
+        setProperty(options, `${NAME}.${FLAGS.concentrator.updateProcessed}`, true);
         return Concentrator._processDamage(actor, options);
     }
 
@@ -132,6 +134,8 @@ export class Concentrator {
      * @param {*} options 
      */
     static _onPreUpdateToken(token, update, options, userId){
+        if (token.data.actorLink) return true;
+        
         const enableConcentrator = Sidekick.getSetting(SETTING_KEYS.concentrator.enable);
 
         if (!enableConcentrator) return true;

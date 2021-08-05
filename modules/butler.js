@@ -326,7 +326,8 @@ export const FLAGS = {
         chatMessage: "concentratorChatMessageParsed",
         damageTaken: "damageWasTaken",
         damageAmount: "damageAmount",
-        isDead: "isDead"
+        isDead: "isDead",
+        updateProcessed: "concentrationUpdateProcessed"
     },
     enhancedConditions: {
         conditionId: "conditionId",
@@ -345,6 +346,10 @@ export const FLAGS = {
         enable: "enableHideName",
         replacementType: "hideNameReplacementType",
         replacementName: "hideNameReplacement"
+    },
+    panSelect: {
+        shouldPan: "shouldPan",
+        shouldSelect: "shouldSelect"
     }
 }
 

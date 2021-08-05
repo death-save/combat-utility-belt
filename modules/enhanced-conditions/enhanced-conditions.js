@@ -21,10 +21,16 @@ export class EnhancedConditions {
      * 4. Override status effects
      */
     static async _onReady() {
+        game.cub.enhancedConditions.supported = false;
         const enable = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.enable);
 
         // Return early if gadget not enabled
         if (!enable) return;
+
+        if (CONFIG.statusEffects.length && typeof CONFIG.statusEffects[0] == "string") {
+            console.warn(game.i18n.localize(`ENHANCED_CONDITIONS.SimpleIconsNotSupported`));           
+            return;
+        }
 
         let defaultMaps = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.defaultMaps) ?? {};
         let conditionMap = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.map);
@@ -53,6 +59,7 @@ export class EnhancedConditions {
 
             if (game.user.isGM) {
                 const preparedMap = EnhancedConditions._prepareMap(conditionMap);
+                conditionMap = preparedMap && preparedMap.length ? preparedMap : conditionMap;
                 Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.map, preparedMap, true);
             }
         }
@@ -73,7 +80,7 @@ export class EnhancedConditions {
                 }
             }
 
-            EnhancedConditions._updateStatusEffects(conditionMap);
+            if (conditionMap.length) EnhancedConditions._updateStatusEffects(conditionMap);
         }
 
         // Save the active condition map to a convenience property
@@ -81,7 +88,7 @@ export class EnhancedConditions {
             game.cub.conditions = conditionMap;
         }
 
-        
+        game.cub.enhancedConditions.supported = true;
     }
 
     /**
@@ -241,12 +248,16 @@ export class EnhancedConditions {
     static _onUpdateCombat(combat, update, options, userId) {
         const enableEnhancedConditions = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.enable);
         const enableOutputCombat = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.outputCombat);
+        const outputChatSetting = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.outputChat);
+        const combatant = combat.combatant;
 
-        if (!hasProperty(update, "turn") || !enableEnhancedConditions || !enableOutputCombat|| !game.user.isGM || !game.combat.combatant) {
+        if (!hasProperty(update, "turn") || !combatant || !enableEnhancedConditions || !outputChatSetting || !enableOutputCombat|| !game.user.isGM) {
             return;
         }
 
-        const token = combat.combatant.token;
+        const token = combatant.token;
+
+        if (!token) return;
 
         const tokenConditions = EnhancedConditions.getConditions(token, {warn: false});
         let conditions = (tokenConditions && tokenConditions.conditions) ? tokenConditions.conditions : [];
@@ -254,13 +265,9 @@ export class EnhancedConditions {
 
         if (!conditions.length) return;
 
-        const chatConditions = [];
+        const chatConditions = conditions.filter(c => c.options?.outputChat);
 
-        for (const condition of conditions) {
-            const shouldOutput = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.outputChat) && condition.options?.outputChat;
-
-            if (shouldOutput) chatConditions.push(condition);
-        }
+        if (!chatConditions.length) return;
 
         EnhancedConditions.outputChatMessage(token, chatConditions, {type: "active"});
     }
@@ -550,7 +557,14 @@ export class EnhancedConditions {
         
         cubDiv.append(labButton);
 
-        labButton.on("click", event => game.cub.conditionLab = new ConditionLab().render(true));
+        labButton.on("click", event => {
+            if (game.cub.enhancedConditions.supported) {
+                return game.cub.conditionLab = new ConditionLab().render(true)
+            } else {
+                ui.notifications.warn(game.i18n.localize(`ENHANCED_CONDITIONS.GameSystemNotSupported`));
+            }
+            
+        });
     }
 
     /**
@@ -599,17 +613,30 @@ export class EnhancedConditions {
     static _prepareMap(conditionMap) {
         if (!conditionMap || !conditionMap?.length) return;
 
-        const preparedMap = duplicate(conditionMap);
+        const preparedMap = [];
+        const outputChatSetting = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.outputChat);
 
         // Map existing ids for ease of access
-        const existingIds = conditionMap.map(c => c.id);
+        const existingIds = conditionMap.filter(c => c.id).map(c => c.id);
+        
+        // Iterate through the map validating/preparing the data
+        for (let i = 0; i < conditionMap.length; i++) {           
+            let condition = duplicate(conditionMap[i]);
 
-        // Iterate through the map validating and fixing the data
-        preparedMap.forEach(c => {
-            c.name = c.name ?? (c.icon ? Sidekick.getNameFromFilePath(c.icon) : "");
-            c.id = c.id || Sidekick.generateUniqueSlugId(c.name, existingIds);
-            c.options = c.options || {};
-        });
+            // Delete falsy values
+            if (!condition) preparedMap.splice(i, 1);
+
+            // Convert string values (eg. icon path) to condition/effect object
+            // @todo #580 Consider re-adding support for systems that use simple icons for status effects
+            //condition = typeof condition == "string" ? {icon: condition} : condition;
+            if (typeof condition == "string") continue;
+
+            condition.name = condition.name ?? (condition.icon ? Sidekick.getNameFromFilePath(condition.icon) : "");
+            condition.id = condition.id || Sidekick.generateUniqueSlugId(condition.name, existingIds);
+            condition.options = condition.options || {};
+            if (condition.options.outputChat === undefined) condition.options.outputChat = outputChatSetting;
+            preparedMap.push(condition);
+        }
 
         return preparedMap;
     }
@@ -842,7 +869,7 @@ export class EnhancedConditions {
             ui.notifications.warn(game.i18n.localize("ENHANCED_CONDITIONS.MapMismatch"));
         }
         
-        const map = json.map;
+        const map = json.map ? EnhancedConditions._prepareMap(json.map) : [];
 
         return map;
     }

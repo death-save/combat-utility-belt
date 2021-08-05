@@ -11,7 +11,7 @@ import EnhancedEffectConfig from "./enhanced-effect-config.js";
 export class ConditionLab extends FormApplication {
     constructor(object, options={}) {
         super(object, options);
-        this.data = game.cub.conditionLab ? game.cub.conditionLab.data : object || null;
+        this.data = (game.cub.conditionLab ? game.cub.conditionLab.data : object) ?? null;
         this.system = game.system.id;
         this.mapType = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.mapType);
         this.initialMap = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.map);
@@ -38,7 +38,7 @@ export class ConditionLab extends FormApplication {
     }
 
     /**
-     * 
+     * Prepare data for form rendering
      */
     async prepareData() {
         const defaultMaps = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.defaultMaps);
@@ -76,15 +76,28 @@ export class ConditionLab extends FormApplication {
             entry.enrichedReference = entry.referenceId ? TextEditor.enrichHTML(entry.referenceId) : "";
 
             // @todo #357 extract this into a function
-            entry.isChanged = existingEntry && entry
-                ? (entry?.name != existingEntry?.name 
-                    || entry?.icon != existingEntry?.icon 
-                    || JSON.stringify(entry?.options) != JSON.stringify(existingEntry?.options)
-                    || entry?.referenceId != existingEntry?.referenceId
-                    || entry?.applyTrigger != existingEntry?.applyTrigger
-                    || entry?.removeTrigger != existingEntry?.removeTrigger
-                    || index != this?.initialMap.indexOf(existingEntry)) 
-                : false;
+            const propsToCheck = [
+                "name",
+                "icon",
+                "options",
+                "referenceId",
+                "applyTrigger",
+                "removeTrigger",
+                "activeEffect"
+            ];
+            entry.isChanged = entry.isNew || (index != this.initialMap?.indexOf(existingEntry));
+
+            if (!entry.isChanged) {
+                for (const prop of propsToCheck) {
+                    if  (existingEntry[prop] && !entry[prop]) {
+                        entry.isChanged = true;
+                        break;
+                    } else if (existingEntry && (JSON.stringify(existingEntry[prop]) != JSON.stringify(entry[prop]))) {
+                        entry.isChanged = true;
+                        break;
+                    }
+                }
+            }
         });
 
         const unsavedMap = this?.initialMap?.length != conditionMap?.length || (conditionMap?.length ? conditionMap?.some(c => c.isNew || c.isChanged) : false);
@@ -126,7 +139,7 @@ export class ConditionLab extends FormApplication {
         let optionsDefeated = [];
         let newMap = [];
         const rows = [];
-        const existingMap = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.map);
+        const existingMap = this.map ?? Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.map);
 
 
         //need to tighten these up to check for the existence of digits after the word
@@ -241,12 +254,16 @@ export class ConditionLab extends FormApplication {
         }
 
         this.mapType = mapType;
-        this.map = EnhancedConditions._prepareMap(newMap);
+        const preparedMap = EnhancedConditions._prepareMap(newMap);
 
         Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.mapType, mapType, true);
-        Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.map, this.map, true);
+        Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.map, preparedMap, true);
+
+        this.map = preparedMap;
+        this.initialMap = this.map;
 
         ui.notifications.info(game.i18n.localize("ENHANCED_CONDITIONS.Lab.SaveSuccess"));
+        this.render();
     }
 
     /**
@@ -305,7 +322,7 @@ export class ConditionLab extends FormApplication {
         const json = JSON.parse(jsonFile);
         const map = EnhancedConditions.mapFromJson(json);
 
-        if (!map) {
+        if (!map || !map?.length) {
             return;
         }
 
@@ -342,6 +359,24 @@ export class ConditionLab extends FormApplication {
         return buttons
     }
 
+    /* -------------------------------------------- */
+    /*                 Hook Handlers                */
+    /* -------------------------------------------- */
+
+    /**
+     * Condition Lab Render handler
+     * @param {*} app 
+     * @param {*} html 
+     * @param {*} data 
+     */
+     static _onRender(app, html, data) {
+        ui.cub.conditionLab = app;
+    }
+
+    /* -------------------------------------------- */
+    /*                Event Handlers                */
+    /* -------------------------------------------- */
+
     /**
      * Activate app listeners
      * @param {*} html 
@@ -354,30 +389,44 @@ export class ConditionLab extends FormApplication {
         const addRowAnchor = html.find("a[name='add-row']");
         const removeRowAnchor = html.find("a[class='remove-row']");
         const changeOrderAnchor = html.find(".change-order a");
-        const iconPath = html.find("input[class='icon-path']");
-        const referenceInput = html.find("input[name^='reference-item']");
+        //const iconPath = html.find("input[class='icon-path']");
+        //const referenceInput = html.find("input[name^='reference-item']");
         const restoreDefaultsButton = html.find("button[class='restore-defaults']");
         const resetFormButton = html.find("button[name='reset']");
         const saveCloseButton = html.find("button[name='save-close']");
 
+        inputs.on("change", event => this._onChangeInputs(event));
         mapTypeSelector.on("change", event => this._onChangeMapType(event));
         activeEffectButton.on("click", event => this._onClickActiveEffectConfig(event));
         triggerAnchor.on("click", event => this._onOpenTrigglerForm(event));            
         addRowAnchor.on("click", async event => this._onAddRow(event));
         removeRowAnchor.on("click", async event => this._onRemoveRow(event));
         changeOrderAnchor.on("click", event => this._onChangeSortOrder(event));
-        referenceInput.on("change", event => this._onChangeReferenceId(event));
+        //referenceInput.on("change", event => this._onChangeReferenceId(event));
         restoreDefaultsButton.on("click", async event => this._onRestoreDefaults(event));
         resetFormButton.on("click", event => this._onResetForm(event));
         saveCloseButton.on("click", event => this._onSaveClose(event));
-        iconPath.on("change", event => this._onChangeIconPath(event));
+        //iconPath.on("change", event => this._onChangeIconPath(event));
 
         super.activateListeners(html);     
     }
 
-    /* -------------------------------------------- */
-    /*                Event Handlers                */
-    /* -------------------------------------------- */
+    /**
+     * Input change handler
+     * @param {*} event 
+     * @returns 
+     */
+    async _onChangeInputs(event) {
+        const name = event.target.name;
+        this.map = this._processFormData(this._getSubmitData());
+        if (name.startsWith("icon-path")) {
+            return this._onChangeIconPath(event);
+        } else if (name.startsWith("reference-id")) {
+            return this._onChangeReferenceId(event);
+        } else {
+            this.render();
+        }
+    }
 
     /**
      * Change Map Type event handler
@@ -418,7 +467,7 @@ export class ConditionLab extends FormApplication {
     _onChangeIconPath(event) {
         event.preventDefault();
         
-        this.map = this._processFormData(this._getSubmitData());
+        //this.map = this._processFormData(this._getSubmitData());
         const row = event.target.name.match(/\d+$/)[0];
 
         //target the icon
@@ -438,7 +487,7 @@ export class ConditionLab extends FormApplication {
         //if (row === null) return;
         if (!conditionId) return;
 
-        const conditions = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.map);
+        const conditions = this.map ?? Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.map);
         const condition = conditions.length ? conditions.find(c => c.id === conditionId) : null;
 
         if (!condition) return;
