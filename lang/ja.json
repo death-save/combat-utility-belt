@@ -81,13 +81,46 @@
     "ENHANCED_CONDITIONS.ChatCard.Buttons.Undo": "状態削除を取り消す",
     "ENHANCED_CONDITIONS.ChatCard.Buttons.Remove": "状態を削除する",
 
+    "GIVE_XP.DistributeForm.XPModifier": "XP倍率",
+    "GIVE_XP.DistributeForm.Friendlies": "友好的",
+    "GIVE_XP.DistributeForm.Hostiles": "敵対的",
+    "GIVE_XP.DistributeForm.SelectFriendlies": "XPを付与する友好的クリーチャーを選択してください。",
+    "GIVE_XP.DistributeForm.SelectHostiles": "XPを付与する敵対的クリーチャーを選択してください。",
+    "GIVE_XP.DistributeForm.Distribution": "分配",
+    "GIVE_XP.DistributeForm.TotalXp": "総計XP",
+    "GIVE_XP.DistributeForm.CreaturesReceiving": "受け取るクリーチャー",
+    "GIVE_XP.DistributeForm.XpPerCreature": "友好的クリーチャーごとの獲得XP",
+
     "HIDE_NAMES.ActorForm.Enable": "アクター名を隠す",
     "HIDE_NAMES.ActorForm.EnableHint": "イニシアチブ表とチャットメッセージに出力されるアクター名を隠します（デフォルトを上書き）。",
     "HIDE_NAMES.ActorForm.ReplacementName": "代替名",
     "HIDE_NAMES.ActorForm.ReplacementHint": "アクター名を置き換える名前を指定します。",
     "HIDE_NAMES.ActorForm.DefaultSettingH": "これは、現在のこのトークンの（CUBPuterで設定された）デフォルト設定です。",
     "HIDE_NAMES.ActorSheetButton": "このアクターの名前を隠す設定",
-    
+
+    "CUB.TRIGGLER.App.AdvancedTrigger.Actor.Note": "アクターの更新に使用するプロパティパスを指定します。パスは updateActor フックに渡される更新オブジェクトからの相対パスです。",
+    "CUB.TRIGGLER.App.AdvancedTrigger.Actor.Note2": "オプションとして、最初のプロパティと比較するための2つ目のプロパティを設定します。このパスはアクターオブジェクト自体からの相対パスです。",
+    "CUB.TRIGGLER.App.AdvancedTrigger.Token.Note": "トークンの更新に使用するプロパティパスを指定します。パスは updateToken フックに渡される更新オブジェクトからの相対パスです。",
+    "CUB.TRIGGLER.App.AdvancedTrigger.Token.Note2": "オプションとして、最初のプロパティと比較するための2つ目のプロパティを設定します。このパスはトークンオブジェクト自体からの相対パスです。",
+    "CUB.TRIGGLER.App.AdvancedTrigger.ActorProperty.Label": "アクター更新プロパティ",
+    "CUB.TRIGGLER.App.AdvancedTrigger.ActorProperty.Placeholder": "例：data.attributes.hp.value（トークン更新プロパティが設定されていない場合は必須）。",
+    "CUB.TRIGGLER.App.AdvancedTrigger.ActorProperty2.Label": "アクター比較プロパティ",
+    "CUB.TRIGGLER.App.AdvancedTrigger.ActorProperty2.Placeholder": "例：data.data.attributes.hp.max（オプション）",
+    "CUB.TRIGGLER.App.AdvancedTrigger.TokenProperty.Label": "トークン更新プロパティ",
+    "CUB.TRIGGLER.App.AdvancedTrigger.TokenProperty.Placeholder": "例：actorData.attributes.hp.value（アクター更新プロパティが設定されていない場合は必須）",
+    "CUB.TRIGGLER.App.AdvancedTrigger.TokenProperty2.Label": "トークン比較プロパティ",
+    "CUB.TRIGGLER.App.AdvancedTrigger.TokenProperty2.Placeholder": "例：actor.data.attributes.hp.max（オプション）",
+    "CUB.TRIGGLER.App.AdvancedTrigger.Property.Hint": "監視する更新プロパティへのパス。アクターとトークンのエントリーポイントの値は、それぞれのエンティティタイプをどこで探すかをトリガーに伝えます。", 
+    "CUB.TRIGGLER.App.TriggerType.Simple.Label": "シンプルトリガー",
+    "CUB.TRIGGLER.App.TriggerType.Advanced.Label": "高度なトリガー",
+    "CUB.TRIGGLER.App.Options.Title": "オプション",
+    "CUB.TRIGGLER.App.SaveSuccessful": "トリガーの保存に成功しました！",
+    "CUB.TRIGGLER.App.AdvancedTrigger.OperatorValue.Heading": "演算子/値",
+    "CUB.TRIGGLER.App.AdvancedTrigger.OperatorValue.Note": "常に必須。演算子と値は、上で設定したアクターとトークンの両方のプロパティに適用されます。",
+    "CUB.TRIGGLER.App.AdvancedTrigger.Name.Label": "トリガー名",
+    "CUB.TRIGGLER.App.AdvancedTrigger.Name.Placeholder": "（高度なトリガーには必須）",
+    "CUB.TRIGGLER.App.AdvancedTrigger.Name.Warning": "高度なトリガーには名前が必要です！",
+
     "SETTINGS.AboutApp.ButtonN": "Combat Utility Beltについて",
     "SETTINGS.AboutApp.ButtonH": "Combat Utility Beltの詳細情報を表示します。",
     "SETTINGS.CUBPuter.ButtonN": "戦闘補助ツール設定",
@@ -133,6 +166,8 @@
 
     "SETTINGS.GiveXP.EnableN": "経験値を分配する",
     "SETTINGS.GiveXP.EnableH": "戦闘終了時に参加キャラクターに経験値を付与するためのオプションを表示します。",
+    "SETTINGS.GiveXP.ModifierN": "倍率",
+    "SETTINGS.GiveXP.ModifierH": "獲得したXPにかかる倍率を指定します。",
 
     "SETTINGS.HideNames.EnableN": "NPC名を隠す",
     "SETTINGS.HideNames.EnableH": "イニシアチブ表やチャットなど、さまざまな場所に表示されるNPCの名前を隠します。",
@@ -209,8 +244,10 @@
     "WORDS.Everyone": "全員",
     "WORDS.About": "クレジット",
     "WORDS.OK": "OK",
-
-
-    "TEMPLATES.EnhancedConditions.ChatCardTitle": "状態を付与",
-    "DEFAULTCONFIG.Concentrator.ConditionName": "集中"
+    "CUB.WORDS.Save": "セーヴ",
+    "CUB.WORDS.Cancel": "キャンセル",
+    "CUB.WORDS.Reset": "リセット",
+    "CUB.WORDS.Actor": "アクター",
+    "CUB.WORDS.Token": "コマ",
+    "WORDS.Configuration": "設定"
 }
