@@ -372,25 +372,43 @@ export class ConditionLab extends FormApplication {
         const addRowAnchor = html.find("a[name='add-row']");
         const removeRowAnchor = html.find("a[class='remove-row']");
         const changeOrderAnchor = html.find(".change-order a");
-        const iconPath = html.find("input[class='icon-path']");
-        const referenceInput = html.find("input[name^='reference-item']");
+        //const iconPath = html.find("input[class='icon-path']");
+        //const referenceInput = html.find("input[name^='reference-item']");
         const restoreDefaultsButton = html.find("button[class='restore-defaults']");
         const resetFormButton = html.find("button[name='reset']");
         const saveCloseButton = html.find("button[name='save-close']");
 
+        inputs.on("change", event => this._onChangeInputs(event));
         mapTypeSelector.on("change", event => this._onChangeMapType(event));
         activeEffectButton.on("click", event => this._onClickActiveEffectConfig(event));
         triggerAnchor.on("click", event => this._onOpenTrigglerForm(event));            
         addRowAnchor.on("click", async event => this._onAddRow(event));
         removeRowAnchor.on("click", async event => this._onRemoveRow(event));
         changeOrderAnchor.on("click", event => this._onChangeSortOrder(event));
-        referenceInput.on("change", event => this._onChangeReferenceId(event));
+        //referenceInput.on("change", event => this._onChangeReferenceId(event));
         restoreDefaultsButton.on("click", async event => this._onRestoreDefaults(event));
         resetFormButton.on("click", event => this._onResetForm(event));
         saveCloseButton.on("click", event => this._onSaveClose(event));
-        iconPath.on("change", event => this._onChangeIconPath(event));
+        //iconPath.on("change", event => this._onChangeIconPath(event));
 
         super.activateListeners(html);     
+    }
+
+    /**
+     * Input change handler
+     * @param {*} event 
+     * @returns 
+     */
+    async _onChangeInputs(event) {
+        const name = event.target.name;
+        this.map = this._processFormData(this._getSubmitData());
+        if (name.startsWith("icon-path")) {
+            return this._onChangeIconPath(event);
+        } else if (name.startsWith("reference-id")) {
+            return this._onChangeReferenceId(event);
+        } else {
+            this.render();
+        }
     }
 
     /**
@@ -432,7 +450,7 @@ export class ConditionLab extends FormApplication {
     _onChangeIconPath(event) {
         event.preventDefault();
         
-        this.map = this._processFormData(this._getSubmitData());
+        //this.map = this._processFormData(this._getSubmitData());
         const row = event.target.name.match(/\d+$/)[0];
 
         //target the icon
