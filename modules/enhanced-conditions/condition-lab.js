@@ -254,10 +254,13 @@ export class ConditionLab extends FormApplication {
         }
 
         this.mapType = mapType;
-        this.map = EnhancedConditions._prepareMap(newMap);
+        const preparedMap = EnhancedConditions._prepareMap(newMap);
 
         Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.mapType, mapType, true);
-        Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.map, this.map, true);
+        Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.map, preparedMap, true);
+
+        this.map = preparedMap;
+        this.initialMap = this.map;
 
         ui.notifications.info(game.i18n.localize("ENHANCED_CONDITIONS.Lab.SaveSuccess"));
     }
