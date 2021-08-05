@@ -11,7 +11,7 @@ import EnhancedEffectConfig from "./enhanced-effect-config.js";
 export class ConditionLab extends FormApplication {
     constructor(object, options={}) {
         super(object, options);
-        this.data = game.cub.conditionLab ? game.cub.conditionLab.data : object || null;
+        this.data = (game.cub.conditionLab ? game.cub.conditionLab.data : object) ?? null;
         this.system = game.system.id;
         this.mapType = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.mapType);
         this.initialMap = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.map);
