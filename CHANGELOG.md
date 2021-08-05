@@ -17,7 +17,7 @@
 - [BREAKING] Removed compatibility with game systems that use simple status effect icons instead of active effects. This was necessary to resolve issues caused by this interaction that prevent basic system features working. If your system is not supported by Enhanced Conditions, a warning will popup when you click the Condition Lab button. A future update may restore this functionality.
 
 ### Concentrator
-- Fixed an issue that could cause errors when loading Foundry
+- Fixed an issue that could cause errors when loading Foundry (thanks @supernun 🎉)
 - Added a check to see if the update had already been processed when damage occurs
 
 ### Hide Names
@@ -25,13 +25,14 @@
 - Combat Carousel names are hidden again
 
 ### Pan/Select
-- Panning works for Players again
+- Panning works for Players again (thanks @thraxst 🎉)!
+- Improved the logic for Pan/Select
 
 ### Award XP
-- Fixed detection of `End Combat` dialog for non-English languages (thanks @daimakaicho)!
+- Fixed detection of `End Combat` dialog for non-English languages (thanks @daimakaicho 🎉)!
 
 ### Translations
-- Updated 日本語 (Japanese) translation (thanks touge and @brothersharper)
+- Updated 日本語 (Japanese) translation (thanks touge and @brothersharper 🎉)!
 
 ## [1.6.0] - 2021-06-15
 ### Enhanced Conditions
