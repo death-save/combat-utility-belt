@@ -263,6 +263,7 @@ export class ConditionLab extends FormApplication {
         this.initialMap = this.map;
 
         ui.notifications.info(game.i18n.localize("ENHANCED_CONDITIONS.Lab.SaveSuccess"));
+        this.render();
     }
 
     /**
