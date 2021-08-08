@@ -62,11 +62,13 @@ export class TokenUtility {
         const hideRoll = Sidekick.getSetting(SETTING_KEYS.tokenUtility.hideAutoRoll);
 
         roll.toMessage(
-          { flavor: `${actor.name} rolls for HP!` },
-          {
-            rollMode: hideRoll ? `gmroll` : `roll`,
-            speaker: ChatMessage.getSpeaker({ actor: actor }),
-          }
+            {
+                flavor: `${actor.name} rolls for HP!`
+            },
+            {
+                rollMode: hideRoll ? `gmroll` : `roll`,
+                speaker: ChatMessage.getSpeaker({actor}),
+            }
         );
         const hp = r.total;
 
