@@ -1,4 +1,10 @@
 {
+    "combat-utility-belt": {
+        "ENHANCED_CONDITIONS.OutputChatConfirm": {
+            "Title": "Enable Output to Chat for All Conditions?",
+            "Content": "Click 'Yes' to enable 'Output to Chat' on all Conditions"
+        }
+    },
     "GADGET_DESCRIPTIONS.AwardXP": "Provides an end of combat prompt to distribute XP from defeated hostile combatants.",
     "GADGET_DESCRIPTIONS.Concentrator": "Manages Concentration in the dnd5e game system.",
     "GADGET_DESCRIPTIONS.EnhancedConditions": "Provides the ability to map Conditions to Status Effect icons",

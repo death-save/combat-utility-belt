@@ -236,7 +236,21 @@ export function registerSettings() {
         type: Boolean,
         config: false,
         default: BUTLER.DEFAULT_CONFIG.enhancedConditions.outputChat,
-        onChange: s => {}
+        onChange: s => {
+            if (s === true) {
+                const dialog = Dialog.confirm({
+                    title: game.i18n.localize(`${BUTLER.NAME}.ENHANCED_CONDITIONS.OutputChatConfirm.Title`),
+                    content: game.i18n.localize(`${BUTLER.NAME}.ENHANCED_CONDITIONS.OutputChatConfirm.Content`),
+                    yes: () => {
+                        const newMap = deepClone(game.cub.conditions);
+                        if (!newMap.length) return;
+                        newMap.forEach(c => c.options.outputChat = true);
+                        Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.map, newMap);
+                    },
+                    no: () => {}
+                });
+            }
+        }
     });
 
     Sidekick.registerSetting(BUTLER.SETTING_KEYS.enhancedConditions.outputCombat, {
