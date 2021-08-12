@@ -225,7 +225,7 @@ export class HideNPCNames {
     static _onRenderImagePopout(app, html, data) {
         const enable = Sidekick.getSetting(SETTING_KEYS.hideNames.enable);
         const uuid = app.options?.uuid;
-        const actor = uuid.startsWith("Actor") ? game.actors.get(uuid.replace("Actor.", "")) : null;
+        const actor = uuid?.startsWith("Actor") ? game.actors.get(uuid.replace("Actor.", "")) : null;
 
         if (!actor || !enable) return;
 
