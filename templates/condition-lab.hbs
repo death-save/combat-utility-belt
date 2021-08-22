@@ -35,7 +35,16 @@
                                 <input type="text" name="condition-{{@index}}" title="Condition" value="{{condition.name}}" class="condition condition-text-input" placeholder="Condition Name" data-dtype="String" {{#if ../isDefault}}disabled{{/if}}>
                             </div>
                             <div class="active-effect">
-                                <button type="button" class="active-effect-config" title="{{#if condition.isNew}}{{localize "ENHANCED_CONDITIONS.Lab.ActiveEffects.TitleDisabled"}}{{else}}{{localize "ENHANCED_CONDITIONS.Lab.ActiveEffects.Title"}}{{/if}}" {{#if condition.isNew}}disabled{{else}}{{/if}}><i class="fas fa-hand-sparkles"></i></button>
+                                <button type="button"
+                                        class="active-effect-config"
+                                        title="{{#if condition.isNew}}
+                                            {{localize "ENHANCED_CONDITIONS.Lab.ActiveEffects.TitleDisabledNew"}}
+                                            {{else if ../isDefault}}{{localize "ENHANCED_CONDITIONS.Lab.ActiveEffects.TitleDisabledDefault"}}
+                                            {{else}}{{localize "ENHANCED_CONDITIONS.Lab.ActiveEffects.Title"}}
+                                            {{/if}}" 
+                                        {{#if (or condition.isNew ../isDefault) }}disabled{{else}}{{/if}}>
+                                    <i class="fas fa-hand-sparkles"></i>
+                                </button>
                             </div>
                         </div>
                         <div class="path">
