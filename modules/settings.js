@@ -209,7 +209,7 @@ export function registerSettings() {
         hint: "SETTINGS.EnhancedConditions.DefaultMapsH",
         scope: "world",
         type: Object,
-        default: [],
+        default: {},
         onChange: s => {}
     });
 
