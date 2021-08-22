@@ -13,7 +13,8 @@ export class ConditionLab extends FormApplication {
         super(object, options);
         this.data = (game.cub.conditionLab ? game.cub.conditionLab.data : object) ?? null;
         this.system = game.system.id;
-        this.mapType = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.mapType);
+        this.initialMapType = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.mapType);
+        this.mapType = null;
         this.initialMap = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.map);
         this.map = null;
         this.maps = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.defaultMaps);
@@ -54,14 +55,14 @@ export class ConditionLab extends FormApplication {
             }
         }
 
-        const mapType = this.mapType || Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.mapType) || "other";
+        const mapType = this.mapType = this.mapType || this.initialMapType || "other";
         const system = this.system || game.system.id;
-        let conditionMap = this.map ? this.map : this.map = this.initialMap;
+        let conditionMap = this.map ? this.map : this.map = JSON.parse(JSON.stringify(this.initialMap));
         const triggers = Sidekick.getSetting(BUTLER.SETTING_KEYS.triggler.triggers).map(t => {
             return [t.id, t.text]
         });
 
-        const isDefault = mapType === Sidekick.getKeyByValue(BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes, BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes.default);
+        const isDefault = this.mapType === Sidekick.getKeyByValue(BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes, BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes.default);
         const outputChatSetting = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.outputChat);
 
         // Transform data for each Condition Mapping entry to ensure it will display correctly
@@ -100,7 +101,9 @@ export class ConditionLab extends FormApplication {
             }
         });
 
-        const unsavedMap = this?.initialMap?.length != conditionMap?.length || (conditionMap?.length ? conditionMap?.some(c => c.isNew || c.isChanged) : false);
+        const unsavedMap = mapType != this.initialMapType
+            || conditionMap?.length != this.initialMap?.length  
+            || (conditionMap?.length ? conditionMap?.some(c => c.isNew || c.isChanged) : false);
         const disableChatOutput = isDefault || !outputChatSetting;
         
         const data = {
@@ -441,20 +444,21 @@ export class ConditionLab extends FormApplication {
         switch (newType) {
             case "default":
             case "custom":
-                newMap = EnhancedConditions.getDefaultMap(this.system);
+                const defaultMap = EnhancedConditions.getDefaultMap(this.system);
+                this.map = defaultMap?.length ? EnhancedConditions._prepareMap(defaultMap) : []; 
                 break;
             
             case "other":
-                newMap = [];
+                this.map = [];
                 break;
         
             default:
                 break;
         }
 
-        const update = {map: newMap, mapType: newType};
+        //const update = {map: newMap, mapType: newType};
 
-        this.map = EnhancedConditions._prepareMap(newMap);
+        //this.map = EnhancedConditions._prepareMap(newMap);
 
         //await this.submit(update);
         this.render();
