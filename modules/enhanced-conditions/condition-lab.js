@@ -599,7 +599,7 @@ export class ConditionLab extends FormApplication {
     }
 
     /**
-     * 
+     * Handler for remove row event
      * @param {*} event 
      */
     _onRemoveRow(event) {
