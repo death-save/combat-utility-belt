@@ -22,14 +22,13 @@ export default class EnhancedEffectConfig extends ActiveEffectConfig {
      * @override
      */
     async _updateObject(event, formData) {
-        //const conditionIdFlag = this.object.getFlag(NAME, FLAGS.enhancedConditions.conditionId);
         const conditionIdFlag = getProperty(this.object.data.flags, `${NAME}.${FLAGS.enhancedConditions.conditionId}`);
         if (!conditionIdFlag) return;
 
         // find the matching condition row
-        const map = Sidekick.getSetting(SETTING_KEYS.enhancedConditions.map);
+        const map = ui.cub?.conditionLab?.map;
 
-        if (!map) return;
+        if (!map && !map.length) return;
 
         const conditionId = conditionIdFlag.replace(`${NAME}.`, "");
         const condition = map.find(c => c.id === conditionId);
@@ -37,17 +36,18 @@ export default class EnhancedEffectConfig extends ActiveEffectConfig {
         if (!condition) return;
 
         // update the effect data
-        const newMap = duplicate(map);
-        const update = duplicate(condition);
-        update.activeEffect = formData;
-        newMap[map.indexOf(condition)] = update;
-        const preparedMap = EnhancedConditions._prepareMap(newMap);
+        
+        condition.activeEffect = condition.activeEffect ? mergeObject(condition.activeEffect, formData) : formData;
 
-        this.object.data = mergeObject(this.object.data, formData);
+        this.object.data = this.object.data ? mergeObject(this.object.data, formData) : formData;
 
-        Sidekick.setSetting(SETTING_KEYS.enhancedConditions.map, preparedMap, true);
-        ui.notifications.info(game.i18n.localize("ENHANCED_CONDITIONS.Lab.SaveSuccess"));
+    
         
         if (this._state == 2) await this.render();
+        if (ui.cub.conditionLab) {
+            ui.cub.conditionLab.map = ui.cub.conditionLab.updatedMap;
+            //ui.cub.conditionLab.unsaved = true;
+            ui.cub.conditionLab.render();
+        }
     }
 }

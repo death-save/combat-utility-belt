@@ -56,18 +56,22 @@ export class TokenUtility {
         if (!formula) {
             return null;
         }
-        
+
         const r = new Roll(formula);
         const roll = r.roll();
         const hideRoll = Sidekick.getSetting(SETTING_KEYS.tokenUtility.hideAutoRoll);
 
-        roll.toMessage({
-            flavor: `${actor.name} rolls for HP!`,
-            rollMode: hideRoll ? `gmroll` : `roll`,
-            speaker: ChatMessage.getSpeaker({actor: actor})
-        });
+        roll.toMessage(
+            {
+                flavor: `${actor.name} rolls for HP!`
+            },
+            {
+                rollMode: hideRoll ? `gmroll` : `roll`,
+                speaker: ChatMessage.getSpeaker({actor}),
+            }
+        );
         const hp = r.total;
-    
+
         return hp;
     }
 

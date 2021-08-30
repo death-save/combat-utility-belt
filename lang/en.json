@@ -1,4 +1,10 @@
 {
+    "combat-utility-belt": {
+        "ENHANCED_CONDITIONS.OutputChatConfirm": {
+            "Title": "Enable Output to Chat for All Conditions?",
+            "Content": "Click 'Yes' to enable 'Output to Chat' on all Conditions"
+        }
+    },
     "GADGET_DESCRIPTIONS.AwardXP": "Provides an end of combat prompt to distribute XP from defeated hostile combatants.",
     "GADGET_DESCRIPTIONS.Concentrator": "Manages Concentration in the dnd5e game system.",
     "GADGET_DESCRIPTIONS.EnhancedConditions": "Provides the ability to map Conditions to Status Effect icons",
@@ -51,7 +57,8 @@
     "ENHANCED_CONDITIONS.Lab.MappingType.Label": "Mapping Type",
     "ENHANCED_CONDITIONS.Lab.MappingType.Unsaved": "(unsaved changes)",
     "ENHANCED_CONDITIONS.Lab.ActiveEffects.Title": "Active Effect Config",
-    "ENHANCED_CONDITIONS.Lab.ActiveEffects.TitleDisabled": "Active Effect Config (Disabled - Save Mapping First)",
+    "ENHANCED_CONDITIONS.Lab.ActiveEffects.TitleDisabledNew": "Active Effect Config (Disabled - Save Mapping First)",
+    "ENHANCED_CONDITIONS.Lab.ActiveEffects.TitleDisabledDefault": "Active Effect Config (Disabled - Cannot Edit Default Mapping)",
     "ENHANCED_CONDITIONS.LAB.Import.NoFile": "You did not upload a data file!",
     "ENHANCED_CONDITIONS.Lab.ConfirmDeleteTitle": "Confirm Row Deletion",
     "ENHANCED_CONDITIONS.Lab.ConfirmDeleteContent": "Are you sure you want to delete this row?",

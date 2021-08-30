@@ -32,7 +32,7 @@ export class EnhancedConditions {
             return;
         }
 
-        let defaultMaps = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.defaultMaps) ?? {};
+        let defaultMaps = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.defaultMaps);
         let conditionMap = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.map);
 
         const system = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.system);
@@ -42,31 +42,35 @@ export class EnhancedConditions {
         // If there's no defaultMaps or defaultMaps doesn't include game system, check storage then set appropriately
         if (!defaultMaps || (defaultMaps instanceof Object && Object.keys(defaultMaps).length === 0) || (defaultMaps instanceof Object && !Object.keys(defaultMaps).includes(system))) {
             if (game.user.isGM) {
-                const storedMaps = await EnhancedConditions._loadDefaultMaps();
-                defaultMaps = Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.defaultMaps, storedMaps, true);
+                defaultMaps = await EnhancedConditions._loadDefaultMaps();
+                Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.defaultMaps, defaultMaps);
             }
         }
 
         // If map type is not set and a default map exists for the system, set maptype to default
         if (!mapType && (defaultMaps instanceof Object && Object.keys(defaultMaps).includes(system))) {
             
-            Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.mapType, defaultMapType, true);
+            Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.mapType, defaultMapType);
         }
 
         // If there's no condition map, get the default one
         if (!conditionMap.length) {
-            conditionMap = EnhancedConditions.getDefaultMap(system);
+            // Pass over defaultMaps since the storage version is still empty
+            conditionMap = EnhancedConditions.getDefaultMap(system, defaultMaps);
 
             if (game.user.isGM) {
                 const preparedMap = EnhancedConditions._prepareMap(conditionMap);
-                conditionMap = preparedMap && preparedMap.length ? preparedMap : conditionMap;
-                Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.map, preparedMap, true);
+
+                if (preparedMap?.length) {
+                    conditionMap = preparedMap?.length ? preparedMap : conditionMap;
+                    Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.map, preparedMap);
+                }
             }
         }
 
         // If map type is not set, now set to default
         if (!mapType && conditionMap.length) {
-            Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.mapType, defaultMapType, true);
+            Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.mapType, defaultMapType);
         }
 
         // If the gadget is enabled, update status icons accordingly
@@ -878,8 +882,8 @@ export class EnhancedConditions {
      * Returns the default condition map for a given system
      * @param {*} system 
      */
-    static getDefaultMap(system) {
-        const defaultMaps = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.defaultMaps);
+    static getDefaultMap(system, defaultMaps=null) {
+        defaultMaps = defaultMaps instanceof Object ? defaultMaps : Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.defaultMaps);
         let defaultMap = defaultMaps[system] || [];
 
         if (!defaultMap.length) {

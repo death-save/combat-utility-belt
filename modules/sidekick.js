@@ -78,21 +78,27 @@ export class Sidekick {
     static async fetchJsons(source, path) {
         const extensions = [".json"];
         const fp = await FilePicker.browse(source, path, {extensions});
-
-        if (!fp.files.length) {
-            return;
-        }
-
-        const jsons = [];
-
-        for (let file of fp.files) {
-            const jsonFile = await fetch(file);
-            const json = await jsonFile.json();
-
-            json instanceof Object ? jsons.push(json) : console.warn("not a valid json:", json);
-        }
+        const fetchedJsons = fp?.files?.length ? await Promise.all(fp.files.map(f => Sidekick.fetchJson(f))) : [];
+        const jsons = fetchedJsons.filter(j => !!j);
         
         return jsons;
+    }
+
+    /**
+     * Fetch a JSON from a given file
+     * @param {File} file 
+     * @returns JSON | null
+     */
+    static async fetchJson(file) {
+        try {
+            const jsonFile = await fetch(file);
+            const json = await jsonFile.json();
+            if (!json instanceof Object) throw new Error("Not a valid JSON!");
+            return json;
+        } catch (e) {
+            console.warn(e.message);
+            return null;
+        }
     }
 
     /**
