@@ -10,6 +10,21 @@
 5. Chat log may not re-render when Hide Names settings are changed. This may cause the old name to still show in the log for players. Advise players to reload Foundry if you change these settings mid-session.
 6. The Default/Inferred Condition Lab Mappings for game systems may not correctly import all data. Importing the map from the CUB Condition Maps folder imports correctly.
 
+## [1.6.2] - 2021-08-29
+### Enhanced Conditions
+- Fixed an issue that prevented Active Effects from being saved while the Condition Lab was open
+- Fixed an issue with Condition Icons that prevented the icon from updating when the filepicker was used
+- Added a dialog when `Output to Chat` is enabled to confirm it should be enabled for all Conditions for Enhanced Conditions
+- Fixed `System - Default` Condition Map not loading correctly in some cases
+- Disabled the Active Effect config button when used the `System - Default` mapping -- this mapping is not intended to allow any changes
+- Improved the detection of unsaved Condition Maps
+
+### Hide Names
+- Fixed an issue with the image popout (`View Character Artwork`) name not being hidden for some actors
+
+### Misc. Token
+- Fixed an issue where hostile Token HP was not being hidden from players (thanks @maselkov! 🎉)
+
 ## [1.6.1] - 2021-08-05
 ### Enhanced Conditions
 - Active Effects saved in an exported Condition Mapping can now be imported 📥!
