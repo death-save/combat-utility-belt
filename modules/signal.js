@@ -90,7 +90,8 @@ export class Signal {
         });
 
         Hooks.on("ready", () => {
-            EnhancedConditions._onReady();            
+            EnhancedConditions._onReady();
+            Concentrator._onReady();            
         });
 
         /* -------------------------------------------- */

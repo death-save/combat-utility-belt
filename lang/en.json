@@ -3,6 +3,10 @@
         "ENHANCED_CONDITIONS.OutputChatConfirm": {
             "Title": "Enable Output to Chat for All Conditions?",
             "Content": "Click 'Yes' to enable 'Output to Chat' on all Conditions"
+        },
+        "CONCENTRATOR": {
+            "MessagePrefix": "Combat Utility Belt - Concentrator",
+            "NoMatchingCondition": "No matching condition found for Concentrator. Please check your Concentrator and Condition Lab"
         }
     },
     "GADGET_DESCRIPTIONS.AwardXP": "Provides an end of combat prompt to distribute XP from defeated hostile combatants.",

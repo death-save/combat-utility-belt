@@ -13,6 +13,20 @@ export class Concentrator {
     /* -------------------------------------------- */
     /*                   Handlers                   */
     /* -------------------------------------------- */
+    static _onReady() {
+        const enableConcentrator = Sidekick.getSetting(SETTING_KEYS.concentrator.enable);
+        
+        if (!game.user.isGM || !enableConcentrator) return;
+
+        const conditionName = Sidekick.getSetting(SETTING_KEYS.concentrator.conditionName);
+
+        const conditionExists = !!EnhancedConditions.getCondition(conditionName);
+
+        if (!conditionExists) {
+            console.log(`${game.i18n.localize(`${NAME}.CONCENTRATOR.MessagePrefix`)} ${game.i18n.localize(`${NAME}.CONCENTRATOR.NoMatchingCondition`)}`);  
+            return ui.notifications.warn(game.i18n.localize(`${NAME}.CONCENTRATOR.NoMatchingCondition`));
+        }
+    }
 
     /**
      * Handle render ChatMessage
