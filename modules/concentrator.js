@@ -433,7 +433,7 @@ export class Concentrator {
      */
     static _isConcentrating(token) {
         const conditionName = Sidekick.getSetting(SETTING_KEYS.concentrator.conditionName);
-        const _isConcentrating = EnhancedConditions.hasCondition(conditionName, token);
+        const _isConcentrating = EnhancedConditions.hasCondition(conditionName, token, {warn: false});
 
         return _isConcentrating;
     }
