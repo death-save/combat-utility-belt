@@ -343,6 +343,27 @@ export class EnhancedConditions {
         });
     }
 
+    static async _onRenderCombatTracker(app, html, data) {
+        const enabled = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.enable);
+
+        if (!enabled) return;
+
+        const effectIcons = html.find("img[class='token-effect']");
+
+        effectIcons.each((index, element) => {
+            const url = new URL(element.src);
+            const path = url?.pathname?.substring(1); 
+            const conditions = EnhancedConditions.getConditionsByIcon(path);
+            const statusEffect = CONFIG.statusEffects.find(e => e.icon === path);
+
+            if (conditions?.length) {
+                element.title = conditions[0];
+            } else if (statusEffect?.label) {
+                element.title = game.i18n.localize(statusEffect.label);
+            }
+        });
+    }
+
     /* -------------------------------------------- */
     /*                    Workers                   */
     /* -------------------------------------------- */

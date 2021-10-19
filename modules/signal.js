@@ -208,6 +208,7 @@ export class Signal {
             HideNPCNames._onRenderCombatTracker(app, html, data);
             TrackerUtility._onRenderCombatTracker(app, html, data);
             TemporaryCombatants._onRenderCombatTracker(app, html, data);
+            EnhancedConditions._onRenderCombatTracker(app, html, data);
         });
 
         /* ---------------- Custom Apps --------------- */
