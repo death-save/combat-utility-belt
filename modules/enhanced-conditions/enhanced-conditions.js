@@ -572,6 +572,8 @@ export class EnhancedConditions {
      * @param {Object} html the html element where the button will be created
      */
     static _createLabButton(html) {
+        if (!game.user.isGM) return;
+        
         const cubDiv = html.find("#combat-utility-belt");
 
         const labButton = $(
