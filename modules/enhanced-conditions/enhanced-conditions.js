@@ -573,7 +573,7 @@ export class EnhancedConditions {
      */
     static _createLabButton(html) {
         if (!game.user.isGM) return;
-        
+
         const cubDiv = html.find("#combat-utility-belt");
 
         const labButton = $(
@@ -658,7 +658,9 @@ export class EnhancedConditions {
             //condition = typeof condition == "string" ? {icon: condition} : condition;
             if (typeof condition == "string") continue;
 
-            condition.name = condition.name ?? (condition.icon ? Sidekick.getNameFromFilePath(condition.icon) : "");
+            if (!condition.name) {
+                condition.name = condition.label ?? (condition.icon ? Sidekick.getNameFromFilePath(condition.icon) : "");
+            }
             condition.id = condition.id || Sidekick.generateUniqueSlugId(condition.name, existingIds);
             condition.options = condition.options || {};
             if (condition.options.outputChat === undefined) condition.options.outputChat = outputChatSetting;
