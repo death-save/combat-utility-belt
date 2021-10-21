@@ -4,7 +4,8 @@ import * as BUTLER from "./butler.js";
  */
 export class Sidekick {
     static createCUBDiv(html) {
-
+        if (!game.user.isGM) return;
+        
         const cubDiv = $(
             `<div id="combat-utility-belt">
                     <h4>Combat Utility Belt</h4>
