@@ -19,7 +19,7 @@ export class PanSelect {
 
         if (!enablePan && !enableSelect) return;
 
-        if (hasProperty(update, "turn") || getProperty(update, "started")) {
+        if (hasProperty(update, "turn") || getProperty(update, "started") || (getProperty(combat, "round") === 0 && getProperty(update, "round") === 1)) {
             options[BUTLER.NAME] = options[BUTLER.NAME] ?? {};
             setProperty(options, `${BUTLER.NAME}.${BUTLER.FLAGS.panSelect.shouldPan}`,  enablePan);
             setProperty(options, `${BUTLER.NAME}.${BUTLER.FLAGS.panSelect.shouldSelect}`,  enableSelect);
