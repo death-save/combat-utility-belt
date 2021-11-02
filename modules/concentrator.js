@@ -36,9 +36,10 @@ export class Concentrator {
      */
     static _onRenderChatMessage(app, html, data) {
         const enableConcentrator = Sidekick.getSetting(SETTING_KEYS.concentrator.enable);
+        const actor = ChatMessage.getSpeakerActor(app.data?.speaker);
         const gmUser = Sidekick.getFirstGM();
 
-        if (!enableConcentrator || game.userId !== gmUser?.id) return;
+        if (!enableConcentrator || game.userId !== gmUser?.id || !actor) return;
 
         const autoConcentrate = Sidekick.getSetting(SETTING_KEYS.concentrator.autoConcentrate);
         const concentrateFlag = app.getFlag(NAME, FLAGS.concentrator.chatMessage);
@@ -54,13 +55,6 @@ export class Concentrator {
 
         const itemId = itemDiv.data("itemId") || null;
 
-        const messageActorId = app.data.speaker.actor;
-        const messageSceneId = app.data.speaker.scene;
-        const messageTokenId = app.data.speaker.token;
-        const scene = messageSceneId ? game.scenes.get(messageSceneId) : game.scenes.active;
-        const tokenData = scene ? scene.data.tokens.find(t => t.id === messageTokenId) : null;
-        const token = canvas?.tokens?.get(messageTokenId) ?? (tokenData ? new Token(tokenData, scene) : null);
-        const actor = token ? token.actor : messageActorId ? game.actors.get(messageActorId) : null;
 
         if (!actor) return;
 
