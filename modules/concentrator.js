@@ -1,6 +1,7 @@
 import { Sidekick } from "./sidekick.js";
-import { NAME, SETTING_KEYS, FLAGS } from "./butler.js";
+import { NAME, SETTING_KEYS, FLAGS, GADGETS } from "./butler.js";
 import { EnhancedConditions } from "./enhanced-conditions/enhanced-conditions.js";
+import { Signal } from "./signal.js";
 
 /**
  * Request a roll or display concentration checks when damage is taken.
@@ -187,6 +188,28 @@ export class Concentrator {
         return Concentrator._processDamage(token, options);
     }
 
+    /**
+     * Socket message handler
+     * @param {*} message 
+     */
+    static _onSocket(message) {
+        if (!message?.targetUserIds || !message?.targetUserIds?.includes(game.userId) || !message?.action) return;
+
+        switch (message.action) {
+            case "prompt":
+                if (!message.actorId) return;
+                Concentrator._displayPrompt(message.actorId, game.userId, message.dc);
+                break;
+            
+            case "cancelOtherPrompts":
+                if (!message.actorId) return;
+                Concentrator._cancelPrompt(message.actorId, message.userId);
+                break;
+        
+            default:
+                break;
+        }
+    }
 
     static _onRenderActorSheet(app, html, data) {
         // get any concentration spells from app -> actor
@@ -241,7 +264,7 @@ export class Concentrator {
         if (displayPrompt) {
             const actor = entity instanceof Actor ? entity : entity.actor;
 
-            return Concentrator._determinePromptedUsers(actor.id);
+            return Concentrator._determinePromptedUsers(actor.id, dc);
         }
     }
 
@@ -270,7 +293,7 @@ export class Concentrator {
      * Distributes concentration prompts to affected users
      * @param {*} options 
      */
-    static _determinePromptedUsers(actorId){
+    static _determinePromptedUsers(actorId, dc){
         if (!actorId) return;
 
         const actor = game.actors.get(actorId);
@@ -286,18 +309,37 @@ export class Concentrator {
 
         const ownerIds = owners.map(u => u.id);
 
-        return Concentrator._distributePrompts(actorId, ownerIds);
+        return Concentrator._distributePrompts(actorId, ownerIds, dc);
     }
 
     /**
      * Distribute concentration prompts to affected users
      * @param {*} actorId 
-     * @param {*} users 
+     * @param {*} users
      */
-    static _distributePrompts(actorId, userIds){
-        for (const uId of userIds) {
-            Concentrator._displayPrompt(actorId, uId);
+    static async _distributePrompts(actorId, userIds, dc){
+        if (!actorId || !userIds || !userIds?.length) return;
+
+        if (userIds.includes(game.userId)) {
+            Concentrator._displayPrompt(actorId, game.userId, dc);
+            const thisUserIndex = userIds.indexOf(game.userId);
+            userIds.splice(thisUserIndex, 1);
         }
+
+        return new Promise((resolve) => {
+            const requestData = {
+                gadget: GADGETS.concentrator.name,
+                action: "prompt",
+                targetUserIds: userIds,
+                actorId,
+                dc
+            };
+
+            game.socket.emit(`module.${NAME}`, requestData, (responseData) => {
+                Signal._onSocket(responseData);
+                resolve();
+            });
+        });
     }
 
     /**
