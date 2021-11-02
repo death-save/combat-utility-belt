@@ -250,6 +250,15 @@ export class Concentrator {
      * @param {*} entity 
      */
     static async _processDeath(entity) {
+        const isActor = entity instanceof Actor;
+        const isToken = entity instanceof Token || entity instanceof TokenDocument;
+
+        if (!isActor && !isToken) return;
+
+        const actor = isActor ? entity : (isToken ? entity.actor : null);
+
+        if (!actor) return;
+
         const conditionName = Sidekick.getSetting(SETTING_KEYS.concentrator.conditionName);
         await EnhancedConditions.removeCondition(conditionName, entity);
         await actor.unsetFlag(NAME, FLAGS.concentrator.concentrationSpell);
