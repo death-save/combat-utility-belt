@@ -459,9 +459,7 @@ export class Concentrator {
                 no: {
                     label: "No",
                     icon: `<i class="fas fa-times"></i>`,
-                    callback: e => {
-                        //maybe whisper the GM to alert them that the player canceled the check?
-                    }
+                    callback: e => {}
                 }
             }
         }).render(true);
