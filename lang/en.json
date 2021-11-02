@@ -1,5 +1,8 @@
 {
     "combat-utility-belt": {
+        "SHORT_NAME": "CUB",
+        "NAME": "Combat Utility Belt",
+        "ID": "combat-utility-belt",
         "ENHANCED_CONDITIONS.OutputChatConfirm": {
             "Title": "Enable Output to Chat for All Conditions?",
             "Content": "Click 'Yes' to enable 'Output to Chat' on all Conditions"
