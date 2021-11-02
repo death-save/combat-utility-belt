@@ -204,11 +204,12 @@ export class Concentrator {
 
         const damageAmount = getProperty(options, `${NAME}.${FLAGS.concentrator.damageAmount}`);
         const isDead = getProperty(options, `${NAME}.${FLAGS.concentrator.isDead}`);
+        const dc = Concentrator._calculateDC(damageAmount);
 
         if (outputChat) {
             if (isDead) return Concentrator._processDeath(entity);
 
-            Concentrator._displayChat(entity, damageAmount);
+            Concentrator._displayChat(entity, dc);
         }
 
         if (displayPrompt) {
@@ -304,13 +305,11 @@ export class Concentrator {
      * @param {*} entity
      * @param {*} damage
      */
-    static _displayChat(entity, damage){
+    static _displayChat(entity, dc){
         if (!game.user.isGM) return;
 
         const isActor = entity instanceof Actor;
         const isToken = entity instanceof Token || entity instanceof TokenDocument;
-        const halfDamage = Math.floor(damage / 2);
-        const dc = halfDamage > 10 ? halfDamage : 10;
         const user = game.userId;
         const speaker = isActor ? ChatMessage.getSpeaker({actor: entity}) : isToken ? ChatMessage.getSpeaker({token: entity}) : ChatMessage.getSpeaker();
         const content = `<h3>Concentrator</header></h3>${entity.name} took damage and their concentration is being tested (DC${dc})!</p>`;
@@ -446,5 +445,16 @@ export class Concentrator {
      */
     static _calculateDamage(newHealth, oldHealth) {
         return oldHealth - newHealth || 0;
+    }
+
+    /**
+     * Calculates a Concentration DC based on a damage amount
+     * @param {*} damage 
+     * @returns 
+     */
+    static _calculateDC(damage) {
+        const halfDamage = Math.floor(damage / 2);
+        const dc = halfDamage > 10 ? halfDamage : 10;
+        return dc;
     }
 }
