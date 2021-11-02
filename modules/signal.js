@@ -186,6 +186,7 @@ export class Signal {
 
         Hooks.on("renderActorSheet", (app, html, data) => {
             HideNPCNames._onRenderActorSheet(app, html, data);
+            Concentrator._onRenderActorSheet(app, html, data);
         });
 
         /* ------------------- Chat ------------------- */

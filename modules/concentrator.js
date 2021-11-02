@@ -187,6 +187,30 @@ export class Concentrator {
         return Concentrator._processDamage(token, options);
     }
 
+
+    static _onRenderActorSheet(app, html, data) {
+        // get any concentration spells from app -> actor
+        const actor = app.entity;
+        const concentrationFlag = actor?.getFlag(NAME, FLAGS.concentrator.concentrationSpell);
+        const itemId = concentrationFlag.id;
+
+        if (!actor && !concentrationFlag) return;
+
+        // find the matching id
+        const spellElement = html.find(`[data-item-id="${itemId}"]`);
+
+        if (!spellElement.length) return;
+        
+        const spellComps = spellElement.find("div.spell-comps");
+
+        if (!spellComps.length) return;
+
+        const conditionName = Sidekick.getSetting(SETTING_KEYS.concentrator.conditionName);
+        const iconSrc = EnhancedConditions.getIconsByCondition(conditionName, {firstOnly: true});
+        const imgHtml = `<img src="${iconSrc}" title="${conditionName}" width="16" height="16" style="background: rgba(0,0,0,0.5); vertical-align: top">`;
+        spellComps.append(imgHtml);
+    }
+
     /* -------------------------------------------- */
     /*                    Workers                   */
     /* -------------------------------------------- */
