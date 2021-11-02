@@ -36,9 +36,9 @@ export class Concentrator {
      */
     static _onRenderChatMessage(app, html, data) {
         const enableConcentrator = Sidekick.getSetting(SETTING_KEYS.concentrator.enable);
+        const gmUser = Sidekick.getFirstGM();
 
-        // Early return if basic conditions not met
-        if (!game.user.isGM || !enableConcentrator) return;
+        if (!enableConcentrator || game.userId !== gmUser?.id) return;
 
         const autoConcentrate = Sidekick.getSetting(SETTING_KEYS.concentrator.autoConcentrate);
         const concentrateFlag = app.getFlag(NAME, FLAGS.concentrator.chatMessage);
@@ -130,8 +130,9 @@ export class Concentrator {
     static _onUpdateActor(actor, update, options, userId){
         const damageTaken = getProperty(options, `${NAME}.${FLAGS.concentrator.damageTaken}`);
         const updateProcessed = getProperty(options, `${NAME}.${FLAGS.concentrator.updateProcessed}`);
+        const gmUser = (game.userId === userId && game.user.isGM) ? game.user : Sidekick.getFirstGM();
 
-        if (!damageTaken || updateProcessed || (!game.user.isGM && userId !== game.userId)) return;
+        if (!damageTaken || updateProcessed || game.userId !== gmUser.id) return;
 
         // Update handled in token hooks
         if (actor.isToken) return;
@@ -179,8 +180,9 @@ export class Concentrator {
      */
     static _onUpdateToken(token, update, options, userId){
         const damageTaken = getProperty(options, `${NAME}.${FLAGS.concentrator.damageTaken}`);
+        const gmUser = (game.user.isGM && game.userId === userId) ? game.user : Sidekick.getFirstGM();
 
-        if (!damageTaken || (!game.user.isGM && userId !== game.userId)) return;
+        if (!damageTaken || game.userId !== gmUser?.id) return;
 
         return Concentrator._processDamage(token, options);
     }
@@ -323,7 +325,9 @@ export class Concentrator {
      * @param {*} entity 
      */
     static _displayDeathChat(entity) {
-        if (!game.user.isGM) return;
+        const gmUser = Sidekick.getFirstGM();
+
+        if (game.userId !== gmUser?.id) return;
 
         const isActor = entity instanceof Actor;
         const isToken = entity instanceof Token || entity instanceof TokenDocument;

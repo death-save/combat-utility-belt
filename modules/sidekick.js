@@ -315,4 +315,20 @@ export class Sidekick {
         const name = Sidekick.toTitleCase(filename);
         return name;
     }
+
+    /**
+     * Gets the first GM user
+     * @returns {GM | null} a GM object or null if none found
+     * @todo this should be stored at the world level so all clients have the same value
+     */
+    static getFirstGM() {
+        const gmUsers = game.users.filter(u => u.isGM && u.active);
+
+        if (gmUsers.length) {
+            return gmUsers[0];
+        } else {
+            return null;
+        }
+        
+    }
 }
