@@ -123,6 +123,17 @@ export function registerSettings() {
         onChange: s => {}
     });
 
+    Sidekick.registerSetting(BUTLER.SETTING_KEYS.concentrator.notifyConcentration, {
+        name: `${BUTLER.NAME}.SETTINGS.CONCENTRATOR.NotifyConcentrationN`,
+        hint: `${BUTLER.NAME}.SETTINGS.CONCENTRATOR.NotifyConcentrationH`,
+        default: Sidekick.getKeyByValue(BUTLER.DEFAULT_CONFIG.concentrator.notifyConcentration, BUTLER.DEFAULT_CONFIG.concentrator.notifyConcentration.none),
+        scope: "world",
+        type: String,
+        choices: BUTLER.DEFAULT_CONFIG.concentrator.notifyConcentration,
+        config: false,
+        onChange: s => {}
+    });
+
     Sidekick.registerSetting(BUTLER.SETTING_KEYS.concentrator.notifyDouble, {
         name: "SETTINGS.Concentrator.NotifyDoubleN",
         hint: "SETTINGS.Concentrator.NotifyDoubleH",

@@ -6,7 +6,11 @@
         },
         "CONCENTRATOR": {
             "MessagePrefix": "Combat Utility Belt - Concentrator",
-            "NoMatchingCondition": "No matching condition found for Concentrator. Please check your Concentrator and Condition Lab"
+        "SETTINGS": {
+            "CONCENTRATOR": {
+                "NotifyConcentrationN": "Notify on Concentration Start",
+                "NotifyConcentrationH": "Send a message when a Concentration spell is cast."
+            }
         }
     },
     "GADGET_DESCRIPTIONS.AwardXP": "Provides an end of combat prompt to distribute XP from defeated hostile combatants.",

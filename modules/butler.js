@@ -135,6 +135,11 @@ export const DEFAULT_CONFIG = {
         outputChat: false,
         promptRoll: false,
         autoConcentrate: false,
+        notifyConcentration: {
+            none: "None",
+            gm: "GM Only",
+            all: "Everyone"
+        },
         notifyDouble: {
             none: "None",
             gm: "GM Only",
@@ -364,6 +369,7 @@ export const SETTING_KEYS = {
         outputChat: "concentratorOutputToChat",
         autoConcentrate: "autoConcentrate",
         concentrationAttribute: "concentrationAttribute",
+        notifyConcentration: "notifyConcentration",
         notifyDouble: "notifyDoubleConcentration",
         healthAttribute: "concentratorHealthAttribute", //validate necessity
         prompt: "concentratorPromptPlayer"
