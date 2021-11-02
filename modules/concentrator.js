@@ -1,5 +1,5 @@
 import { Sidekick } from "./sidekick.js";
-import { NAME, SETTING_KEYS, FLAGS, GADGETS } from "./butler.js";
+import { NAME, SETTING_KEYS, FLAGS, GADGETS, DEFAULT_CONFIG } from "./butler.js";
 import { EnhancedConditions } from "./enhanced-conditions/enhanced-conditions.js";
 import { Signal } from "./signal.js";
 
@@ -78,11 +78,12 @@ export class Concentrator {
         };
 
         let sendMessage = Sidekick.getSetting(SETTING_KEYS.concentrator.notifyConcentration);
+        const suppressNotifyDouble = typeof notifyDoubleSetting === "string" && (notifyDoubleSetting.localeCompare(DEFAULT_CONFIG.concentrator.notifyDouble.none, undefined, {sensitivity: "accent"}) === 0);
 
         // If the actor/token-actor is already Concentrating, and the notification setting is enabled, fire a notification
-        if (isAlreadyConcentrating && notifyDoubleSetting !== "none") {
+        if (isAlreadyConcentrating && !suppressNotifyDouble) {
             await Concentrator._notifyDoubleConcentration(actor, spell);
-            sendMessage = false;
+            sendMessage = DEFAULT_CONFIG.concentrator.notifyConcentration.none;
         }
 
         await Concentrator._startConcentration(actor, spell, conditionName, {sendMessage});
@@ -423,7 +424,7 @@ export class Concentrator {
      * @param {*} options 
      * @returns 
      */
-    static _startConcentration(entity, spell, conditionName, {sendMessage=Sidekick.getSetting(SETTING_KEYS.concentrator.notifyConcentration)}={}) {
+    static _startConcentration(entity, spell, conditionName, {sendMessage=DEFAULT_CONFIG.concentrator.notifyConcentration.none}={}) {
         const isActor = entity instanceof Actor;
         const isToken = entity instanceof Token || entity instanceof TokenDocument;
 
@@ -433,7 +434,9 @@ export class Concentrator {
 
         if (!actor) return;
 
-        if (sendMessage) {
+        const suppressMessage = typeof sendMessage === "string" && (sendMessage.localeCompare(DEFAULT_CONFIG.concentrator.notifyConcentration.none, undefined, {sensitivity: "accent"}) === 0);
+
+        if (!suppressMessage) {
             const isWhisper = Sidekick.getSetting(SETTING_KEYS.concentrator.notifyConcentration) === "GM Only";
         
             const speaker = isActor ? ChatMessage.getSpeaker({actor: entity}) : isToken ? ChatMessage.getSpeaker({token: entity.document}) : ChatMessage.getSpeaker();
