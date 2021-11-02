@@ -327,7 +327,8 @@ export const FLAGS = {
         damageTaken: "damageWasTaken",
         damageAmount: "damageAmount",
         isDead: "isDead",
-        updateProcessed: "concentrationUpdateProcessed"
+        updateProcessed: "concentrationUpdateProcessed",
+        concentrationSpell: "concentrationSpell"
     },
     enhancedConditions: {
         conditionId: "conditionId",
