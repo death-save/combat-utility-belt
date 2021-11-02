@@ -252,6 +252,7 @@ export class Concentrator {
     static async _processDeath(entity) {
         const conditionName = Sidekick.getSetting(SETTING_KEYS.concentrator.conditionName);
         await EnhancedConditions.removeCondition(conditionName, entity);
+        await actor.unsetFlag(NAME, FLAGS.concentrator.concentrationSpell);
 
         return Concentrator._displayDeathChat(entity);
     }
