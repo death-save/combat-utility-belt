@@ -71,6 +71,12 @@ export class Concentrator {
         const conditionName = Sidekick.getSetting(SETTING_KEYS.concentrator.conditionName);
         const isAlreadyConcentrating = EnhancedConditions.hasCondition(conditionName, actor, {warn: false});
         const notifyDoubleSetting = Sidekick.getSetting(SETTING_KEYS.concentrator.notifyDouble);
+        const spell = {
+            id: item?.id ?? "",
+            name: item?.name ?? game.i18n.localize(`${NAME}.CONCENTRATOR.UnknownSpell`)
+        };
+
+        let sendMessage = Sidekick.getSetting(SETTING_KEYS.concentrator.notifyConcentration);
 
         // If the actor/token-actor is already Concentrating, and the notification setting is enabled, fire a notification
         if (isAlreadyConcentrating && notifyDoubleSetting !== "none") {
@@ -79,6 +85,8 @@ export class Concentrator {
             // Otherwise, add the Concentrating condition
             EnhancedConditions.addCondition(conditionName, actor, {warn: false});
         }
+
+        await Concentrator._startConcentration(actor, spell, conditionName, {sendMessage});
 
         // Finally, set a flag that this message has been processed
         return app.setFlag(NAME, FLAGS.concentrator.chatMessage, true);
@@ -331,6 +339,43 @@ export class Concentrator {
         const type = CONST.CHAT_MESSAGE_TYPES.OTHER;
 
         return ChatMessage.create({user, speaker, content, type});
+    }
+
+    /**
+     * Processes steps to start Concentration for an entity
+     * @param {*} entity 
+     * @param {*} spell 
+     * @param {*} conditionName 
+     * @param {*} options 
+     * @returns 
+     */
+    static _startConcentration(entity, spell, conditionName, {sendMessage=Sidekick.getSetting(SETTING_KEYS.concentrator.notifyConcentration)}={}) {
+        const isActor = entity instanceof Actor;
+        const isToken = entity instanceof Token || entity instanceof TokenDocument;
+
+        if (!isActor && !isToken) return;
+
+        const actor = isActor ? entity : (isToken ? entity.actor : null);
+
+        if (!actor) return;
+
+        if (sendMessage) {
+            const isWhisper = Sidekick.getSetting(SETTING_KEYS.concentrator.notifyConcentration) === "GM Only";
+        
+            const speaker = isActor ? ChatMessage.getSpeaker({actor: entity}) : isToken ? ChatMessage.getSpeaker({token: entity.document}) : ChatMessage.getSpeaker();
+            const whisper = isWhisper ? game.users.entities.filter(u => u.isGM) : [];
+
+            const content =  game.i18n.format(`${NAME}.CONCENTRATOR.Messages.StartConcentration`, {entityName: entity.name, spellName: spell.name})
+            const type = CONST.CHAT_MESSAGE_TYPES.OTHER;
+        
+            ChatMessage.create({speaker, whisper, content, type});
+        }
+        
+        EnhancedConditions.addCondition(conditionName, actor, {warn: false});
+        return actor.setFlag(NAME, FLAGS.concentrator.concentrationSpell, {
+            id: spell.id,
+            name: spell.name
+        });
     }
 
     /**

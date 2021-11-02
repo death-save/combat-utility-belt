@@ -9,6 +9,10 @@
         },
         "CONCENTRATOR": {
             "MessagePrefix": "Combat Utility Belt - Concentrator",
+            "Messages": {
+                "StartConcentration": "<h3>Concentrator</h3><p>{entityName} is now concentrating on <strong>{spellName}</strong>."
+            }
+        },
         "SETTINGS": {
             "CONCENTRATOR": {
                 "NotifyConcentrationN": "Notify on Concentration Start",
