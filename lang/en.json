@@ -10,8 +10,10 @@
         "CONCENTRATOR": {
             "MessagePrefix": "Combat Utility Belt - Concentrator",
             "Messages": {
-                "StartConcentration": "<h3>Concentrator</h3><p>{entityName} is now concentrating on <strong>{spellName}</strong>."
-            }
+                "StartConcentration": "<h3>Concentrator</h3><p>{entityName} is now concentrating on <strong>{spellName}</strong>.",
+                "DoubleConcentration": "<h3>Concentrator</h3><p>{entityName} cast <strong>{newSpellName}</strong> while concentrating on <strong>{oldSpellName}</strong>. Concentration on the original spell is lost."
+            },
+            "UnknownSpell": "Unknown Spell"
         },
         "SETTINGS": {
             "CONCENTRATOR": {

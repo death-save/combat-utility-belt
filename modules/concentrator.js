@@ -34,7 +34,7 @@ export class Concentrator {
      * @param {*} html 
      * @param {*} data 
      */
-    static _onRenderChatMessage(app, html, data) {
+    static async _onRenderChatMessage(app, html, data) {
         const enableConcentrator = Sidekick.getSetting(SETTING_KEYS.concentrator.enable);
         const actor = ChatMessage.getSpeakerActor(app.data?.speaker);
         const gmUser = Sidekick.getFirstGM();
@@ -80,10 +80,8 @@ export class Concentrator {
 
         // If the actor/token-actor is already Concentrating, and the notification setting is enabled, fire a notification
         if (isAlreadyConcentrating && notifyDoubleSetting !== "none") {
-            Concentrator._notifyDoubleConcentration(actor);
-        } else {
-            // Otherwise, add the Concentrating condition
-            EnhancedConditions.addCondition(conditionName, actor, {warn: false});
+            await Concentrator._notifyDoubleConcentration(actor, spell);
+            sendMessage = false;
         }
 
         await Concentrator._startConcentration(actor, spell, conditionName, {sendMessage});
@@ -381,16 +379,23 @@ export class Concentrator {
     /**
      * Displays a chat message to GMs if a Concentration spell is cast while already concentrating
      * @param {*} entity  the entity with double concentration
+     * @param {*} newSpell
      */
-    static _notifyDoubleConcentration(entity) {
+    static _notifyDoubleConcentration(entity, newSpell={name: game.i18n.localize(`${NAME}.CONCENTRATOR.UnknownSpell`), id: ""}) {
         const isWhisper = Sidekick.getSetting(SETTING_KEYS.concentrator.notifyDouble) === "GM Only";
         const isActor = entity instanceof Actor;
         const isToken = entity instanceof Token || entity instanceof TokenDocument;
-        const speaker = isActor ? ChatMessage.getSpeaker({actor: entity}) : isToken ? ChatMessage.getSpeaker({token: entity}) : ChatMessage.getSpeaker();
-        const whisper = isWhisper ? game.users.entities.filter(u => u.isGM) : [];
-        const content =  `<h3>Concentrator</h3><p>${entity.name} cast a spell requiring Concentration while concentrating on another spell. Concentration on the original spell is lost.`;
-        const type = CONST.CHAT_MESSAGE_TYPES.OTHER;
 
+        if (!isActor && !isToken) return;
+
+        const actor = isActor ? entity : (isToken ? entity.actor : null);
+
+        const speaker = isActor ? ChatMessage.getSpeaker({actor: entity}) : isToken ? ChatMessage.getSpeaker({token: entity.document}) : ChatMessage.getSpeaker();
+        const whisper = isWhisper ? game.users.entities.filter(u => u.isGM) : [];
+        const previousSpell = actor.getFlag(NAME, FLAGS.concentrator.concentrationSpell) ?? game.i18n.localize(`${NAME}.CONCENTRATOR.UnknownSpell`);
+        const content =  game.i18n.format(`${NAME}.CONCENTRATOR.Messages.DoubleConcentration`, {entityName: entity.name, oldSpellName: previousSpell.name, newSpellName: newSpell.name})
+        const type = CONST.CHAT_MESSAGE_TYPES.OTHER;
+        
         return ChatMessage.create({speaker, whisper, content, type});
     }
 
