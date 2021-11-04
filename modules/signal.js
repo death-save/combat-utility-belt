@@ -120,6 +120,7 @@ export class Signal {
 
         Hooks.on("deleteActiveEffect", (effect, options, userId) => {
             EnhancedConditions._onDeleteActiveEffect(effect, options, userId);
+            Concentrator._onDeleteActiveEffect(effect, options, userId);
         });
 
         /* ------------------- Token ------------------ */

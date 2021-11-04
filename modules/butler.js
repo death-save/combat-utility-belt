@@ -145,6 +145,11 @@ export const DEFAULT_CONFIG = {
             gm: "GM Only",
             all: "Everyone"
         },
+        notifyEndConcentration: {
+            none: "None",
+            gm: "GM Only",
+            all: "Everyone"
+        },
         icon: "modules/combat-utility-belt/icons/concentrating.svg",
         alias: "Concentrator"
     },
@@ -371,6 +376,7 @@ export const SETTING_KEYS = {
         concentrationAttribute: "concentrationAttribute",
         notifyConcentration: "notifyConcentration",
         notifyDouble: "notifyDoubleConcentration",
+        notifyEndConcentration: "notifyEndConcentration",
         healthAttribute: "concentratorHealthAttribute", //validate necessity
         prompt: "concentratorPromptPlayer"
     },

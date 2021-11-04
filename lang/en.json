@@ -11,14 +11,17 @@
             "MessagePrefix": "Combat Utility Belt - Concentrator",
             "Messages": {
                 "StartConcentration": "<h3>Concentrator</h3><p>{entityName} is now concentrating on <strong>{spellName}</strong>.",
-                "DoubleConcentration": "<h3>Concentrator</h3><p>{entityName} cast <strong>{newSpellName}</strong> while concentrating on <strong>{oldSpellName}</strong>. Concentration on the original spell is lost."
+                "DoubleConcentration": "<h3>Concentrator</h3><p>{entityName} cast <strong>{newSpellName}</strong> while concentrating on <strong>{oldSpellName}</strong>. Concentration on the original spell is lost.",
+                "EndConcentration": "<h3>Concentrator</h3><p>{entityName}'s concentration on <strong>{spellName}</strong> is broken!</p>"
             },
             "UnknownSpell": "Unknown Spell"
         },
         "SETTINGS": {
             "CONCENTRATOR": {
                 "NotifyConcentrationN": "Notify on Concentration Start",
-                "NotifyConcentrationH": "Send a message when a Concentration spell is cast."
+                "NotifyConcentrationH": "Send a message when a Concentration spell is cast.",
+                "NotifyEndN": "Notify on Concentration End",
+                "NotifyEndH": "Send a message when Concentration on a spell ends."
             }
         }
     },

@@ -190,6 +190,31 @@ export class Concentrator {
     }
 
     /**
+     * Delete ActiveEffect handler
+     * @param {*} effect 
+     * @param {*} options 
+     * @param {*} userId 
+     */
+    static _onDeleteActiveEffect(effect, options, userId) {
+        const gmUser = (game.user.isGM && game.userId === userId) ? game.user : Sidekick.getFirstGM();
+        const actor = effect.parent;
+
+        if (!actor || game.userId !== gmUser?.id) return;
+
+        const conditionIdFlag = effect.getFlag(NAME, FLAGS.enhancedConditions.conditionId);
+
+        if (!conditionIdFlag) return;
+
+        const condition = game.cub?.conditions?.find(c => c.id === conditionIdFlag);
+        const concentrationConditionName = Sidekick.getSetting(SETTING_KEYS.concentrator.conditionName);
+
+        if (!condition || condition?.name !== concentrationConditionName) return;
+
+        const sendMessage = Sidekick.getSetting(SETTING_KEYS.concentrator.notifyEndConcentration);
+        Concentrator._endConcentration(actor, {sendMessage});
+    }
+
+    /**
      * Socket message handler
      * @param {*} message 
      */
@@ -283,9 +308,7 @@ export class Concentrator {
 
         if (!actor) return;
 
-        const conditionName = Sidekick.getSetting(SETTING_KEYS.concentrator.conditionName);
-        await EnhancedConditions.removeCondition(conditionName, entity);
-        await actor.unsetFlag(NAME, FLAGS.concentrator.concentrationSpell);
+        Concentrator._endConcentration(actor, {sendMessage:DEFAULT_CONFIG.concentrator.notifyEndConcentration.none});
 
         return Concentrator._displayDeathChat(entity);
     }
@@ -476,6 +499,43 @@ export class Concentrator {
         const type = CONST.CHAT_MESSAGE_TYPES.OTHER;
         
         return ChatMessage.create({speaker, whisper, content, type});
+    }
+
+    /**
+     * Processes end of Concentration
+     * @param {*} entity 
+     * @param {*} options 
+     * @returns 
+     */
+    static _endConcentration(entity, {sendMessage=DEFAULT_CONFIG.concentrator.notifyEndConcentration.none}={}) {
+        const isActor = entity instanceof Actor;
+        const isToken = entity instanceof Token || entity instanceof TokenDocument;
+        const actor = isActor ? entity : (isToken ? entity.actor : null);
+
+        if (!actor) return;
+
+        const conditionName = Sidekick.getSetting(SETTING_KEYS.concentrator.conditionName);
+
+        if (conditionName) {
+            EnhancedConditions.removeCondition(conditionName, actor, {warn: false});
+        }
+        
+        const suppressMessage = typeof sendMessage === "string" && (sendMessage.localeCompare(DEFAULT_CONFIG.concentrator.notifyEndConcentration.none, undefined, {sensitivity: "accent"}) === 0);
+
+        if (!suppressMessage) {
+            const isWhisper = Sidekick.getSetting(SETTING_KEYS.concentrator.notifyEndConcentration) === "GM Only";
+        
+            const speaker = isActor ? ChatMessage.getSpeaker({actor: entity}) : isToken ? ChatMessage.getSpeaker({token: entity.document}) : ChatMessage.getSpeaker();
+            const whisper = isWhisper ? game.users.entities.filter(u => u.isGM) : [];
+
+            const spell = actor.getFlag(NAME, FLAGS.concentrator.concentrationSpell) ?? {name: game.i18n.localize(`${NAME}.CONCENTRATOR.UnknownSpell`)};
+            const content =  game.i18n.format(`${NAME}.CONCENTRATOR.Messages.EndConcentration`, {entityName: entity.name, spellName: spell.name})
+            const type = CONST.CHAT_MESSAGE_TYPES.OTHER;
+        
+            ChatMessage.create({speaker, whisper, content, type});
+        }
+
+        return actor.unsetFlag(NAME, FLAGS.concentrator.concentrationSpell);
     }
 
     /* -------------------------------------------- */

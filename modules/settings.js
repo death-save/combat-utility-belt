@@ -145,6 +145,17 @@ export function registerSettings() {
         onChange: s => {}
     });
 
+    Sidekick.registerSetting(BUTLER.SETTING_KEYS.concentrator.notifyEndConcentration, {
+        name: `${BUTLER.NAME}.SETTINGS.CONCENTRATOR.NotifyEndN`,
+        hint: `${BUTLER.NAME}.SETTINGS.CONCENTRATOR.NotifyEndN`,
+        default: Sidekick.getKeyByValue(BUTLER.DEFAULT_CONFIG.concentrator.notifyEndConcentration, BUTLER.DEFAULT_CONFIG.concentrator.notifyEndConcentration.none),
+        scope: "world",
+        type: String,
+        choices: BUTLER.DEFAULT_CONFIG.concentrator.notifyEndConcentration,
+        config: false,
+        onChange: s => {}
+    });
+
     /* -------------------------------------------- */
     /*              EnhancedConditions              */
     /* -------------------------------------------- */
