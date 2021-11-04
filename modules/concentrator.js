@@ -413,7 +413,7 @@ export class Concentrator {
         const isActor = entity instanceof Actor;
         const isToken = entity instanceof Token || entity instanceof TokenDocument;
         const user = game.userId;
-        const speaker = isActor ? ChatMessage.getSpeaker({actor: entity}) : isToken ? ChatMessage.getSpeaker({token: entity}) : ChatMessage.getSpeaker();
+        const speaker = isActor ? ChatMessage.getSpeaker({actor: entity}) : isToken ? ChatMessage.getSpeaker({token: entity.document}) : ChatMessage.getSpeaker();
         const content = `<h3>Concentrator</header></h3>${entity.name} took damage and their concentration is being tested (DC${dc})!</p>`;
         const type = CONST.CHAT_MESSAGE_TYPES.OTHER;
 
