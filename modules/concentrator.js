@@ -241,7 +241,7 @@ export class Concentrator {
         // get any concentration spells from app -> actor
         const actor = app.entity;
         const concentrationFlag = actor?.getFlag(NAME, FLAGS.concentrator.concentrationSpell);
-        const itemId = concentrationFlag.id;
+        const itemId = concentrationFlag?.id;
 
         if (!actor && !concentrationFlag) return;
 
