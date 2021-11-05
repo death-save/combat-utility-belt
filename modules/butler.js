@@ -151,7 +151,12 @@ export const DEFAULT_CONFIG = {
             all: "Everyone"
         },
         icon: "modules/combat-utility-belt/icons/concentrating.svg",
-        alias: "Concentrator"
+        alias: "Concentrator",
+        concentrationStatuses: {
+            breaking: "breaking",
+            active: "active",
+            broken: "broken"
+        }
     },
     cubPuter: {
         id: "cub-puter",

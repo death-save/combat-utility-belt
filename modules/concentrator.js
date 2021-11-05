@@ -201,6 +201,10 @@ export class Concentrator {
 
         if (!actor || game.userId !== gmUser?.id) return;
 
+        const concentrationSpellFlag = actor.getFlag(NAME, FLAGS.concentrator.concentrationSpell);
+
+        if (concentrationSpellFlag?.status !== DEFAULT_CONFIG.concentrator.concentrationStatuses.active) return;
+
         const conditionIdFlag = effect.getFlag(NAME, FLAGS.enhancedConditions.conditionId);
 
         if (!conditionIdFlag) return;
@@ -470,7 +474,8 @@ export class Concentrator {
         EnhancedConditions.addCondition(conditionName, actor, {warn: false});
         return actor.setFlag(NAME, FLAGS.concentrator.concentrationSpell, {
             id: spell.id,
-            name: spell.name
+            name: spell.name,
+            status: DEFAULT_CONFIG.concentrator.concentrationStatuses.active
         });
     }
 
@@ -503,12 +508,19 @@ export class Concentrator {
      * @param {*} options 
      * @returns 
      */
-    static _endConcentration(entity, {sendMessage=DEFAULT_CONFIG.concentrator.notifyEndConcentration.none}={}) {
+    static async _endConcentration(entity, {sendMessage=DEFAULT_CONFIG.concentrator.notifyEndConcentration.none}={}) {
         const isActor = entity instanceof Actor;
         const isToken = entity instanceof Token || entity instanceof TokenDocument;
         const actor = isActor ? entity : (isToken ? entity.actor : null);
 
         if (!actor) return;
+
+        const flag = actor.getFlag(NAME, FLAGS.concentrator.concentrationSpell);
+
+        if (flag) {
+            const flagUpdate = {status: DEFAULT_CONFIG.concentrator.concentrationStatuses.breaking};
+            await actor.setFlag(NAME, FLAGS.concentrator.concentrationSpell, mergeObject(flag, flagUpdate));
+        }
 
         const conditionName = Sidekick.getSetting(SETTING_KEYS.concentrator.conditionName);
 
@@ -518,7 +530,7 @@ export class Concentrator {
         
         const suppressMessage = typeof sendMessage === "string" && (sendMessage.localeCompare(DEFAULT_CONFIG.concentrator.notifyEndConcentration.none, undefined, {sensitivity: "accent"}) === 0);
 
-        if (!suppressMessage) {
+        if (!suppressMessage && flag) {
             const isWhisper = Sidekick.getSetting(SETTING_KEYS.concentrator.notifyEndConcentration) === "GM Only";
         
             const speaker = isActor ? ChatMessage.getSpeaker({actor: entity}) : isToken ? ChatMessage.getSpeaker({token: entity.document}) : ChatMessage.getSpeaker();
