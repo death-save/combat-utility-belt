@@ -224,12 +224,12 @@ export class Concentrator {
         switch (message.action) {
             case "prompt":
                 if (!message.actorId) return;
-                Concentrator._displayPrompt(message.actorId, game.userId, message.dc);
+                Concentrator._displayPrompt(message.actor, game.userId, message.dc);
                 break;
             
             case "cancelOtherPrompts":
                 if (!message.actorId) return;
-                Concentrator._cancelPrompt(message.actorId, message.userId);
+                Concentrator._cancelPrompt(message.actor, message.userId);
                 break;
         
             default:
@@ -290,7 +290,7 @@ export class Concentrator {
         if (displayPrompt) {
             const actor = entity instanceof Actor ? entity : entity.actor;
 
-            return Concentrator._determinePromptedUsers(actor.id, dc);
+            return Concentrator._determinePromptedUsers(actor, dc);
         }
     }
 
@@ -317,11 +317,7 @@ export class Concentrator {
      * Distributes concentration prompts to affected users
      * @param {*} options 
      */
-    static _determinePromptedUsers(actorId, dc){
-        if (!actorId) return;
-
-        const actor = game.actors.get(actorId);
-
+    static _determinePromptedUsers(actor, dc){
         if (!actor) return;
 
         let owners = game.users.entities.filter(user => user.active && actor.hasPerm(user, Sidekick.getKeyByValue(CONST.ENTITY_PERMISSIONS, CONST.ENTITY_PERMISSIONS.OWNER)) && !user.isGM);
@@ -333,7 +329,7 @@ export class Concentrator {
 
         const ownerIds = owners.map(u => u.id);
 
-        return Concentrator._distributePrompts(actorId, ownerIds, dc);
+        return Concentrator._distributePrompts(actor, ownerIds, dc);
     }
 
     /**
@@ -341,11 +337,11 @@ export class Concentrator {
      * @param {*} actorId 
      * @param {*} users
      */
-    static async _distributePrompts(actorId, userIds, dc){
-        if (!actorId || !userIds || !userIds?.length) return;
+    static async _distributePrompts(actor, userIds, dc){
+        if (!actor || !userIds || !userIds?.length) return;
 
         if (userIds.includes(game.userId)) {
-            Concentrator._displayPrompt(actorId, game.userId, dc);
+            Concentrator._displayPrompt(actor, game.userId, dc);
             const thisUserIndex = userIds.indexOf(game.userId);
             userIds.splice(thisUserIndex, 1);
         }
