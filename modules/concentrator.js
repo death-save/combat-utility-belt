@@ -350,20 +350,15 @@ export class Concentrator {
             userIds.splice(thisUserIndex, 1);
         }
 
-        return new Promise((resolve) => {
-            const requestData = {
-                gadget: GADGETS.concentrator.name,
-                action: "prompt",
-                targetUserIds: userIds,
-                actorId,
-                dc
-            };
+        const requestData = {
+            gadget: GADGETS.concentrator.name,
+            action: "prompt",
+            targetUserIds: userIds,
+            actor,
+            dc
+        };
 
-            game.socket.emit(`module.${NAME}`, requestData, (responseData) => {
-                Signal._onSocket(responseData);
-                resolve();
-            });
-        });
+        game.socket.emit(`module.${NAME}`, requestData);
     }
 
     /**
@@ -371,27 +366,24 @@ export class Concentrator {
      * @param {*} actorId 
      * @param {*} userId 
      */
-    static _displayPrompt(actorId, userId){
-        const actor = game.actors.get(actorId);
-        const ability = Sidekick.getSetting(SETTING_KEYS.concentrator.concentrationAttribute);
-
+    static _displayPrompt(actor, userId, dc){
         if (!actor || game.userId !== userId) {
             return;
         }
 
         new Dialog({
-            title: "Concentration Check",
-            content: `<p>Roll a concentration check for ${actor.name}?</p>`,
+            title: game.i18n.localize(`${NAME}.CONCENTRATOR.Prompt.Title`),
+            content: game.i18n.format(`${NAME}.CONCENTRATOR.Prompt.Content`, {actorName: actor.name}),
             buttons: {
                 yes: {
-                    label: "Yes",
+                    label: game.i18n.localize(`WORDS.Yes`),
                     icon: `<i class="fas fa-check"></i>`,
-                    callback: e => {
-                        actor.rollAbilitySave(ability);
+                    callback: (event) => {
+                        Concentrator._processConcentrationCheck(event, actor, dc);
                     }
                 },
                 no: {
-                    label: "No",
+                    label: game.i18n.localize(`WORDS.No`),
                     icon: `<i class="fas fa-times"></i>`,
                     callback: e => {
                         //maybe whisper the GM to alert them that the player canceled the check?
@@ -400,6 +392,56 @@ export class Concentrator {
             },
             default: "Yes"
         }).render(true);
+    }
+
+    /**
+     * Processes a Concentration check for the given entity and DC
+     * @param {*} event 
+     * @param {*} entity 
+     * @param {*} dc
+     */
+    static _processConcentrationCheck(event, entity, dc) {
+        const actor = entity instanceof Actor ? entity : (entity instanceof Token || entity instanceof TokenDocument ? entity.actor : null);
+
+        if (!actor) return;
+
+        const ability = Sidekick.getSetting(SETTING_KEYS.concentrator.concentrationAttribute);
+        actor.rollAbilitySave(ability);
+        game.socket.emit(`module.${NAME}`, {
+            gadget: GADGETS.concentrator.name,
+            action: "cancelOtherPrompts",
+            actor,
+            userId: game.userId,
+            targetUserIds: game.users.filter(u => u.active && u.id !== game.userId)?.map(u => u.id)
+        });
+
+        Hooks.once("createChatMessage", (message, options, userId) => {
+            if (!message.isRoll && message.data.flavor !== "Constitution Saving Throw") return;
+
+            if (dc && message.roll.total < dc) {
+                ui.notifications.notify("Concentration check failed!");
+                const sendMessage = Sidekick.getSetting(SETTING_KEYS.concentrator.notifyEndConcentration);
+                Concentrator._endConcentration(entity, {sendMessage});
+            }
+        });
+    }
+
+    /**
+     * Cancels any open prompts to roll Concentration checks
+     * @param {*} actorId 
+     * @param {*} userId 
+     */
+    static _cancelPrompt(actorId, userId) {
+        if (!actorId || !userId || game.userId === userId) return;
+
+        // Find any open Concentration check dialogs
+        const openWindows = Object.entries(ui.windows);
+        const dialog = Object.values(ui.windows)?.find(w => w.title === game.i18n.localize(`${NAME}.CONCENTRATOR.Prompt.Title`));
+
+        if (!dialog) return;
+
+        dialog.close();
+        ui.notifications.notify(`${game.i18n.localize(`${NAME}.SHORT_NAME`)} | ${game.i18n.localize(`${NAME}.CONCENTRATOR.Prompt.ClosedByOther`)}`);
     }
 
     /**

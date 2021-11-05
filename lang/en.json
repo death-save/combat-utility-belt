@@ -9,6 +9,12 @@
         },
         "CONCENTRATOR": {
             "MessagePrefix": "Combat Utility Belt - Concentrator",
+            "NoMatchingCondition": "No matching condition found for Concentrator. Please check your Concentrator and Condition Lab",
+            "Prompt": {
+                "Title": "Concentration Check",
+                "Content": "<p>Roll a concentration check for {actorName}?</p>",
+                "ClosedByOther": "Another user has rolled the concentration check"
+            },
             "Messages": {
                 "StartConcentration": "<h3>Concentrator</h3><p>{entityName} is now concentrating on <strong>{spellName}</strong>.",
                 "DoubleConcentration": "<h3>Concentrator</h3><p>{entityName} cast <strong>{newSpellName}</strong> while concentrating on <strong>{oldSpellName}</strong>. Concentration on the original spell is lost.",
