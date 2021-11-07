@@ -371,9 +371,12 @@ export class Concentrator {
             return;
         }
 
+        const spell = actor.getFlag(NAME, FLAGS.concentrator.concentrationSpell);
+        const spellName = spell?.name ?? game.i18n.localize(`${NAME}.CONCENTRATOR.UnknownSpell`);
+
         new Dialog({
             title: game.i18n.localize(`${NAME}.CONCENTRATOR.Prompt.Title`),
-            content: game.i18n.format(`${NAME}.CONCENTRATOR.Prompt.Content`, {actorName: actor.name}),
+            content: game.i18n.format(`${NAME}.CONCENTRATOR.Prompt.Content`, {actorName: actor.name, spellName}),
             buttons: {
                 yes: {
                     label: game.i18n.localize(`WORDS.Yes`),

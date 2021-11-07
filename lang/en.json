@@ -12,7 +12,7 @@
             "NoMatchingCondition": "No matching condition found for Concentrator. Please check your Concentrator and Condition Lab",
             "Prompt": {
                 "Title": "Concentration Check",
-                "Content": "<p>Roll a concentration check for {actorName}?</p>",
+                "Content": "<p>Roll a concentration check for <strong>{actorName}</strong>?</p><p>Spell: <strong>{spellName}</strong></p>",
                 "ClosedByOther": "Another user has rolled the concentration check"
             },
             "Messages": {
