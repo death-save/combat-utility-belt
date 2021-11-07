@@ -459,7 +459,9 @@ export class Concentrator {
         const isToken = entity instanceof Token || entity instanceof TokenDocument;
         const user = game.userId;
         const speaker = isActor ? ChatMessage.getSpeaker({actor: entity}) : isToken ? ChatMessage.getSpeaker({token: entity.document}) : ChatMessage.getSpeaker();
-        const content = `<h3>Concentrator</header></h3>${entity.name} took damage and their concentration is being tested (DC${dc})!</p>`;
+        const spell = Concentrator.getConcentrationSpell(entity);
+        const spellName = spell?.name ?? game.i18n.localize(`${NAME}.CONCENTRATOR.UnknownSpell`);
+        const content = game.i18n.format(`${NAME}.CONCENTRATOR.Messages.ConcentrationTested`, {entityName: entity.name, dc, spellName});
         const type = CONST.CHAT_MESSAGE_TYPES.OTHER;
 
         return ChatMessage.create({user, speaker, content, type});
