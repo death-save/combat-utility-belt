@@ -695,4 +695,22 @@ export class Concentrator {
         const dc = halfDamage > 10 ? halfDamage : 10;
         return dc;
     }
+
+    /**
+     * For a given entity, gets and returns their concentrated spell (if any)
+     * @param {*} entity 
+     * @returns Concentration Spell object
+     */
+    static getConcentrationSpell(entity) {
+        const isActor = entity instanceof Actor;
+        const isToken = entity instanceof Token || entity instanceof TokenDocument;
+
+        const actor = isActor ? entity : (isToken ? entity.actor : null);
+
+        if (!actor) return;
+
+        const spell = actor.getFlag(NAME, FLAGS.concentrator.concentrationSpell);
+
+        return spell;
+    }
 }
