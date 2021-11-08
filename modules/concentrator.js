@@ -1,6 +1,7 @@
 import { Sidekick } from "./sidekick.js";
-import { NAME, SETTING_KEYS, FLAGS } from "./butler.js";
+import { NAME, SETTING_KEYS, FLAGS, GADGETS, DEFAULT_CONFIG } from "./butler.js";
 import { EnhancedConditions } from "./enhanced-conditions/enhanced-conditions.js";
+import { Signal } from "./signal.js";
 
 /**
  * Request a roll or display concentration checks when damage is taken.
@@ -13,6 +14,20 @@ export class Concentrator {
     /* -------------------------------------------- */
     /*                   Handlers                   */
     /* -------------------------------------------- */
+    static _onReady() {
+        const enableConcentrator = Sidekick.getSetting(SETTING_KEYS.concentrator.enable);
+        
+        if (!game.user.isGM || !enableConcentrator) return;
+
+        const conditionName = Sidekick.getSetting(SETTING_KEYS.concentrator.conditionName);
+
+        const conditionExists = !!EnhancedConditions.getCondition(conditionName);
+
+        if (!conditionExists) {
+            console.log(`${game.i18n.localize(`${NAME}.CONCENTRATOR.MessagePrefix`)} ${game.i18n.localize(`${NAME}.CONCENTRATOR.NoMatchingCondition`)}`);  
+            return ui.notifications.warn(game.i18n.localize(`${NAME}.CONCENTRATOR.NoMatchingCondition`));
+        }
+    }
 
     /**
      * Handle render ChatMessage
@@ -20,11 +35,12 @@ export class Concentrator {
      * @param {*} html 
      * @param {*} data 
      */
-    static _onRenderChatMessage(app, html, data) {
+    static async _onRenderChatMessage(app, html, data) {
         const enableConcentrator = Sidekick.getSetting(SETTING_KEYS.concentrator.enable);
+        const actor = ChatMessage.getSpeakerActor(app.data?.speaker);
+        const gmUser = Sidekick.getFirstGM();
 
-        // Early return if basic conditions not met
-        if (!game.user.isGM || !enableConcentrator) return;
+        if (!enableConcentrator || game.userId !== gmUser?.id || !actor) return;
 
         const autoConcentrate = Sidekick.getSetting(SETTING_KEYS.concentrator.autoConcentrate);
         const concentrateFlag = app.getFlag(NAME, FLAGS.concentrator.chatMessage);
@@ -40,13 +56,6 @@ export class Concentrator {
 
         const itemId = itemDiv.data("itemId") || null;
 
-        const messageActorId = app.data.speaker.actor;
-        const messageSceneId = app.data.speaker.scene;
-        const messageTokenId = app.data.speaker.token;
-        const scene = messageSceneId ? game.scenes.get(messageSceneId) : game.scenes.active;
-        const tokenData = scene ? scene.data.tokens.find(t => t.id === messageTokenId) : null;
-        const token = canvas?.tokens?.get(messageTokenId) ?? (tokenData ? new Token(tokenData, scene) : null);
-        const actor = token ? token.actor : messageActorId ? game.actors.get(messageActorId) : null;
 
         if (!actor) return;
 
@@ -63,14 +72,21 @@ export class Concentrator {
         const conditionName = Sidekick.getSetting(SETTING_KEYS.concentrator.conditionName);
         const isAlreadyConcentrating = EnhancedConditions.hasCondition(conditionName, actor, {warn: false});
         const notifyDoubleSetting = Sidekick.getSetting(SETTING_KEYS.concentrator.notifyDouble);
+        const spell = {
+            id: item?.id ?? "",
+            name: item?.name ?? game.i18n.localize(`${NAME}.CONCENTRATOR.UnknownSpell`)
+        };
+
+        let sendMessage = Sidekick.getSetting(SETTING_KEYS.concentrator.notifyConcentration);
+        const suppressNotifyDouble = typeof notifyDoubleSetting === "string" && (notifyDoubleSetting.localeCompare(DEFAULT_CONFIG.concentrator.notifyDouble.none, undefined, {sensitivity: "accent"}) === 0);
 
         // If the actor/token-actor is already Concentrating, and the notification setting is enabled, fire a notification
-        if (isAlreadyConcentrating && notifyDoubleSetting !== "none") {
-            Concentrator._notifyDoubleConcentration(actor);
-        } else {
-            // Otherwise, add the Concentrating condition
-            EnhancedConditions.addCondition(conditionName, actor, {warn: false});
+        if (isAlreadyConcentrating && !suppressNotifyDouble) {
+            await Concentrator._notifyDoubleConcentration(actor, spell);
+            sendMessage = DEFAULT_CONFIG.concentrator.notifyConcentration.none;
         }
+
+        await Concentrator._startConcentration(actor, spell, conditionName, {sendMessage});
 
         // Finally, set a flag that this message has been processed
         return app.setFlag(NAME, FLAGS.concentrator.chatMessage, true);
@@ -116,8 +132,9 @@ export class Concentrator {
     static _onUpdateActor(actor, update, options, userId){
         const damageTaken = getProperty(options, `${NAME}.${FLAGS.concentrator.damageTaken}`);
         const updateProcessed = getProperty(options, `${NAME}.${FLAGS.concentrator.updateProcessed}`);
+        const gmUser = (game.userId === userId && game.user.isGM) ? game.user : Sidekick.getFirstGM();
 
-        if (!damageTaken || updateProcessed || (!game.user.isGM && userId !== game.userId)) return;
+        if (!damageTaken || updateProcessed || game.userId !== gmUser.id) return;
 
         // Update handled in token hooks
         if (actor.isToken) return;
@@ -165,10 +182,86 @@ export class Concentrator {
      */
     static _onUpdateToken(token, update, options, userId){
         const damageTaken = getProperty(options, `${NAME}.${FLAGS.concentrator.damageTaken}`);
+        const gmUser = (game.user.isGM && game.userId === userId) ? game.user : Sidekick.getFirstGM();
 
-        if (!damageTaken || (!game.user.isGM && userId !== game.userId)) return;
+        if (!damageTaken || game.userId !== gmUser?.id) return;
 
         return Concentrator._processDamage(token, options);
+    }
+
+    /**
+     * Delete ActiveEffect handler
+     * @param {*} effect 
+     * @param {*} options 
+     * @param {*} userId 
+     */
+    static _onDeleteActiveEffect(effect, options, userId) {
+        const gmUser = (game.user.isGM && game.userId === userId) ? game.user : Sidekick.getFirstGM();
+        const actor = effect.parent;
+
+        if (!actor || game.userId !== gmUser?.id) return;
+
+        const concentrationSpellFlag = actor.getFlag(NAME, FLAGS.concentrator.concentrationSpell);
+
+        if (concentrationSpellFlag?.status !== DEFAULT_CONFIG.concentrator.concentrationStatuses.active) return;
+
+        const conditionIdFlag = effect.getFlag(NAME, FLAGS.enhancedConditions.conditionId);
+
+        if (!conditionIdFlag) return;
+
+        const condition = game.cub?.conditions?.find(c => c.id === conditionIdFlag);
+        const concentrationConditionName = Sidekick.getSetting(SETTING_KEYS.concentrator.conditionName);
+
+        if (!condition || condition?.name !== concentrationConditionName) return;
+
+        const sendMessage = Sidekick.getSetting(SETTING_KEYS.concentrator.notifyEndConcentration);
+        Concentrator._endConcentration(actor, {sendMessage});
+    }
+
+    /**
+     * Socket message handler
+     * @param {*} message 
+     */
+    static _onSocket(message) {
+        if (!message?.targetUserIds || !message?.targetUserIds?.includes(game.userId) || !message?.action) return;
+
+        switch (message.action) {
+            case "prompt":
+                if (!message.actorId) return;
+                Concentrator._displayPrompt(message.actor, game.userId, message.dc);
+                break;
+            
+            case "cancelOtherPrompts":
+                if (!message.actorId) return;
+                Concentrator._cancelPrompt(message.actor, message.userId);
+                break;
+        
+            default:
+                break;
+        }
+    }
+
+    static _onRenderActorSheet(app, html, data) {
+        // get any concentration spells from app -> actor
+        const actor = app.entity;
+        const concentrationFlag = actor?.getFlag(NAME, FLAGS.concentrator.concentrationSpell);
+        const itemId = concentrationFlag?.id;
+
+        if (!actor && !concentrationFlag) return;
+
+        // find the matching id
+        const spellElement = html.find(`[data-item-id="${itemId}"]`);
+
+        if (!spellElement.length) return;
+        
+        const spellComps = spellElement.find("div.spell-comps");
+
+        if (!spellComps.length) return;
+
+        const conditionName = Sidekick.getSetting(SETTING_KEYS.concentrator.conditionName);
+        const iconSrc = EnhancedConditions.getIconsByCondition(conditionName, {firstOnly: true});
+        const imgHtml = `<img src="${iconSrc}" title="${conditionName}" width="16" height="16" style="background: rgba(0,0,0,0.5); vertical-align: top">`;
+        spellComps.append(imgHtml);
     }
 
     /* -------------------------------------------- */
@@ -190,17 +283,18 @@ export class Concentrator {
 
         const damageAmount = getProperty(options, `${NAME}.${FLAGS.concentrator.damageAmount}`);
         const isDead = getProperty(options, `${NAME}.${FLAGS.concentrator.isDead}`);
+        const dc = Concentrator._calculateDC(damageAmount);
 
         if (outputChat) {
             if (isDead) return Concentrator._processDeath(entity);
 
-            Concentrator._displayChat(entity, damageAmount);
+            Concentrator._displayChat(entity, dc);
         }
 
         if (displayPrompt) {
             const actor = entity instanceof Actor ? entity : entity.actor;
 
-            return Concentrator._determinePromptedUsers(actor.id);
+            return Concentrator._determinePromptedUsers(actor, dc);
         }
     }
 
@@ -209,8 +303,16 @@ export class Concentrator {
      * @param {*} entity 
      */
     static async _processDeath(entity) {
-        const conditionName = Sidekick.getSetting(SETTING_KEYS.concentrator.conditionName);
-        await EnhancedConditions.removeCondition(conditionName, entity);
+        const isActor = entity instanceof Actor;
+        const isToken = entity instanceof Token || entity instanceof TokenDocument;
+
+        if (!isActor && !isToken) return;
+
+        const actor = isActor ? entity : (isToken ? entity.actor : null);
+
+        if (!actor) return;
+
+        Concentrator._endConcentration(actor, {sendMessage:DEFAULT_CONFIG.concentrator.notifyEndConcentration.none});
 
         return Concentrator._displayDeathChat(entity);
     }
@@ -219,11 +321,7 @@ export class Concentrator {
      * Distributes concentration prompts to affected users
      * @param {*} options 
      */
-    static _determinePromptedUsers(actorId){
-        if (!actorId) return;
-
-        const actor = game.actors.get(actorId);
-
+    static _determinePromptedUsers(actor, dc){
         if (!actor) return;
 
         let owners = game.users.entities.filter(user => user.active && actor.hasPerm(user, Sidekick.getKeyByValue(CONST.ENTITY_PERMISSIONS, CONST.ENTITY_PERMISSIONS.OWNER)) && !user.isGM);
@@ -235,18 +333,32 @@ export class Concentrator {
 
         const ownerIds = owners.map(u => u.id);
 
-        return Concentrator._distributePrompts(actorId, ownerIds);
+        return Concentrator._distributePrompts(actor, ownerIds, dc);
     }
 
     /**
      * Distribute concentration prompts to affected users
      * @param {*} actorId 
-     * @param {*} users 
+     * @param {*} users
      */
-    static _distributePrompts(actorId, userIds){
-        for (const uId of userIds) {
-            Concentrator._displayPrompt(actorId, uId);
+    static async _distributePrompts(actor, userIds, dc){
+        if (!actor || !userIds || !userIds?.length) return;
+
+        if (userIds.includes(game.userId)) {
+            Concentrator._displayPrompt(actor, game.userId, dc);
+            const thisUserIndex = userIds.indexOf(game.userId);
+            userIds.splice(thisUserIndex, 1);
         }
+
+        const requestData = {
+            gadget: GADGETS.concentrator.name,
+            action: "prompt",
+            targetUserIds: userIds,
+            actor,
+            dc
+        };
+
+        game.socket.emit(`module.${NAME}`, requestData);
     }
 
     /**
@@ -254,27 +366,27 @@ export class Concentrator {
      * @param {*} actorId 
      * @param {*} userId 
      */
-    static _displayPrompt(actorId, userId){
-        const actor = game.actors.get(actorId);
-        const ability = Sidekick.getSetting(SETTING_KEYS.concentrator.concentrationAttribute);
-
+    static _displayPrompt(actor, userId, dc){
         if (!actor || game.userId !== userId) {
             return;
         }
 
+        const spell = actor.getFlag(NAME, FLAGS.concentrator.concentrationSpell);
+        const spellName = spell?.name ?? game.i18n.localize(`${NAME}.CONCENTRATOR.UnknownSpell`);
+
         new Dialog({
-            title: "Concentration Check",
-            content: `<p>Roll a concentration check for ${actor.name}?</p>`,
+            title: game.i18n.localize(`${NAME}.CONCENTRATOR.Prompts.Check.Title`),
+            content: game.i18n.format(`${NAME}.CONCENTRATOR.Prompts.Check.Content`, {actorName: actor.name, spellName}),
             buttons: {
                 yes: {
-                    label: "Yes",
+                    label: game.i18n.localize(`WORDS.Yes`),
                     icon: `<i class="fas fa-check"></i>`,
-                    callback: e => {
-                        actor.rollAbilitySave(ability);
+                    callback: (event) => {
+                        Concentrator._processConcentrationCheck(event, actor, dc);
                     }
                 },
                 no: {
-                    label: "No",
+                    label: game.i18n.localize(`WORDS.No`),
                     icon: `<i class="fas fa-times"></i>`,
                     callback: e => {
                         //maybe whisper the GM to alert them that the player canceled the check?
@@ -286,20 +398,70 @@ export class Concentrator {
     }
 
     /**
+     * Processes a Concentration check for the given entity and DC
+     * @param {*} event 
+     * @param {*} entity 
+     * @param {*} dc
+     */
+    static _processConcentrationCheck(event, entity, dc) {
+        const actor = entity instanceof Actor ? entity : (entity instanceof Token || entity instanceof TokenDocument ? entity.actor : null);
+
+        if (!actor) return;
+
+        const ability = Sidekick.getSetting(SETTING_KEYS.concentrator.concentrationAttribute);
+        actor.rollAbilitySave(ability);
+        game.socket.emit(`module.${NAME}`, {
+            gadget: GADGETS.concentrator.name,
+            action: "cancelOtherPrompts",
+            actor,
+            userId: game.userId,
+            targetUserIds: game.users.filter(u => u.active && u.id !== game.userId)?.map(u => u.id)
+        });
+
+        Hooks.once("createChatMessage", (message, options, userId) => {
+            if (!message.isRoll && message.data.flavor.contains(game.i18n.format("DND5E.SavePromptTitle", {ability: CONFIG.DND5E.abilities[ability]}))) return;
+
+            if (dc && message.roll.total < dc) {
+                ui.notifications.notify("Concentration check failed!");
+                const sendMessage = Sidekick.getSetting(SETTING_KEYS.concentrator.notifyEndConcentration);
+                Concentrator._endConcentration(entity, {sendMessage});
+            }
+        });
+    }
+
+    /**
+     * Cancels any open prompts to roll Concentration checks
+     * @param {*} actorId 
+     * @param {*} userId 
+     */
+    static _cancelPrompt(actorId, userId) {
+        if (!actorId || !userId || game.userId === userId) return;
+
+        // Find any open Concentration check dialogs
+        const openWindows = Object.entries(ui.windows);
+        const dialog = Object.values(ui.windows)?.find(w => w.title === game.i18n.localize(`${NAME}.CONCENTRATOR.Prompts.Check.Title`));
+
+        if (!dialog) return;
+
+        dialog.close();
+        ui.notifications.notify(`${game.i18n.localize(`${NAME}.SHORT_NAME`)} | ${game.i18n.localize(`${NAME}.CONCENTRATOR.Prompts.Check.ClosedByOther`)}`);
+    }
+
+    /**
      * Displays a chat message for concentration checks
      * @param {*} entity
      * @param {*} damage
      */
-    static _displayChat(entity, damage){
+    static _displayChat(entity, dc){
         if (!game.user.isGM) return;
 
         const isActor = entity instanceof Actor;
         const isToken = entity instanceof Token || entity instanceof TokenDocument;
-        const halfDamage = Math.floor(damage / 2);
-        const dc = halfDamage > 10 ? halfDamage : 10;
         const user = game.userId;
-        const speaker = isActor ? ChatMessage.getSpeaker({actor: entity}) : isToken ? ChatMessage.getSpeaker({token: entity}) : ChatMessage.getSpeaker();
-        const content = `<h3>Concentrator</header></h3>${entity.name} took damage and their concentration is being tested (DC${dc})!</p>`;
+        const speaker = isActor ? ChatMessage.getSpeaker({actor: entity}) : isToken ? ChatMessage.getSpeaker({token: entity.document}) : ChatMessage.getSpeaker();
+        const spell = Concentrator.getConcentrationSpell(entity);
+        const spellName = spell?.name ?? game.i18n.localize(`${NAME}.CONCENTRATOR.UnknownSpell`);
+        const content = game.i18n.format(`${NAME}.CONCENTRATOR.Messages.ConcentrationTested`, {entityName: entity.name, dc, spellName});
         const type = CONST.CHAT_MESSAGE_TYPES.OTHER;
 
         return ChatMessage.create({user, speaker, content, type});
@@ -310,32 +472,127 @@ export class Concentrator {
      * @param {*} entity 
      */
     static _displayDeathChat(entity) {
-        if (!game.user.isGM) return;
+        const gmUser = Sidekick.getFirstGM();
+
+        if (game.userId !== gmUser?.id) return;
 
         const isActor = entity instanceof Actor;
         const isToken = entity instanceof Token || entity instanceof TokenDocument;
         const user =  game.userId;
         const speaker = isActor ? ChatMessage.getSpeaker({actor: entity}) : isToken ? ChatMessage.getSpeaker({token: entity}) : ChatMessage.getSpeaker();
-        const content = `<h3>Concentrator</header></h3>${entity.name} is incapacitated and the spell they were concentrating on is lost!</p>`;
+        const spell = Concentrator.getConcentrationSpell(entity);
+        const spellName = spell?.name ?? game.i18n.localize(`${NAME}.CONCENTRATOR.UnknownSpell`);
+        const content = game.i18n.format(`${NAME}.CONCENTRATOR.Messages.Incapacitated`, {entityName: entity.name, spellName});
         const type = CONST.CHAT_MESSAGE_TYPES.OTHER;
 
         return ChatMessage.create({user, speaker, content, type});
     }
 
     /**
+     * Processes steps to start Concentration for an entity
+     * @param {*} entity 
+     * @param {*} spell 
+     * @param {*} conditionName 
+     * @param {*} options 
+     * @returns 
+     */
+    static _startConcentration(entity, spell, conditionName, {sendMessage=DEFAULT_CONFIG.concentrator.notifyConcentration.none}={}) {
+        const isActor = entity instanceof Actor;
+        const isToken = entity instanceof Token || entity instanceof TokenDocument;
+
+        if (!isActor && !isToken) return;
+
+        const actor = isActor ? entity : (isToken ? entity.actor : null);
+
+        if (!actor) return;
+
+        const suppressMessage = typeof sendMessage === "string" && (sendMessage.localeCompare(DEFAULT_CONFIG.concentrator.notifyConcentration.none, undefined, {sensitivity: "accent"}) === 0);
+
+        if (!suppressMessage) {
+            const isWhisper = Sidekick.getSetting(SETTING_KEYS.concentrator.notifyConcentration) === "GM Only";
+        
+            const speaker = isActor ? ChatMessage.getSpeaker({actor: entity}) : isToken ? ChatMessage.getSpeaker({token: entity.document}) : ChatMessage.getSpeaker();
+            const whisper = isWhisper ? game.users.entities.filter(u => u.isGM) : [];
+
+            const content =  game.i18n.format(`${NAME}.CONCENTRATOR.Messages.StartConcentration`, {entityName: entity.name, spellName: spell.name})
+            const type = CONST.CHAT_MESSAGE_TYPES.OTHER;
+        
+            ChatMessage.create({speaker, whisper, content, type});
+        }
+        
+        EnhancedConditions.addCondition(conditionName, actor, {warn: false});
+        return actor.setFlag(NAME, FLAGS.concentrator.concentrationSpell, {
+            id: spell.id,
+            name: spell.name,
+            status: DEFAULT_CONFIG.concentrator.concentrationStatuses.active
+        });
+    }
+
+    /**
      * Displays a chat message to GMs if a Concentration spell is cast while already concentrating
      * @param {*} entity  the entity with double concentration
+     * @param {*} newSpell
      */
-    static _notifyDoubleConcentration(entity) {
+    static _notifyDoubleConcentration(entity, newSpell={name: game.i18n.localize(`${NAME}.CONCENTRATOR.UnknownSpell`), id: ""}) {
         const isWhisper = Sidekick.getSetting(SETTING_KEYS.concentrator.notifyDouble) === "GM Only";
         const isActor = entity instanceof Actor;
         const isToken = entity instanceof Token || entity instanceof TokenDocument;
-        const speaker = isActor ? ChatMessage.getSpeaker({actor: entity}) : isToken ? ChatMessage.getSpeaker({token: entity}) : ChatMessage.getSpeaker();
-        const whisper = isWhisper ? game.users.entities.filter(u => u.isGM) : [];
-        const content =  `<h3>Concentrator</h3><p>${entity.name} cast a spell requiring Concentration while concentrating on another spell. Concentration on the original spell is lost.`;
-        const type = CONST.CHAT_MESSAGE_TYPES.OTHER;
 
+        if (!isActor && !isToken) return;
+
+        const actor = isActor ? entity : (isToken ? entity.actor : null);
+
+        const speaker = isActor ? ChatMessage.getSpeaker({actor: entity}) : isToken ? ChatMessage.getSpeaker({token: entity.document}) : ChatMessage.getSpeaker();
+        const whisper = isWhisper ? game.users.entities.filter(u => u.isGM) : [];
+        const previousSpell = actor.getFlag(NAME, FLAGS.concentrator.concentrationSpell) ?? game.i18n.localize(`${NAME}.CONCENTRATOR.UnknownSpell`);
+        const content =  game.i18n.format(`${NAME}.CONCENTRATOR.Messages.DoubleConcentration`, {entityName: entity.name, oldSpellName: previousSpell.name, newSpellName: newSpell.name})
+        const type = CONST.CHAT_MESSAGE_TYPES.OTHER;
+        
         return ChatMessage.create({speaker, whisper, content, type});
+    }
+
+    /**
+     * Processes end of Concentration
+     * @param {*} entity 
+     * @param {*} options 
+     * @returns 
+     */
+    static async _endConcentration(entity, {sendMessage=DEFAULT_CONFIG.concentrator.notifyEndConcentration.none}={}) {
+        const isActor = entity instanceof Actor;
+        const isToken = entity instanceof Token || entity instanceof TokenDocument;
+        const actor = isActor ? entity : (isToken ? entity.actor : null);
+
+        if (!actor) return;
+
+        const flag = actor.getFlag(NAME, FLAGS.concentrator.concentrationSpell);
+
+        if (flag) {
+            const flagUpdate = {status: DEFAULT_CONFIG.concentrator.concentrationStatuses.breaking};
+            await actor.setFlag(NAME, FLAGS.concentrator.concentrationSpell, mergeObject(flag, flagUpdate));
+        }
+
+        const conditionName = Sidekick.getSetting(SETTING_KEYS.concentrator.conditionName);
+
+        if (conditionName) {
+            EnhancedConditions.removeCondition(conditionName, actor, {warn: false});
+        }
+        
+        const suppressMessage = typeof sendMessage === "string" && (sendMessage.localeCompare(DEFAULT_CONFIG.concentrator.notifyEndConcentration.none, undefined, {sensitivity: "accent"}) === 0);
+
+        if (!suppressMessage && flag) {
+            const isWhisper = Sidekick.getSetting(SETTING_KEYS.concentrator.notifyEndConcentration) === "GM Only";
+        
+            const speaker = isActor ? ChatMessage.getSpeaker({actor: entity}) : isToken ? ChatMessage.getSpeaker({token: entity.document}) : ChatMessage.getSpeaker();
+            const whisper = isWhisper ? game.users.entities.filter(u => u.isGM) : [];
+
+            const spell = actor.getFlag(NAME, FLAGS.concentrator.concentrationSpell) ?? {name: game.i18n.localize(`${NAME}.CONCENTRATOR.UnknownSpell`)};
+            const content =  game.i18n.format(`${NAME}.CONCENTRATOR.Messages.EndConcentration`, {entityName: entity.name, spellName: spell.name})
+            const type = CONST.CHAT_MESSAGE_TYPES.OTHER;
+        
+            ChatMessage.create({speaker, whisper, content, type});
+        }
+
+        return actor.unsetFlag(NAME, FLAGS.concentrator.concentrationSpell);
     }
 
     /* -------------------------------------------- */
@@ -346,14 +603,14 @@ export class Concentrator {
      * Executes when the module setting is enabled
      */
     static _promptEnableEnhancedConditions() {
-        const title = "Enable Enhanced Conditions?";
-        const content = `<p>In order to use Concentrator you must enable Enhanced Conditions.</p><strong>Would you like to enable Enhanced Conditions</strong>`;
+        const title = game.i18n.localize(`${NAME}.CONCENTRATOR.Prompts.EnableEnhancedConditions.Title`);
+        const content = game.i18n.localize(`${NAME}.CONCENTRATOR.Prompts.EnableEnhancedConditions.Content`);
         new Dialog({
             title,
             content,
             buttons: {
                 yes: {
-                    label: "Yes",
+                    label: game.i18n.localize("WORDS.Yes"),
                     icon: `<i class="fas fa-check"></i>`,
                     callback: async e => {
                         await Sidekick.setSetting(SETTING_KEYS.enhancedConditions.enable, true, true);
@@ -362,11 +619,9 @@ export class Concentrator {
                     }
                 },
                 no: {
-                    label: "No",
+                    label: game.i18n.localize("WORDS.No"),
                     icon: `<i class="fas fa-times"></i>`,
-                    callback: e => {
-                        //maybe whisper the GM to alert them that the player canceled the check?
-                    }
+                    callback: e => {}
                 }
             }
         }).render(true);
@@ -419,7 +674,7 @@ export class Concentrator {
      */
     static _isConcentrating(token) {
         const conditionName = Sidekick.getSetting(SETTING_KEYS.concentrator.conditionName);
-        const _isConcentrating = EnhancedConditions.hasCondition(conditionName, token);
+        const _isConcentrating = EnhancedConditions.hasCondition(conditionName, token, {warn: false});
 
         return _isConcentrating;
     }
@@ -432,5 +687,34 @@ export class Concentrator {
      */
     static _calculateDamage(newHealth, oldHealth) {
         return oldHealth - newHealth || 0;
+    }
+
+    /**
+     * Calculates a Concentration DC based on a damage amount
+     * @param {*} damage 
+     * @returns 
+     */
+    static _calculateDC(damage) {
+        const halfDamage = Math.floor(damage / 2);
+        const dc = halfDamage > 10 ? halfDamage : 10;
+        return dc;
+    }
+
+    /**
+     * For a given entity, gets and returns their concentrated spell (if any)
+     * @param {*} entity 
+     * @returns Concentration Spell object
+     */
+    static getConcentrationSpell(entity) {
+        const isActor = entity instanceof Actor;
+        const isToken = entity instanceof Token || entity instanceof TokenDocument;
+
+        const actor = isActor ? entity : (isToken ? entity.actor : null);
+
+        if (!actor) return;
+
+        const spell = actor.getFlag(NAME, FLAGS.concentrator.concentrationSpell);
+
+        return spell;
     }
 }

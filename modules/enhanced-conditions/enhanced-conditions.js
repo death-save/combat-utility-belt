@@ -343,6 +343,27 @@ export class EnhancedConditions {
         });
     }
 
+    static async _onRenderCombatTracker(app, html, data) {
+        const enabled = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.enable);
+
+        if (!enabled) return;
+
+        const effectIcons = html.find("img[class='token-effect']");
+
+        effectIcons.each((index, element) => {
+            const url = new URL(element.src);
+            const path = url?.pathname?.substring(1); 
+            const conditions = EnhancedConditions.getConditionsByIcon(path);
+            const statusEffect = CONFIG.statusEffects.find(e => e.icon === path);
+
+            if (conditions?.length) {
+                element.title = conditions[0];
+            } else if (statusEffect?.label) {
+                element.title = game.i18n.localize(statusEffect.label);
+            }
+        });
+    }
+
     /* -------------------------------------------- */
     /*                    Workers                   */
     /* -------------------------------------------- */
@@ -551,6 +572,8 @@ export class EnhancedConditions {
      * @param {Object} html the html element where the button will be created
      */
     static _createLabButton(html) {
+        if (!game.user.isGM) return;
+
         const cubDiv = html.find("#combat-utility-belt");
 
         const labButton = $(
@@ -635,7 +658,9 @@ export class EnhancedConditions {
             //condition = typeof condition == "string" ? {icon: condition} : condition;
             if (typeof condition == "string") continue;
 
-            condition.name = condition.name ?? (condition.icon ? Sidekick.getNameFromFilePath(condition.icon) : "");
+            if (!condition.name) {
+                condition.name = condition.label ?? (condition.icon ? Sidekick.getNameFromFilePath(condition.icon) : "");
+            }
             condition.id = condition.id || Sidekick.generateUniqueSlugId(condition.name, existingIds);
             condition.options = condition.options || {};
             if (condition.options.outputChat === undefined) condition.options.outputChat = outputChatSetting;

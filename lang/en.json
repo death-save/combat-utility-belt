@@ -1,8 +1,42 @@
 {
     "combat-utility-belt": {
+        "SHORT_NAME": "CUB",
+        "NAME": "Combat Utility Belt",
+        "ID": "combat-utility-belt",
         "ENHANCED_CONDITIONS.OutputChatConfirm": {
             "Title": "Enable Output to Chat for All Conditions?",
             "Content": "Click 'Yes' to enable 'Output to Chat' on all Conditions"
+        },
+        "CONCENTRATOR": {
+            "MessagePrefix": "Combat Utility Belt - Concentrator",
+            "NoMatchingCondition": "No matching condition found for Concentrator. Please check your Concentrator and Condition Lab",
+            "Prompts": {
+                "Check": {
+                    "Title": "Concentration Check",
+                    "Content": "<p>Roll a concentration check for <strong>{actorName}</strong>?</p><p>Spell: <strong>{spellName}</strong></p>",
+                    "ClosedByOther": "Another user has rolled the concentration check"
+                },
+                "EnableEnhancedConditions": {
+                    "Title": "Enable Enhanced Conditions?",
+                    "Content": "<p>In order to use Concentrator you must enable Enhanced Conditions.</p><strong>Would you like to enable Enhanced Conditions</strong>"
+                }
+            },
+            "Messages": {
+                "StartConcentration": "<h3>Concentrator</h3><p>{entityName} is now concentrating on <strong>{spellName}</strong>.",
+                "DoubleConcentration": "<h3>Concentrator</h3><p>{entityName} cast <strong>{newSpellName}</strong> while concentrating on <strong>{oldSpellName}</strong>. Concentration on the original spell is lost.",
+                "EndConcentration": "<h3>Concentrator</h3><p>{entityName}'s concentration on <strong>{spellName}</strong> is broken!</p>",
+                "ConcentrationTested": "<h3>Concentrator</h3><strong>{entityName}</strong> took damage and their concentration on <strong>{spellName}</strong> is being tested (<strong>DC{dc}</strong>)!</p>",
+                "Incapacitated": "<h3>Concentrator</h3><strong>{entityName}</strong> is incapacitated and concentration on <strong>{spellName}</strong> is lost!</p>"      
+            },
+            "UnknownSpell": "Unknown Spell"
+        },
+        "SETTINGS": {
+            "CONCENTRATOR": {
+                "NotifyConcentrationN": "Notify on Concentration Start",
+                "NotifyConcentrationH": "Send a message when a Concentration spell is cast.",
+                "NotifyEndN": "Notify on Concentration End",
+                "NotifyEndH": "Send a message when Concentration on a spell ends."
+            }
         }
     },
     "GADGET_DESCRIPTIONS.AwardXP": "Provides an end of combat prompt to distribute XP from defeated hostile combatants.",

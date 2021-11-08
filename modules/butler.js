@@ -135,13 +135,28 @@ export const DEFAULT_CONFIG = {
         outputChat: false,
         promptRoll: false,
         autoConcentrate: false,
+        notifyConcentration: {
+            none: "None",
+            gm: "GM Only",
+            all: "Everyone"
+        },
         notifyDouble: {
             none: "None",
             gm: "GM Only",
             all: "Everyone"
         },
+        notifyEndConcentration: {
+            none: "None",
+            gm: "GM Only",
+            all: "Everyone"
+        },
         icon: "modules/combat-utility-belt/icons/concentrating.svg",
-        alias: "Concentrator"
+        alias: "Concentrator",
+        concentrationStatuses: {
+            breaking: "breaking",
+            active: "active",
+            broken: "broken"
+        }
     },
     cubPuter: {
         id: "cub-puter",
@@ -327,7 +342,8 @@ export const FLAGS = {
         damageTaken: "damageWasTaken",
         damageAmount: "damageAmount",
         isDead: "isDead",
-        updateProcessed: "concentrationUpdateProcessed"
+        updateProcessed: "concentrationUpdateProcessed",
+        concentrationSpell: "concentrationSpell"
     },
     enhancedConditions: {
         conditionId: "conditionId",
@@ -363,7 +379,9 @@ export const SETTING_KEYS = {
         outputChat: "concentratorOutputToChat",
         autoConcentrate: "autoConcentrate",
         concentrationAttribute: "concentrationAttribute",
+        notifyConcentration: "notifyConcentration",
         notifyDouble: "notifyDoubleConcentration",
+        notifyEndConcentration: "notifyEndConcentration",
         healthAttribute: "concentratorHealthAttribute", //validate necessity
         prompt: "concentratorPromptPlayer"
     },

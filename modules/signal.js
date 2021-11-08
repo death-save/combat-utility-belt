@@ -90,7 +90,9 @@ export class Signal {
         });
 
         Hooks.on("ready", () => {
-            EnhancedConditions._onReady();            
+            game.socket.on(`module.${BUTLER.NAME}`, Signal._onSocket);
+            EnhancedConditions._onReady();
+            Concentrator._onReady();            
         });
 
         /* -------------------------------------------- */
@@ -118,6 +120,7 @@ export class Signal {
 
         Hooks.on("deleteActiveEffect", (effect, options, userId) => {
             EnhancedConditions._onDeleteActiveEffect(effect, options, userId);
+            Concentrator._onDeleteActiveEffect(effect, options, userId);
         });
 
         /* ------------------- Token ------------------ */
@@ -185,6 +188,7 @@ export class Signal {
 
         Hooks.on("renderActorSheet", (app, html, data) => {
             HideNPCNames._onRenderActorSheet(app, html, data);
+            Concentrator._onRenderActorSheet(app, html, data);
         });
 
         /* ------------------- Chat ------------------- */
@@ -207,6 +211,7 @@ export class Signal {
             HideNPCNames._onRenderCombatTracker(app, html, data);
             TrackerUtility._onRenderCombatTracker(app, html, data);
             TemporaryCombatants._onRenderCombatTracker(app, html, data);
+            EnhancedConditions._onRenderCombatTracker(app, html, data);
         });
 
         /* ---------------- Custom Apps --------------- */
@@ -226,5 +231,21 @@ export class Signal {
         Hooks.on("vinoPrepareChatDisplayData", (chatDisplayData) => {
             HideNPCNames._onVinoPrepareChatDisplayData(chatDisplayData);
         });
+    }
+
+    /**
+     * Socket dispatcher
+     * @param {*} message 
+     */
+    static _onSocket(message) {
+        if (!message?.gadget) return;
+
+        switch (message.gadget) {
+            case BUTLER.GADGETS.concentrator.name:
+                return Concentrator._onSocket(message);
+        
+            default:
+                break;
+        }
     }
 }

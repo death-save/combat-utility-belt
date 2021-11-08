@@ -10,6 +10,36 @@
 5. Chat log may not re-render when Hide Names settings are changed. This may cause the old name to still show in the log for players. Advise players to reload Foundry if you change these settings mid-session.
 6. The Default/Inferred Condition Lab Mappings for game systems may not correctly import all data. Importing the map from the CUB Condition Maps folder imports correctly.
 
+## [1.7.0] - 2021-11-07
+### 💭 Concentrator
+> Concentrator has undergone some large-scale changes. Please read the following notes carefully.
+- Concentrator now tracks which spell an actor is concentrating on:
+- - The Concentration condition icon will show up next to the spell in the Spellbook. 
+- - An optional notification is also sent to chat (enabled via CUBputer).
+- When Concentration is being tested the prompt to the user and the message in chat now contain the spell the actor is concentrating on.
+- When Concentration is broken a notification will be sent to chat (if the setting is enabled via CUBputer).
+- Improved the back-end handling of concentration checks and the distribution of prompts to actor owners.
+- A warning is raised when starting Foundry if Concentrator is not mapped to a condition
+- - Suppressed a warning that fired whenever a token was damaged and the Concentrator was not mapped to a condition.
+
+### ✨ Enhanced Conditions
+- Added tooltips to status effects/conditions in the standard combat tracker
+- The Condition Lab button is no longer visible to players
+- When preparing a Condition Map, the label of a status effect is used if there is no name. This prevents a status effect with a valid label having its name set to match its icon. Eg. status effect `{label: "Awesome", img: "/path/to/icons/only-ok.png"}` will map a name of `Awesome` whereas previously it would map a name of `only ok`.
+
+### 🍳 Pan/Select
+- Fixed an issue with Pan/Select not firing on the first round of combat.
+
+### 🧍 Misc Actor/Token
+- When HP is auto rolled for a token and no HP formula exists, the max HP is now used instead. In the `dnd5e` system this fixes issues dropping tokens for vehicles, which may not have a formula.
+
+### 🖥️ CUBputer
+- The CUBputer button is no longer visible to players
+
+### 🌎 Translations
+- Added `Polski` (Polish) translation (thanks @MichalGolaszewski ! 🎉)
+- Updated `한국어` (Korean) translation (thanks @drdwing ! 🎉)
+
 ## [1.6.2] - 2021-08-29
 ### Enhanced Conditions
 - Fixed an issue that prevented Active Effects from being saved while the Condition Lab was open

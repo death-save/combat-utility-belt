@@ -502,8 +502,12 @@ export class CUBPuter extends FormApplication {
  * @param {*} html 
  */
 export function createCUBPuterButton(html) {
+    if (!game.user.isGM) return;
+
     const cubDiv = html.find("#combat-utility-belt");
 
+    if (!cubDiv || !cubDiv.length) return;
+    
     const cubPuterButton = $(
         `<button id="${DEFAULT_CONFIG.cubPuter.buttonId}" data-action="cub-puter" title="${game.i18n.localize("SETTINGS.CUBPuter.ButtonH")}">
             <i class="fas fa-desktop"></i> ${DEFAULT_CONFIG.cubPuter.title}

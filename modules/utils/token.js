@@ -54,7 +54,8 @@ export class TokenUtility {
         const formula = newFormula || getProperty(actor, "data.data.attributes.hp.formula");
 
         if (!formula) {
-            return null;
+            const maxHP = getProperty(actor, "data.data.attributes.hp.max");
+            return maxHP ?? 0;
         }
 
         const r = new Roll(formula);
