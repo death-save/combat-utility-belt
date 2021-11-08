@@ -61,6 +61,11 @@
       "lang": "de",
       "name": "Deutsch",
       "path": "lang/de.json"
+    },
+    {
+      "lang": "pl",
+      "name": "Polski",
+      "path": "pl.json"
     }
   ], 
   "packs": [
