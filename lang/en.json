@@ -10,16 +10,23 @@
         "CONCENTRATOR": {
             "MessagePrefix": "Combat Utility Belt - Concentrator",
             "NoMatchingCondition": "No matching condition found for Concentrator. Please check your Concentrator and Condition Lab",
-            "Prompt": {
-                "Title": "Concentration Check",
-                "Content": "<p>Roll a concentration check for <strong>{actorName}</strong>?</p><p>Spell: <strong>{spellName}</strong></p>",
-                "ClosedByOther": "Another user has rolled the concentration check"
+            "Prompts": {
+                "Check": {
+                    "Title": "Concentration Check",
+                    "Content": "<p>Roll a concentration check for <strong>{actorName}</strong>?</p><p>Spell: <strong>{spellName}</strong></p>",
+                    "ClosedByOther": "Another user has rolled the concentration check"
+                },
+                "EnableEnhancedConditions": {
+                    "Title": "Enable Enhanced Conditions?",
+                    "Content": "<p>In order to use Concentrator you must enable Enhanced Conditions.</p><strong>Would you like to enable Enhanced Conditions</strong>"
+                }
             },
             "Messages": {
                 "StartConcentration": "<h3>Concentrator</h3><p>{entityName} is now concentrating on <strong>{spellName}</strong>.",
                 "DoubleConcentration": "<h3>Concentrator</h3><p>{entityName} cast <strong>{newSpellName}</strong> while concentrating on <strong>{oldSpellName}</strong>. Concentration on the original spell is lost.",
                 "EndConcentration": "<h3>Concentrator</h3><p>{entityName}'s concentration on <strong>{spellName}</strong> is broken!</p>",
-                "ConcentrationTested": "<h3>Concentrator</h3><strong>{entityName}</strong> took damage and their concentration on <strong>{spellName}</strong> is being tested (<strong>DC{dc}</strong>)!</p>"
+                "ConcentrationTested": "<h3>Concentrator</h3><strong>{entityName}</strong> took damage and their concentration on <strong>{spellName}</strong> is being tested (<strong>DC{dc}</strong>)!</p>",
+                "Incapacitated": "<h3>Concentrator</h3><strong>{entityName}</strong> is incapacitated and concentration on <strong>{spellName}</strong> is lost!</p>"      
             },
             "UnknownSpell": "Unknown Spell"
         },

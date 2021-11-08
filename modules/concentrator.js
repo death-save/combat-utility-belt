@@ -375,8 +375,8 @@ export class Concentrator {
         const spellName = spell?.name ?? game.i18n.localize(`${NAME}.CONCENTRATOR.UnknownSpell`);
 
         new Dialog({
-            title: game.i18n.localize(`${NAME}.CONCENTRATOR.Prompt.Title`),
-            content: game.i18n.format(`${NAME}.CONCENTRATOR.Prompt.Content`, {actorName: actor.name, spellName}),
+            title: game.i18n.localize(`${NAME}.CONCENTRATOR.Prompts.Check.Title`),
+            content: game.i18n.format(`${NAME}.CONCENTRATOR.Prompts.Check.Content`, {actorName: actor.name, spellName}),
             buttons: {
                 yes: {
                     label: game.i18n.localize(`WORDS.Yes`),
@@ -419,7 +419,7 @@ export class Concentrator {
         });
 
         Hooks.once("createChatMessage", (message, options, userId) => {
-            if (!message.isRoll && message.data.flavor !== "Constitution Saving Throw") return;
+            if (!message.isRoll && message.data.flavor.contains(game.i18n.format("DND5E.SavePromptTitle", {ability: CONFIG.DND5E.abilities[ability]}))) return;
 
             if (dc && message.roll.total < dc) {
                 ui.notifications.notify("Concentration check failed!");
@@ -439,12 +439,12 @@ export class Concentrator {
 
         // Find any open Concentration check dialogs
         const openWindows = Object.entries(ui.windows);
-        const dialog = Object.values(ui.windows)?.find(w => w.title === game.i18n.localize(`${NAME}.CONCENTRATOR.Prompt.Title`));
+        const dialog = Object.values(ui.windows)?.find(w => w.title === game.i18n.localize(`${NAME}.CONCENTRATOR.Prompts.Check.Title`));
 
         if (!dialog) return;
 
         dialog.close();
-        ui.notifications.notify(`${game.i18n.localize(`${NAME}.SHORT_NAME`)} | ${game.i18n.localize(`${NAME}.CONCENTRATOR.Prompt.ClosedByOther`)}`);
+        ui.notifications.notify(`${game.i18n.localize(`${NAME}.SHORT_NAME`)} | ${game.i18n.localize(`${NAME}.CONCENTRATOR.Prompts.Check.ClosedByOther`)}`);
     }
 
     /**
@@ -480,7 +480,9 @@ export class Concentrator {
         const isToken = entity instanceof Token || entity instanceof TokenDocument;
         const user =  game.userId;
         const speaker = isActor ? ChatMessage.getSpeaker({actor: entity}) : isToken ? ChatMessage.getSpeaker({token: entity}) : ChatMessage.getSpeaker();
-        const content = `<h3>Concentrator</header></h3>${entity.name} is incapacitated and the spell they were concentrating on is lost!</p>`;
+        const spell = Concentrator.getConcentrationSpell(entity);
+        const spellName = spell?.name ?? game.i18n.localize(`${NAME}.CONCENTRATOR.UnknownSpell`);
+        const content = game.i18n.format(`${NAME}.CONCENTRATOR.Messages.Incapacitated`, {entityName: entity.name, spellName});
         const type = CONST.CHAT_MESSAGE_TYPES.OTHER;
 
         return ChatMessage.create({user, speaker, content, type});
@@ -601,14 +603,14 @@ export class Concentrator {
      * Executes when the module setting is enabled
      */
     static _promptEnableEnhancedConditions() {
-        const title = "Enable Enhanced Conditions?";
-        const content = `<p>In order to use Concentrator you must enable Enhanced Conditions.</p><strong>Would you like to enable Enhanced Conditions</strong>`;
+        const title = game.i18n.localize(`${NAME}.CONCENTRATOR.Prompts.EnableEnhancedConditions.Title`);
+        const content = game.i18n.localize(`${NAME}.CONCENTRATOR.Prompts.EnableEnhancedConditions.Content`);
         new Dialog({
             title,
             content,
             buttons: {
                 yes: {
-                    label: "Yes",
+                    label: game.i18n.localize("WORDS.Yes"),
                     icon: `<i class="fas fa-check"></i>`,
                     callback: async e => {
                         await Sidekick.setSetting(SETTING_KEYS.enhancedConditions.enable, true, true);
@@ -617,7 +619,7 @@ export class Concentrator {
                     }
                 },
                 no: {
-                    label: "No",
+                    label: game.i18n.localize("WORDS.No"),
                     icon: `<i class="fas fa-times"></i>`,
                     callback: e => {}
                 }
