@@ -227,8 +227,8 @@ export class Concentrator {
 
         switch (message.action) {
             case "prompt":
-                if (!message.actorId) return;
-                Concentrator._displayPrompt(message.actor, game.userId, message.dc);
+                if (!message.uuid) return;
+                Concentrator._displayPrompt(message.uuid, game.userId, message.dc);
                 break;
             
             case "cancelOtherPrompts":
@@ -292,9 +292,7 @@ export class Concentrator {
         }
 
         if (displayPrompt) {
-            const actor = entity instanceof Actor ? entity : entity.actor;
-
-            return Concentrator._determinePromptedUsers(actor, dc);
+            return Concentrator._determinePromptedUsers(entity.uuid, dc);
         }
     }
 
@@ -321,8 +319,12 @@ export class Concentrator {
      * Distributes concentration prompts to affected users
      * @param {*} options 
      */
-    static _determinePromptedUsers(actor, dc){
-        if (!actor) return;
+    static async _determinePromptedUsers(uuid, dc){
+        if (!uuid) return;
+
+        const actor = await Sidekick.getActorFromUuid(uuid);
+
+        if (!(actor instanceof Actor)) return;
 
         let owners = game.users.entities.filter(user => user.active && actor.hasPerm(user, Sidekick.getKeyByValue(CONST.ENTITY_PERMISSIONS, CONST.ENTITY_PERMISSIONS.OWNER)) && !user.isGM);
 
@@ -333,7 +335,7 @@ export class Concentrator {
 
         const ownerIds = owners.map(u => u.id);
 
-        return Concentrator._distributePrompts(actor, ownerIds, dc);
+        return Concentrator._distributePrompts(uuid, ownerIds, dc);
     }
 
     /**
@@ -341,11 +343,11 @@ export class Concentrator {
      * @param {*} actorId 
      * @param {*} users
      */
-    static async _distributePrompts(actor, userIds, dc){
-        if (!actor || !userIds || !userIds?.length) return;
+    static async _distributePrompts(uuid, userIds, dc){
+        if (!uuid || !userIds || !userIds?.length) return;
 
         if (userIds.includes(game.userId)) {
-            Concentrator._displayPrompt(actor, game.userId, dc);
+            Concentrator._displayPrompt(uuid, game.userId, dc);
             const thisUserIndex = userIds.indexOf(game.userId);
             userIds.splice(thisUserIndex, 1);
         }
@@ -354,7 +356,7 @@ export class Concentrator {
             gadget: GADGETS.concentrator.name,
             action: "prompt",
             targetUserIds: userIds,
-            actor,
+            uuid,
             dc
         };
 
@@ -366,10 +368,12 @@ export class Concentrator {
      * @param {*} actorId 
      * @param {*} userId 
      */
-    static _displayPrompt(actor, userId, dc){
-        if (!actor || game.userId !== userId) {
-            return;
-        }
+    static async _displayPrompt(uuid, userId, dc){
+        if (!uuid || game.userId !== userId) return;
+
+        const actor = await Sidekick.getActorFromUuid(uuid);
+
+        if (!actor) return;
 
         const spell = actor.getFlag(NAME, FLAGS.concentrator.concentrationSpell);
         const spellName = spell?.name ?? game.i18n.localize(`${NAME}.CONCENTRATOR.UnknownSpell`);
@@ -419,7 +423,7 @@ export class Concentrator {
             if (dc && message.roll.total < dc) {
                 ui.notifications.notify("Concentration check failed!");
                 const sendMessage = Sidekick.getSetting(SETTING_KEYS.concentrator.notifyEndConcentration);
-                Concentrator._endConcentration(entity, {sendMessage});
+                Concentrator._endConcentration(actor, {sendMessage});
             }
         });
     }
