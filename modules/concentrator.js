@@ -419,7 +419,7 @@ export class Concentrator {
         });
 
         Hooks.once("createChatMessage", (message, options, userId) => {
-            if (!message.isRoll && message.data.flavor.contains(game.i18n.format("DND5E.SavePromptTitle", {ability: CONFIG.DND5E.abilities[ability]}))) return;
+            if (!message.isRoll && !message.data.flavor.includes(game.i18n.format("DND5E.SavePromptTitle", {ability: CONFIG.DND5E.abilities[ability]}))) return;
 
             if (dc && message.roll.total < dc) {
                 ui.notifications.notify("Concentration check failed!");
