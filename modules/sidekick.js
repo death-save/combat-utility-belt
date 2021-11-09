@@ -331,4 +331,21 @@ export class Sidekick {
         }
         
     }
+
+    /**
+     * Gets an Actor from an Actor or Token UUID
+     * @param {*} uuid 
+     */
+    static async getActorFromUuid(uuid) {
+        const isActor = uuid.includes("Actor");
+        const isToken = uuid.includes("Token");
+
+        if (isActor) return await fromUuid(uuid);
+        else if (isToken) {
+            const tokenDocument = await fromUuid(uuid);
+            return tokenDocument?.actor ?? undefined;
+        }
+
+        return;
+    }
 }
