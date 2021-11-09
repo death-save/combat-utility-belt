@@ -400,14 +400,10 @@ export class Concentrator {
     /**
      * Processes a Concentration check for the given entity and DC
      * @param {*} event 
-     * @param {*} entity 
+     * @param {*} actor 
      * @param {*} dc
      */
-    static _processConcentrationCheck(event, entity, dc) {
-        const actor = entity instanceof Actor ? entity : (entity instanceof Token || entity instanceof TokenDocument ? entity.actor : null);
-
-        if (!actor) return;
-
+    static _processConcentrationCheck(event, actor, dc) {
         const ability = Sidekick.getSetting(SETTING_KEYS.concentrator.concentrationAttribute);
         actor.rollAbilitySave(ability);
         game.socket.emit(`module.${NAME}`, {
