@@ -232,8 +232,8 @@ export class Concentrator {
                 break;
             
             case "cancelOtherPrompts":
-                if (!message.actorId) return;
-                Concentrator._cancelPrompt(message.actor, message.userId);
+                if (!message.userId) return;
+                Concentrator._cancelPrompt(message.userId);
                 break;
         
             default:
@@ -409,7 +409,6 @@ export class Concentrator {
         game.socket.emit(`module.${NAME}`, {
             gadget: GADGETS.concentrator.name,
             action: "cancelOtherPrompts",
-            actor,
             userId: game.userId,
             targetUserIds: game.users.filter(u => u.active && u.id !== game.userId)?.map(u => u.id)
         });
@@ -427,11 +426,10 @@ export class Concentrator {
 
     /**
      * Cancels any open prompts to roll Concentration checks
-     * @param {*} actorId 
      * @param {*} userId 
      */
-    static _cancelPrompt(actorId, userId) {
-        if (!actorId || !userId || game.userId === userId) return;
+    static _cancelPrompt(userId) {
+        if (!userId || game.userId === userId) return;
 
         // Find any open Concentration check dialogs
         const dialog = Object.values(ui.windows)?.find(w => w.title === game.i18n.localize(`${NAME}.CONCENTRATOR.Prompts.Check.Title`));
