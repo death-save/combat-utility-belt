@@ -279,7 +279,7 @@ export class Concentrator {
         const displayPrompt = Sidekick.getSetting(SETTING_KEYS.concentrator.prompt);
         const outputChat = Sidekick.getSetting(SETTING_KEYS.concentrator.outputChat);
 
-        if (!isConcentrating || (!displayPrompt && !outputChat)) return;
+        if (!entity || !isConcentrating || (!displayPrompt && !outputChat)) return;
 
         const damageAmount = getProperty(options, `${NAME}.${FLAGS.concentrator.damageAmount}`);
         const isDead = getProperty(options, `${NAME}.${FLAGS.concentrator.isDead}`);
