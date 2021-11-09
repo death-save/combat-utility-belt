@@ -438,7 +438,6 @@ export class Concentrator {
         if (!actorId || !userId || game.userId === userId) return;
 
         // Find any open Concentration check dialogs
-        const openWindows = Object.entries(ui.windows);
         const dialog = Object.values(ui.windows)?.find(w => w.title === game.i18n.localize(`${NAME}.CONCENTRATOR.Prompts.Check.Title`));
 
         if (!dialog) return;
