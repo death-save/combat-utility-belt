@@ -135,6 +135,7 @@ export const DEFAULT_CONFIG = {
         outputChat: false,
         promptRoll: false,
         autoConcentrate: false,
+        autoEndConcentration: false,
         notifyConcentration: {
             none: "None",
             gm: "GM Only",
@@ -378,6 +379,7 @@ export const SETTING_KEYS = {
         conditionName: "concentratorConditionName",
         outputChat: "concentratorOutputToChat",
         autoConcentrate: "autoConcentrate",
+        autoEndConcentration: "autoEndConcentration",
         concentrationAttribute: "concentrationAttribute",
         notifyConcentration: "notifyConcentration",
         notifyDouble: "notifyDoubleConcentration",

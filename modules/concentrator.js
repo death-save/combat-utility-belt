@@ -214,8 +214,12 @@ export class Concentrator {
 
         if (!condition || condition?.name !== concentrationConditionName) return;
 
-        const sendMessage = Sidekick.getSetting(SETTING_KEYS.concentrator.notifyEndConcentration);
-        Concentrator._endConcentration(actor, {sendMessage});
+        const autoEndConcentration = Sidekick.getSetting(SETTING_KEYS.concentrator.autoEndConcentration);
+
+        if (autoEndConcentration) {
+            const sendMessage = Sidekick.getSetting(SETTING_KEYS.concentrator.notifyEndConcentration);
+            Concentrator._endConcentration(actor, {sendMessage});
+        }
     }
 
     /**
@@ -420,7 +424,9 @@ export class Concentrator {
         Hooks.once("createChatMessage", (message, options, userId) => {
             if (!message.isRoll && !message.data.flavor.includes(game.i18n.format("DND5E.SavePromptTitle", {ability: CONFIG.DND5E.abilities[ability]}))) return;
 
-            if (dc && message.roll.total < dc) {
+            const autoEndConcentration = Sidekick.getSetting(SETTING_KEYS.concentrator.autoEndConcentration);
+
+            if (autoEndConcentration && (dc && message.roll.total < dc)) {
                 ui.notifications.notify("Concentration check failed!");
                 const sendMessage = Sidekick.getSetting(SETTING_KEYS.concentrator.notifyEndConcentration);
                 Concentrator._endConcentration(actor, {sendMessage});

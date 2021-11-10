@@ -123,6 +123,16 @@ export function registerSettings() {
         onChange: s => {}
     });
 
+    Sidekick.registerSetting(BUTLER.SETTING_KEYS.concentrator.autoEndConcentration, {
+        name: `${BUTLER.NAME}.SETTINGS.CONCENTRATOR.AutoEndConcentrationN`,
+        hint: `${BUTLER.NAME}.SETTINGS.CONCENTRATOR.AutoEndConcentrationH`,
+        default: BUTLER.DEFAULT_CONFIG.concentrator.autoEndConcentration,
+        scope: "world",
+        type: Boolean,
+        config: false,
+        onChange: s => {}
+    });
+
     Sidekick.registerSetting(BUTLER.SETTING_KEYS.concentrator.notifyConcentration, {
         name: `${BUTLER.NAME}.SETTINGS.CONCENTRATOR.NotifyConcentrationN`,
         hint: `${BUTLER.NAME}.SETTINGS.CONCENTRATOR.NotifyConcentrationH`,
