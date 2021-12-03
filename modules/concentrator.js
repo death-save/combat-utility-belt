@@ -499,7 +499,7 @@ export class Concentrator {
      * @param {*} options 
      * @returns 
      */
-    static _startConcentration(entity, spell, conditionName, {sendMessage=DEFAULT_CONFIG.concentrator.notifyConcentration.none}={}) {
+    static async _startConcentration(entity, spell, conditionName, {sendMessage=DEFAULT_CONFIG.concentrator.notifyConcentration.none}={}) {
         const isActor = entity instanceof Actor;
         const isToken = entity instanceof Token || entity instanceof TokenDocument;
 
@@ -523,7 +523,7 @@ export class Concentrator {
             ChatMessage.create({speaker, whisper, content, type});
         }
         
-        EnhancedConditions.addCondition(conditionName, actor, {warn: false});
+        await EnhancedConditions.addCondition(conditionName, actor, {warn: false});
         return actor.setFlag(NAME, FLAGS.concentrator.concentrationSpell, {
             id: spell.id,
             name: spell.name,
