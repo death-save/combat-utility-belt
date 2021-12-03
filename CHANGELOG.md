@@ -10,6 +10,13 @@
 5. Chat log may not re-render when Hide Names settings are changed. This may cause the old name to still show in the log for players. Advise players to reload Foundry if you change these settings mid-session.
 6. The Default/Inferred Condition Lab Mappings for game systems may not correctly import all data. Importing the map from the CUB Condition Maps folder imports correctly.
 
+## [1.7.3] - 2021-12-02
+### 💭 Concentrator
+- Fixed an issue that was causing a "ghost" Concentrating condition to appear on some actors/tokens
+
+### ✨ Enhanced Conditions
+- Fixed an issue where duplicate conditions created programmatically would cause the Condition Lab to fail to load 
+
 ## [1.7.2] - 2021-11-12
 ### 🌎 Translations
 - Fixed an issue with the path for the Polski (Polish) translation
