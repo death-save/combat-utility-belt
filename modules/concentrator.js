@@ -499,7 +499,7 @@ export class Concentrator {
      * @param {*} options 
      * @returns 
      */
-    static _startConcentration(entity, spell, conditionName, {sendMessage=DEFAULT_CONFIG.concentrator.notifyConcentration.none}={}) {
+    static async _startConcentration(entity, spell, conditionName, {sendMessage=DEFAULT_CONFIG.concentrator.notifyConcentration.none}={}) {
         const isActor = entity instanceof Actor;
         const isToken = entity instanceof Token || entity instanceof TokenDocument;
 
@@ -523,7 +523,7 @@ export class Concentrator {
             ChatMessage.create({speaker, whisper, content, type});
         }
         
-        EnhancedConditions.addCondition(conditionName, actor, {warn: false});
+        await EnhancedConditions.addCondition(conditionName, actor, {warn: false});
         return actor.setFlag(NAME, FLAGS.concentrator.concentrationSpell, {
             id: spell.id,
             name: spell.name,
@@ -640,16 +640,13 @@ export class Concentrator {
 
         const enhancedConditions = Sidekick.getSetting(SETTING_KEYS.enhancedConditions.enable);
 
-        if (!enhancedConditions) {
-            return;
-        }
+        if (!enhancedConditions) return;
 
-        const conditionMap = Sidekick.getSetting(SETTING_KEYS.enhancedConditions.map);
-
-        const concentrating = EnhancedConditions._lookupConditionByName(conditionName);
+        const concentrating = EnhancedConditions.getCondition(conditionName);
 
         if (concentrating) return;
-
+        
+        const conditionMap = Sidekick.getSetting(SETTING_KEYS.enhancedConditions.map);
         const update = duplicate(conditionMap);
 
         update.push({
@@ -657,7 +654,9 @@ export class Concentrator {
             icon
         });
 
-        Sidekick.setSetting(SETTING_KEYS.enhancedConditions.map, update);
+        const newMap = EnhancedConditions._prepareMap(update);
+
+        Sidekick.setSetting(SETTING_KEYS.enhancedConditions.map, newMap);
     }
 
     /**
