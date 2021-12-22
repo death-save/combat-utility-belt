@@ -25,6 +25,7 @@ export class CUBPuter extends FormApplication {
             top: 200,
             left: 400,
             background: "#000",
+            popOut: true,
             resizable: true,
             closeOnSubmit: false
         });
