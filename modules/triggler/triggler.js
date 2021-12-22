@@ -42,7 +42,7 @@ export class Triggler {
         const conditionMap = Sidekick.getSetting(SETTING_KEYS.enhancedConditions.map);
         const matchedApplyConditions = conditionMap.filter(m => m.applyTrigger === trigger.id);
         const matchedRemoveConditions = conditionMap.filter(m => m.removeTrigger === trigger.id);
-        const matchedMacros = game.macros.entities.filter(m => m.getFlag(NAME, DEFAULT_CONFIG.triggler.flags.macro) === trigger.id);
+        const matchedMacros = game.macros.contents.filter(m => m.getFlag(NAME, DEFAULT_CONFIG.triggler.flags.macro) === trigger.id);
         const applyConditionNames = matchedApplyConditions.map(c => c.name);
         const removeConditionNames = matchedRemoveConditions.map(c => c.name);
 

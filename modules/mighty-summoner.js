@@ -24,7 +24,7 @@ export class MightySummoner {
         }
 
         const ownedActors = owners.map(owner => {
-            const actors = game.actors.entities.filter(a => hasProperty(a, `data.permission.${owner}`));
+            const actors = game.actors.contents.filter(a => hasProperty(a, `data.permission.${owner}`));
             return actors;
         }).flat();
 

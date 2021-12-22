@@ -330,7 +330,7 @@ export class Concentrator {
 
         if (!(actor instanceof Actor)) return;
 
-        let owners = game.users.entities.filter(user => user.active && actor.hasPerm(user, Sidekick.getKeyByValue(CONST.ENTITY_PERMISSIONS, CONST.ENTITY_PERMISSIONS.OWNER)) && !user.isGM);
+        let owners = game.users.contents.filter(user => user.active && actor.hasPerm(user, Sidekick.getKeyByValue(CONST.ENTITY_PERMISSIONS, CONST.ENTITY_PERMISSIONS.OWNER)) && !user.isGM);
 
         if (!owners.length) {
             const gmUsers = game.users.filter(u => u.active && u.isGM);
@@ -515,7 +515,7 @@ export class Concentrator {
             const isWhisper = Sidekick.getSetting(SETTING_KEYS.concentrator.notifyConcentration) === "GM Only";
         
             const speaker = isActor ? ChatMessage.getSpeaker({actor: entity}) : isToken ? ChatMessage.getSpeaker({token: entity.document}) : ChatMessage.getSpeaker();
-            const whisper = isWhisper ? game.users.entities.filter(u => u.isGM) : [];
+            const whisper = isWhisper ? game.users.contents.filter(u => u.isGM) : [];
 
             const content =  game.i18n.format(`${NAME}.CONCENTRATOR.Messages.StartConcentration`, {entityName: entity.name, spellName: spell.name})
             const type = CONST.CHAT_MESSAGE_TYPES.OTHER;
@@ -546,7 +546,7 @@ export class Concentrator {
         const actor = isActor ? entity : (isToken ? entity.actor : null);
 
         const speaker = isActor ? ChatMessage.getSpeaker({actor: entity}) : isToken ? ChatMessage.getSpeaker({token: entity.document}) : ChatMessage.getSpeaker();
-        const whisper = isWhisper ? game.users.entities.filter(u => u.isGM) : [];
+        const whisper = isWhisper ? game.users.contents.filter(u => u.isGM) : [];
         const previousSpell = actor.getFlag(NAME, FLAGS.concentrator.concentrationSpell) ?? game.i18n.localize(`${NAME}.CONCENTRATOR.UnknownSpell`);
         const content =  game.i18n.format(`${NAME}.CONCENTRATOR.Messages.DoubleConcentration`, {entityName: entity.name, oldSpellName: previousSpell.name, newSpellName: newSpell.name})
         const type = CONST.CHAT_MESSAGE_TYPES.OTHER;
@@ -586,7 +586,7 @@ export class Concentrator {
             const isWhisper = Sidekick.getSetting(SETTING_KEYS.concentrator.notifyEndConcentration) === "GM Only";
         
             const speaker = isActor ? ChatMessage.getSpeaker({actor: entity}) : isToken ? ChatMessage.getSpeaker({token: entity.document}) : ChatMessage.getSpeaker();
-            const whisper = isWhisper ? game.users.entities.filter(u => u.isGM) : [];
+            const whisper = isWhisper ? game.users.contents.filter(u => u.isGM) : [];
 
             const spell = actor.getFlag(NAME, FLAGS.concentrator.concentrationSpell) ?? {name: game.i18n.localize(`${NAME}.CONCENTRATOR.UnknownSpell`)};
             const content =  game.i18n.format(`${NAME}.CONCENTRATOR.Messages.EndConcentration`, {entityName: entity.name, spellName: spell.name})
