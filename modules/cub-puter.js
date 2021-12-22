@@ -67,7 +67,7 @@ export class CUBPuter extends FormApplication {
                 const [key, setting] = entry;
                 // Update setting data
                 const s = duplicate(setting);
-                s.value = game.settings.get(s.module, s.key);
+                s.value = game.settings.get(s.namespace, s.key);
                 s.type = setting.type instanceof Function ? setting.type.name : "String";
                 s.isCheckbox = setting.type === Boolean;
                 s.isSelect = s.choices !== undefined;
@@ -283,10 +283,10 @@ export class CUBPuter extends FormApplication {
             }
 
             const d = s.default;
-            const v = game.settings.get(s.module, s.key);
+            const v = game.settings.get(s.namespace, s.key);
 
             if ( v !== d ) {
-              await game.settings.set(s.module, s.key, d);
+              await game.settings.set(s.namespace, s.key, d);
               restored.push(k);
             }
         }
@@ -335,9 +335,9 @@ export class CUBPuter extends FormApplication {
           if (!s) {
               continue;
           }
-          let current = game.settings.get(s.module, s.key);
+          let current = game.settings.get(s.namespace, s.key);
           if ( v !== current ) {
-            await game.settings.set(s.module, s.key, v);
+            await game.settings.set(s.namespace, s.key, v);
             updated.push(k);
           }
         }
