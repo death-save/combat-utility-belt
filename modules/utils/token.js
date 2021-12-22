@@ -58,8 +58,7 @@ export class TokenUtility {
             return maxHP ?? 0;
         }
 
-        const r = new Roll(formula);
-        const roll = r.roll();
+        const roll = new Roll(formula);
         const hideRoll = Sidekick.getSetting(SETTING_KEYS.tokenUtility.hideAutoRoll);
 
         roll.toMessage(
@@ -71,7 +70,7 @@ export class TokenUtility {
                 speaker: ChatMessage.getSpeaker({actor}),
             }
         );
-        const hp = r.total;
+        const hp = roll.total;
 
         return hp;
     }
