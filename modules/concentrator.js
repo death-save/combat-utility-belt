@@ -47,6 +47,9 @@ export class Concentrator {
 
         if (!autoConcentrate || concentrateFlag) return;
 
+        // Don't apply concentration checks when the BetterRolls5e's "Info" button is pressed.
+        if (data.message.flags.betterrolls5e?.params?.infoOnly) return;
+
         const itemDiv = html.find("div[data-item-id]");
 
         // support Beyond20
