@@ -1335,7 +1335,7 @@ export class EnhancedConditions {
 
             const effectIds = activeEffects.map(e => e.id);
 
-            await actor.deleteEmbeddedEntity("ActiveEffect", effectIds);
+            await actor.deleteEmbeddedDocuments("ActiveEffect", effectIds);
         }
     }
 
@@ -1376,7 +1376,7 @@ export class EnhancedConditions {
 
             const effectIds = actorConditionEffects.map(ace => ace.id);
 
-            await actor.deleteEmbeddedEntity("ActiveEffect", effectIds);
+            await actor.deleteEmbeddedDocuments("ActiveEffect", effectIds);
         }
     }
 }
