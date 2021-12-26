@@ -2,7 +2,7 @@
   "name": "combat-utility-belt",
   "title": "Combat Utility Belt",
   "description": "Adds various combat-focused features",
-  "version": "1.7.3",
+  "version": "1.8.0",
   "author": "Evan Clarke [errational#2007]",
   "authors": [
     {
@@ -13,8 +13,8 @@
       "reddit": "u/etherboy12"
     }
   ],
-  "minimumCoreVersion": "0.8.5",
-  "compatibleCoreVersion": "0.8.9",
+  "minimumCoreVersion": "9.235",
+  "compatibleCoreVersion": "9.238",
   "url": "https://github.com/death-save/combat-utility-belt",
   "bugs": "https://github.com/death-save/combat-utility-belt/issues",
   "readme": "https://github.com/death-save/combat-utility-belt/wiki",

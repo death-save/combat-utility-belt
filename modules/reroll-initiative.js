@@ -26,7 +26,7 @@ export class RerollInitiative {
         // If we are not moving forward through the rounds, return
         if (update.round < 2 || update.round < combat.previous.round) return;
 
-        const gmUsers = game.users.entities.filter(u => u.isGM);
+        const gmUsers = game.users.contents.filter(u => u.isGM);
         const gmUserId = game.user.isGM ? game.userId : gmUsers.length ? gmUsers[0].id : null;
 
         if (!gmUserId) return;

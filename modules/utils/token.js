@@ -58,8 +58,7 @@ export class TokenUtility {
             return maxHP ?? 0;
         }
 
-        const r = new Roll(formula);
-        const roll = r.roll();
+        const roll = new Roll(formula);
         const hideRoll = Sidekick.getSetting(SETTING_KEYS.tokenUtility.hideAutoRoll);
 
         roll.toMessage(
@@ -71,7 +70,7 @@ export class TokenUtility {
                 speaker: ChatMessage.getSpeaker({actor}),
             }
         );
-        const hp = r.total;
+        const hp = roll.total;
 
         return hp;
     }
@@ -106,12 +105,9 @@ export class TokenUtility {
     }
 
     /**
-     * Patch Core method: Token#_drawEffect
-     * @param {*} src 
-     * @param {*} i 
-     * @param {*} bg 
-     * @param {*} w 
-     * @param {*} tint 
+     * Draw a status effect icon
+     * @return {Promise<void>}
+     * @private
      */
     static async _drawEffect(src, i, bg, w, tint) {
         const effectSize = Sidekick.getSetting(SETTING_KEYS.tokenUtility.effectSize); 
@@ -119,61 +115,62 @@ export class TokenUtility {
         // Use the default values if no setting found
         const multiplier = effectSize ? DEFAULT_CONFIG.tokenUtility.effectSize[effectSize].multiplier : 2;
         const divisor = effectSize ? DEFAULT_CONFIG.tokenUtility.effectSize[effectSize].divisor : 5;
-        
+
         // By default the width is multipled by 2, so divide by 2 first then use the new multiplier
         w = (w / 2) * multiplier;
-        let tex = await loadTexture(src);
-        let icon = this.effects.addChild(new PIXI.Sprite(tex));
+
+        let tex = await loadTexture(src, {fallback: 'icons/svg/hazard.svg'});
+        let icon = this.hud.effects.addChild(new PIXI.Sprite(tex));
         icon.width = icon.height = w;
-        icon.x = Math.floor(i / divisor) * w;
-        icon.y = (i % divisor) * w;
+        //const nr = Math.floor(this.data.height * 5);
+        const nr = Math.floor(this.data.height * divisor);
+        icon.x = Math.floor(i / nr) * w;
+        icon.y = (i % nr) * w;
         if ( tint ) icon.tint = tint;
         bg.drawRoundedRect(icon.x + 1, icon.y + 1, w - 2, w - 2, 2);
-        this.effects.addChild(icon);
-      }
+    }
 
-      /**
-   * Get an array of icon paths which represent valid status effect choices
-   * @private
-   */
+    /**
+     * Get an array of icon paths which represent valid status effect choices
+     * @private
+     */
     static _getStatusEffectChoices() {
-    const token = this.object;
+        const token = this.object;
 
-    // Get statuses which are active for the token actor
-    const actor = token.actor || null;
-    const statuses = actor ? actor.effects.reduce((obj, e) => {
-      const id = e.getFlag("core", "statusId");
-      if ( id ) {
-        obj[id] = {
-          id: id,
-          overlay: !!e.getFlag("core", "overlay")
-        }
-      }
-      return obj;
-    }, {}) : {};
-
-    // Prepare the list of effects from the configured defaults and any additional effects present on the Token
-    const tokenEffects = duplicate(token.data.effects) || [];
-    if ( token.data.overlayEffect ) tokenEffects.push(token.data.overlayEffect);
-    return CONFIG.statusEffects.concat(tokenEffects).reduce((obj, e) => {
-      const src = e.icon ?? e;
-      // Allow duplicate entries by commenting out the line below.
-      // if ( src in obj ) return obj;
-      const status = statuses[e.id] || {};
-      const isActive = !!status.id || token.data.effects.includes(src);
-      const isOverlay = !!status.overlay || token.data.overlayEffect === src;
-      obj[src] = {
-        id: e.id ?? "",
-        title: e.label ? game.i18n.localize(e.label) : null,
-        src,
-        isActive,
-        isOverlay,
-        cssClass: [
-          isActive ? "active" : null,
-          isOverlay ? "overlay" : null
-        ].filterJoin(" ")
-      };
-      return obj;
-    }, {});
-  }
+        // Get statuses which are active for the token actor
+        const actor = token.actor || null;
+        const statuses = actor ? actor.effects.reduce((obj, e) => {
+            const id = e.getFlag("core", "statusId");
+            if ( id ) {
+                obj[id] = {
+                    id: id,
+                    overlay: !!e.getFlag("core", "overlay")
+                }
+            }
+            return obj;
+        }, {}) : {};
+    
+        // Prepare the list of effects from the configured defaults and any additional effects present on the Token
+        const tokenEffects = foundry.utils.deepClone(token.data.effects) || [];
+        if ( token.data.overlayEffect ) tokenEffects.push(token.data.overlayEffect);
+        return CONFIG.statusEffects.concat(tokenEffects).reduce((obj, e) => {
+            const src = e.icon ?? e;
+            //if ( src in obj ) return obj;
+            const status = statuses[e.id] || {};
+            const isActive = !!status.id || token.data.effects.includes(src);
+            const isOverlay = !!status.overlay || token.data.overlayEffect === src;
+            obj[src] = {
+                id: e.id ?? "",
+                title: e.label ? game.i18n.localize(e.label) : null,
+                src,
+                isActive,
+                isOverlay,
+                cssClass: [
+                    isActive ? "active" : null,
+                    isOverlay ? "overlay" : null
+                ].filterJoin(" ")
+            };
+            return obj;
+        }, {});
+    }
 }

@@ -108,7 +108,7 @@ export class Signal {
         Hooks.on("updateActor", (actor, updateData, options, userId) => {
             // Workaround for actor array returned in hook for non triggering clients
             if (actor instanceof Collection) {
-                actor = actor.entities.find(a => a.id === update.id);
+                actor = actor.contents.find(a => a.id === update.id);
             }
             Concentrator._onUpdateActor(actor, updateData, options, userId);
             Triggler._onUpdateActor(actor, updateData, options, userId);
