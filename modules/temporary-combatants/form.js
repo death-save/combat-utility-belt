@@ -31,7 +31,7 @@ export class TemporaryCombatantForm extends FormApplication {
             folder = await Folder.create({name: "Temporary Combatants", type: "Actor", parent: null}, {displaySheet: false});
         }
         
-        const actorType = game.system.entityTypes.Actor.includes("npc") ? "npc" : game.system.entityTypes.Actor[0];
+        const actorType = game.system.documentTypes.Actor.includes("npc") ? "npc" : game.system.documentTypes.Actor[0];
         const flags = {
             [NAME]: {
                 [FLAGS.temporaryCombatants.temporaryCombatant]: true

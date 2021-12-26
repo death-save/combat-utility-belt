@@ -247,7 +247,7 @@ export class Concentrator {
 
     static _onRenderActorSheet(app, html, data) {
         // get any concentration spells from app -> actor
-        const actor = app.entity;
+        const actor = app.document;
         const concentrationFlag = actor?.getFlag(NAME, FLAGS.concentrator.concentrationSpell);
         const itemId = concentrationFlag?.id;
 
@@ -330,7 +330,7 @@ export class Concentrator {
 
         if (!(actor instanceof Actor)) return;
 
-        let owners = game.users.contents.filter(user => user.active && actor.hasPerm(user, Sidekick.getKeyByValue(CONST.ENTITY_PERMISSIONS, CONST.ENTITY_PERMISSIONS.OWNER)) && !user.isGM);
+        let owners = game.users.contents.filter(user => user.active && actor.testUserPermission(user, Sidekick.getKeyByValue(CONST.ENTITY_PERMISSIONS, CONST.ENTITY_PERMISSIONS.OWNER)) && !user.isGM);
 
         if (!owners.length) {
             const gmUsers = game.users.filter(u => u.active && u.isGM);
