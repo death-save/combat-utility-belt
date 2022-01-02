@@ -1,4 +1,46 @@
 {
+    "combat-utility-belt": {
+        "SHORT_NAME": "CUB",
+        "NAME": "Combat Utility Belt",
+        "ID": "combat-utility-belt",
+        "ENHANCED_CONDITIONS.OutputChatConfirm": {
+            "Title": "チャットにすべての状態異常を出力しますか？",
+            "Content": "「はい」ですべての状態異常が設定関係なくチャットに出力されます。"
+        },
+        "CONCENTRATOR": {
+            "MessagePrefix": "Combat Utility Belt - 集中管理",
+            "NoMatchingCondition": "集中管理のための状態異常が見つかりませんでした。コンディションラボより対応する状態異常を設定してください。",
+            "Prompts": {
+                "Check": {
+                    "Title": "集中判定",
+                    "Content": "<p><strong>{actorName}</strong>の集中判定を行いますか?</p><p>集中呪文：<strong>{spellName}</strong></p>",
+                    "ClosedByOther": "別のユーザが集中判定を行いました"
+                },
+                "EnableEnhancedConditions": {
+                    "Title": "拡張状態異常（コンディションラボ）有効化しますか？",
+                    "Content": "<p>集中管理を行うためには拡張状態異常を有効化する必要があります。</p><strong>有効化しますか？</strong>"
+                }
+            },
+            "Messages": {
+                "StartConcentration": "<h3>集中管理</h3><p>{entityName}は<strong>{spellName}</strong>の集中を開始しました。",
+                "DoubleConcentration": "<h3>集中管理</h3><p>{entityName}は<strong>{oldSpellName}</strong>に集中をしていたときに新たに<strong>{newSpellName}</strong>の集中を開始しました。元の呪文の集中は終了しました。",
+                "EndConcentration": "<h3>集中管理</h3><p>{entityName}の<strong>{spellName}</strong>に対する集中が途切れてしまいました！</p>",
+                "ConcentrationTested": "<h3>集中管理</h3><strong>{entityName}</strong>はダメージを受けたため<strong>{spellName}</strong>の集中判定を行う必要があります。(<strong>難易度{dc}</strong>)!</p>",
+                "Incapacitated": "<h3>集中管理</h3><strong>{entityName}</strong>は無力状態になったため<strong>{spellName}</strong>の集中が失われました！</p>"      
+            },
+            "UnknownSpell": "不明な呪文"
+        },
+        "SETTINGS": {
+            "CONCENTRATOR": {
+                "AutoEndConcentrationN": "集中自動終了",
+                "AutoEndConcentrationH": "集中判定に失敗した時、自動的に集中状態を終了するかどうかを設定します。",
+                "NotifyConcentrationN": "集中開始時を通知",
+                "NotifyConcentrationH": "集中が開始したときチャットにメッセージを表示します。",
+                "NotifyEndN": "集中終了を通知",
+                "NotifyEndH": "集中が終了したときチャットにメッセージを表示します。"
+            }
+        }
+    },
     "GADGET_DESCRIPTIONS.AwardXP": "戦闘終了時、倒した敵対的クリーチャーから得られたXPを分配するダイアログを表示します。",
     "GADGET_DESCRIPTIONS.Concentrator": "DnD5eのルールに従った精神集中状態の管理を行います。",
     "GADGET_DESCRIPTIONS.EnhancedConditions": "状態をカスタマイズし、アイコンに割り当てる機能を提供します。",
@@ -27,6 +69,8 @@
     "CONCENTRATOR.ConditionName": "精神集中状態",
     "CONCENTRATOR.Alias": "集中状態管理",
 
+    "ENHANCED_CONDITIONS.GameSystemNotSupported": "CUB Enhanced Conditions does not work with this game system. Please check the CUB Wiki for more info",
+    "ENHANCED_CONDITIONS.SimpleIconsNotSupported": "CUB Enhanced Conditions does not support game systems that use simple status effect icons.",
     "ENHANCED_CONDITIONS.MapMismatch": "このマッピングは現在のゲームシステムと一致しないため、期待どおりに動作しない可能性があります。",
     "ENHANCED_CONDITIONS.ApplyCondition.Failed.NoToken": "状態の適用に失敗しました。該当するコマがありません。",
     "ENHANCED_CONDITIONS.ApplyCondition.Failed.NoCondition": "状態の適用に失敗しました。該当する状態が存在しません。",
@@ -50,6 +94,7 @@
     "ENHANCED_CONDITIONS.Lab.MappingType.Unsaved": "（未保存の変更）",
     "ENHANCED_CONDITIONS.Lab.ActiveEffects.Title": "アクティブ効果設定",
     "ENHANCED_CONDITIONS.Lab.ActiveEffects.TitleDisabled": "アクティブ効果設定（無効：最初にマッピングの保存を行ってください）",
+    "ENHANCED_CONDITIONS.Lab.ActiveEffects.TitleDisabledDefault": "アクティブ効果設定（無効：デフォルトマッピングを編集できません）",
     "ENHANCED_CONDITIONS.LAB.Import.NoFile": "データファイルがアップロードされていません！",
     "ENHANCED_CONDITIONS.Lab.ConfirmDeleteTitle": "行の削除確認",
     "ENHANCED_CONDITIONS.Lab.ConfirmDeleteContent": "本当にこの行を削除しますか？",
