@@ -1,14 +1,28 @@
 # Changelog
 
 ## [Known Issues]
-> Some issues related to the upgrade to Active Effects can be resolved/mitigated by **Saving your Condition Lab** after updating to a CUB version greater than 1.3.0. Please try this before reporting an issue!
+> ~Some issues related to the upgrade to Active Effects can be resolved/mitigated by **Saving your Condition Lab** after updating to a CUB version greater than 1.3.0. Please try this before reporting an issue!~
 
-1. Loading a world with an existing Condition Lab mapping from pre CUB v1.3.0 may cause any Conditions added to a token to default to the first mapped condition. WORKAROUND: After loading your world, go into the Condition Lab and click Save.
+1. ~Loading a world with an existing Condition Lab mapping from pre CUB v1.3.0 may cause any Conditions added to a token to default to the first mapped condition. WORKAROUND: After loading your world, go into the Condition Lab and click Save.~
 2. Enhanced Conditions chat output for linked Tokens and Actors is not aggregated, so you may see multiple messages when many conditions are added/removed from an Actor/Token.
 3. Overlay Effects added to a token will trigger the matching non-Overlay Condition to output to chat. The reverse is also true.
-4. **PF2e users**: Enhanced Conditions `Output to Chat` setting will cause duplicate chat messages due to similar function built into the system.
+4. ~**PF2e users**: Enhanced Conditions `Output to Chat` setting will cause duplicate chat messages due to similar function built into the system.~
 5. Chat log may not re-render when Hide Names settings are changed. This may cause the old name to still show in the log for players. Advise players to reload Foundry if you change these settings mid-session.
 6. The Default/Inferred Condition Lab Mappings for game systems may not correctly import all data. Importing the map from the CUB Condition Maps folder imports correctly.
+7. **PF2e users**: PF2e is not currently supported by Enhanced Conditions due to the customisation of the effects framework implemented by the system.
+
+## [1.8.1] - 2022-01-13
+> This update adds compatibility for Foundry VTT V9.242
+
+### 💭 Concentrator
+- Added support for BetterRolls5e rolls (Constitution Save)
+
+### Misc
+- Fixed HP rolling on token drag-n-drop (including Mighty Summoner)
+
+### 🌎 Translations
+- Updated `한국어` (Korean) translation (thanks @flattenstream ! 🎉)
+- Updated `日本語` (Japanese) translation (thanks touge ! 🎉)
 
 ## [1.8.0] - 2021-12-25
 > This update adds compatibility for Foundry VTT V9
