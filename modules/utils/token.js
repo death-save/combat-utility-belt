@@ -4,53 +4,71 @@ import { MightySummoner } from "../mighty-summoner.js";
 
 export class TokenUtility {
     /**
-     * Pre-create Token Hook Handler
-     * @param {Object} scene
-     * @param {Object} tokenData  
-     * @param {Object} options 
-     * @param {String} userId 
+     * Handle Token create hook
+     * @param {*} token 
+     * @param {*} options 
+     * @param {*} userId 
+     * @returns 
      */
-    static _onPreCreateToken(token, tokenData, options, userId) {
+    static async _onCreateToken(token, options, userId) {
         const actor = token.actor;
-        const autoRollHP = Sidekick.getSetting(SETTING_KEYS.tokenUtility.autoRollHP);
-        const mightySummonerSetting = Sidekick.getSetting(SETTING_KEYS.tokenUtility.mightySummoner);
-        const mightySummonerFlag = getProperty(tokenData, `flags.${NAME}.${FLAGS.mightySummoner.mightySummoner}`);
-        const tempCombatantSetting = Sidekick.getSetting(SETTING_KEYS.tempCombatants.enable);
-        const tempCombatantFlag = getProperty(tokenData, `flags.${NAME}.${FLAGS.temporaryCombatants.temporaryCombatant}`);
-
-        // if this token has been handled by the mighty summoner logic then nothing to do
-        if (!actor || mightySummonerFlag || (tempCombatantSetting && tempCombatantFlag)) {
-            return true;
-        }
-
-        const feat = Sidekick.getSetting(SETTING_KEYS.tokenUtility.mightySummonerFeat);
-
-        if (mightySummonerSetting && MightySummoner._checkForFeat(actor, feat)) {
-            MightySummoner._createDialog(tokenData, actor);
-            return false;
-        }
         
-        if (tokenData.disposition !== -1 || !autoRollHP || actor?.hasPlayerOwner) {
-            return true;
+        const mightySummonerSetting = Sidekick.getSetting(SETTING_KEYS.tokenUtility.mightySummoner);
+        const tempCombatantSetting = Sidekick.getSetting(SETTING_KEYS.tempCombatants.enable);
+        const tempCombatantFlag = token.getFlag(NAME, FLAGS.temporaryCombatants.temporaryCombatant);
+
+        if (!actor || (tempCombatantSetting && tempCombatantFlag) || game.userId !== userId) {
+            return;
         }
 
-        const newHP = TokenUtility.rollHP(actor);
-        const hpUpdate = TokenUtility._buildHPData(newHP);
+        const summonerFeat = Sidekick.getSetting(SETTING_KEYS.tokenUtility.mightySummonerFeat);
 
-        if (!hpUpdate) return true;
+        if (mightySummonerSetting && MightySummoner._checkForFeat(actor, summonerFeat)) {
+            return MightySummoner._createDialog(token);
+        }
 
-        return token.data.update(hpUpdate);
+        if (TokenUtility._shouldRollHP(token)) {
+            return TokenUtility._processHPUpdate(token, actor);
+        }        
     }
 
-    
+    /**
+     * Checks if the given token HP should be rolled
+     * @param {*} token 
+     * @returns 
+     */
+    static _shouldRollHP(token) {
+        const actor = token?.actor;
+        const autoRollHP = Sidekick.getSetting(SETTING_KEYS.tokenUtility.autoRollHP);
 
-    
+        if (actor && token?.data?.disposition === -1 && autoRollHP && !actor?.hasPlayerOwner) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Rolls for HP then updates the given token
+     * @param {*} token 
+     * @param {*} actor 
+     * @returns 
+     */
+    static async _processHPUpdate(token, actor=null, formula=null) {
+        actor = actor ?? token?.actor;
+        const newHP = await TokenUtility.rollHP(actor, formula);
+        const hpUpdate = TokenUtility._buildHPData(newHP);
+
+        if (!hpUpdate) return;
+
+        return token.update(hpUpdate);
+    }
 
     /**
      * Rolls an actor's hp formula and returns an update payload with the result
      * @param {*} actor
      */
-    static rollHP(actor, newFormula=null) {
+    static async rollHP(actor, newFormula=null) {
         const formula = newFormula || getProperty(actor, "data.data.attributes.hp.formula");
 
         if (!formula) {
@@ -59,9 +77,10 @@ export class TokenUtility {
         }
 
         const roll = new Roll(formula);
+        await roll.evaluate();
         const hideRoll = Sidekick.getSetting(SETTING_KEYS.tokenUtility.hideAutoRoll);
 
-        roll.toMessage(
+        await roll.toMessage(
             {
                 flavor: `${actor.name} rolls for HP!`
             },

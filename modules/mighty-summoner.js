@@ -45,38 +45,21 @@ export class MightySummoner {
     /**
      * Creates a dialog to determine if the creature is being summoned
      */
-    static async _createDialog(tokenData, actor) {
+    static async _createDialog(tokenDocument) {
+        const actor = tokenDocument?.actor;
         const title = "Mighty Summoner";
         const content = "<p>Is this monster being summoned?</p>";
-        const yes = () => MightySummoner._handleCreate(tokenData, actor, true);
-        const no = () => MightySummoner._handleCreate(tokenData, actor, false);
+        const yes = () => {
+            const formula = MightySummoner._calculateHPFormula(actor);
+            return TokenUtility._processHPUpdate(tokenDocument, null, formula);
+        }
+        const no = () => {
+            const shouldRollHP = TokenUtility._shouldRollHP(tokenDocument);
+            if (!shouldRollHP) return;
+            return TokenUtility._processHPUpdate(tokenDocument);
+        }
         const defaultYes = false;
         return Dialog.confirm({title, content, yes, no, defaultYes},{});
-    }
-
-    /**
-     * Handles summoning with the feat
-     * @param {*} tokenData 
-     * @param {*} actor 
-     * @param {*} isSummon 
-     * @todo don't handle creation here: pass the manipulated data back to the precreate hook somehow
-     *       we are setting a flag on every token create where some owned actor has the feat with this code!
-     */
-    static _handleCreate(tokenData, actor, isSummon) {
-        let hpUpdate;
-
-        if (isSummon) {
-            const newFormula = MightySummoner._calculateHPFormula(actor);
-            const newHP = TokenUtility.rollHP(actor, newFormula);
-            hpUpdate = TokenUtility._buildHPData(newHP); 
-        }
-
-        const createData = hpUpdate ? mergeObject(tokenData, hpUpdate) : tokenData;
-        
-        setProperty(createData, `flags.${NAME}.${FLAGS.mightySummoner.mightySummoner}`, true);
-        
-        return Token.create(createData);
-        //return newData;
     }
 
     /**

@@ -425,11 +425,16 @@ export class Concentrator {
         });
 
         Hooks.once("createChatMessage", (message, options, userId) => {
-            if (!message.isRoll && !message.data.flavor.includes(game.i18n.format("DND5E.SavePromptTitle", {ability: CONFIG.DND5E.abilities[ability]}))) return;
+            const includesSaveText = message.data.flavor?.includes(game.i18n.format("DND5E.SavePromptTitle", {ability: CONFIG.DND5E.abilities[ability]}));
+            // Support BetterRolls5e
+            const betterRoll = message.data?.flags?.betterrolls5e;
+            
+            if (!message.isRoll && (!includesSaveText || !betterRoll)) return;
 
             const autoEndConcentration = Sidekick.getSetting(SETTING_KEYS.concentrator.autoEndConcentration);
+            const total = betterRoll ? Concentrator.getBetterRollsTotal(betterRoll) : message.roll?.total;
 
-            if (autoEndConcentration && (dc && message.roll.total < dc)) {
+            if (autoEndConcentration && (dc && total && total < dc)) {
                 ui.notifications.notify("Concentration check failed!");
                 const sendMessage = Sidekick.getSetting(SETTING_KEYS.concentrator.notifyEndConcentration);
                 Concentrator._endConcentration(actor, {sendMessage});
@@ -721,5 +726,25 @@ export class Concentrator {
         const spell = actor.getFlag(NAME, FLAGS.concentrator.concentrationSpell);
 
         return spell;
+    }
+
+    /**
+     * 
+     * @param {*} brInstance 
+     */
+    static getBetterRollsTotal(brInstance) {
+        const entries = brInstance?.entries;
+        const rollEntry = entries?.find(e => e.type.includes("roll"));
+
+        if (!brInstance || !entries || !rollEntry) return;
+
+        const rollState = rollEntry.rollState;
+
+        if (rollState == "highest" || rollState == "lowest") {
+           const keptRoll = rollEntry.entries?.find(r => !r.ignored);
+           return keptRoll?.total;
+        }
+
+        return rollEntry.entries[0]?.total;
     }
 }

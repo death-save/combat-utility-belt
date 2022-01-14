@@ -322,17 +322,19 @@ export class Sidekick {
     /**
      * Gets the first GM user
      * @returns {GM | null} a GM object or null if none found
-     * @todo this should be stored at the world level so all clients have the same value
      */
     static getFirstGM() {
-        const gmUsers = game.users.filter(u => u.isGM && u.active);
+        const gmUsers = game.users.filter(u => u.isGM && u.active).sort((a, b) => a.localeCompare(b));
 
-        if (gmUsers.length) {
-            return gmUsers[0];
-        } else {
-            return null;
-        }
-        
+        return gmUsers.length ? gmUsers[0] : null;
+    }
+
+    /**
+     * Checks if the current user is the first active GM
+     * @returns {Boolean}
+     */
+    static isFirstGM() {
+        return game.user.id === this.getFirstGM()?.id;
     }
 
     /**
