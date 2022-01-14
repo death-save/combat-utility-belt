@@ -126,7 +126,10 @@ export class Signal {
         /* ------------------- Token ------------------ */
 
         Hooks.on("preCreateToken", (tokenDocument, createData, options, userId) => {
-            return TokenUtility._onPreCreateToken(tokenDocument, createData, options, userId);
+        });
+
+        Hooks.on("createToken", (tokenDocument, options, userId) => {
+            TokenUtility._onCreateToken(tokenDocument, options, userId);
         });
 
         Hooks.on("preUpdateToken", (tokenDocument, updateData, options, userId) => {
