@@ -211,7 +211,7 @@
     
     "SETTINGS.GiveXP.EnableN": "Enable Award XP",
     "SETTINGS.GiveXP.EnableH": "Adds an option at the end of combat to automatically distribute xp from the combat to the players",
-    "SETTINGS.GiveXP.ModifierN": "Modifer",
+    "SETTINGS.GiveXP.ModifierN": "XP Modifier",
     "SETTINGS.GiveXP.ModifierH": "Multiplies awarded XP by this value",
 
     "SETTINGS.HideNames.EnableN": "Enable Hide Actor Names",
