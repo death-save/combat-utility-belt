@@ -337,7 +337,7 @@ export function registerSettings() {
         default: BUTLER.DEFAULT_CONFIG.giveXP.modifier,
         scope: "world",
         type: Number,
-        config: true,
+        config: false,
         onChange: s => {}
     });
 
