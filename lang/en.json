@@ -3,9 +3,14 @@
         "SHORT_NAME": "CUB",
         "NAME": "Combat Utility Belt",
         "ID": "combat-utility-belt",
-        "ENHANCED_CONDITIONS.OutputChatConfirm": {
-            "Title": "Enable Output to Chat for All Conditions?",
-            "Content": "Click 'Yes' to enable 'Output to Chat' on all Conditions"
+        "ENHANCED_CONDITIONS" :{
+            "OutputChatConfirm": {
+                "Title": "Enable Output to Chat for All Conditions?",
+                "Content": "Click 'Yes' to enable 'Output to Chat' on all Conditions"
+            },
+            "ConditionLab": {
+                "NoReference": "--No Reference Entry-- (Drag a Journal, Item, Actor, etc. into this field to set)"
+            }
         },
         "CONCENTRATOR": {
             "MessagePrefix": "Combat Utility Belt - Concentrator",
