@@ -5,585 +5,686 @@
       "id": "focused",
       "name": "Focused",
       "icon": "icons/svg/upgrade.svg",
-      "referenceType": "compendium.journalEntry",
-      "compendium": "ironclaw2e.statuseffects",
-      "referenceId": "@Compendium[ironclaw2e.statuseffects.WGljaB1SMqPtXDwC]",
+      "referenceId": "@Compendium[ironclaw2e.statuseffects.WGljaB1SMqPtXDwC]{Focused}",
       "applyTrigger": "",
       "removeTrigger": "",
       "activeEffect": null,
       "options": {
         "overlay": false,
         "removeOthers": false,
-        "outputChat": false,
-        "markDefeated": false
-      }
+        "markDefeated": false,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"ironclaw2e.statuseffects\" data-id=\"WGljaB1SMqPtXDwC\"><i class=\"fas fa-book-open\"></i> Focused</a>",
+      "isChanged": false
+    },
+    {
+      "id": "aiming",
+      "name": "Aiming",
+      "icon": "icons/svg/target.svg",
+      "referenceId": "@Compendium[ironclaw2e.statuseffects.sNhLDTvRmn4LG4Qj]{Aiming}",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "activeEffect": null,
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "markDefeated": false,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"ironclaw2e.statuseffects\" data-id=\"sNhLDTvRmn4LG4Qj\"><i class=\"fas fa-book-open\"></i> Aiming</a>",
+      "isChanged": false
     },
     {
       "id": "guarding",
       "name": "Guarding",
       "icon": "icons/svg/shield.svg",
-      "referenceType": "compendium.journalEntry",
-      "compendium": "ironclaw2e.statuseffects",
-      "referenceId": "@Compendium[ironclaw2e.statuseffects.ZzpRbp4XIFV5y8rW]",
+      "referenceId": "@Compendium[ironclaw2e.statuseffects.ZzpRbp4XIFV5y8rW]{Guarding}",
       "applyTrigger": "",
       "removeTrigger": "",
       "activeEffect": null,
       "options": {
         "overlay": false,
         "removeOthers": false,
-        "outputChat": false,
-        "markDefeated": false
-      }
+        "markDefeated": false,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"ironclaw2e.statuseffects\" data-id=\"ZzpRbp4XIFV5y8rW\"><i class=\"fas fa-book-open\"></i> Guarding</a>",
+      "isChanged": false
     },
     {
       "id": "reeling",
       "name": "Reeling",
-      "icon": "icons/svg/lightning.svg",
-      "referenceType": "compendium.journalEntry",
-      "compendium": "ironclaw2e.statuseffects",
-      "referenceId": "@Compendium[ironclaw2e.statuseffects.2RqmHH9RbzJKjdKA]",
+      "icon": "icons/svg/daze.svg",
+      "referenceId": "@Compendium[ironclaw2e.statuseffects.2RqmHH9RbzJKjdKA]{Reeling}",
       "applyTrigger": "",
       "removeTrigger": "",
       "activeEffect": null,
       "options": {
         "overlay": false,
         "removeOthers": false,
-        "outputChat": false,
-        "markDefeated": false
-      }
+        "markDefeated": false,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"ironclaw2e.statuseffects\" data-id=\"2RqmHH9RbzJKjdKA\"><i class=\"fas fa-book-open\"></i> Reeling</a>",
+      "isChanged": false
     },
     {
       "id": "hurt",
       "name": "Hurt",
       "icon": "icons/svg/acid.svg",
-      "referenceType": "compendium.journalEntry",
-      "compendium": "ironclaw2e.statuseffects",
-      "referenceId": "@Compendium[ironclaw2e.statuseffects.7buKwZrZVy8OwPhx]",
+      "referenceId": "@Compendium[ironclaw2e.statuseffects.7buKwZrZVy8OwPhx]{Hurt}",
       "applyTrigger": "",
       "removeTrigger": "",
       "activeEffect": null,
       "options": {
         "overlay": false,
         "removeOthers": false,
-        "outputChat": false,
-        "markDefeated": false
-      }
+        "markDefeated": false,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"ironclaw2e.statuseffects\" data-id=\"7buKwZrZVy8OwPhx\"><i class=\"fas fa-book-open\"></i> Hurt</a>",
+      "isChanged": false
     },
     {
       "id": "afraid",
       "name": "Afraid",
       "icon": "systems/ironclaw2e/icons/status/afraid.svg",
-      "referenceType": "compendium.journalEntry",
-      "compendium": "ironclaw2e.statuseffects",
-      "referenceId": "@Compendium[ironclaw2e.statuseffects.krkg0YwKTNyD8BPM]",
+      "referenceId": "@Compendium[ironclaw2e.statuseffects.krkg0YwKTNyD8BPM]{Afraid}",
       "applyTrigger": "",
       "removeTrigger": "",
       "activeEffect": null,
       "options": {
         "overlay": false,
         "removeOthers": false,
-        "outputChat": false,
-        "markDefeated": false
-      }
+        "markDefeated": false,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"ironclaw2e.statuseffects\" data-id=\"krkg0YwKTNyD8BPM\"><i class=\"fas fa-book-open\"></i> Afraid</a>",
+      "isChanged": false
     },
     {
       "id": "injured",
       "name": "Injured",
       "icon": "icons/svg/blood.svg",
-      "referenceType": "compendium.journalEntry",
-      "compendium": "ironclaw2e.statuseffects",
-      "referenceId": "@Compendium[ironclaw2e.statuseffects.XZ1nn0BJoBGtHSYt]",
+      "referenceId": "@Compendium[ironclaw2e.statuseffects.XZ1nn0BJoBGtHSYt]{Injured}",
       "applyTrigger": "",
       "removeTrigger": "",
       "activeEffect": null,
       "options": {
         "overlay": false,
         "removeOthers": false,
-        "outputChat": false,
-        "markDefeated": false
-      }
+        "markDefeated": false,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"ironclaw2e.statuseffects\" data-id=\"XZ1nn0BJoBGtHSYt\"><i class=\"fas fa-book-open\"></i> Injured</a>",
+      "isChanged": false
     },
     {
       "id": "dying",
       "name": "Dying",
       "icon": "systems/ironclaw2e/icons/status/dying.svg",
-      "referenceType": "compendium.journalEntry",
-      "compendium": "ironclaw2e.statuseffects",
-      "referenceId": "@Compendium[ironclaw2e.statuseffects.1Jg9RzQ24bpHnh7A]",
+      "referenceId": "@Compendium[ironclaw2e.statuseffects.1Jg9RzQ24bpHnh7A]{Dying}",
       "applyTrigger": "",
       "removeTrigger": "",
       "activeEffect": null,
       "options": {
         "overlay": false,
         "removeOthers": false,
-        "outputChat": false,
-        "markDefeated": true
-      }
+        "markDefeated": true,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"ironclaw2e.statuseffects\" data-id=\"1Jg9RzQ24bpHnh7A\"><i class=\"fas fa-book-open\"></i> Dying</a>",
+      "isChanged": false
     },
     {
       "id": "dead",
       "name": "Dead",
       "icon": "icons/svg/skull.svg",
-      "referenceType": "compendium.journalEntry",
-      "compendium": "ironclaw2e.statuseffects",
-      "referenceId": "@Compendium[ironclaw2e.statuseffects.JsnatC5y42DGbPP3]",
+      "referenceId": "@Compendium[ironclaw2e.statuseffects.JsnatC5y42DGbPP3]{Dead}",
       "applyTrigger": "",
       "removeTrigger": "",
       "activeEffect": null,
       "options": {
         "overlay": true,
         "removeOthers": false,
-        "outputChat": false,
-        "markDefeated": true
-      }
+        "markDefeated": true,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"ironclaw2e.statuseffects\" data-id=\"JsnatC5y42DGbPP3\"><i class=\"fas fa-book-open\"></i> Dead</a>",
+      "isChanged": false
     },
     {
       "id": "overkilled",
       "name": "Overkilled",
       "icon": "systems/ironclaw2e/icons/status/overkilled.svg",
-      "referenceType": "compendium.journalEntry",
-      "compendium": "ironclaw2e.statuseffects",
-      "referenceId": "@Compendium[ironclaw2e.statuseffects.iL6ssGkLXwHPqRLh]",
+      "referenceId": "@Compendium[ironclaw2e.statuseffects.iL6ssGkLXwHPqRLh]{Overkilled}",
       "applyTrigger": "",
       "removeTrigger": "",
       "activeEffect": null,
       "options": {
         "overlay": true,
         "removeOthers": false,
-        "outputChat": false,
-        "markDefeated": true
-      }
+        "markDefeated": true,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"ironclaw2e.statuseffects\" data-id=\"iL6ssGkLXwHPqRLh\"><i class=\"fas fa-book-open\"></i> Overkilled</a>",
+      "isChanged": false
     },
     {
       "id": "asleep",
       "name": "Asleep",
       "icon": "icons/svg/sleep.svg",
-      "referenceType": "compendium.journalEntry",
-      "compendium": "ironclaw2e.statuseffects",
-      "referenceId": "@Compendium[ironclaw2e.statuseffects.fy5EtGmfIZbpbqd1]",
+      "referenceId": "@Compendium[ironclaw2e.statuseffects.fy5EtGmfIZbpbqd1]{Asleep}",
       "applyTrigger": "",
       "removeTrigger": "",
       "activeEffect": null,
       "options": {
         "overlay": false,
         "removeOthers": false,
-        "outputChat": false,
-        "markDefeated": true
-      }
+        "markDefeated": true,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"ironclaw2e.statuseffects\" data-id=\"fy5EtGmfIZbpbqd1\"><i class=\"fas fa-book-open\"></i> Asleep</a>",
+      "isChanged": false
     },
     {
       "id": "unconscious",
       "name": "Unconscious",
       "icon": "icons/svg/unconscious.svg",
-      "referenceType": "compendium.journalEntry",
-      "compendium": "ironclaw2e.statuseffects",
-      "referenceId": "@Compendium[ironclaw2e.statuseffects.y17nrzjqcBNdnyVo]",
+      "referenceId": "@Compendium[ironclaw2e.statuseffects.y17nrzjqcBNdnyVo]{Unconscious}",
       "applyTrigger": "",
       "removeTrigger": "",
       "activeEffect": null,
       "options": {
         "overlay": true,
         "removeOthers": false,
-        "outputChat": false,
-        "markDefeated": true
-      }
+        "markDefeated": true,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"ironclaw2e.statuseffects\" data-id=\"y17nrzjqcBNdnyVo\"><i class=\"fas fa-book-open\"></i> Unconscious</a>",
+      "isChanged": false
     },
     {
       "id": "burdened",
       "name": "Burdened",
       "icon": "systems/ironclaw2e/icons/status/burdened.svg",
-      "referenceType": "compendium.journalEntry",
-      "compendium": "ironclaw2e.statuseffects",
-      "referenceId": "@Compendium[ironclaw2e.statuseffects.pJTP7nRDfLCXTAzO]",
+      "referenceId": "@Compendium[ironclaw2e.statuseffects.pJTP7nRDfLCXTAzO]{Burdened}",
       "applyTrigger": "",
       "removeTrigger": "",
       "activeEffect": null,
       "options": {
         "overlay": false,
         "removeOthers": false,
-        "outputChat": false,
-        "markDefeated": false
-      }
+        "markDefeated": false,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"ironclaw2e.statuseffects\" data-id=\"pJTP7nRDfLCXTAzO\"><i class=\"fas fa-book-open\"></i> Burdened</a>",
+      "isChanged": false
     },
     {
       "id": "over-burdened",
       "name": "Over-Burdened",
       "icon": "systems/ironclaw2e/icons/status/overburdened.svg",
-      "referenceType": "compendium.journalEntry",
-      "compendium": "ironclaw2e.statuseffects",
-      "referenceId": "@Compendium[ironclaw2e.statuseffects.Ms6nfCALR2RxiwFc]",
+      "referenceId": "@Compendium[ironclaw2e.statuseffects.Ms6nfCALR2RxiwFc]{Over-Burdened}",
       "applyTrigger": "",
       "removeTrigger": "",
-      "activeEffect": null,
+      "activeEffect": {
+        "label": "Over-Burdened",
+        "icon": "systems/ironclaw2e/icons/status/overburdened.svg",
+        "tint": "",
+        "disabled": false,
+        "duration": {
+          "seconds": null,
+          "startTime": null,
+          "rounds": null,
+          "turns": null,
+          "startRound": null,
+          "startTurn": null
+        },
+        "changes": []
+      },
       "options": {
         "overlay": false,
         "removeOthers": false,
-        "outputChat": false,
-        "markDefeated": false
-      }
+        "markDefeated": false,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"ironclaw2e.statuseffects\" data-id=\"Ms6nfCALR2RxiwFc\"><i class=\"fas fa-book-open\"></i> Over-Burdened</a>",
+      "isChanged": false
     },
     {
       "id": "cannot-move",
       "name": "Cannot Move",
       "icon": "systems/ironclaw2e/icons/status/cantmove.svg",
-      "referenceType": "compendium.journalEntry",
-      "compendium": "ironclaw2e.statuseffects",
-      "referenceId": "@Compendium[ironclaw2e.statuseffects.8X3gh1U1g5NQxwbA]",
+      "referenceId": "@Compendium[ironclaw2e.statuseffects.8X3gh1U1g5NQxwbA]{Cannot Move}",
       "applyTrigger": "",
       "removeTrigger": "",
       "activeEffect": null,
       "options": {
         "overlay": false,
         "removeOthers": false,
-        "outputChat": false,
-        "markDefeated": false
-      }
+        "markDefeated": false,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"ironclaw2e.statuseffects\" data-id=\"8X3gh1U1g5NQxwbA\"><i class=\"fas fa-book-open\"></i> Cannot Move</a>",
+      "isChanged": false
     },
     {
       "id": "fatigued",
       "name": "Fatigued",
       "icon": "icons/svg/degen.svg",
-      "referenceType": "compendium.journalEntry",
-      "compendium": "ironclaw2e.statuseffects",
-      "referenceId": "@Compendium[ironclaw2e.statuseffects.O8Cf7H1AoijQfdmL]",
+      "referenceId": "@Compendium[ironclaw2e.statuseffects.O8Cf7H1AoijQfdmL]{Fatigued}",
       "applyTrigger": "",
       "removeTrigger": "",
       "activeEffect": null,
       "options": {
         "overlay": false,
         "removeOthers": false,
-        "outputChat": false,
-        "markDefeated": false
-      }
+        "markDefeated": false,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"ironclaw2e.statuseffects\" data-id=\"O8Cf7H1AoijQfdmL\"><i class=\"fas fa-book-open\"></i> Fatigued</a>",
+      "isChanged": false
     },
     {
       "id": "sick",
       "name": "Sick",
       "icon": "icons/svg/poison.svg",
-      "referenceType": "compendium.journalEntry",
-      "compendium": "ironclaw2e.statuseffects",
-      "referenceId": "@Compendium[ironclaw2e.statuseffects.HFHtUwuSoZ6wQutn]",
+      "referenceId": "@Compendium[ironclaw2e.statuseffects.HFHtUwuSoZ6wQutn]{Sick}",
       "applyTrigger": "",
       "removeTrigger": "",
       "activeEffect": null,
       "options": {
         "overlay": false,
         "removeOthers": false,
-        "outputChat": false,
-        "markDefeated": false
-      }
+        "markDefeated": false,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"ironclaw2e.statuseffects\" data-id=\"HFHtUwuSoZ6wQutn\"><i class=\"fas fa-book-open\"></i> Sick</a>",
+      "isChanged": false
     },
     {
       "id": "confused",
       "name": "Confused",
-      "icon": "icons/svg/daze.svg",
-      "referenceType": "compendium.journalEntry",
-      "compendium": "ironclaw2e.statuseffects",
-      "referenceId": "@Compendium[ironclaw2e.statuseffects.E156mwoPTBUaagBB]",
+      "icon": "icons/svg/stoned.svg",
+      "referenceId": "@Compendium[ironclaw2e.statuseffects.E156mwoPTBUaagBB]{Confused}",
       "applyTrigger": "",
       "removeTrigger": "",
       "activeEffect": null,
       "options": {
         "overlay": false,
         "removeOthers": false,
-        "outputChat": false,
-        "markDefeated": false
-      }
+        "markDefeated": false,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"ironclaw2e.statuseffects\" data-id=\"E156mwoPTBUaagBB\"><i class=\"fas fa-book-open\"></i> Confused</a>",
+      "isChanged": false
     },
     {
       "id": "terrified",
       "name": "Terrified",
       "icon": "systems/ironclaw2e/icons/status/terrified.svg",
-      "referenceType": "compendium.journalEntry",
-      "compendium": "ironclaw2e.statuseffects",
-      "referenceId": "@Compendium[ironclaw2e.statuseffects.soFkqUQFGaY3Q8IM]",
+      "referenceId": "@Compendium[ironclaw2e.statuseffects.soFkqUQFGaY3Q8IM]{Terrified}",
       "applyTrigger": "",
       "removeTrigger": "",
       "activeEffect": null,
       "options": {
         "overlay": false,
         "removeOthers": false,
-        "outputChat": false,
-        "markDefeated": false
-      }
+        "markDefeated": false,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"ironclaw2e.statuseffects\" data-id=\"soFkqUQFGaY3Q8IM\"><i class=\"fas fa-book-open\"></i> Terrified</a>",
+      "isChanged": false
     },
     {
       "id": "enraged",
       "name": "Enraged",
       "icon": "icons/svg/explosion.svg",
-      "referenceType": "compendium.journalEntry",
-      "compendium": "ironclaw2e.statuseffects",
-      "referenceId": "@Compendium[ironclaw2e.statuseffects.2TtNJmDXp79MvLk9]",
+      "referenceId": "@Compendium[ironclaw2e.statuseffects.2TtNJmDXp79MvLk9]{Enraged}",
       "applyTrigger": "",
       "removeTrigger": "",
       "activeEffect": null,
       "options": {
         "overlay": false,
         "removeOthers": false,
-        "outputChat": false,
-        "markDefeated": false
-      }
+        "markDefeated": false,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"ironclaw2e.statuseffects\" data-id=\"2TtNJmDXp79MvLk9\"><i class=\"fas fa-book-open\"></i> Enraged</a>",
+      "isChanged": false
     },
     {
       "id": "knockdown",
       "name": "Knockdown",
       "icon": "icons/svg/falling.svg",
-      "referenceType": "compendium.journalEntry",
-      "compendium": "ironclaw2e.statuseffects",
-      "referenceId": "@Compendium[ironclaw2e.statuseffects.Rs6XYXEEYOIbUVZo]",
+      "referenceId": "@Compendium[ironclaw2e.statuseffects.Rs6XYXEEYOIbUVZo]{Knockdown}",
       "applyTrigger": "",
       "removeTrigger": "",
       "activeEffect": null,
       "options": {
         "overlay": false,
         "removeOthers": false,
-        "outputChat": false,
-        "markDefeated": false
-      }
+        "markDefeated": false,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"ironclaw2e.statuseffects\" data-id=\"Rs6XYXEEYOIbUVZo\"><i class=\"fas fa-book-open\"></i> Knockdown</a>",
+      "isChanged": false
     },
     {
       "id": "berserk",
       "name": "Berserk",
       "icon": "icons/svg/hazard.svg",
-      "referenceType": "compendium.journalEntry",
-      "compendium": "ironclaw2e.statuseffects",
-      "referenceId": "@Compendium[ironclaw2e.statuseffects.dtpk97W1sWJY68zF]",
+      "referenceId": "@Compendium[ironclaw2e.statuseffects.dtpk97W1sWJY68zF]{Berserk}",
       "applyTrigger": "",
       "removeTrigger": "",
       "activeEffect": null,
       "options": {
         "overlay": false,
         "removeOthers": false,
-        "outputChat": false,
-        "markDefeated": false
-      }
+        "markDefeated": false,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"ironclaw2e.statuseffects\" data-id=\"dtpk97W1sWJY68zF\"><i class=\"fas fa-book-open\"></i> Berserk</a>",
+      "isChanged": false
     },
     {
       "id": "blinded",
       "name": "Blinded",
       "icon": "icons/svg/blind.svg",
-      "referenceType": "compendium.journalEntry",
-      "compendium": "ironclaw2e.statuseffects",
-      "referenceId": "@Compendium[ironclaw2e.statuseffects.XW0PM0eiepT2fqcD]",
+      "referenceId": "@Compendium[ironclaw2e.statuseffects.XW0PM0eiepT2fqcD]{Blinded}",
       "applyTrigger": "",
       "removeTrigger": "",
       "activeEffect": null,
       "options": {
         "overlay": false,
         "removeOthers": false,
-        "outputChat": false,
-        "markDefeated": false
-      }
+        "markDefeated": false,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"ironclaw2e.statuseffects\" data-id=\"XW0PM0eiepT2fqcD\"><i class=\"fas fa-book-open\"></i> Blinded</a>",
+      "isChanged": false
     },
     {
-      "id": "silence",
+      "id": "silenced",
       "name": "Silenced",
       "icon": "icons/svg/silenced.svg",
-      "referenceType": "compendium.journalEntry",
-      "compendium": "ironclaw2e.statuseffects",
-      "referenceId": "@Compendium[ironclaw2e.statuseffects.8WNaDcPi0IJbaJAk]",
+      "referenceId": "@Compendium[ironclaw2e.statuseffects.8WNaDcPi0IJbaJAk]{Silenced}",
       "applyTrigger": "",
       "removeTrigger": "",
       "activeEffect": null,
       "options": {
         "overlay": false,
         "removeOthers": false,
-        "outputChat": false,
-        "markDefeated": false
-      }
+        "markDefeated": false,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"ironclaw2e.statuseffects\" data-id=\"8WNaDcPi0IJbaJAk\"><i class=\"fas fa-book-open\"></i> Silenced</a>",
+      "isChanged": false
     },
     {
       "id": "full-tilt",
       "name": "Full Tilt",
       "icon": "icons/svg/up.svg",
-      "referenceType": "compendium.journalEntry",
-      "compendium": "ironclaw2e.statuseffects",
-      "referenceId": "@Compendium[ironclaw2e.statuseffects.C9275OGG3YcLz1cb]",
+      "referenceId": "@Compendium[ironclaw2e.statuseffects.C9275OGG3YcLz1cb]{Full Tilt}",
       "applyTrigger": "",
       "removeTrigger": "",
       "activeEffect": null,
       "options": {
         "overlay": false,
         "removeOthers": false,
-        "outputChat": false,
-        "markDefeated": false
-      }
+        "markDefeated": false,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"ironclaw2e.statuseffects\" data-id=\"C9275OGG3YcLz1cb\"><i class=\"fas fa-book-open\"></i> Full Tilt</a>",
+      "isChanged": false
     },
     {
       "id": "slowed",
       "name": "Slowed",
       "icon": "icons/svg/down.svg",
-      "referenceType": "compendium.journalEntry",
-      "compendium": "ironclaw2e.statuseffects",
-      "referenceId": "@Compendium[ironclaw2e.statuseffects.nbQkEI0uPTHdQtPk]",
+      "referenceId": "@Compendium[ironclaw2e.statuseffects.nbQkEI0uPTHdQtPk]{Slowed}",
       "applyTrigger": "",
       "removeTrigger": "",
       "activeEffect": null,
       "options": {
         "overlay": false,
         "removeOthers": false,
-        "outputChat": false,
-        "markDefeated": false
-      }
+        "markDefeated": false,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"ironclaw2e.statuseffects\" data-id=\"nbQkEI0uPTHdQtPk\"><i class=\"fas fa-book-open\"></i> Slowed</a>",
+      "isChanged": false
     },
     {
       "id": "immobilized",
       "name": "Immobilized",
       "icon": "icons/svg/mountain.svg",
-      "referenceType": "compendium.journalEntry",
-      "compendium": "ironclaw2e.statuseffects",
-      "referenceId": "@Compendium[ironclaw2e.statuseffects.lveZKbwsOHC8wg25]",
+      "referenceId": "@Compendium[ironclaw2e.statuseffects.lveZKbwsOHC8wg25]{Immobilized}",
       "applyTrigger": "",
       "removeTrigger": "",
       "activeEffect": null,
       "options": {
         "overlay": false,
         "removeOthers": false,
-        "outputChat": false,
-        "markDefeated": false
-      }
+        "markDefeated": false,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"ironclaw2e.statuseffects\" data-id=\"lveZKbwsOHC8wg25\"><i class=\"fas fa-book-open\"></i> Immobilized</a>",
+      "isChanged": false
     },
     {
       "id": "half-buried",
       "name": "Half-Buried",
       "icon": "icons/svg/ruins.svg",
-      "referenceType": "compendium.journalEntry",
-      "compendium": "ironclaw2e.statuseffects",
-      "referenceId": "@Compendium[ironclaw2e.statuseffects.2oqPSchTRfNviHhm]",
+      "referenceId": "@Compendium[ironclaw2e.statuseffects.2oqPSchTRfNviHhm]{Half-Buried}",
       "applyTrigger": "",
       "removeTrigger": "",
       "activeEffect": null,
       "options": {
         "overlay": false,
         "removeOthers": false,
-        "outputChat": false,
-        "markDefeated": false
-      }
+        "markDefeated": false,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"ironclaw2e.statuseffects\" data-id=\"2oqPSchTRfNviHhm\"><i class=\"fas fa-book-open\"></i> Half-Buried</a>",
+      "isChanged": false
     },
     {
       "id": "on-fire",
       "name": "On Fire",
       "icon": "icons/svg/fire.svg",
-      "referenceType": "compendium.journalEntry",
-      "compendium": "ironclaw2e.statuseffects",
-      "referenceId": "@Compendium[ironclaw2e.statuseffects.9SQeyWG4sy1vaXO4]",
+      "referenceId": "@Compendium[ironclaw2e.statuseffects.9SQeyWG4sy1vaXO4]{On Fire}",
       "applyTrigger": "",
       "removeTrigger": "",
       "activeEffect": null,
       "options": {
         "overlay": false,
         "removeOthers": false,
-        "outputChat": false,
-        "markDefeated": false
-      }
+        "markDefeated": false,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"ironclaw2e.statuseffects\" data-id=\"9SQeyWG4sy1vaXO4\"><i class=\"fas fa-book-open\"></i> On Fire</a>",
+      "isChanged": false
     },
     {
       "id": "mesmerized",
       "name": "Mesmerized",
-      "icon": "icons/svg/ice-aura.svg",
-      "referenceType": "compendium.journalEntry",
-      "compendium": "ironclaw2e.statuseffects",
-      "referenceId": "@Compendium[ironclaw2e.statuseffects.EMsCXyLEv1SEXIT4]",
+      "icon": "icons/svg/sun.svg",
+      "referenceId": "@Compendium[ironclaw2e.statuseffects.EMsCXyLEv1SEXIT4]{Mesmerized}",
       "applyTrigger": "",
       "removeTrigger": "",
       "activeEffect": null,
       "options": {
         "overlay": false,
         "removeOthers": false,
-        "outputChat": false,
-        "markDefeated": false
-      }
+        "markDefeated": false,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"ironclaw2e.statuseffects\" data-id=\"EMsCXyLEv1SEXIT4\"><i class=\"fas fa-book-open\"></i> Mesmerized</a>",
+      "isChanged": false
     },
     {
       "id": "marionette",
       "name": "Marionette",
       "icon": "icons/svg/paralysis.svg",
-      "referenceType": "compendium.journalEntry",
-      "compendium": "ironclaw2e.statuseffects",
-      "referenceId": "@Compendium[ironclaw2e.statuseffects.QJyebhpwRNfvkFEi]",
+      "referenceId": "@Compendium[ironclaw2e.statuseffects.QJyebhpwRNfvkFEi]{Marionette}",
       "applyTrigger": "",
       "removeTrigger": "",
       "activeEffect": null,
       "options": {
         "overlay": false,
         "removeOthers": false,
-        "outputChat": false,
-        "markDefeated": false
-      }
+        "markDefeated": false,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"ironclaw2e.statuseffects\" data-id=\"QJyebhpwRNfvkFEi\"><i class=\"fas fa-book-open\"></i> Marionette</a>",
+      "isChanged": false
     },
     {
       "id": "controlled",
       "name": "Controlled",
       "icon": "icons/svg/statue.svg",
-      "referenceType": "compendium.journalEntry",
-      "compendium": "ironclaw2e.statuseffects",
-      "referenceId": "@Compendium[ironclaw2e.statuseffects.rjHftAZgQQTg41ag]",
+      "referenceId": "@Compendium[ironclaw2e.statuseffects.rjHftAZgQQTg41ag]{Controlled}",
       "applyTrigger": "",
       "removeTrigger": "",
       "activeEffect": null,
       "options": {
         "overlay": false,
         "removeOthers": false,
-        "outputChat": false,
-        "markDefeated": false
-      }
+        "markDefeated": false,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"ironclaw2e.statuseffects\" data-id=\"rjHftAZgQQTg41ag\"><i class=\"fas fa-book-open\"></i> Controlled</a>",
+      "isChanged": false
     },
     {
       "id": "all-fours",
       "name": "All Fours",
       "icon": "icons/svg/pawprint.svg",
-      "referenceType": "compendium.journalEntry",
-      "compendium": "ironclaw2e.statuseffects",
-      "referenceId": "@Compendium[ironclaw2e.statuseffects.MItXHxvNgfSCFenc]",
+      "referenceId": "@Compendium[ironclaw2e.statuseffects.MItXHxvNgfSCFenc]{All Fours}",
       "applyTrigger": "",
       "removeTrigger": "",
       "activeEffect": null,
       "options": {
         "overlay": false,
         "removeOthers": false,
-        "outputChat": false,
-        "markDefeated": false
-      }
+        "markDefeated": false,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"ironclaw2e.statuseffects\" data-id=\"MItXHxvNgfSCFenc\"><i class=\"fas fa-book-open\"></i> All Fours</a>",
+      "isChanged": false
     },
     {
       "id": "flying",
       "name": "Flying",
       "icon": "icons/svg/wing.svg",
-      "referenceType": "compendium.journalEntry",
-      "compendium": "ironclaw2e.statuseffects",
-      "referenceId": "@Compendium[ironclaw2e.statuseffects.zghrfBq4iiKosTKu]",
+      "referenceId": "@Compendium[ironclaw2e.statuseffects.zghrfBq4iiKosTKu]{Flying}",
       "applyTrigger": "",
       "removeTrigger": "",
       "activeEffect": null,
       "options": {
         "overlay": false,
         "removeOthers": false,
-        "outputChat": false,
-        "markDefeated": false
-      }
+        "markDefeated": false,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"ironclaw2e.statuseffects\" data-id=\"zghrfBq4iiKosTKu\"><i class=\"fas fa-book-open\"></i> Flying</a>",
+      "isChanged": false
     },
     {
       "id": "grappled",
       "name": "Grappled",
       "icon": "icons/svg/net.svg",
-      "referenceType": "compendium.journalEntry",
-      "compendium": "ironclaw2e.statuseffects",
-      "referenceId": "@Compendium[ironclaw2e.statuseffects.lQRKvbZYOo7izSdT]",
+      "referenceId": "@Compendium[ironclaw2e.statuseffects.lQRKvbZYOo7izSdT]{Grappled}",
       "applyTrigger": "",
       "removeTrigger": "",
       "activeEffect": null,
       "options": {
         "overlay": false,
         "removeOthers": false,
-        "outputChat": false,
-        "markDefeated": false
-      }
+        "markDefeated": false,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"ironclaw2e.statuseffects\" data-id=\"lQRKvbZYOo7izSdT\"><i class=\"fas fa-book-open\"></i> Grappled</a>",
+      "isChanged": false
+    },
+    {
+      "id": "hiding",
+      "name": "Hiding",
+      "icon": "icons/svg/mystery-man.svg",
+      "referenceId": "@Compendium[ironclaw2e.statuseffects.5J32lLlKCtZhFbuR]{Hiding}",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "activeEffect": null,
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "markDefeated": false,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"ironclaw2e.statuseffects\" data-id=\"5J32lLlKCtZhFbuR\"><i class=\"fas fa-book-open\"></i> Hiding</a>",
+      "isChanged": false
+    },
+    {
+      "id": "temporary-ward",
+      "name": "Temporary Ward",
+      "icon": "icons/svg/aura.svg",
+      "referenceId": "@Compendium[ironclaw2e.statuseffects.UOSMGqjqbc8GwAXe]{Temporary Ward}",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "activeEffect": null,
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "markDefeated": false,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"ironclaw2e.statuseffects\" data-id=\"UOSMGqjqbc8GwAXe\"><i class=\"fas fa-book-open\"></i> Temporary Ward</a>",
+      "isChanged": false
     },
     {
       "id": "misc-a",
       "name": "Misc-A",
       "icon": "icons/svg/eye.svg",
-      "referenceType": "journalEntry",
       "referenceId": "",
       "applyTrigger": "",
       "removeTrigger": "",
@@ -591,15 +692,17 @@
       "options": {
         "overlay": false,
         "removeOthers": false,
-        "outputChat": false,
-        "markDefeated": false
-      }
+        "markDefeated": false,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "",
+      "isChanged": false
     },
     {
       "id": "misc-b",
       "name": "Misc-B",
       "icon": "icons/svg/clockwork.svg",
-      "referenceType": "journalEntry",
       "referenceId": "",
       "applyTrigger": "",
       "removeTrigger": "",
@@ -607,15 +710,17 @@
       "options": {
         "overlay": false,
         "removeOthers": false,
-        "outputChat": false,
-        "markDefeated": false
-      }
+        "markDefeated": false,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "",
+      "isChanged": false
     },
     {
       "id": "misc-c",
       "name": "Misc-C",
       "icon": "icons/svg/castle.svg",
-      "referenceType": "journalEntry",
       "referenceId": "",
       "applyTrigger": "",
       "removeTrigger": "",
@@ -623,15 +728,17 @@
       "options": {
         "overlay": false,
         "removeOthers": false,
-        "outputChat": false,
-        "markDefeated": false
-      }
+        "markDefeated": false,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "",
+      "isChanged": false
     },
     {
       "id": "misc-d",
       "name": "Misc-D",
       "icon": "icons/svg/book.svg",
-      "referenceType": "journalEntry",
       "referenceId": "",
       "applyTrigger": "",
       "removeTrigger": "",
@@ -639,15 +746,17 @@
       "options": {
         "overlay": false,
         "removeOthers": false,
-        "outputChat": false,
-        "markDefeated": false
-      }
+        "markDefeated": false,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "",
+      "isChanged": false
     },
     {
       "id": "misc-e",
       "name": "Misc-E",
       "icon": "icons/svg/coins.svg",
-      "referenceType": "journalEntry",
       "referenceId": "",
       "applyTrigger": "",
       "removeTrigger": "",
@@ -655,15 +764,17 @@
       "options": {
         "overlay": false,
         "removeOthers": false,
-        "outputChat": false,
-        "markDefeated": false
-      }
+        "markDefeated": false,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "",
+      "isChanged": false
     },
     {
       "id": "misc-f",
       "name": "Misc-F",
       "icon": "icons/svg/sound.svg",
-      "referenceType": "journalEntry",
       "referenceId": "",
       "applyTrigger": "",
       "removeTrigger": "",
@@ -671,9 +782,30 @@
       "options": {
         "overlay": false,
         "removeOthers": false,
-        "outputChat": false,
-        "markDefeated": false
-      }
+        "markDefeated": false,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "",
+      "isChanged": false
+    },
+    {
+      "id": "misc-g",
+      "name": "Misc-G",
+      "icon": "icons/svg/tower-flag.svg",
+      "referenceId": "",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "activeEffect": null,
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "markDefeated": false,
+        "outputChat": false
+      },
+      "isNew": false,
+      "enrichedReference": "",
+      "isChanged": false
     }
   ]
 }
