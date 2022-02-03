@@ -217,12 +217,8 @@ export class Concentrator {
 
         if (!condition || condition?.name !== concentrationConditionName) return;
 
-        const autoEndConcentration = Sidekick.getSetting(SETTING_KEYS.concentrator.autoEndConcentration);
-
-        if (autoEndConcentration) {
-            const sendMessage = Sidekick.getSetting(SETTING_KEYS.concentrator.notifyEndConcentration);
-            Concentrator._endConcentration(actor, {sendMessage});
-        }
+        const sendMessage = Sidekick.getSetting(SETTING_KEYS.concentrator.notifyEndConcentration);
+        Concentrator._endConcentration(actor, {sendMessage});
     }
 
     /**
