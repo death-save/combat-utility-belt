@@ -781,7 +781,7 @@ export class ConditionLab extends FormApplication {
             if ( !config ) return false;
             const entity = config.collection.instance.get(data.id);
             if ( !entity ) return false;
-            const link = `@${data.type}[${entity._id}]{${entity.name}}`;
+            const link = `@${data.type}[${entity.id}]{${entity.name}}`;
             targetInput.value = link;
             this._onChangeReferenceId(event);
         }
