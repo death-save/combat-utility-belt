@@ -54,7 +54,22 @@ export class RerollInitiative {
             combat.combatants.map(c => c.id) : 
             combat.combatants.filter(c => !hasProperty(c, `data.flags.${NAME}.${FLAGS.temporaryCombatants.temporaryCombatant}`)).map(c => c.id);
 
-        await combat.rollInitiative(combatantIds);
+        const rollOptions = RerollInitiative.getRollInitiativeOptions();
+        await combat.rollInitiative(combatantIds, rollOptions);
         await combat.update({turn: 0});
+    }
+
+    static getRollInitiativeOptions() {
+        const systemId = game.system.id;
+
+        switch (systemId) {
+            case "pf1":
+                return {
+                    skipDialog: true
+                }
+        
+            default:
+                return {};
+        }
     }
 }
