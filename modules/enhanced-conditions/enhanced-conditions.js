@@ -684,7 +684,7 @@ export class EnhancedConditions {
             entry = await JournalEntry.create({
                 name: condition,
                 permission: {
-                    default: CONST.ENTITY_PERMISSIONS.LIMITED
+                    default: CONST.DOCUMENT_PERMISSION_LEVELS.LIMITED
                 }
             }, {
                 displaySheet: false

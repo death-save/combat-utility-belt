@@ -329,7 +329,7 @@ export class Concentrator {
 
         if (!(actor instanceof Actor)) return;
 
-        let owners = game.users.contents.filter(user => user.active && actor.testUserPermission(user, Sidekick.getKeyByValue(CONST.ENTITY_PERMISSIONS, CONST.ENTITY_PERMISSIONS.OWNER)) && !user.isGM);
+        let owners = game.users.contents.filter(user => user.active && actor.testUserPermission(user, Sidekick.getKeyByValue(CONST.DOCUMENT_PERMISSION_LEVELS, CONST.DOCUMENT_PERMISSION_LEVELS.OWNER)) && !user.isGM);
 
         if (!owners.length) {
             const gmUsers = game.users.filter(u => u.active && u.isGM);

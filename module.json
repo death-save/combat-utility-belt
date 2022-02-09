@@ -75,7 +75,7 @@
       "system": "dnd5e",
       "module": "combat-utility-belt",
       "path": "./packs/conditionsdnd5e.db",
-      "entity": "JournalEntry"
+      "type": "JournalEntry"
     },
     {
       "name": "conditionsarchmage",
@@ -83,7 +83,7 @@
       "system": "archmage",
       "module": "combat-utility-belt",
       "path": "./packs/conditionsarchmage.db",
-      "entity": "JournalEntry"
+      "type": "JournalEntry"
     }
   ],
   "styles" : [

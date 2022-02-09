@@ -121,14 +121,14 @@ export class PanSelect {
 
         switch (BUTLER.DEFAULT_CONFIG.panSelect.panPlayers[panPlayers]) {
             case BUTLER.DEFAULT_CONFIG.panSelect.panPlayers.observer:
-                if (actorPermission >= CONST.ENTITY_PERMISSIONS.OBSERVER) {
+                if (actorPermission >= CONST.DOCUMENT_PERMISSION_LEVELS.OBSERVER) {
                     break;
                 }
 
                 return;
      
             case BUTLER.DEFAULT_CONFIG.panSelect.panPlayers.owner:
-                if (actorPermission >= CONST.ENTITY_PERMISSIONS.OWNER) {
+                if (actorPermission >= CONST.DOCUMENT_PERMISSION_LEVELS.OWNER) {
                     break;
                 }
 
@@ -252,7 +252,7 @@ export class PanSelect {
         const actor = token?.actor;
         const actorPermission = actor ? actor.data.permission[game.userId] || 0 : null;
 
-        if (!actor || actorPermission === null || actorPermission < CONST.ENTITY_PERMISSIONS.OWNER) {
+        if (!actor || actorPermission === null || actorPermission < CONST.DOCUMENT_PERMISSION_LEVELS.OWNER) {
             return;
         }
 
@@ -271,7 +271,7 @@ export class PanSelect {
             return;
         }
 
-        if (actorPermission < CONST.ENTITY_PERMISSIONS.OWNER) {
+        if (actorPermission < CONST.DOCUMENT_PERMISSION_LEVELS.OWNER) {
             return canvas.tokens.releaseAll();
         }
     }
