@@ -1,15 +1,36 @@
 # Changelog
 
 ## [Known Issues]
-> ~Some issues related to the upgrade to Active Effects can be resolved/mitigated by **Saving your Condition Lab** after updating to a CUB version greater than 1.3.0. Please try this before reporting an issue!~
+1. Enhanced Conditions chat output for linked Tokens and Actors is not aggregated, so you may see multiple messages when many conditions are added/removed from an Actor/Token.
+2. Overlay Effects added to a token will trigger the matching non-Overlay Condition to output to chat. The reverse is also true.
+3. Chat log may not re-render when Hide Names settings are changed. This may cause the old name to still show in the log for players. Advise players to reload Foundry if you change these settings mid-session.
+4. The Default/Inferred Condition Lab Mappings for game systems may not correctly import all data. Importing the map from the CUB Condition Maps folder imports correctly.
+5. **PF2e users**: PF2e is not currently supported by Enhanced Conditions due to the customisation of the effects framework implemented by the system.
 
-1. ~Loading a world with an existing Condition Lab mapping from pre CUB v1.3.0 may cause any Conditions added to a token to default to the first mapped condition. WORKAROUND: After loading your world, go into the Condition Lab and click Save.~
-2. Enhanced Conditions chat output for linked Tokens and Actors is not aggregated, so you may see multiple messages when many conditions are added/removed from an Actor/Token.
-3. Overlay Effects added to a token will trigger the matching non-Overlay Condition to output to chat. The reverse is also true.
-4. ~**PF2e users**: Enhanced Conditions `Output to Chat` setting will cause duplicate chat messages due to similar function built into the system.~
-5. Chat log may not re-render when Hide Names settings are changed. This may cause the old name to still show in the log for players. Advise players to reload Foundry if you change these settings mid-session.
-6. The Default/Inferred Condition Lab Mappings for game systems may not correctly import all data. Importing the map from the CUB Condition Maps folder imports correctly.
-7. **PF2e users**: PF2e is not currently supported by Enhanced Conditions due to the customisation of the effects framework implemented by the system.
+## [1.8.2] - 2022-02-08
+> This update adds compatibility for Foundry VTT v9.249
+
+### ✨ Enhanced Conditions
+- Redesigned some code related to duplicate status effect entries. This fixes a bug that caused CUB to prevent `Pathfinder` buffs from showing on the token HUD status effect choices
+- Fixed a bug that caused reference entries (eg. Journal Entries) droppped onto a Condition to not correctly store their `id`s
+- **Mark Defeated** now works for linked tokens
+- Updated `Iron Claw Second Edition` Condition Map (thanks @hertzila)
+- Condition Lab **Add Row** button now generates an `id` for the new condition to avoid duplication issues
+- Condition Reference placeholder text is now a translatable
+
+### 💭 Concentrator
+- Fixed an issue with the Concentration icon not being removed from the spellbook when the status effect was toggled off on the token
+
+### 🏆 Award XP
+- Renamed **Modifier** setting to **XP Modifier**
+- Removed **XP Modifier** from standard module settings (it is still available in the CUBputer)
+
+### 🎲 Reroll Initiative
+- Temporary Combatants no longer reroll when they shouldn't
+- Rerolling initiative in the `Pathfinder` system will automatically skip the initiative dialog
+
+### 🔫 Triggler
+- Fixed an incompatibility with `Multilevel Tokens` module
 
 ## [1.8.1] - 2022-01-13
 > This update adds compatibility for Foundry VTT V9.242
