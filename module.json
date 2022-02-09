@@ -2,7 +2,7 @@
   "name": "combat-utility-belt",
   "title": "Combat Utility Belt",
   "description": "Adds various combat-focused features",
-  "version": "1.8.1",
+  "version": "1.8.2",
   "author": "Evan Clarke [errational#2007]",
   "authors": [
     {
@@ -14,7 +14,7 @@
     }
   ],
   "minimumCoreVersion": "9.235",
-  "compatibleCoreVersion": "9.242",
+  "compatibleCoreVersion": "9.249",
   "url": "https://github.com/death-save/combat-utility-belt",
   "bugs": "https://github.com/death-save/combat-utility-belt/issues",
   "readme": "https://github.com/death-save/combat-utility-belt/wiki",
@@ -75,7 +75,7 @@
       "system": "dnd5e",
       "module": "combat-utility-belt",
       "path": "./packs/conditionsdnd5e.db",
-      "entity": "JournalEntry"
+      "type": "JournalEntry"
     },
     {
       "name": "conditionsarchmage",
@@ -83,7 +83,7 @@
       "system": "archmage",
       "module": "combat-utility-belt",
       "path": "./packs/conditionsarchmage.db",
-      "entity": "JournalEntry"
+      "type": "JournalEntry"
     }
   ],
   "styles" : [

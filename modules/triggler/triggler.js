@@ -75,6 +75,16 @@ export class Triggler {
             return;
         }
 
+        /**
+         * Avoid issues with Multi-Level Tokens by ignoring clone tokens
+         * @see Issue #491
+         */
+        if(entity.data?.flags 
+            && ("multilevel-tokens" in entity.data.flags) 
+            && ("stoken" in entity.data.flags["multilevel-tokens"])) {
+                return;
+        }
+
         const hasPlayerOwner = !!(entity.hasPlayerOwner ?? entity.document?.hasPlayerOwner);
 
         /**

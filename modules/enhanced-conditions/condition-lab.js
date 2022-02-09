@@ -585,6 +585,7 @@ export class ConditionLab extends FormApplication {
 
         const existingNewConditions = this.map.filter(m => m.name.includes("newCondition"));
         const newConditionIndex = existingNewConditions.length ? Math.max(...existingNewConditions.map(m => m.name.match(/\d+/g)[0])) + 1 : 1;
+        const newConditionName = `New Condition ${newConditionIndex}`;
         const fdMap = this.updatedMap;
         const defaultMapType = Sidekick.getKeyByValue(BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes, BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes.default);
         const customMapType = Sidekick.getKeyByValue(BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes, BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes.custom);
@@ -597,9 +598,11 @@ export class ConditionLab extends FormApplication {
         }
         
         const newMap = duplicate(this.map);
-        
+        const exisitingIds = this.map.map(c => c.id);
+
         newMap.push({
-            name: `newCondition${newConditionIndex}`,
+            name: newConditionName,
+            id: Sidekick.generateUniqueSlugId(newConditionName, exisitingIds),
             icon: "icons/svg/d20-black.svg",
             referenceId: "",
             trigger: ""
@@ -778,7 +781,7 @@ export class ConditionLab extends FormApplication {
             if ( !config ) return false;
             const entity = config.collection.instance.get(data.id);
             if ( !entity ) return false;
-            const link = `@${data.type}[${entity._id}]{${entity.name}}`;
+            const link = `@${data.type}[${entity.id}]{${entity.name}}`;
             targetInput.value = link;
             this._onChangeReferenceId(event);
         }

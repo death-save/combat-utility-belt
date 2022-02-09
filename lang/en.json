@@ -3,9 +3,14 @@
         "SHORT_NAME": "CUB",
         "NAME": "Combat Utility Belt",
         "ID": "combat-utility-belt",
-        "ENHANCED_CONDITIONS.OutputChatConfirm": {
-            "Title": "Enable Output to Chat for All Conditions?",
-            "Content": "Click 'Yes' to enable 'Output to Chat' on all Conditions"
+        "ENHANCED_CONDITIONS" :{
+            "OutputChatConfirm": {
+                "Title": "Enable Output to Chat for All Conditions?",
+                "Content": "Click 'Yes' to enable 'Output to Chat' on all Conditions"
+            },
+            "ConditionLab": {
+                "NoReference": "--No Reference Entry-- (Drag a Journal, Item, Actor, etc. into this field to set)"
+            }
         },
         "CONCENTRATOR": {
             "MessagePrefix": "Combat Utility Belt - Concentrator",
@@ -211,7 +216,7 @@
     
     "SETTINGS.GiveXP.EnableN": "Enable Award XP",
     "SETTINGS.GiveXP.EnableH": "Adds an option at the end of combat to automatically distribute xp from the combat to the players",
-    "SETTINGS.GiveXP.ModifierN": "Modifer",
+    "SETTINGS.GiveXP.ModifierN": "XP Modifier",
     "SETTINGS.GiveXP.ModifierH": "Multiplies awarded XP by this value",
 
     "SETTINGS.HideNames.EnableN": "Enable Hide Actor Names",
