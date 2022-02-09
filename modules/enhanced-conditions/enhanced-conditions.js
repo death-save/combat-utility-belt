@@ -391,14 +391,13 @@ export class EnhancedConditions {
         
         switch (type) {
             case "create":
-                // If condition marks combatants defeated, look for matching combatant
-                
                 if (condition.options?.removeOthers) EnhancedConditions._removeOtherConditions(actor, condition.id);
+                if (condition.options?.markDefeated) EnhancedConditions._toggleDefeated(actor, {markDefeated: true});
                 break;
 
             case "delete":
-                // If condition marks combatants defeated, untoggle defeated
                 if (condition.options?.markDefeated) EnhancedConditions._toggleDefeated(actor, {markDefeated: false});
+                break;
 
             default:
                 break;
