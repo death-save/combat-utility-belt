@@ -583,8 +583,8 @@ export class ConditionLab extends FormApplication {
     _onAddRow(event) {
         event.preventDefault();
 
-        const existingNewConditions = this.map.filter(m => m.name.includes("newCondition"));
-        const newConditionIndex = existingNewConditions.length ? Math.max(...existingNewConditions.map(m => m.name.match(/\d+/g)[0])) + 1 : 1;
+        const existingNewConditions = this.map.filter(m => m.name.match(/^New Condition \d+$/));
+        const newConditionIndex = existingNewConditions.length ? Math.max(...existingNewConditions.map(m => 1 * m.name.match(/\d+$/g)[0])) + 1 : 1;
         const newConditionName = `New Condition ${newConditionIndex}`;
         const fdMap = this.updatedMap;
         const defaultMapType = Sidekick.getKeyByValue(BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes, BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes.default);
