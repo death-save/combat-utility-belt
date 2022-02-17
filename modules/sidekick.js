@@ -294,7 +294,7 @@ export class Sidekick {
         if (!existingIds.length) return slug;
 
         const uniqueIndex = existingIds.length > 1 ? Math.max(...existingIds.map(id => id.match(/\d+/g)[0])) + 1 : 1;
-        slug = slug + uniqueIndex;
+        slug = slug.replace(/\d+$/g, uniqueIndex);
         
         return slug;
     }
