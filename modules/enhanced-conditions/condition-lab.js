@@ -598,11 +598,10 @@ export class ConditionLab extends FormApplication {
         }
         
         const newMap = duplicate(this.map);
-        const exisitingIds = this.map.map(c => c.id);
-
+        const exisitingIds = this.map.filter(c => c.id).map(c => c.id);
         newMap.push({
+            id: Sidekick.createId(exisitingIds),
             name: newConditionName,
-            id: Sidekick.generateUniqueSlugId(newConditionName, exisitingIds),
             icon: "icons/svg/d20-black.svg",
             referenceId: "",
             trigger: ""

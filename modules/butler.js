@@ -214,7 +214,8 @@ export const DEFAULT_CONFIG = {
             conditionLab: `${PATH}/templates/condition-lab.hbs`,
             chatOutput: `${PATH}/templates/chat-conditions.hbs`,
             importDialog: `${PATH}/templates/import-conditions.html`
-        }
+        },
+        migrationVersion: null
     },
     giveXP: {
         enable: false,
@@ -402,7 +403,8 @@ export const SETTING_KEYS = {
         removeDefaultEffects: "removeDefaultEffects",
         outputChat: "conditionsOutputToChat",
         outputCombat: "conditionsOutputDuringCombat",
-        suppressPreventativeSaveReminder: "conditionsSuppressPreventativeSaveReminder"
+        suppressPreventativeSaveReminder: "conditionsSuppressPreventativeSaveReminder",
+        migrationVersion: "enhancedConditionsMigrationVersion"
     },
     giveXP: {
         enable: "enableGiveXP",

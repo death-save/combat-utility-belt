@@ -555,6 +555,19 @@ export class EnhancedConditions {
         for (const c of removeConditions) await EnhancedConditions.removeCondition(c.name, entity, {warn: true});
     }
 
+    /**
+     * Migrates Condition Ids to be truly unique-ish
+     * @param {*} conditionMap 
+     */
+    static async _migrateConditionIds(conditionMap) {
+        if (!conditionMap?.length) return;
+
+        const existingIds = conditionMap.filter(c => c.id).map(c => c.id);
+        const newMap = foundry.utils.deepClone(conditionMap);
+        newMap.forEach(c => c.id = Sidekick.createId(existingIds));
+        await Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.map, newMap);
+    }
+
     /* -------------------------------------------- */
     /*                    Helpers                   */
     /* -------------------------------------------- */
@@ -637,6 +650,7 @@ export class EnhancedConditions {
 
         // Map existing ids for ease of access
         const existingIds = conditionMap.filter(c => c.id).map(c => c.id);
+        const processedIds = [];
         
         // Iterate through the map validating/preparing the data
         for (let i = 0; i < conditionMap.length; i++) {           
@@ -653,7 +667,11 @@ export class EnhancedConditions {
             if (!condition.name) {
                 condition.name = condition.label ?? (condition.icon ? Sidekick.getNameFromFilePath(condition.icon) : "");
             }
-            condition.id = condition.id || Sidekick.generateUniqueSlugId(condition.name, existingIds);
+
+            // If conditionId doesn't exist, or is a duplicate, create a new Id
+            condition.id = (!condition.id || processedIds.includes(condition.id)) ? Sidekick.createId(existingIds) : condition.id;
+            processedIds.push(condition.id);
+
             condition.options = condition.options || {};
             if (condition.options.outputChat === undefined) condition.options.outputChat = outputChatSetting;
             preparedMap.push(condition);
@@ -768,19 +786,23 @@ export class EnhancedConditions {
 
         if (!conditionMap.length) return;
 
-        const statusEffects = conditionMap.map((c, i, a) => {
-            const existingIds = a.length ? a.filter(c => c.id).map(c => c.id) : [];
-            const id = c.id ? `${BUTLER.NAME}.${c.id}` : Sidekick.generateUniqueSlugId(c.name, existingIds);
+        const existingIds = conditionMap.filter(c => c.id).map(c => c.id);
+        
+        const statusEffects = [];
+        
+        for (const c of conditionMap) {
+            const id = c.id ?? Sidekick.createid(existingIds);
+            const longId = `${BUTLER.NAME}.${id}`;
 
-            return {
-                id,
+            const effect = {
+                id: longId,
                 flags: {
                     ...c.activeEffect?.flags,
                     core: {
-                        statusId: `${[BUTLER.NAME]}.${c.id}` ?? `${[BUTLER.NAME]}.${c.name?.slugify()}`
+                        statusId: longId
                     },
                     [BUTLER.NAME]: {
-                        [BUTLER.FLAGS.enhancedConditions.conditionId]: c.id ?? c.name?.slugify(),
+                        [BUTLER.FLAGS.enhancedConditions.conditionId]: id,
                         [BUTLER.FLAGS.enhancedConditions.overlay]: c?.options?.overlay ?? false
                     }
                 },
@@ -789,7 +811,9 @@ export class EnhancedConditions {
                 changes: c.activeEffect?.changes || [],
                 duration: c.duration || c.activeEffect?.duration || {}
             }
-        });
+
+            statusEffects.push(effect);
+        };
 
         return statusEffects.length > 1 ? statusEffects : statusEffects.shift();
     }
@@ -1377,5 +1401,16 @@ export class EnhancedConditions {
 
             await actor.deleteEmbeddedDocuments("ActiveEffect", effectIds);
         }
+    }
+
+    static async _migrationHelper(cubVersion) {
+        const conditionMigrationVersion = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.migrationVersion);
+
+        if (foundry.utils.isNewerVersion(cubVersion, conditionMigrationVersion)) {
+            console.log(`${BUTLER.NAME} | Performing Enhanced Condition migration...`);
+            EnhancedConditions._migrateConditionIds(game.cub?.conditions);
+            await Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.migrationVersion, cubVersion);
+            console.log(`${BUTLER.NAME} | Enhanced Condition migration complete!`);
+        } 
     }
 }

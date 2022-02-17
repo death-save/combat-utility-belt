@@ -316,6 +316,16 @@ export function registerSettings() {
         default: false,
         onChange: s => {}
     });
+    
+    Sidekick.registerSetting(BUTLER.SETTING_KEYS.enhancedConditions.migrationVersion, {
+        name:  `${BUTLER.NAME}.SETTINGS.ENHANCED_CONDITIONS.MigrationVersionN`,
+        hint: `${BUTLER.NAME}.SETTINGS.ENHANCED_CONDITIONS.MigrationVersionH`,
+        scope: "world",
+        type: String,
+        config: false,
+        default: BUTLER.DEFAULT_CONFIG.enhancedConditions.migrationVersion,
+        onChange: s => {}
+    });
 
     /* -------------------------------------------- */
     /*                    GiveXP                    */

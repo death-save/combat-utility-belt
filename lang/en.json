@@ -43,6 +43,10 @@
                 "NotifyConcentrationH": "Send a message when a Concentration spell is cast.",
                 "NotifyEndN": "Notify on Concentration End",
                 "NotifyEndH": "Send a message when Concentration on a spell ends."
+            },
+            "ENHANCED_CONDITIONS": {
+                "MigrationVersionN": "Migration Version",
+                "MigrationVersionH": "Version of CUB for which migration was last performed"
             }
         }
     },
