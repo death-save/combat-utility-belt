@@ -324,7 +324,7 @@ export class Sidekick {
      * @returns {GM | null} a GM object or null if none found
      */
     static getFirstGM() {
-        const gmUsers = game.users.filter(u => u.isGM && u.active).sort((a, b) => a.localeCompare(b));
+        const gmUsers = game.users.filter(u => u.isGM && u.active).sort((a, b) => a.name.localeCompare(b.name));
 
         return gmUsers.length ? gmUsers[0] : null;
     }
