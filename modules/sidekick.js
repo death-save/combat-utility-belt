@@ -353,4 +353,36 @@ export class Sidekick {
 
         return;
     }
+
+    /**
+     * Filters an array down to just its duplicate elements based on the property specified
+     * @param {*} arrayToCheck 
+     * @param {*} filterProperty 
+     * @returns 
+     */
+    static findArrayDuplicates(arrayToCheck, filterProperty) {
+        const lookup = arrayToCheck.reduce((a, e) => {
+            a.set(e[filterProperty], (a.get(e[filterProperty]) ?? 0) + 1);
+            return a;
+        }, new Map());
+
+        return arrayToCheck.filter(e => lookup.get(e[filterProperty] > 1));
+    }
+
+    /**
+     * Returns true for each array element that is a duplicate based on the property specified
+     * @param {*} arrayToCheck 
+     * @param {*} filterProperty 
+     * @returns 
+     */
+    static identifyArrayDuplicatesByProperty(arrayToCheck, filterProperty) {
+        const seen = new Set();
+        return arrayToCheck.map(e => {
+            if (seen.size === seen.add(e[filterProperty]).size) {
+                return true;
+            } else {
+                return false;
+            }
+        });
+    }
 }
