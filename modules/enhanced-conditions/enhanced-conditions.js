@@ -563,10 +563,41 @@ export class EnhancedConditions {
         if (!conditionMap?.length) return;
 
         const existingIds = conditionMap.filter(c => c.id).map(c => c.id);
+        const processedIds = [];
         const newMap = foundry.utils.deepClone(conditionMap);
-        newMap.forEach(c => c.id = Sidekick.createId(existingIds));
+        newMap.forEach((c) => {
+            if (processedIds.includes(c.id)) {
+                console.log(`${BUTLER.NAME} | Duplicate Condition found:`, c);
+                const oldId = c.id;
+                c.id = Sidekick.createId(existingIds);
+                console.log(`${BUTLER.NAME} | New id:`, c.id);
+            }
+            processedIds.push(c.id);
+        });
         await Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.map, newMap);
     }
+
+    // !! TODO: reassess this -- will it replace valid status effects because the duplicate id matches the remaining unique id???
+    // static async _migrateActiveEffectConditionId(oldId, newId) {
+    //     const updates = [];
+
+    //     for (const scene of game.scenes) {
+    //         const sceneTokens = scene.data?.tokens?.contents;
+    //         for (const token of sceneTokens) {
+    //             const matchingEffect = token.actor?.effects?.contents?.find(e => e.getFlag('core', 'statusId') === oldId);
+    //             if (matchingEffect) {
+    //                 const newFlags = foundry.utils.duplicate(matchingEffect.data.flags);
+    //                 foundry.utils.mergeObject(newFlags, {
+    //                     "core.statusId": newId,
+    //                     [`${BUTLER.NAME}.${BUTLER.FLAGS.enhancedConditions.conditionId}`]: newId
+    //                 });
+    //                 const update = {_id: matchingEffect.id, flags: newFlags};
+                    
+    //                 await token.actor.updateEmbeddedDocuments("ActiveEffect", update);
+    //             }
+    //         }
+    //     }
+    // }
 
     /* -------------------------------------------- */
     /*                    Helpers                   */
