@@ -23,6 +23,7 @@ import { ActorUtility } from "./utils/actor.js";
 import { TrackerUtility } from "./utils/combat-tracker.js";
 import { ConditionLab } from "./enhanced-conditions/condition-lab.js";
 import { Triggler } from "./triggler/triggler.js";
+import MigrationHelper from "./utils/migration.js";
 
 /* -------------------------------------------- */
 /*                     Class                    */
@@ -92,7 +93,8 @@ export class Signal {
         Hooks.on("ready", () => {
             game.socket.on(`module.${BUTLER.NAME}`, Signal._onSocket);
             EnhancedConditions._onReady();
-            Concentrator._onReady();            
+            Concentrator._onReady();
+            MigrationHelper._onReady();            
         });
 
         /* -------------------------------------------- */

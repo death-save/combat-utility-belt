@@ -294,7 +294,7 @@ export class Sidekick {
         if (!existingIds.length) return slug;
 
         const uniqueIndex = existingIds.length > 1 ? Math.max(...existingIds.map(id => id.match(/\d+/g)[0])) + 1 : 1;
-        slug = slug + uniqueIndex;
+        slug = slug.replace(/\d+$/g, uniqueIndex);
         
         return slug;
     }
@@ -324,7 +324,7 @@ export class Sidekick {
      * @returns {GM | null} a GM object or null if none found
      */
     static getFirstGM() {
-        const gmUsers = game.users.filter(u => u.isGM && u.active).sort((a, b) => a.localeCompare(b));
+        const gmUsers = game.users.filter(u => u.isGM && u.active).sort((a, b) => a.name.localeCompare(b.name));
 
         return gmUsers.length ? gmUsers[0] : null;
     }
@@ -352,5 +352,37 @@ export class Sidekick {
         }
 
         return;
+    }
+
+    /**
+     * Filters an array down to just its duplicate elements based on the property specified
+     * @param {*} arrayToCheck 
+     * @param {*} filterProperty 
+     * @returns 
+     */
+    static findArrayDuplicates(arrayToCheck, filterProperty) {
+        const lookup = arrayToCheck.reduce((a, e) => {
+            a.set(e[filterProperty], (a.get(e[filterProperty]) ?? 0) + 1);
+            return a;
+        }, new Map());
+
+        return arrayToCheck.filter(e => lookup.get(e[filterProperty] > 1));
+    }
+
+    /**
+     * Returns true for each array element that is a duplicate based on the property specified
+     * @param {*} arrayToCheck 
+     * @param {*} filterProperty 
+     * @returns 
+     */
+    static identifyArrayDuplicatesByProperty(arrayToCheck, filterProperty) {
+        const seen = new Set();
+        return arrayToCheck.map(e => {
+            if (seen.size === seen.add(e[filterProperty]).size) {
+                return true;
+            } else {
+                return false;
+            }
+        });
     }
 }

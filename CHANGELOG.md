@@ -7,6 +7,16 @@
 4. The Default/Inferred Condition Lab Mappings for game systems may not correctly import all data. Importing the map from the CUB Condition Maps folder imports correctly.
 5. **PF2e users**: PF2e is not currently supported by Enhanced Conditions due to the customisation of the effects framework implemented by the system.
 
+## [1.8.3] - 2022-02-19
+### ✨ Enhanced Conditions
+- Conditions are now stored with a truly unique(ish) `id` instead of a "slugified" version of the name. Eg. previously a Condition named "The Butterfly Effect" would have had an `id` of `the-buttefly-effect`. This should fix any issues related to `id` duplication such as adding effects to tokens and having unrelated effects added
+> Note: this change only applies to newly created conditions or any conditions with a duplicate `id`
+- New Conditions now inherit the global/world setting for `Output to Chat`
+- Changed the placeholder name of new Conditions to `New Condition` instead of `newCondition`
+
+### Misc
+- Fixed a bug related to finding the first active GM
+
 ## [1.8.2] - 2022-02-08
 > This update adds compatibility for Foundry VTT v9.249
 

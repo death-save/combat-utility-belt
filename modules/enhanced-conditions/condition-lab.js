@@ -583,8 +583,8 @@ export class ConditionLab extends FormApplication {
     _onAddRow(event) {
         event.preventDefault();
 
-        const existingNewConditions = this.map.filter(m => m.name.includes("newCondition"));
-        const newConditionIndex = existingNewConditions.length ? Math.max(...existingNewConditions.map(m => m.name.match(/\d+/g)[0])) + 1 : 1;
+        const existingNewConditions = this.map.filter(m => m.name.match(/^New Condition \d+$/));
+        const newConditionIndex = existingNewConditions.length ? Math.max(...existingNewConditions.map(m => 1 * m.name.match(/\d+$/g)[0])) + 1 : 1;
         const newConditionName = `New Condition ${newConditionIndex}`;
         const fdMap = this.updatedMap;
         const defaultMapType = Sidekick.getKeyByValue(BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes, BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes.default);
@@ -598,14 +598,18 @@ export class ConditionLab extends FormApplication {
         }
         
         const newMap = duplicate(this.map);
-        const exisitingIds = this.map.map(c => c.id);
-
+        const exisitingIds = this.map.filter(c => c.id).map(c => c.id);
+        const outputChatSetting = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.outputChat);
+        
         newMap.push({
+            id: Sidekick.createId(exisitingIds),
             name: newConditionName,
-            id: Sidekick.generateUniqueSlugId(newConditionName, exisitingIds),
             icon: "icons/svg/d20-black.svg",
             referenceId: "",
-            trigger: ""
+            trigger: "",
+            options: {
+                outputChat: outputChatSetting
+            }
         });
         
         const newMapType = this.mapType === defaultMapType ? customMapType : this.mapType; 
