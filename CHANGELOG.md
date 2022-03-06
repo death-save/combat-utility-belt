@@ -7,6 +7,12 @@
 4. The Default/Inferred Condition Lab Mappings for game systems may not correctly import all data. Importing the map from the CUB Condition Maps folder imports correctly.
 5. **PF2e users**: PF2e is not currently supported by Enhanced Conditions due to the customisation of the effects framework implemented by the system.
 
+## [1.8.4] - 2022-03-06
+> This update adds compatibility for Foundry VTT v9.255
+### ✨ Enhanced Conditions
+- Fixed an issue with empty Condition Maps not allowing rows to be added in the Condition Lab
+- Fixed an issue with Condition Maps not correctly being built in some circumstances, causing the Condition Lab to fail to open
+
 ## [1.8.3] - 2022-02-19
 ### ✨ Enhanced Conditions
 - Conditions are now stored with a truly unique(ish) `id` instead of a "slugified" version of the name. Eg. previously a Condition named "The Butterfly Effect" would have had an `id` of `the-buttefly-effect`. This should fix any issues related to `id` duplication such as adding effects to tokens and having unrelated effects added
