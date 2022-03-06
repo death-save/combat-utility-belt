@@ -822,7 +822,7 @@ export class EnhancedConditions {
         const statusEffects = [];
         
         for (const c of conditionMap) {
-            const id = c.id ?? Sidekick.createid(existingIds);
+            const id = c.id ?? Sidekick.createId(existingIds);
             const longId = `${BUTLER.NAME}.${id}`;
 
             const effect = {
