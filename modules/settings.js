@@ -323,6 +323,7 @@ export function registerSettings() {
         scope: "world",
         type: String,
         config: false,
+        apiOnly: true,
         default: BUTLER.DEFAULT_CONFIG.enhancedConditions.migrationVersion,
         onChange: s => {}
     });
