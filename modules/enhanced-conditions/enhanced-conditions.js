@@ -674,9 +674,13 @@ export class EnhancedConditions {
      * @param {*} conditionMap 
      */
     static _prepareMap(conditionMap) {
-        if (!conditionMap || !conditionMap?.length) return;
-
         const preparedMap = [];
+
+        if (!conditionMap || !conditionMap?.length) {
+            return preparedMap;
+        }
+
+        
         const outputChatSetting = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.outputChat);
 
         // Map existing ids for ease of access
@@ -822,7 +826,7 @@ export class EnhancedConditions {
         const statusEffects = [];
         
         for (const c of conditionMap) {
-            const id = c.id ?? Sidekick.createid(existingIds);
+            const id = c.id ?? Sidekick.createId(existingIds);
             const longId = `${BUTLER.NAME}.${id}`;
 
             const effect = {
