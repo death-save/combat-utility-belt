@@ -40,6 +40,15 @@
             },
             "UnknownSpell": "Unknown Spell"
         },
+        "HIDE_NAMES": {
+            "MessageIcon": {
+                "Title": {
+                    "NameNotHidden": "Name not hidden (click to hide)",
+                    "NameHiddenPrefix": "Replacement Name:",
+                    "NameHiddenSuffix": "(click to reveal)"
+                }
+            }
+        },
         "SETTINGS": {
             "CONCENTRATOR": {
                 "AutoEndConcentrationN": "Automatically End Concentration",

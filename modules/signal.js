@@ -114,6 +114,7 @@ export class Signal {
             }
             Concentrator._onUpdateActor(actor, updateData, options, userId);
             Triggler._onUpdateActor(actor, updateData, options, userId);
+            HideNPCNames._onUpdateActor(actor, updateData, options, userId);
         });
 
         Hooks.on("createActiveEffect", (effect, options, userId) => {
@@ -143,6 +144,7 @@ export class Signal {
             EnhancedConditions._onUpdateToken(tokenDocument, updateData, options, userId);
             Concentrator._onUpdateToken(tokenDocument, updateData, options, userId);
             Triggler._onUpdateToken(tokenDocument, updateData, options, userId);
+            HideNPCNames._onUpdateToken(tokenDocument, updateData, options, userId);
         });
 
         /* ------------------ Combat ------------------ */

@@ -17,6 +17,55 @@ export class HideNPCNames {
     }
 
     /**
+     * Update Actor handler
+     * @param {*} actor 
+     * @param {*} update 
+     * @param {*} options 
+     * @param {*} user 
+     */
+    static _onUpdateActor(actor, update, options, user) {
+        const gadgetEnabled = Sidekick.getSetting(SETTING_KEYS.hideNames.enable);
+
+        if (!gadgetEnabled || !foundry.utils.hasProperty(update, `data.flags.${NAME}.${FLAGS.hideNames.enable}`)) {
+            return;
+        }
+
+        HideNPCNames._updateEntityMessages(actor);
+    }
+
+    /**
+     * Update Token handler
+     * @param {*} token 
+     * @param {*} update 
+     * @param {*} options 
+     * @param {*} user 
+     */
+    static _onUpdateToken(token, update, options, user) {
+        const gadgetEnabled = Sidekick.getSetting(SETTING_KEYS.hideNames.enable);
+
+        if (!gadgetEnabled || !foundry.utils.hasProperty(update, `actorData.flags.${NAME}.${FLAGS.hideNames.enable}`)) {
+            return;
+        }
+
+        HideNPCNames._updateEntityMessages(token);
+    }
+
+    /**
+     * 
+     * @param {*} entity 
+     * @returns 
+     */
+    static _updateEntityMessages(entity) {
+        const isToken = entity instanceof Token || entity instanceof TokenDocument;
+
+        const messages = game.messages.contents.filter(m => m.logged && m.data?.speaker?.[isToken ? "token" : "actor"] === entity.id);
+
+        for (const message of messages) {
+            ui.chat.updateMessage(message);
+        }
+    }
+
+    /**
      * Handle render Actor sheet
      * @param {*} app 
      * @param {*} html 
@@ -97,8 +146,9 @@ export class HideNPCNames {
             if (!npcToken) continue;
 
             if (game.user.isGM || npcToken.isOwner) {
-                const icon = `<span> <i class="fas fa-mask" title="${npcToken.replacement}"></i></span>`;
-                $(el).find(".token-name").children().first().append(icon);
+                const $icon = $(`<span> <i class="fas fa-mask" title="${npcToken.replacement}"></i></span>`);
+                $(el).find(".token-name").children().first().append($icon);
+                $icon.on("click", (event) => this._onClickChatMessageIcon(event));
                 continue;
             }
 
@@ -131,16 +181,23 @@ export class HideNPCNames {
 
         const shouldReplace = HideNPCNames.shouldReplaceName(actor);
 
-        if (!shouldReplace) return;
-
         const replacementName = HideNPCNames.getReplacementName(actor);
 
         // If we are the GM or the Actor's owner, simply apply the icon to the name and return
         if (game.user.isGM || actor.isOwner) {
+            //const currentFlagValue = message.getFlag(NAME, FLAGS.hideNames.message.hidden);
+
             const senderName = html.find("header").children().first();
-            const icon = `<span> <i class="fas fa-mask" title="${replacementName}"></i></span>`;
-            return senderName.append(icon);
+            const title = `${shouldReplace ? `${game.i18n.localize(`${NAME}.HIDE_NAMES.MessageIcon.Title.NameHiddenPrefix`)} ${replacementName} ${game.i18n.localize(`${NAME}.HIDE_NAMES.MessageIcon.Title.NameHiddenSuffix`)}` : game.i18n.localize(`${NAME}.HIDE_NAMES.MessageIcon.Title.NameNotHidden`)}`;
+            const $icon = $(
+                `<a class="hide-name"><span class="fa-stack fa-1x hidden" title="${title}"><i class="fas fa-mask fa-stack-1x"></i>
+                ${!shouldReplace ? `<i class="fas fa-slash fa-stack-1x"></i>` : ""}</span></a>`
+            );
+            $icon.on("click", (event) => this._onClickChatMessageIcon(event));
+            return senderName.append($icon);
         }
+
+        if (!shouldReplace) return;
 
         const hideParts = Sidekick.getSetting(SETTING_KEYS.hideNames.hideParts);
         let matchString = null;
@@ -290,6 +347,31 @@ export class HideNPCNames {
             }
         }
         
+    }
+
+    /**
+     * Chat Message Icon click handler
+     * @param {*} event 
+     * @returns 
+     */
+    static async _onClickChatMessageIcon(event) {
+        const icon = event.target;
+        //const span = icon?.closest("span");
+        const chatMessageLi = icon?.closest("li.chat-message");
+        const messageId = chatMessageLi?.dataset.messageId;
+        const message = game.messages.get(messageId);
+        const speaker = message?.data.speaker;        
+        const actorId = speaker?.actor;
+        const tokenId = speaker?.token;
+
+        const sceneId = speaker?.scene;
+        const token = tokenId ? await fromUuid(`Scene.${sceneId}.Token.${tokenId}`) : null;
+        const actor = token ? token.actor : game.actors.get(actorId);
+        
+        if (!actor) return;
+
+        const shouldReplace = HideNPCNames.shouldReplaceName(actor);
+        await actor.setFlag(NAME, FLAGS.hideNames.enable, !shouldReplace);
     }
 
     /**
