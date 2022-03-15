@@ -217,8 +217,8 @@ ol.condition-lab {
 }
 
 .condition-lab a.trash {
-    flex: none;
-    margin: 6px 3px 3px 3px;
+    /* flex: none;
+    margin: 6px 3px 3px 3px; */
 }
 
 .condition-lab div.journal-icon {
@@ -236,9 +236,9 @@ ol.condition-lab {
 }
 
 .condition-lab .trash {
-    flex: 0 0 20px;
+    /* flex: 0 0 20px;
     line-height: 60px;
-    text-align: center;
+    text-align: center; */
 }
 
 .condition-lab .add-row {
@@ -255,9 +255,9 @@ ol.condition-lab {
 }
 
 .condition-lab .trash button {
-    flex: 0 0 30px;
+    /* flex: 0 0 30px;
     width: 30px;
-    line-height: 60px;
+    line-height: 60px; */
 }
 
 .condition-lab .grabber {
@@ -267,25 +267,43 @@ ol.condition-lab {
     opacity: 0.5;
 }
 
-.condition-lab div.change-order {
+.condition-lab div.row-controls {
     position: relative;
     max-width: 25px;
 }
 
-.condition-lab .change-order a {
-    position: absolute;
+.condition-lab .row-controls div {
+  display: flex;
 }
 
-.condition-lab .change-order a.move-up {
-    top: 20%;
+.condition-lab .row-controls div.remove-row {
+  flex: 4;
+  align-items: center;
 }
 
-.condition-lab .change-order a.move-down {
-    bottom: 20%;
+.condition-lab .row-controls div.move-down {
+  align-items: flex-end;
+}
+
+.condition-lab .row-controls a {
+    /* position: absolute; */
+}
+
+.condition-lab .row-controls a.move-up {
+    /* top: 20%; */
+}
+
+.condition-lab .row-controls a.move-down {
+    /* bottom: 20%; */
 }
 
 .condition-lab .options {
     padding: 0 0 0 26px;
+}
+
+.condition-lab .tooltip {
+    font-size: x-small;
+    vertical-align: text-top;
 }
 
 #cub-condition-lab button.highlight {
