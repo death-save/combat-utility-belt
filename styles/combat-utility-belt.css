@@ -64,12 +64,55 @@ a.add-temporary {
 
 /* CONDITION LAB */
 
+#cub-condition-lab .hidden {
+  display: none;
+}
+
 ol.condition-lab {
-    list-style:none;
+    list-style: none;
     overflow-y: auto;
     overflow-x: hidden;
-    max-height: 550px;
-    margin: 0px;
+    max-height: 490px;
+    margin: 10px 0px;
+    padding: 0px;
+    border: 2px inset;
+}
+
+#cub-condition-lab div.sort {
+    flex: 0 1 20px;
+    margin-right: 3px;
+}
+
+#cub-condition-lab div.filter {
+    margin-left: 25px;
+    max-width: 50%;
+    display: flex;
+}
+
+#cub-condition-lab div.filter div.input-wrapper {
+  position: relative;
+}
+
+#cub-condition-lab div.filter div.input-wrapper i {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+}
+
+#cub-condition-lab div.filter div.input-wrapper input {
+  padding-left: 20px;
+}
+
+
+
+#cub-condition-lab div.condition-list-controls .sort i {
+    font-size: x-large;
+}
+
+#cub-condition-lab .condition-list-controls button {
+    flex: 0 1 28px;
+    height: 28px;
+    width: 28px;
     padding: 0px;
 }
 
