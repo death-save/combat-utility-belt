@@ -385,4 +385,11 @@ export class Sidekick {
             }
         });
     }
+
+    static async loadTemplates() {
+        const templates = [
+            `${BUTLER.PATH}/templates/partials/chat-card-condition-list.hbs`
+        ];
+        await loadTemplates(templates)
+    }
 }

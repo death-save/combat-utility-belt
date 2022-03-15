@@ -443,15 +443,18 @@ export class EnhancedConditions {
         switch (options.type) {
             case "added":
                 type.added = true;
+                type.title = game.i18n.localize(`${BUTLER.NAME}.ENHANCED_CONDITIONS.ChatCard.Title.Added`);
                 break;
 
             case "removed":
                 type.removed = true;
+                type.title = game.i18n.localize(`${BUTLER.NAME}.ENHANCED_CONDITIONS.ChatCard.Title.Removed`);
                 break;
 
             case "active":
             default:
                 type.active = true;
+                type.title = game.i18n.localize(`${BUTLER.NAME}.ENHANCED_CONDITIONS.ChatCard.Title.Active`);
                 break;
         }
 
@@ -471,7 +474,10 @@ export class EnhancedConditions {
             }
         });
 
+        const chatCardHeading = game.i18n.localize(`${BUTLER.NAME}.ENHANCED_CONDITIONS.ChatCard.Heading`);
+
         const templateData = {
+            chatCardHeading,
             type,
             entityId: entity.id,
             alias: speaker.alias,
@@ -479,14 +485,40 @@ export class EnhancedConditions {
             isOwner: entity.isOwner || game.user.isGM
         };
 
-        const content = await renderTemplate(BUTLER.DEFAULT_CONFIG.enhancedConditions.templates.chatOutput, templateData);
 
-        return await ChatMessage.create({
-            speaker,
-            content,
-            type: chatType,
-            user: chatUser
-        });
+
+        // if the last message Enhanced conditions, append instead of making a new one
+        const lastMessage = game.messages.contents[game.messages.contents.length - 1];
+        const lastMessageSpeaker = lastMessage?.data.speaker;
+        const sameSpeaker = isActorEntity ? lastMessageSpeaker?.actor === speaker.actor : lastMessageSpeaker?.token === speaker.token;
+        
+        // hard code the recent timestamp to 30s for now
+        const recentTimestamp = Date.now() <= lastMessage?.data.timestamp + 30000;
+        const enhancedConditionsDiv = lastMessage?.data.content.match("enhanced-conditions");
+
+        if (enhancedConditionsDiv && sameSpeaker && recentTimestamp) {
+            let newContent = "";
+            for (const condition of entries) {
+                const newRow = await renderTemplate(BUTLER.DEFAULT_CONFIG.enhancedConditions.templates.chatConditionsPartial, {condition, type});
+                newContent += newRow;
+            }
+            const existingContent = lastMessage.data.content;
+            const ulEnd = existingContent?.indexOf(`</ul>`);
+            if (!ulEnd) return;
+            const content = existingContent.slice(0, ulEnd) + newContent + existingContent.slice(ulEnd);
+            await lastMessage.update({content});
+            ui.chat.scrollBottom();
+            // return await ui.chat.updateMessage(lastMessage, true);
+        } else {
+            const content = await renderTemplate(BUTLER.DEFAULT_CONFIG.enhancedConditions.templates.chatOutput, templateData);
+
+            return await ChatMessage.create({
+                speaker,
+                content,
+                type: chatType,
+                user: chatUser
+            });
+        }
     }
 
     /**

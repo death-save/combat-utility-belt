@@ -94,7 +94,8 @@ export class Signal {
             game.socket.on(`module.${BUTLER.NAME}`, Signal._onSocket);
             EnhancedConditions._onReady();
             Concentrator._onReady();
-            MigrationHelper._onReady();            
+            MigrationHelper._onReady();
+            Sidekick.loadTemplates();          
         });
 
         /* -------------------------------------------- */

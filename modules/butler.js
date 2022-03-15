@@ -213,6 +213,7 @@ export const DEFAULT_CONFIG = {
         templates: {
             conditionLab: `${PATH}/templates/condition-lab.hbs`,
             chatOutput: `${PATH}/templates/chat-conditions.hbs`,
+            chatConditionsPartial: `${PATH}/templates/partials/chat-card-condition-list.hbs`,
             importDialog: `${PATH}/templates/import-conditions.html`
         },
         migrationVersion: null

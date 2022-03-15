@@ -35,6 +35,11 @@ img.condition-icon {
     margin: 0px 6px 0px 0px;
 }
 
+.enhanced-conditions div.add-remove {
+    display: flex;
+    flex: 0 0 15px;
+}
+
 .enhanced-conditions div.condition-name,
 .enhanced-conditions div.condition-reference {
     flex: 2;

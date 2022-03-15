@@ -15,6 +15,14 @@
                 "SortAnchorTitle": "Sorted by Name - unsorted - click to change",
                 "SortAnchorTitle_asc": "Sorted by Name - A to Z - Click to change",
                 "SortAnchorTitle_desc": "Sorted by Name - Z to A - click to change"
+            },
+            "ChatCard": {
+                "Heading": "Enhanced Conditions",
+                "Title": {
+                    "Added": "Added",
+                    "Removed": "Removed",
+                    "Active": "Active"
+                }
             }
         },
         "CONCENTRATOR": {
