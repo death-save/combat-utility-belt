@@ -388,7 +388,8 @@ export class Sidekick {
 
     static async loadTemplates() {
         const templates = [
-            `${BUTLER.PATH}/templates/partials/chat-card-condition-list.hbs`
+            `${BUTLER.PATH}/templates/partials/chat-card-condition-list.hbs`,
+            `${BUTLER.PATH}/templates/partials/condition-lab-row.hbs`
         ];
         await loadTemplates(templates)
     }
