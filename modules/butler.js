@@ -182,6 +182,10 @@ export const DEFAULT_CONFIG = {
             id: "cub-condition-lab",
             title: "Condition Lab",
         },
+        macroConfig: {
+            id: "cub-enhanced-condition-macro-config",
+            title: "CUB Enhanced Condition - Macro Config"
+        },
         title: "Enhanced Conditions",
         mapTypes: {
             default: "System - Default",
@@ -214,7 +218,8 @@ export const DEFAULT_CONFIG = {
             conditionLab: `${PATH}/templates/condition-lab.hbs`,
             chatOutput: `${PATH}/templates/chat-conditions.hbs`,
             chatConditionsPartial: `${PATH}/templates/partials/chat-card-condition-list.hbs`,
-            importDialog: `${PATH}/templates/import-conditions.html`
+            importDialog: `${PATH}/templates/import-conditions.html`,
+            macroConfig: `${PATH}/templates/enhanced-condition-macro-config.hbs`
         },
         migrationVersion: null
     },

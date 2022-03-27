@@ -23,6 +23,13 @@
                     "Removed": "Removed",
                     "Active": "Active"
                 }
+            },
+            "MacroConfig": {
+                "Heading": "Macros to Execute",
+                "ApplyHeading": "Apply Macro",
+                "RemoveHeading": "Remove Macro",
+                "Description": "Select a macro to execute when this condition is added to or removed from a token/actor",
+                "SelectNone": "--No Macro--"
             }
         },
         "CONCENTRATOR": {

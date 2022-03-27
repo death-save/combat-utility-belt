@@ -4,6 +4,7 @@ import { EnhancedConditions } from "./enhanced-conditions.js";
 import { TrigglerForm } from "../triggler/triggler-form.js";
 import { DraggableList } from "../utils/draggable-list.js";
 import EnhancedEffectConfig from "./enhanced-effect-config.js";
+import EnhancedConditionMacroConfig from "./enhanced-condition-macro.js";
 
 /**
  * Form application for managing mapping of Conditions to Icons and JournalEntries
@@ -425,6 +426,7 @@ export class ConditionLab extends FormApplication {
         const saveCloseButton = html.find("button[name='save-close']");
         const filterInput = html.find("input[name='filter-list']");
         const sortButton = html.find("a.sort-list");
+        const macroConfigButton = html.find("button.macro-config");
 
         inputs.on("change", event => this._onChangeInputs(event));
         mapTypeSelector.on("change", event => this._onChangeMapType(event));
@@ -438,6 +440,7 @@ export class ConditionLab extends FormApplication {
         saveCloseButton.on("click", event => this._onSaveClose(event));
         filterInput.on("input", (event) => this._onChangeFilter(event));
         sortButton.on("click", (event) => this._onClickSortButton(event));
+        macroConfigButton.on("click", (event) => this._onClickMacroConfig(event));
 
         super.activateListeners(html);     
     }
@@ -877,6 +880,22 @@ export class ConditionLab extends FormApplication {
             targetInput.value = link;
             this._onChangeReferenceId(event);
         }
+    }
+
+    /**
+     * Macro Config button click handler
+     * @param {*} event 
+     * @returns 
+     */
+    _onClickMacroConfig(event) {
+        const rowLi = event.target.closest("li");
+        const conditionId = rowLi ? rowLi.dataset.conditionId : null;
+
+        if (!conditionId) return;
+
+        const condition = this.map.find(c => c.id === conditionId);
+
+        new EnhancedConditionMacroConfig(condition).render(true);
     }
 
     /**

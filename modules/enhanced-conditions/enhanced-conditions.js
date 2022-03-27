@@ -196,6 +196,12 @@ export class EnhancedConditions {
         // If there's any conditions to output to chat, do so
         if (chatAddConditions.length) EnhancedConditions.outputChatMessage(token, chatAddConditions, {type: "added"});
         if (chatRemoveConditions.length) EnhancedConditions.outputChatMessage(token, chatRemoveConditions, {type: "removed"});
+
+        // process macros
+        const addMacroIds = addConditions.flatMap(c => c.macros?.filter(m => m.id && m.type === "apply").map(m => m.id));
+        const removeMacroIds = removeConditions.flatMap(c => c.macros?.filter(m => m.id && m.type === "remove").map(m => m.id));
+        const macroIds = [...addMacroIds, ...removeMacroIds];
+        if (macroIds.length) EnhancedConditions._processMacros(macroIds, token);
     }
 
     /**
@@ -388,20 +394,28 @@ export class EnhancedConditions {
         const actor = effect.parent;
         
         if (shouldOutput) EnhancedConditions.outputChatMessage(actor, condition, {type: outputType});
-        
+        let macros = [];
+
         switch (type) {
             case "create":
+                macros = condition.macros?.filter(m => m.type === "apply");
                 if (condition.options?.removeOthers) EnhancedConditions._removeOtherConditions(actor, condition.id);
                 if (condition.options?.markDefeated) EnhancedConditions._toggleDefeated(actor, {markDefeated: true});
+                
                 break;
 
             case "delete":
+                macros = condition.macros?.filter(m => m.type === "remove");
                 if (condition.options?.markDefeated) EnhancedConditions._toggleDefeated(actor, {markDefeated: false});
                 break;
 
             default:
                 break;
         }
+
+        const macroIds = macros.length ? macros.filter(m => m.id).map(m => m.id) : null;
+
+        if (macroIds.length) EnhancedConditions._processMacros(macroIds, actor);
     }
 
     /**
@@ -607,6 +621,24 @@ export class EnhancedConditions {
             processedIds.push(c.id);
         });
         await Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.map, newMap);
+    }
+
+    /**
+     * Process macros based on given Ids
+     * @param {*} macroIds 
+     * @param {*} entity 
+     */
+    static async _processMacros(macroIds, entity=null) {
+        const isToken = entity instanceof Token || entity instanceof TokenDocument;
+        const isActor = entity instanceof Actor;
+
+        for (const macroId of macroIds) {
+            const macro = game.macros.get(macroId);
+            if (!macro) continue;
+
+            const options = isToken ? {token: entity} : (isActor ? {actor: entity} : null);
+            await macro.execute(macroId, options);
+        }
     }
 
     // !! TODO: reassess this -- will it replace valid status effects because the duplicate id matches the remaining unique id???
