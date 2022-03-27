@@ -70,6 +70,13 @@
                 "MigrationVersionN": "Migration Version",
                 "MigrationVersionH": "Version of CUB for which migration was last performed"
             }
+        },
+        "WORDS": {
+            "Icon": "Icon",
+            "Macro": "Macro",
+            "Name": "Name",
+            "Reference": "Reference",
+            "Save": "Save"
         }
     },
     "GADGET_DESCRIPTIONS.AwardXP": "Provides an end of combat prompt to distribute XP from defeated hostile combatants.",
