@@ -201,6 +201,10 @@ export class Signal {
 
         /* ------------------- Chat ------------------- */
 
+        Hooks.on("renderChatLog", (app, html, data) => {
+            EnhancedConditions._onRenderChatLog(app, html, data);
+        });
+
         Hooks.on("renderChatMessage", (app, html, data) => {
             HideNPCNames._onRenderChatMessage(app, html, data);
             Concentrator._onRenderChatMessage(app, html, data);

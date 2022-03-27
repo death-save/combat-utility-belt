@@ -4,7 +4,7 @@
 <div class="enhanced-conditions content" data-token-id="{{tokenId}}">
     <ul class="chat-message condition-list">
         {{#each conditions}}
-            {{> "modules/combat-utility-belt/templates/partials/chat-card-condition-list.hbs" type=../type condition=this}}
+            {{> "modules/combat-utility-belt/templates/partials/chat-card-condition-list.hbs" type=../type condition=this timestamp=../timestamp}}
         {{/each}}
     </ul>
 </div>

@@ -85,6 +85,7 @@ export class EnhancedConditions {
             }
 
             if (conditionMap.length) EnhancedConditions._updateStatusEffects(conditionMap);
+            setInterval(EnhancedConditions.updateConditionTimestamps, 15000);
         }
 
         // Save the active condition map to a convenience property
@@ -349,6 +350,23 @@ export class EnhancedConditions {
         });
     }
 
+    /**
+     * ChatLog render hook
+     * @param {*} app 
+     * @param {*} html 
+     * @param {*} data 
+     */
+    static async _onRenderChatLog(app, html, data) {
+        EnhancedConditions.updateConditionTimestamps();
+    }
+
+    /**
+     * 
+     * @param {*} app 
+     * @param {*} html 
+     * @param {*} data 
+     * @returns 
+     */
     static async _onRenderCombatTracker(app, html, data) {
         const enabled = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.enable);
 
@@ -476,6 +494,7 @@ export class EnhancedConditions {
         //const token = token || this.currentToken;
         const chatType = CONST.CHAT_MESSAGE_TYPES.OTHER;
         const speaker = isActorEntity ? ChatMessage.getSpeaker({actor: entity}) : ChatMessage.getSpeaker({token: entity});
+        const timestamp = Date.now();
 
         // iterate over the entries and mark any with references for use in the template
         entries.forEach((v, i, a) => {
@@ -493,6 +512,7 @@ export class EnhancedConditions {
         const templateData = {
             chatCardHeading,
             type,
+            timestamp,
             entityId: entity.id,
             alias: speaker.alias,
             conditions: entries,
@@ -513,7 +533,7 @@ export class EnhancedConditions {
         if (enhancedConditionsDiv && sameSpeaker && recentTimestamp) {
             let newContent = "";
             for (const condition of entries) {
-                const newRow = await renderTemplate(BUTLER.DEFAULT_CONFIG.enhancedConditions.templates.chatConditionsPartial, {condition, type});
+                const newRow = await renderTemplate(BUTLER.DEFAULT_CONFIG.enhancedConditions.templates.chatConditionsPartial, {condition, type, timestamp});
                 newContent += newRow;
             }
             const existingContent = lastMessage.data.content;
@@ -521,12 +541,12 @@ export class EnhancedConditions {
             if (!ulEnd) return;
             const content = existingContent.slice(0, ulEnd) + newContent + existingContent.slice(ulEnd);
             await lastMessage.update({content});
+            EnhancedConditions.updateConditionTimestamps();
             ui.chat.scrollBottom();
-            // return await ui.chat.updateMessage(lastMessage, true);
         } else {
             const content = await renderTemplate(BUTLER.DEFAULT_CONFIG.enhancedConditions.templates.chatOutput, templateData);
 
-            return await ChatMessage.create({
+            await ChatMessage.create({
                 speaker,
                 content,
                 type: chatType,
@@ -638,6 +658,22 @@ export class EnhancedConditions {
 
             const options = isToken ? {token: entity} : (isActor ? {actor: entity} : null);
             await macro.execute(macroId, options);
+        }
+    }
+
+    /**
+     * Update condition added/removed timestamps
+     */
+    static updateConditionTimestamps() {
+        const conditionRows = document.querySelectorAll("ol#chat-log ul.condition-list li");
+        for ( const li of conditionRows ) {
+            const timestamp = typeof li.dataset.timestamp === "string" ? parseInt(li.dataset.timestamp) : li.dataset.timestamp;
+            const iconSpanWrapper = li.querySelector("span.add-remove-icon");
+
+            if (!timestamp || !iconSpanWrapper) continue;
+
+            const type = li.dataset.changeType;
+            iconSpanWrapper.title = `${type} ${foundry.utils.timeSince(timestamp)}`;
         }
     }
 

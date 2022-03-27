@@ -1,6 +1,6 @@
-<li class="flexrow" id="condition-{{@index}}" data-condition-name="{{condition.name}}">
+<li class="flexrow" id="condition-{{@index}}" data-condition-name="{{condition.name}}" data-condition-id="{{condition.id}}" data-timestamp={{timestamp}} data-change-type="{{type.title}}">
     <div class="add-remove">
-        <span class="add-remove-icon" title="{{type.title}}">
+        <span class="add-remove-icon" title="{{type.title}} {{timeSince timestamp}}">
             {{#if type.removed}}<i class="fas fa-minus"></i>
             {{else}}{{#if type.added}}<span class="added"><i class="fas fa-plus"></i>{{/if}}
             {{/if}}
