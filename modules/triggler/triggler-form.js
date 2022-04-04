@@ -57,12 +57,13 @@ export class TrigglerForm extends FormApplication {
         const pcOnly = this.data.pcOnly || null;
         const npcOnly = this.data.npcOnly || null;
         const notZero = this.data.notZero || null;
-
-        const templates = game.system.template.Actor.templates;
-        const baseTemplate = templates ? Object.values(templates)[0] : null;
-        const categories = baseTemplate ? Object.keys(baseTemplate) : null;
-        const attributes = category ? Object.keys(baseTemplate[category]) : null;
-        const properties = category && attribute ? Object.keys(baseTemplate[category][attribute]) : null;
+        const actorModel = game.system.model?.Actor;
+        const mergedModel = actorModel ? Object.keys(actorModel).reduce((a, t, i) => {
+            return foundry.utils.mergeObject(a, actorModel[t]);
+        }, {}) : null;
+        const categories = mergedModel ? Object.keys(mergedModel) : null;
+        const attributes = category ? Object.keys(mergedModel[category]) : null;
+        const properties = category && attribute ? Object.keys(mergedModel[category][attribute]) : null;
         const operators = DEFAULT_CONFIG.triggler.operators;
 
         const triggerSelected = id && triggers ? true : false;
