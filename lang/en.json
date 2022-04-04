@@ -12,9 +12,9 @@
                 "NoReference": "--No Reference Entry-- (Drag a Journal, Item, Actor, etc. into this field to set)",
                 "FilterInputTitle": "Filter by Name",
                 "FilterButtonTitle": "Apply Filter",
-                "SortAnchorTitle": "Sorted by Name - unsorted - click to change",
-                "SortAnchorTitle_asc": "Sorted by Name - A to Z - Click to change",
-                "SortAnchorTitle_desc": "Sorted by Name - Z to A - click to change"
+                "SortAnchorTitle": "Sort by Name - unsorted (click to change)",
+                "SortAnchorTitle_asc": "Sort by Name - A to Z (click to change)",
+                "SortAnchorTitle_desc": "Sort by Name - Z to A (click to change)"
             },
             "ChatCard": {
                 "Heading": "Enhanced Conditions",
