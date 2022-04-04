@@ -5,6 +5,7 @@ import { TrigglerForm } from "../triggler/triggler-form.js";
 import { DraggableList } from "../utils/draggable-list.js";
 import EnhancedEffectConfig from "./enhanced-effect-config.js";
 import EnhancedConditionMacroConfig from "./enhanced-condition-macro.js";
+import EnhancedConditionTriggerConfig from "./enhanced-condition-trigger.js";
 
 /**
  * Form application for managing mapping of Conditions to Icons and JournalEntries
@@ -427,6 +428,7 @@ export class ConditionLab extends FormApplication {
         const filterInput = html.find("input[name='filter-list']");
         const sortButton = html.find("a.sort-list");
         const macroConfigButton = html.find("button.macro-config");
+        const triggerConfigButton = html.find("button.trigger-config");
 
         inputs.on("change", event => this._onChangeInputs(event));
         mapTypeSelector.on("change", event => this._onChangeMapType(event));
@@ -441,6 +443,7 @@ export class ConditionLab extends FormApplication {
         filterInput.on("input", (event) => this._onChangeFilter(event));
         sortButton.on("click", (event) => this._onClickSortButton(event));
         macroConfigButton.on("click", (event) => this._onClickMacroConfig(event));
+        triggerConfigButton.on("click", (event) => this._onClickTriggerConfig(event));
 
         super.activateListeners(html);     
     }
@@ -896,6 +899,22 @@ export class ConditionLab extends FormApplication {
         const condition = this.map.find(c => c.id === conditionId);
 
         new EnhancedConditionMacroConfig(condition).render(true);
+    }
+
+    /**
+     * Trigger Config button click handler
+     * @param {*} event 
+     * @returns 
+     */
+     _onClickTriggerConfig(event) {
+        const rowLi = event.target.closest("li");
+        const conditionId = rowLi ? rowLi.dataset.conditionId : null;
+
+        if (!conditionId) return;
+
+        const condition = this.map.find(c => c.id === conditionId);
+
+        new EnhancedConditionTriggerConfig(condition).render(true);
     }
 
     /**

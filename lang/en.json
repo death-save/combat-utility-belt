@@ -30,6 +30,13 @@
                 "RemoveHeading": "Remove Macro",
                 "Description": "Select a macro to execute when this condition is added to or removed from a token/actor",
                 "SelectNone": "--No Macro--"
+            },
+            "TriggerConfig": {
+                "Heading": "Triggers",
+                "ApplyHeading": "Apply Trigger",
+                "RemoveHeading": "Remove Trigger",
+                "Description": "Triggers that Apply or Remove this Condition",
+                "SelectNone": "--No Trigger--"
             }
         },
         "CONCENTRATOR": {

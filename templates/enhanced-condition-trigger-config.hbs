@@ -1,0 +1,30 @@
+<form data-condition-id="{{condition.id}}">
+    <h2>{{condition.name}} - {{localize "combat-utility-belt.ENHANCED_CONDITIONS.TriggerConfig.Heading"}}</h3>
+    <p class="notes">{{localize "combat-utility-belt.ENHANCED_CONDITIONS.TriggerConfig.Description"}}</p>
+    <div class="flexrow">
+        <div class="form-group">
+            <label for="trigger-select-apply">{{localize "combat-utility-belt.ENHANCED_CONDITIONS.TriggerConfig.ApplyHeading"}}</label>
+            <select name="trigger-select-apply" class="trigger-select">
+                <option value="">{{localize "combat-utility-belt.ENHANCED_CONDITIONS.TriggerConfig.SelectNone"}}</option>
+                {{selectOptions triggerChoices selected=applyTriggerId nameAttr="id" labelAttr="text" localize=true}}
+            </select>
+        </div>
+    </div>
+    <hr/>
+    <div class="flexrow">
+        <div class="form-group">
+            <label for="trigger-select-remove">{{localize "combat-utility-belt.ENHANCED_CONDITIONS.TriggerConfig.RemoveHeading"}}</label>
+            <select name="trigger-select-remove" class="trigger-select">
+                <option value="">{{localize "combat-utility-belt.ENHANCED_CONDITIONS.TriggerConfig.SelectNone"}}</option>
+                {{selectOptions triggerChoices selected=removeTriggerId nameAttr="id" labelAttr="text" localize=true}}
+            </select>
+        </div>
+    </div>
+    <br/>    
+    <div class="footer">
+        {{canSave}}
+        <button name="save" class="save" type="submit">
+            <i class="fas fa-save"></i>&nbsp;{{localize "combat-utility-belt.WORDS.Save"}}
+        </button>
+    </div>
+</form>

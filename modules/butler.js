@@ -186,6 +186,10 @@ export const DEFAULT_CONFIG = {
             id: "cub-enhanced-condition-macro-config",
             title: "CUB Enhanced Condition - Macro Config"
         },
+        triggerConfig: {
+            id: "cub-enhanced-condition-trigger-config",
+            title: "CUB Enhanced Condition - Trigger Config"
+        },
         title: "Enhanced Conditions",
         mapTypes: {
             default: "System - Default",
@@ -219,7 +223,8 @@ export const DEFAULT_CONFIG = {
             chatOutput: `${PATH}/templates/chat-conditions.hbs`,
             chatConditionsPartial: `${PATH}/templates/partials/chat-card-condition-list.hbs`,
             importDialog: `${PATH}/templates/import-conditions.html`,
-            macroConfig: `${PATH}/templates/enhanced-condition-macro-config.hbs`
+            macroConfig: `${PATH}/templates/enhanced-condition-macro-config.hbs`,
+            triggerConfig: `${PATH}/templates/enhanced-condition-trigger-config.hbs`
         },
         migrationVersion: null
     },
@@ -338,7 +343,8 @@ export const DEFAULT_CONFIG = {
             percent: "%"
         },
         templatePaths: {
-            macroTriggerSelect: `${PATH}/templates/trigger-select.html`
+            macroTriggerSelect: `${PATH}/templates/trigger-select.html`,
+            trigglerButton: `${PATH}/templates/triggler-button.hbs`
         }
         
     }
