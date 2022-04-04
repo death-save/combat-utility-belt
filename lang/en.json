@@ -85,6 +85,9 @@
                 "MigrationVersionH": "Version of CUB for which migration was last performed"
             }
         },
+        "TRIGGLER": {
+            "ButtonTitle": "Open Triggler"
+        },
         "WORDS": {
             "Icon": "Icon",
             "Macro": "Macro",
