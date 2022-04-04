@@ -67,20 +67,24 @@ a.add-temporary {
     margin: 10px;
 }
 
-/* CONDITION LAB */
+/* -------------------------------------------- */
+/*                 CONDITION LAB                */
+/* -------------------------------------------- */
 
 #cub-condition-lab .hidden {
   display: none;
 }
 
-ol.condition-lab {
+#cub-condition-lab ol.condition-lab {
     list-style: none;
     overflow-y: auto;
     overflow-x: hidden;
-    max-height: 490px;
+    max-height: 530px;
     margin: 10px 0px;
     padding: 0px;
     border: 2px inset;
+    /* background: url('/ui/denim025.png'); */
+    background: rgba(0,0,0,0.5);
 }
 
 #cub-condition-lab div.sort {
@@ -108,8 +112,6 @@ ol.condition-lab {
   padding-left: 20px;
 }
 
-
-
 #cub-condition-lab div.condition-list-controls .sort i {
     font-size: x-large;
 }
@@ -122,7 +124,10 @@ ol.condition-lab {
 }
 
 .condition-lab li.row {
-    border-bottom: 2px groove beige;
+    /* border-bottom: 2px groove beige; */
+    background: url('/ui/parchment.jpg');
+    border-radius: 5px;
+    margin: 5px;
 }
 
 .condition-lab .flexcol {
@@ -139,6 +144,7 @@ ol.condition-lab {
 
 .condition-lab .flexcol.content2 {
     flex: 3;
+    padding-left: 26px;
 }
 
 .condition-lab .flexcol.text-entry {
@@ -156,7 +162,7 @@ ol.condition-lab {
 .condition-lab .flexcol.text-entry .condition {
     display: flex;
     flex: 1;
-    margin: 0px 3px 3px 0px;
+    /* margin: 0px 3px 3px 0px; */
 }
 
 .condition-lab .flexcol.text-entry.journal {
@@ -211,8 +217,8 @@ ol.condition-lab {
 }
 
 .condition-lab img {
-    width: 50px;
-    height: 50px;
+    width: 60px;
+    height: 60px;
     background-color:rgba(0,0,0,0.5);
 }
 
@@ -242,16 +248,17 @@ ol.condition-lab {
 }
 
 .condition-lab .add-row {
+    color: white;
     border-style: dotted;
     line-height: 25px;
-    margin: 5px 2px;
+    margin: 5px;
     padding: 2px;
 }
 
 .condition-lab .icon {
-    flex: 0 0 50px;
-    width: 50px;
-    height: 50px;
+    flex: 0 0 60px;
+    width: 60px;
+    height: 60px;
 }
 
 .condition-lab .trash button {
@@ -298,7 +305,7 @@ ol.condition-lab {
 }
 
 .condition-lab .options {
-    padding: 0 0 0 26px;
+    /* padding: 0 0 0 26px; */
 }
 
 .condition-lab .tooltip {
@@ -317,7 +324,47 @@ ol.condition-lab {
     border-left: 2px solid rgb(0, 255, 0);
 }
 
-/* CUBPUTER */
+#cub-condition-lab .wrapper-rel {
+    position: relative;
+    flex: 1;
+    height: fit-content;
+}
+
+#cub-condition-lab .inset-label {
+    position: absolute;
+    /* background: rgba(0,0,0,0.5); */
+    /* color: white; */
+    background: rgba(0, 0, 0, 0.05);
+    height: 100%;
+    padding: 4px 2px;
+}
+
+#cub-condition-lab .condition-text-input {
+    padding-left: 45px;
+}
+
+#cub-condition-lab .reference input {
+    padding-left: 70px;
+}
+
+#cub-condition-lab .icon-path {
+    padding-left: 35px;
+}
+
+#cub-condition-lab .related-buttons {
+    justify-content: start;
+}
+
+#cub-condition-lab .related-buttons button {
+    /* flex: 0; */
+}
+
+.triggler-icon {
+    display: inline-flex;
+}
+/* -------------------------------------------- */
+/*                   CUBPUTER                   */
+/* -------------------------------------------- */
 
 .cub-puter ul.gadget-list {
     list-style: none;
