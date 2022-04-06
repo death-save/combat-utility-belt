@@ -161,8 +161,6 @@ export class ConditionLab extends FormApplication {
         let conditions = [];
         let icons = [];
         let references = [];
-        let applyTriggers = [];
-        let removeTriggers = [];
         let optionsOverlay = [];
         let optionsRemove = [];
         let optionsOutputChat = [];
@@ -177,8 +175,6 @@ export class ConditionLab extends FormApplication {
         const idRegex = new RegExp(/^id/, "i");
         const iconRegex = new RegExp("icon", "i");
         const referenceRegex = new RegExp("reference", "i");
-        const applyTriggerRegex = new RegExp("apply-trigger", "i");
-        const removeTriggerRegex = new RegExp("remove-trigger", "i");
         const optionsOverlayRegex = new RegExp("options-overlay", "i");
         const optionsRemoveRegex = new RegExp("options-remove-others", "i");
         const optionsOutputChatRegex = new RegExp("options-output-chat", "i");
@@ -205,10 +201,6 @@ export class ConditionLab extends FormApplication {
                 icons[row] = formData[e];
             } else if (e.match(referenceRegex)) {
                 references[row] = formData[e]; 
-            } else if (e.match(applyTriggerRegex)) {
-                applyTriggers[row] = formData[e];
-            } else if (e.match(removeTriggerRegex)) {
-                removeTriggers[row] = formData[e];
             } else if (e.match(optionsOverlayRegex)) {
                 optionsOverlay[row] = formData[e];
             } else if (e.match(optionsRemoveRegex)) {
@@ -227,15 +219,20 @@ export class ConditionLab extends FormApplication {
             const name = conditions[i];
             const existingCondition = (existingMap && id) ? existingMap.find(c => c.id === id) : null;
             const activeEffect = existingCondition ? existingCondition.activeEffect : null;
+            const applyTrigger = existingCondition ? existingCondition.applyTrigger : null;
+            const removeTrigger = existingCondition ? existingCondition.removeTrigger : null;
+            const macros = existingCondition ? existingCondition.macros : null;
+
 
             const condition = {
                 id,
                 name,
                 icon: icons[i],
                 referenceId: references[i],
-                applyTrigger: applyTriggers[i],
-                removeTrigger: removeTriggers[i],
+                applyTrigger,
+                removeTrigger,
                 activeEffect,
+                macros,
                 options: {
                     overlay: optionsOverlay[i],
                     removeOthers: optionsRemove[i],
