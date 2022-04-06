@@ -133,13 +133,22 @@
             <!--delete row-->
             <div class="flexcol row-controls">
                 <div class="move-up">
-                {{#unless (eq key 0)}}<a class="move-up"><i class="fas fa-chevron-up"></i></a>{{/unless}}</div>
-                <div class="remove-row">{{#unless isDefault}}
-                <a name="remove-row-{{@index}}" class="remove-row" title="Delete Row">
-                    <i class="fas fa-trash"></i>
-                </a>
-                {{/unless}}</div> 
-                <div class="move-down">{{#unless (eq key conditionMapLength)}}<a class="move-down"><i class="fas fa-chevron-down"></i></a>{{/unless}}</div>
+                    {{#unless sortDirection}}
+                    {{#unless (eq key 0)}}<a class="move-up"><i class="fas fa-chevron-up"></i></a>{{/unless}}
+                    {{/unless}}
+                </div>
+                <div class="remove-row">
+                    {{#unless isDefault}}
+                    <a name="remove-row-{{@index}}" class="remove-row" title="Delete Row">
+                        <i class="fas fa-trash"></i>
+                    </a>
+                    {{/unless}}
+                </div> 
+                <div class="move-down">
+                    {{#unless sortDirection}}
+                    {{#unless (eq key conditionMapLength)}}<a class="move-down"><i class="fas fa-chevron-down"></i></a>{{/unless}}
+                    {{/unless}}
+                </div>
             </div>
               
         </li>
