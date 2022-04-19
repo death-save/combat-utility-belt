@@ -20,7 +20,7 @@ export const GADGETS = {
     concentrator: {
         name: "Concentrator",
         info: "Manages Concentration in the dnd5e game system.",
-        wiki: `${WIKIPATH}/award-xp`
+        wiki: `${WIKIPATH}/concentrator`
     },
     enhancedConditions: {
         name: "Enhanced Conditions",
