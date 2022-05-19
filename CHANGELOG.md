@@ -1,11 +1,33 @@
 # Changelog
 
 ## [Known Issues]
-1. Enhanced Conditions chat output for linked Tokens and Actors is not aggregated, so you may see multiple messages when many conditions are added/removed from an Actor/Token.
+1. ~~Enhanced Conditions chat output for linked Tokens and Actors is not aggregated, so you may see multiple messages when many conditions are added/removed from an Actor/Token.~~
 2. Overlay Effects added to a token will trigger the matching non-Overlay Condition to output to chat. The reverse is also true.
 3. Chat log may not re-render when Hide Names settings are changed. This may cause the old name to still show in the log for players. Advise players to reload Foundry if you change these settings mid-session.
 4. The Default/Inferred Condition Lab Mappings for game systems may not correctly import all data. Importing the map from the CUB Condition Maps folder imports correctly.
 5. **PF2e users**: PF2e is not currently supported by Enhanced Conditions due to the customisation of the effects framework implemented by the system.
+
+## [1.9.0] - 2022-05-18
+> This update adds compatibility for Foundry VTT v9.269
+### ✨ Enhanced Conditions
+- Conditions can now execute a Macro when they are added or removed. The macros are selectable from the Macros button in the Condition Lab row for that condition.
+- Added rudimentary sorting and filtering to the Condition Lab. This only affects the display of the Conditions in the lab, not the saved mapping.
+- When multiple Enhanced Conditions messages are output to chat one after another, the output is now merged into the previous chat message. This should prevent a torrent of messages when multiple conditions are added or removed from an actor/token in quick succession. Note: this will only occur when the last Enhanced Conditions message was less than 30s ago.
+- Improved the overall look and feel of the Condition Lab Layout.
+- Condition Add/Remove icon in chat now includes a "time since" in the tooltip.
+- Triggler Triggers for a Condition are now selectable from the Triggler button in the Condition Lab row for that condition.
+- Fixed a bug with the D&D 3.5e system where Condition Active Effects were immediately removed upon adding.
+
+### 💭 Concentrator
+- Concentrator now has the following notification settings: Start, Check, Double Concentration, Death
+- Concentrator notification settings now have the following options: No one, Gm & Owner/s, Everyone.
+- Added a setting to determine if NPC Concentration notifications should be hidden from players.
+
+### 😷 Hide Names
+- Added a clickable icon to chat cards that allows the quick hiding/unhiding of an actor's name.
+
+### 🔫 Triggler
+- Improved the logic of Triggler's detection of actor properties in the selections for simple Triggers.
 
 ## [1.8.4] - 2022-03-06
 > This update adds compatibility for Foundry VTT v9.255
