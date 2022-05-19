@@ -14,7 +14,7 @@
     }
   ],
   "minimumCoreVersion": "9.235",
-  "compatibleCoreVersion": "9.255",
+  "compatibleCoreVersion": "9.269",
   "url": "https://github.com/death-save/combat-utility-belt",
   "bugs": "https://github.com/death-save/combat-utility-belt/issues",
   "readme": "https://github.com/death-save/combat-utility-belt/wiki",
