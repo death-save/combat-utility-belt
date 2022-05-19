@@ -85,7 +85,7 @@ export class Concentrator {
 
         // If the actor/token-actor is already Concentrating, and the notification setting is enabled, fire a notification
         if (isAlreadyConcentrating && !suppressNotifyDouble) {
-            await Concentrator._notifyDoubleConcentration(actor, spell);
+            await Concentrator._displayChat("double", actor, {newSpell: spell});
             sendMessage = DEFAULT_CONFIG.concentrator.notifyConcentration.none;
         }
 
@@ -280,7 +280,6 @@ export class Concentrator {
     static _processDamage(entity, options) {
         const isConcentrating = Concentrator._isConcentrating(entity);
         const displayPrompt = Sidekick.getSetting(SETTING_KEYS.concentrator.prompt);
-        const outputChat = Sidekick.getSetting(SETTING_KEYS.concentrator.outputChat);
 
         if (!entity || !isConcentrating || (!displayPrompt && !outputChat)) return;
 
@@ -288,11 +287,8 @@ export class Concentrator {
         const isDead = getProperty(options, `${NAME}.${FLAGS.concentrator.isDead}`);
         const dc = Concentrator._calculateDC(damageAmount);
 
-        if (outputChat) {
-            if (isDead) return Concentrator._processDeath(entity);
-
-            Concentrator._displayChat(entity, dc);
-        }
+        if (isDead) return Concentrator._processDeath(entity);
+        Concentrator._displayChat("check", entity, {dc});
 
         if (displayPrompt) {
             return Concentrator._determinePromptedUsers(entity.uuid, dc);
@@ -315,11 +311,11 @@ export class Concentrator {
 
         Concentrator._endConcentration(actor, {sendMessage:DEFAULT_CONFIG.concentrator.notifyEndConcentration.none});
 
-        return Concentrator._displayDeathChat(entity);
+        return Concentrator._displayChat("death", entity);
     }
 
     /**
-     * Distributes concentration prompts to affected users
+     * Determines which users should receive a prompt
      * @param {*} options 
      */
     static async _determinePromptedUsers(uuid, dc){
@@ -459,40 +455,58 @@ export class Concentrator {
      * @param {*} entity
      * @param {*} damage
      */
-    static _displayChat(entity, dc){
+    static _displayChat(type, entity, {dc=0, newSpell={name: game.i18n.localize(`${NAME}.CONCENTRATOR.UnknownSpell`), id: ""}}={}){
         if (!game.user.isGM) return;
 
         const isActor = entity instanceof Actor;
         const isToken = entity instanceof Token || entity instanceof TokenDocument;
         const user = game.userId;
         const speaker = isActor ? ChatMessage.getSpeaker({actor: entity}) : isToken ? ChatMessage.getSpeaker({token: entity.document}) : ChatMessage.getSpeaker();
-        const spell = Concentrator.getConcentrationSpell(entity);
+        const spell = type === "start" ? newSpell : Concentrator.getConcentrationSpell(entity);
         const spellName = spell?.name ?? game.i18n.localize(`${NAME}.CONCENTRATOR.UnknownSpell`);
-        const content = game.i18n.format(`${NAME}.CONCENTRATOR.Messages.ConcentrationTested`, {entityName: entity.name, dc, spellName});
-        const type = CONST.CHAT_MESSAGE_TYPES.OTHER;
 
-        return ChatMessage.create({user, speaker, content, type});
-    }
+        const messageType = CONST.CHAT_MESSAGE_TYPES.OTHER;
+        const hasPlayerOwner = isToken ? entity.actor?.hasPlayerOwner : entity.hasPlayerOwner;
+        const hideNpcConcentration = Sidekick.getSetting(SETTING_KEYS.concentrator.hideNpcConcentration);
 
-    /**
-     * Displays a message when a concentrating token dies
-     * @param {*} entity 
-     */
-    static _displayDeathChat(entity) {
-        const gmUser = Sidekick.getFirstGM();
+        let content = "";
+        let isWhisper = false;
 
-        if (game.userId !== gmUser?.id) return;
+        switch (type) {
+            case "start":
+                content =  game.i18n.format(`${NAME}.CONCENTRATOR.Messages.StartConcentration`, {entityName: entity.name, spellName})
+                isWhisper = Sidekick.getSetting(SETTING_KEYS.concentrator.notifyConcentration) === DEFAULT_CONFIG.concentrator.notifyConcentration.gm;
+                break;
 
-        const isActor = entity instanceof Actor;
-        const isToken = entity instanceof Token || entity instanceof TokenDocument;
-        const user =  game.userId;
-        const speaker = isActor ? ChatMessage.getSpeaker({actor: entity}) : isToken ? ChatMessage.getSpeaker({token: entity}) : ChatMessage.getSpeaker();
-        const spell = Concentrator.getConcentrationSpell(entity);
-        const spellName = spell?.name ?? game.i18n.localize(`${NAME}.CONCENTRATOR.UnknownSpell`);
-        const content = game.i18n.format(`${NAME}.CONCENTRATOR.Messages.Incapacitated`, {entityName: entity.name, spellName});
-        const type = CONST.CHAT_MESSAGE_TYPES.OTHER;
+            case "check":
+                content = game.i18n.format(`${NAME}.CONCENTRATOR.Messages.ConcentrationTested`, {entityName: entity.name, dc, spellName});
+                isWhisper = Sidekick.getSetting(SETTING_KEYS.concentrator.notifyConcentrationCheck) === DEFAULT_CONFIG.concentrator.notifyConcentrationCheck.gm;
+                break;
 
-        return ChatMessage.create({user, speaker, content, type});
+            case "dead":
+                content = game.i18n.format(`${NAME}.CONCENTRATOR.Messages.Incapacitated`, {entityName: entity.name, spellName});
+                isWhisper = Sidekick.getSetting(SETTING_KEYS.concentrator.notifyEndConcentration) === DEFAULT_CONFIG.concentrator.notifyConcentrationEnd.gm;
+                break;
+
+            case "double":
+                content =  game.i18n.format(`${NAME}.CONCENTRATOR.Messages.DoubleConcentration`, {entityName: entity.name, oldSpellName: spellName, newSpellName: newSpell.name})
+                isWhisper = Sidekick.getSetting(SETTING_KEYS.concentrator.notifyDouble) === DEFAULT_CONFIG.concentrator.notifyDouble.gm;
+                break;
+
+            case "end":
+                content = game.i18n.format(`${NAME}.CONCENTRATOR.Messages.EndConcentration`, {entityName: entity.name, spellName})
+                isWhisper = Sidekick.getSetting(SETTING_KEYS.concentrator.notifyEndConcentration) === DEFAULT_CONFIG.concentrator.notifyEndConcentration.gm;
+                break;
+            
+            default:
+                break;
+        }
+        
+        if (!content) return;
+
+        const whisperRecipients = isWhisper ? Concentrator._getWhisperRecipients(entity, Sidekick.getKeyByValue(DEFAULT_CONFIG.concentrator.messageVisibility, DEFAULT_CONFIG.concentrator.messageVisibility.gmOwner)) : [];
+
+        return ChatMessage.create({user, speaker, content, type: messageType, whisper: whisperRecipients});
     }
 
     /**
@@ -516,15 +530,7 @@ export class Concentrator {
         const suppressMessage = typeof sendMessage === "string" && (sendMessage.localeCompare(DEFAULT_CONFIG.concentrator.notifyConcentration.none, undefined, {sensitivity: "accent"}) === 0);
 
         if (!suppressMessage) {
-            const isWhisper = Sidekick.getSetting(SETTING_KEYS.concentrator.notifyConcentration) === "GM Only";
-        
-            const speaker = isActor ? ChatMessage.getSpeaker({actor: entity}) : isToken ? ChatMessage.getSpeaker({token: entity.document}) : ChatMessage.getSpeaker();
-            const whisper = isWhisper ? game.users.contents.filter(u => u.isGM) : [];
-
-            const content =  game.i18n.format(`${NAME}.CONCENTRATOR.Messages.StartConcentration`, {entityName: entity.name, spellName: spell.name})
-            const type = CONST.CHAT_MESSAGE_TYPES.OTHER;
-        
-            ChatMessage.create({speaker, whisper, content, type});
+            Concentrator._displayChat("start", actor, {newSpell: spell});
         }
         
         await EnhancedConditions.addCondition(conditionName, actor, {warn: false});
@@ -533,29 +539,6 @@ export class Concentrator {
             name: spell.name,
             status: DEFAULT_CONFIG.concentrator.concentrationStatuses.active
         });
-    }
-
-    /**
-     * Displays a chat message to GMs if a Concentration spell is cast while already concentrating
-     * @param {*} entity  the entity with double concentration
-     * @param {*} newSpell
-     */
-    static _notifyDoubleConcentration(entity, newSpell={name: game.i18n.localize(`${NAME}.CONCENTRATOR.UnknownSpell`), id: ""}) {
-        const isWhisper = Sidekick.getSetting(SETTING_KEYS.concentrator.notifyDouble) === "GM Only";
-        const isActor = entity instanceof Actor;
-        const isToken = entity instanceof Token || entity instanceof TokenDocument;
-
-        if (!isActor && !isToken) return;
-
-        const actor = isActor ? entity : (isToken ? entity.actor : null);
-
-        const speaker = isActor ? ChatMessage.getSpeaker({actor: entity}) : isToken ? ChatMessage.getSpeaker({token: entity.document}) : ChatMessage.getSpeaker();
-        const whisper = isWhisper ? game.users.contents.filter(u => u.isGM) : [];
-        const previousSpell = actor.getFlag(NAME, FLAGS.concentrator.concentrationSpell) ?? game.i18n.localize(`${NAME}.CONCENTRATOR.UnknownSpell`);
-        const content =  game.i18n.format(`${NAME}.CONCENTRATOR.Messages.DoubleConcentration`, {entityName: entity.name, oldSpellName: previousSpell.name, newSpellName: newSpell.name})
-        const type = CONST.CHAT_MESSAGE_TYPES.OTHER;
-        
-        return ChatMessage.create({speaker, whisper, content, type});
     }
 
     /**
@@ -587,16 +570,7 @@ export class Concentrator {
         const suppressMessage = typeof sendMessage === "string" && (sendMessage.localeCompare(DEFAULT_CONFIG.concentrator.notifyEndConcentration.none, undefined, {sensitivity: "accent"}) === 0);
 
         if (!suppressMessage && flag) {
-            const isWhisper = Sidekick.getSetting(SETTING_KEYS.concentrator.notifyEndConcentration) === "GM Only";
-        
-            const speaker = isActor ? ChatMessage.getSpeaker({actor: entity}) : isToken ? ChatMessage.getSpeaker({token: entity.document}) : ChatMessage.getSpeaker();
-            const whisper = isWhisper ? game.users.contents.filter(u => u.isGM) : [];
-
-            const spell = actor.getFlag(NAME, FLAGS.concentrator.concentrationSpell) ?? {name: game.i18n.localize(`${NAME}.CONCENTRATOR.UnknownSpell`)};
-            const content =  game.i18n.format(`${NAME}.CONCENTRATOR.Messages.EndConcentration`, {entityName: entity.name, spellName: spell.name})
-            const type = CONST.CHAT_MESSAGE_TYPES.OTHER;
-        
-            ChatMessage.create({speaker, whisper, content, type});
+            Concentrator._displayChat("end", entity);
         }
 
         return actor.unsetFlag(NAME, FLAGS.concentrator.concentrationSpell);
@@ -742,5 +716,31 @@ export class Concentrator {
         }
 
         return rollEntry.entries[0]?.total;
+    }
+
+    /**
+     * Finds whisper recipients for given entity and desired visibility
+     * @param {*} entity 
+     * @param {*} desiredVisibility 
+     * @returns 
+     */
+    static _getWhisperRecipients(entity, desiredVisibility) {
+        let whisperRecipients = [];
+        const ownerIds = Sidekick.getDocumentOwners(entity);
+
+        const visibilityGmOwner = Sidekick.getKeyByValue(DEFAULT_CONFIG.concentrator.messageVisibility, DEFAULT_CONFIG.concentrator.messageVisibility.gmOwner);
+        const visibilityAll = Sidekick.getKeyByValue(DEFAULT_CONFIG.concentrator.messageVisibility, DEFAULT_CONFIG.concentrator.messageVisibility.all);
+
+        switch (desiredVisibility) {
+            case visibilityGmOwner:
+                whisperRecipients = game.users.filter(u => u.isGM || ownerIds.includes(u.id)).map(u => u.id);
+                break;
+
+            case visibilityAll:        
+            default:
+                break;
+        }
+
+        return whisperRecipients;
     }
 }

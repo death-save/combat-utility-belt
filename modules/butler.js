@@ -137,18 +137,23 @@ export const DEFAULT_CONFIG = {
         autoConcentrate: false,
         autoEndConcentration: false,
         notifyConcentration: {
-            none: "None",
-            gm: "GM Only",
+            none: "No one",
+            gm: "GM & Owner/s",
+            all: "Everyone"
+        },
+        notifyConcentrationCheck: {
+            none: "No one",
+            gm: "GM & Owner/s",
             all: "Everyone"
         },
         notifyDouble: {
-            none: "None",
-            gm: "GM Only",
+            none: "No one",
+            gm: "GM & Owner/s",
             all: "Everyone"
         },
         notifyEndConcentration: {
-            none: "None",
-            gm: "GM Only",
+            none: "No one",
+            gm: "GM & Owner/s",
             all: "Everyone"
         },
         icon: "modules/combat-utility-belt/icons/concentrating.svg",
@@ -157,6 +162,10 @@ export const DEFAULT_CONFIG = {
             breaking: "breaking",
             active: "active",
             broken: "broken"
+        },
+        messageVisibility: {
+            gmOwner: "GM And Owner",
+            all: "All"
         }
     },
     cubPuter: {
@@ -395,10 +404,12 @@ export const SETTING_KEYS = {
         autoEndConcentration: "autoEndConcentration",
         concentrationAttribute: "concentrationAttribute",
         notifyConcentration: "notifyConcentration",
+        notifyConcentrationCheck: "notifyConcentrationCheck",
         notifyDouble: "notifyDoubleConcentration",
         notifyEndConcentration: "notifyEndConcentration",
         healthAttribute: "concentratorHealthAttribute", //validate necessity
-        prompt: "concentratorPromptPlayer"
+        prompt: "concentratorPromptPlayer",
+        hideNpcConcentration: "hideNPCConcentration"
     },
     cubPuter: {
         menu: "cubPuter",

@@ -394,4 +394,19 @@ export class Sidekick {
         ];
         await loadTemplates(templates)
     }
+
+    /**
+     * Retrieves all the owners of a given document
+     * @param {*} document 
+     * @returns 
+     */
+    static getDocumentOwners(document) {
+        const permissions = document.permission ?? document.data?.permission;
+        if (!permissions) return null;
+        const owners = [];
+        for (const userId in permissions) {
+            if (permissions[userId] === 3) owners.push(userId);
+        }
+        return owners;
+    }
 }

@@ -77,8 +77,12 @@
                 "AutoEndConcentrationH": "Determines whether or not Concentration is automatically ended on a failed Concentration check.",
                 "NotifyConcentrationN": "Notify on Concentration Start",
                 "NotifyConcentrationH": "Send a message when a Concentration spell is cast.",
+                "NotifyConcentrationCheckN": "Notify on Concentration Check",
+                "NotifyConcentrationCheckH": "Send a message when a Concentrating actor is forced to make a check.",
                 "NotifyEndN": "Notify on Concentration End",
-                "NotifyEndH": "Send a message when Concentration on a spell ends."
+                "NotifyEndH": "Send a message when Concentration on a spell ends. (Including when the caster is incapacitated/dies)",
+                "HideNPCConcentrationN": "Hide NPC Concentration",
+                "HideNPCConcentrationH": "Hide non-player-owned actor Concentration messages from players. This applies even if Concentration notifications are set to 'Everyone'"
             },
             "ENHANCED_CONDITIONS": {
                 "MigrationVersionN": "Migration Version",
