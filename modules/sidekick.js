@@ -3,6 +3,10 @@ import * as BUTLER from "./butler.js";
  * Provides helper methods for use elsewhere in the module (and has your back in a melee)
  */
 export class Sidekick {
+    /**
+     * Creates the CUB div in the Sidebar
+     * @param {*} html 
+     */
     static createCUBDiv(html) {
         if (!game.user.isGM) return;
         
@@ -14,26 +18,33 @@ export class Sidekick {
 
         const setupButton = html.find("div#settings-game");
         setupButton.append(cubDiv);
-
     }
 
+    /**
+     * Get a single setting using the provided key
+     * @param {*} key 
+     * @returns {Object} setting
+     */
     static getSetting(key) {
         return game.settings.get(BUTLER.NAME, key);
     }
 
+    /**
+     * Get all CUB settings
+     * @returns {Array} settings
+     */
     static getAllSettings() {
         const settings = [...game.settings.settings].filter((k,v) => String(k).startsWith(BUTLER.NAME));
         return settings;
     }
 
-    /*
-    static async setSetting(key, value, awaitResult=false) {
-        return awaitResult ? 
-            await game.settings.set(BUTLER.NAME, key, value) : 
-            game.settings.set(BUTLER.NAME, key, value);
-    }
-    */
-
+    /**
+     * Sets a single game setting
+     * @param {*} key 
+     * @param {*} value 
+     * @param {*} awaitResult 
+     * @returns 
+     */
     static setSetting(key, value, awaitResult=false) {
         if (!awaitResult) {
             return game.settings.set(BUTLER.NAME, key, value);
@@ -46,14 +57,31 @@ export class Sidekick {
         });
     }
 
+    /**
+     * Register a single setting using the provided key and setting data
+     * @param {*} key 
+     * @param {*} metadata 
+     * @returns 
+     */
     static registerSetting(key, metadata) {
         return game.settings.register(BUTLER.NAME, key, metadata);
     }
 
+    /**
+     * Register a menu setting using the provided key and setting data
+     * @param {*} key 
+     * @param {*} metadata 
+     * @returns 
+     */
     static registerMenu(key, metadata) {
         return game.settings.registerMenu(BUTLER.NAME, key, metadata);
     }
 
+    /**
+     * Register all provided setting data
+     * @param {*} settingsData 
+     * @returns 
+     */
     static registerAllSettings(settingsData) {
         return Object.keys(settingsData).forEach((key) => Sidekick.registerSetting(key, settingsData[key]));
     }
@@ -277,6 +305,11 @@ export class Sidekick {
         .forEach((textNode) => textNode.textContent = textNode.textContent.replace(pattern, string)));
     };
 
+    /**
+     * Get text nodes in a given element
+     * @param {*} el 
+     * @returns 
+     */
     static getTextNodesIn(el) {
         return $(el).find(":not(iframe)").addBack().contents().filter((i, e) => e.nodeType == 3 && /\S/.test(e.nodeValue));
     };
@@ -386,6 +419,9 @@ export class Sidekick {
         });
     }
 
+    /**
+     * Loads templates for partials
+     */
     static async loadTemplates() {
         const templates = [
             `${BUTLER.PATH}/templates/partials/chat-card-condition-list.hbs`,
