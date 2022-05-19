@@ -1224,9 +1224,11 @@ export class EnhancedConditions {
 
             const createData = hasDuplicates ? newEffects : effects;
             const updateData = updateEffects;
+            // If system is dnd3.5e, then prevent upstream updates to avoid condition being immediately removed
+            const stopUpdates = game.system.id === "D35E";
 
-            if (createData.length) await actor.createEmbeddedDocuments("ActiveEffect", createData);
-            if (updateData.length) await actor.updateEmbeddedDocuments("ActiveEffect", updateData);
+            if (createData.length) await actor.createEmbeddedDocuments("ActiveEffect", createData, {stopUpdates});
+            if (updateData.length) await actor.updateEmbeddedDocuments("ActiveEffect", updateData, {stopUpdates});
         }
         
     }
