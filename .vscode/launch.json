@@ -5,12 +5,13 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "type": "chrome",
+            "type": "pwa-chrome",
             "request": "launch",
             "name": "Launch Chrome",
             "url": "http://localhost:59999",
+            "webRoot": "http://localhost:59999",
             "pathMapping": {
-                "/modules/combat-utility-belt": "${workspaceFolder}"
+                "/modules/combat-utility-belt/": "${workspaceFolder}"
             }
         }
     ]

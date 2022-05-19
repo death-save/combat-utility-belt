@@ -1,0 +1,30 @@
+<form data-condition-id="{{condition.id}}">
+    <h2>{{condition.name}} - {{localize "combat-utility-belt.ENHANCED_CONDITIONS.MacroConfig.Heading"}}</h3>
+    <p class="notes">{{localize "combat-utility-belt.ENHANCED_CONDITIONS.MacroConfig.Description"}}</p>
+    <div class="flexrow">
+        <div class="form-group">
+            <label for="macro-select-apply">{{localize "combat-utility-belt.ENHANCED_CONDITIONS.MacroConfig.ApplyHeading"}}</label>
+            <select name="macro-select-apply" class="macro-select">
+                <option value="">{{localize "combat-utility-belt.ENHANCED_CONDITIONS.MacroConfig.SelectNone"}}</option>
+                {{selectOptions macroChoices selected=applyMacroId nameAttr="id" labelAttr="name" localize=true}}
+            </select>
+        </div>
+    </div>
+    <hr/>
+    <div class="flexrow">
+        <div class="form-group">
+            <label for="macro-select-remove">{{localize "combat-utility-belt.ENHANCED_CONDITIONS.MacroConfig.RemoveHeading"}}</label>
+            <select name="macro-select-remove" class="macro-select">
+                <option value="">{{localize "combat-utility-belt.ENHANCED_CONDITIONS.MacroConfig.SelectNone"}}</option>
+                {{selectOptions macroChoices selected=removeMacroId nameAttr="id" labelAttr="name" localize=true}}
+            </select>
+        </div>
+    </div>
+    <br/>    
+    <div class="footer">
+        {{canSave}}
+        <button name="save" class="save" type="submit">
+            <i class="fas fa-save"></i>&nbsp;{{localize "combat-utility-belt.WORDS.Save"}}
+        </button>
+    </div>
+</form>

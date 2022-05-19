@@ -35,6 +35,11 @@ img.condition-icon {
     margin: 0px 6px 0px 0px;
 }
 
+.enhanced-conditions div.add-remove {
+    display: flex;
+    flex: 0 0 15px;
+}
+
 .enhanced-conditions div.condition-name,
 .enhanced-conditions div.condition-reference {
     flex: 2;
@@ -62,19 +67,67 @@ a.add-temporary {
     margin: 10px;
 }
 
-/* CONDITION LAB */
+/* -------------------------------------------- */
+/*                 CONDITION LAB                */
+/* -------------------------------------------- */
 
-ol.condition-lab {
-    list-style:none;
+#cub-condition-lab .hidden {
+  display: none;
+}
+
+#cub-condition-lab ol.condition-lab {
+    list-style: none;
     overflow-y: auto;
     overflow-x: hidden;
-    max-height: 550px;
-    margin: 0px;
+    max-height: 530px;
+    margin: 10px 0px;
+    padding: 0px;
+    border: 2px inset;
+    /* background: url('/ui/denim025.png'); */
+    background: rgba(0,0,0,0.5);
+}
+
+#cub-condition-lab div.sort {
+    flex: 0 1 20px;
+    margin-right: 3px;
+}
+
+#cub-condition-lab div.filter {
+    margin-left: 25px;
+    max-width: 50%;
+    display: flex;
+}
+
+#cub-condition-lab div.filter div.input-wrapper {
+  position: relative;
+}
+
+#cub-condition-lab div.filter div.input-wrapper i {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+}
+
+#cub-condition-lab div.filter div.input-wrapper input {
+  padding-left: 20px;
+}
+
+#cub-condition-lab div.condition-list-controls .sort i {
+    font-size: x-large;
+}
+
+#cub-condition-lab .condition-list-controls button {
+    flex: 0 1 28px;
+    height: 28px;
+    width: 28px;
     padding: 0px;
 }
 
 .condition-lab li.row {
-    border-bottom: 2px groove beige;
+    /* border-bottom: 2px groove beige; */
+    background: url('/ui/parchment.jpg');
+    border-radius: 5px;
+    margin: 5px;
 }
 
 .condition-lab .flexcol {
@@ -91,6 +144,7 @@ ol.condition-lab {
 
 .condition-lab .flexcol.content2 {
     flex: 3;
+    padding-left: 26px;
 }
 
 .condition-lab .flexcol.text-entry {
@@ -108,7 +162,7 @@ ol.condition-lab {
 .condition-lab .flexcol.text-entry .condition {
     display: flex;
     flex: 1;
-    margin: 0px 3px 3px 0px;
+    /* margin: 0px 3px 3px 0px; */
 }
 
 .condition-lab .flexcol.text-entry.journal {
@@ -163,14 +217,14 @@ ol.condition-lab {
 }
 
 .condition-lab img {
-    width: 50px;
-    height: 50px;
+    width: 60px;
+    height: 60px;
     background-color:rgba(0,0,0,0.5);
 }
 
 .condition-lab a.trash {
-    flex: none;
-    margin: 6px 3px 3px 3px;
+    /* flex: none;
+    margin: 6px 3px 3px 3px; */
 }
 
 .condition-lab div.journal-icon {
@@ -188,28 +242,29 @@ ol.condition-lab {
 }
 
 .condition-lab .trash {
-    flex: 0 0 20px;
+    /* flex: 0 0 20px;
     line-height: 60px;
-    text-align: center;
+    text-align: center; */
 }
 
 .condition-lab .add-row {
+    color: white;
     border-style: dotted;
     line-height: 25px;
-    margin: 5px 2px;
+    margin: 5px;
     padding: 2px;
 }
 
 .condition-lab .icon {
-    flex: 0 0 50px;
-    width: 50px;
-    height: 50px;
+    flex: 0 0 60px;
+    width: 60px;
+    height: 60px;
 }
 
 .condition-lab .trash button {
-    flex: 0 0 30px;
+    /* flex: 0 0 30px;
     width: 30px;
-    line-height: 60px;
+    line-height: 60px; */
 }
 
 .condition-lab .grabber {
@@ -219,25 +274,43 @@ ol.condition-lab {
     opacity: 0.5;
 }
 
-.condition-lab div.change-order {
+.condition-lab div.row-controls {
     position: relative;
     max-width: 25px;
 }
 
-.condition-lab .change-order a {
-    position: absolute;
+.condition-lab .row-controls div {
+  display: flex;
 }
 
-.condition-lab .change-order a.move-up {
-    top: 20%;
+.condition-lab .row-controls div.remove-row {
+  flex: 4;
+  align-items: center;
 }
 
-.condition-lab .change-order a.move-down {
-    bottom: 20%;
+.condition-lab .row-controls div.move-down {
+  align-items: flex-end;
+}
+
+.condition-lab .row-controls a {
+    /* position: absolute; */
+}
+
+.condition-lab .row-controls a.move-up {
+    /* top: 20%; */
+}
+
+.condition-lab .row-controls a.move-down {
+    /* bottom: 20%; */
 }
 
 .condition-lab .options {
-    padding: 0 0 0 26px;
+    /* padding: 0 0 0 26px; */
+}
+
+.condition-lab .tooltip {
+    font-size: x-small;
+    vertical-align: text-top;
 }
 
 #cub-condition-lab button.highlight {
@@ -251,7 +324,47 @@ ol.condition-lab {
     border-left: 2px solid rgb(0, 255, 0);
 }
 
-/* CUBPUTER */
+#cub-condition-lab .wrapper-rel {
+    position: relative;
+    flex: 1;
+    height: fit-content;
+}
+
+#cub-condition-lab .inset-label {
+    position: absolute;
+    /* background: rgba(0,0,0,0.5); */
+    /* color: white; */
+    background: rgba(0, 0, 0, 0.05);
+    height: 100%;
+    padding: 4px 2px;
+}
+
+#cub-condition-lab .condition-text-input {
+    padding-left: 45px;
+}
+
+#cub-condition-lab .reference input {
+    padding-left: 70px;
+}
+
+#cub-condition-lab .icon-path {
+    padding-left: 35px;
+}
+
+#cub-condition-lab .related-buttons {
+    justify-content: start;
+}
+
+#cub-condition-lab .related-buttons button {
+    /* flex: 0; */
+}
+
+.triggler-icon {
+    display: inline-flex;
+}
+/* -------------------------------------------- */
+/*                   CUBPUTER                   */
+/* -------------------------------------------- */
 
 .cub-puter ul.gadget-list {
     list-style: none;

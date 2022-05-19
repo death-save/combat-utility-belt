@@ -85,6 +85,7 @@ export class EnhancedConditions {
             }
 
             if (conditionMap.length) EnhancedConditions._updateStatusEffects(conditionMap);
+            setInterval(EnhancedConditions.updateConditionTimestamps, 15000);
         }
 
         // Save the active condition map to a convenience property
@@ -196,6 +197,12 @@ export class EnhancedConditions {
         // If there's any conditions to output to chat, do so
         if (chatAddConditions.length) EnhancedConditions.outputChatMessage(token, chatAddConditions, {type: "added"});
         if (chatRemoveConditions.length) EnhancedConditions.outputChatMessage(token, chatRemoveConditions, {type: "removed"});
+
+        // process macros
+        const addMacroIds = addConditions.flatMap(c => c.macros?.filter(m => m.id && m.type === "apply").map(m => m.id));
+        const removeMacroIds = removeConditions.flatMap(c => c.macros?.filter(m => m.id && m.type === "remove").map(m => m.id));
+        const macroIds = [...addMacroIds, ...removeMacroIds];
+        if (macroIds.length) EnhancedConditions._processMacros(macroIds, token);
     }
 
     /**
@@ -343,6 +350,23 @@ export class EnhancedConditions {
         });
     }
 
+    /**
+     * ChatLog render hook
+     * @param {*} app 
+     * @param {*} html 
+     * @param {*} data 
+     */
+    static async _onRenderChatLog(app, html, data) {
+        EnhancedConditions.updateConditionTimestamps();
+    }
+
+    /**
+     * 
+     * @param {*} app 
+     * @param {*} html 
+     * @param {*} data 
+     * @returns 
+     */
     static async _onRenderCombatTracker(app, html, data) {
         const enabled = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.enable);
 
@@ -388,20 +412,28 @@ export class EnhancedConditions {
         const actor = effect.parent;
         
         if (shouldOutput) EnhancedConditions.outputChatMessage(actor, condition, {type: outputType});
-        
+        let macros = [];
+
         switch (type) {
             case "create":
+                macros = condition.macros?.filter(m => m.type === "apply");
                 if (condition.options?.removeOthers) EnhancedConditions._removeOtherConditions(actor, condition.id);
                 if (condition.options?.markDefeated) EnhancedConditions._toggleDefeated(actor, {markDefeated: true});
+                
                 break;
 
             case "delete":
+                macros = condition.macros?.filter(m => m.type === "remove");
                 if (condition.options?.markDefeated) EnhancedConditions._toggleDefeated(actor, {markDefeated: false});
                 break;
 
             default:
                 break;
         }
+
+        const macroIds = macros.length ? macros.filter(m => m.id).map(m => m.id) : null;
+
+        if (macroIds.length) EnhancedConditions._processMacros(macroIds, actor);
     }
 
     /**
@@ -443,15 +475,18 @@ export class EnhancedConditions {
         switch (options.type) {
             case "added":
                 type.added = true;
+                type.title = game.i18n.localize(`${BUTLER.NAME}.ENHANCED_CONDITIONS.ChatCard.Title.Added`);
                 break;
 
             case "removed":
                 type.removed = true;
+                type.title = game.i18n.localize(`${BUTLER.NAME}.ENHANCED_CONDITIONS.ChatCard.Title.Removed`);
                 break;
 
             case "active":
             default:
                 type.active = true;
+                type.title = game.i18n.localize(`${BUTLER.NAME}.ENHANCED_CONDITIONS.ChatCard.Title.Active`);
                 break;
         }
 
@@ -459,6 +494,7 @@ export class EnhancedConditions {
         //const token = token || this.currentToken;
         const chatType = CONST.CHAT_MESSAGE_TYPES.OTHER;
         const speaker = isActorEntity ? ChatMessage.getSpeaker({actor: entity}) : ChatMessage.getSpeaker({token: entity});
+        const timestamp = Date.now();
 
         // iterate over the entries and mark any with references for use in the template
         entries.forEach((v, i, a) => {
@@ -471,22 +507,52 @@ export class EnhancedConditions {
             }
         });
 
+        const chatCardHeading = game.i18n.localize(`${BUTLER.NAME}.ENHANCED_CONDITIONS.ChatCard.Heading`);
+
         const templateData = {
+            chatCardHeading,
             type,
+            timestamp,
             entityId: entity.id,
             alias: speaker.alias,
             conditions: entries,
             isOwner: entity.isOwner || game.user.isGM
         };
 
-        const content = await renderTemplate(BUTLER.DEFAULT_CONFIG.enhancedConditions.templates.chatOutput, templateData);
 
-        return await ChatMessage.create({
-            speaker,
-            content,
-            type: chatType,
-            user: chatUser
-        });
+
+        // if the last message Enhanced conditions, append instead of making a new one
+        const lastMessage = game.messages.contents[game.messages.contents.length - 1];
+        const lastMessageSpeaker = lastMessage?.data.speaker;
+        const sameSpeaker = isActorEntity ? lastMessageSpeaker?.actor === speaker.actor : lastMessageSpeaker?.token === speaker.token;
+        
+        // hard code the recent timestamp to 30s for now
+        const recentTimestamp = Date.now() <= lastMessage?.data.timestamp + 30000;
+        const enhancedConditionsDiv = lastMessage?.data.content.match("enhanced-conditions");
+
+        if (enhancedConditionsDiv && sameSpeaker && recentTimestamp) {
+            let newContent = "";
+            for (const condition of entries) {
+                const newRow = await renderTemplate(BUTLER.DEFAULT_CONFIG.enhancedConditions.templates.chatConditionsPartial, {condition, type, timestamp});
+                newContent += newRow;
+            }
+            const existingContent = lastMessage.data.content;
+            const ulEnd = existingContent?.indexOf(`</ul>`);
+            if (!ulEnd) return;
+            const content = existingContent.slice(0, ulEnd) + newContent + existingContent.slice(ulEnd);
+            await lastMessage.update({content});
+            EnhancedConditions.updateConditionTimestamps();
+            ui.chat.scrollBottom();
+        } else {
+            const content = await renderTemplate(BUTLER.DEFAULT_CONFIG.enhancedConditions.templates.chatOutput, templateData);
+
+            await ChatMessage.create({
+                speaker,
+                content,
+                type: chatType,
+                user: chatUser
+            });
+        }
     }
 
     /**
@@ -575,6 +641,40 @@ export class EnhancedConditions {
             processedIds.push(c.id);
         });
         await Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.map, newMap);
+    }
+
+    /**
+     * Process macros based on given Ids
+     * @param {*} macroIds 
+     * @param {*} entity 
+     */
+    static async _processMacros(macroIds, entity=null) {
+        const isToken = entity instanceof Token || entity instanceof TokenDocument;
+        const isActor = entity instanceof Actor;
+
+        for (const macroId of macroIds) {
+            const macro = game.macros.get(macroId);
+            if (!macro) continue;
+
+            const options = isToken ? {token: entity} : (isActor ? {actor: entity} : null);
+            await macro.execute(macroId, options);
+        }
+    }
+
+    /**
+     * Update condition added/removed timestamps
+     */
+    static updateConditionTimestamps() {
+        const conditionRows = document.querySelectorAll("ol#chat-log ul.condition-list li");
+        for ( const li of conditionRows ) {
+            const timestamp = typeof li.dataset.timestamp === "string" ? parseInt(li.dataset.timestamp) : li.dataset.timestamp;
+            const iconSpanWrapper = li.querySelector("span.add-remove-icon");
+
+            if (!timestamp || !iconSpanWrapper) continue;
+
+            const type = li.dataset.changeType;
+            iconSpanWrapper.title = `${type} ${foundry.utils.timeSince(timestamp)}`;
+        }
     }
 
     // !! TODO: reassess this -- will it replace valid status effects because the duplicate id matches the remaining unique id???
@@ -1124,9 +1224,11 @@ export class EnhancedConditions {
 
             const createData = hasDuplicates ? newEffects : effects;
             const updateData = updateEffects;
+            // If system is dnd3.5e, then prevent upstream updates to avoid condition being immediately removed
+            const stopUpdates = game.system.id === "D35E";
 
-            if (createData.length) await actor.createEmbeddedDocuments("ActiveEffect", createData);
-            if (updateData.length) await actor.updateEmbeddedDocuments("ActiveEffect", updateData);
+            if (createData.length) await actor.createEmbeddedDocuments("ActiveEffect", createData, {stopUpdates});
+            if (updateData.length) await actor.updateEmbeddedDocuments("ActiveEffect", updateData, {stopUpdates});
         }
         
     }

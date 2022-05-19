@@ -9,7 +9,34 @@
                 "Content": "Click 'Yes' to enable 'Output to Chat' on all Conditions"
             },
             "ConditionLab": {
-                "NoReference": "--No Reference Entry-- (Drag a Journal, Item, Actor, etc. into this field to set)"
+                "NoReference": "--No Reference Entry-- (Drag a Journal, Item, Actor, etc. into this field to set)",
+                "FilterInputTitle": "Filter by Name",
+                "FilterButtonTitle": "Apply Filter",
+                "SortAnchorTitle": "Sort by Name - unsorted (click to change)",
+                "SortAnchorTitle_asc": "Sort by Name - A to Z (click to change)",
+                "SortAnchorTitle_desc": "Sort by Name - Z to A (click to change)"
+            },
+            "ChatCard": {
+                "Heading": "Enhanced Conditions",
+                "Title": {
+                    "Added": "Added",
+                    "Removed": "Removed",
+                    "Active": "Active"
+                }
+            },
+            "MacroConfig": {
+                "Heading": "Macros to Execute",
+                "ApplyHeading": "Apply Macro",
+                "RemoveHeading": "Remove Macro",
+                "Description": "Select a macro to execute when this condition is added to or removed from a token/actor",
+                "SelectNone": "--No Macro--"
+            },
+            "TriggerConfig": {
+                "Heading": "Triggers",
+                "ApplyHeading": "Apply Trigger",
+                "RemoveHeading": "Remove Trigger",
+                "Description": "Triggers that Apply or Remove this Condition",
+                "SelectNone": "--No Trigger--"
             }
         },
         "CONCENTRATOR": {
@@ -35,19 +62,42 @@
             },
             "UnknownSpell": "Unknown Spell"
         },
+        "HIDE_NAMES": {
+            "MessageIcon": {
+                "Title": {
+                    "NameNotHidden": "Name not hidden (click to hide)",
+                    "NameHiddenPrefix": "Replacement Name:",
+                    "NameHiddenSuffix": "(click to reveal)"
+                }
+            }
+        },
         "SETTINGS": {
             "CONCENTRATOR": {
                 "AutoEndConcentrationN": "Automatically End Concentration",
                 "AutoEndConcentrationH": "Determines whether or not Concentration is automatically ended on a failed Concentration check.",
                 "NotifyConcentrationN": "Notify on Concentration Start",
                 "NotifyConcentrationH": "Send a message when a Concentration spell is cast.",
+                "NotifyConcentrationCheckN": "Notify on Concentration Check",
+                "NotifyConcentrationCheckH": "Send a message when a Concentrating actor is forced to make a check.",
                 "NotifyEndN": "Notify on Concentration End",
-                "NotifyEndH": "Send a message when Concentration on a spell ends."
+                "NotifyEndH": "Send a message when Concentration on a spell ends. (Including when the caster is incapacitated/dies)",
+                "HideNPCConcentrationN": "Hide NPC Concentration",
+                "HideNPCConcentrationH": "Hide non-player-owned actor Concentration messages from players. This applies even if Concentration notifications are set to 'Everyone'"
             },
             "ENHANCED_CONDITIONS": {
                 "MigrationVersionN": "Migration Version",
                 "MigrationVersionH": "Version of CUB for which migration was last performed"
             }
+        },
+        "TRIGGLER": {
+            "ButtonTitle": "Open Triggler"
+        },
+        "WORDS": {
+            "Icon": "Icon",
+            "Macro": "Macro",
+            "Name": "Name",
+            "Reference": "Reference",
+            "Save": "Save"
         }
     },
     "GADGET_DESCRIPTIONS.AwardXP": "Provides an end of combat prompt to distribute XP from defeated hostile combatants.",

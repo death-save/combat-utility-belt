@@ -20,7 +20,7 @@ export const GADGETS = {
     concentrator: {
         name: "Concentrator",
         info: "Manages Concentration in the dnd5e game system.",
-        wiki: `${WIKIPATH}/award-xp`
+        wiki: `${WIKIPATH}/concentrator`
     },
     enhancedConditions: {
         name: "Enhanced Conditions",
@@ -137,18 +137,23 @@ export const DEFAULT_CONFIG = {
         autoConcentrate: false,
         autoEndConcentration: false,
         notifyConcentration: {
-            none: "None",
-            gm: "GM Only",
+            none: "No one",
+            gm: "GM & Owner/s",
+            all: "Everyone"
+        },
+        notifyConcentrationCheck: {
+            none: "No one",
+            gm: "GM & Owner/s",
             all: "Everyone"
         },
         notifyDouble: {
-            none: "None",
-            gm: "GM Only",
+            none: "No one",
+            gm: "GM & Owner/s",
             all: "Everyone"
         },
         notifyEndConcentration: {
-            none: "None",
-            gm: "GM Only",
+            none: "No one",
+            gm: "GM & Owner/s",
             all: "Everyone"
         },
         icon: "modules/combat-utility-belt/icons/concentrating.svg",
@@ -157,6 +162,10 @@ export const DEFAULT_CONFIG = {
             breaking: "breaking",
             active: "active",
             broken: "broken"
+        },
+        messageVisibility: {
+            gmOwner: "GM And Owner",
+            all: "All"
         }
     },
     cubPuter: {
@@ -181,6 +190,14 @@ export const DEFAULT_CONFIG = {
         conditionLab: {
             id: "cub-condition-lab",
             title: "Condition Lab",
+        },
+        macroConfig: {
+            id: "cub-enhanced-condition-macro-config",
+            title: "CUB Enhanced Condition - Macro Config"
+        },
+        triggerConfig: {
+            id: "cub-enhanced-condition-trigger-config",
+            title: "CUB Enhanced Condition - Trigger Config"
         },
         title: "Enhanced Conditions",
         mapTypes: {
@@ -213,7 +230,10 @@ export const DEFAULT_CONFIG = {
         templates: {
             conditionLab: `${PATH}/templates/condition-lab.hbs`,
             chatOutput: `${PATH}/templates/chat-conditions.hbs`,
-            importDialog: `${PATH}/templates/import-conditions.html`
+            chatConditionsPartial: `${PATH}/templates/partials/chat-card-condition-list.hbs`,
+            importDialog: `${PATH}/templates/import-conditions.html`,
+            macroConfig: `${PATH}/templates/enhanced-condition-macro-config.hbs`,
+            triggerConfig: `${PATH}/templates/enhanced-condition-trigger-config.hbs`
         },
         migrationVersion: null
     },
@@ -332,7 +352,8 @@ export const DEFAULT_CONFIG = {
             percent: "%"
         },
         templatePaths: {
-            macroTriggerSelect: `${PATH}/templates/trigger-select.html`
+            macroTriggerSelect: `${PATH}/templates/trigger-select.html`,
+            trigglerButton: `${PATH}/templates/triggler-button.hbs`
         }
         
     }
@@ -383,10 +404,12 @@ export const SETTING_KEYS = {
         autoEndConcentration: "autoEndConcentration",
         concentrationAttribute: "concentrationAttribute",
         notifyConcentration: "notifyConcentration",
+        notifyConcentrationCheck: "notifyConcentrationCheck",
         notifyDouble: "notifyDoubleConcentration",
         notifyEndConcentration: "notifyEndConcentration",
         healthAttribute: "concentratorHealthAttribute", //validate necessity
-        prompt: "concentratorPromptPlayer"
+        prompt: "concentratorPromptPlayer",
+        hideNpcConcentration: "hideNPCConcentration"
     },
     cubPuter: {
         menu: "cubPuter",

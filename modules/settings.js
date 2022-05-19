@@ -93,15 +93,6 @@ export function registerSettings() {
         onChange: s => {}
     });
 
-    Sidekick.registerSetting(BUTLER.SETTING_KEYS.concentrator.outputChat, {
-        name: "SETTINGS.Concentrator.OutputToChatN",
-        hint: "SETTINGS.Concentrator.OutputToChatH",
-        default: BUTLER.DEFAULT_CONFIG.concentrator.outputChat,
-        scope: "world",
-        type: Boolean,
-        config: false,
-        onChange: s => {}
-    });
 
     Sidekick.registerSetting(BUTLER.SETTING_KEYS.concentrator.prompt, {
         name: "SETTINGS.Concentrator.PromptRollN",
@@ -144,6 +135,17 @@ export function registerSettings() {
         onChange: s => {}
     });
 
+    Sidekick.registerSetting(BUTLER.SETTING_KEYS.concentrator.notifyConcentrationCheck, {
+        name: `${BUTLER.NAME}.SETTINGS.CONCENTRATOR.NotifyConcentrationCheckN`,
+        hint: `${BUTLER.NAME}.SETTINGS.CONCENTRATOR.NotifyConcentrationCheckH`,
+        default: Sidekick.getKeyByValue(BUTLER.DEFAULT_CONFIG.concentrator.notifyConcentrationCheck, BUTLER.DEFAULT_CONFIG.concentrator.notifyConcentrationCheck.none),
+        scope: "world",
+        type: String,
+        choices: BUTLER.DEFAULT_CONFIG.concentrator.notifyConcentrationCheck,
+        config: false,
+        onChange: s => {}
+    });
+
     Sidekick.registerSetting(BUTLER.SETTING_KEYS.concentrator.notifyDouble, {
         name: "SETTINGS.Concentrator.NotifyDoubleN",
         hint: "SETTINGS.Concentrator.NotifyDoubleH",
@@ -162,6 +164,16 @@ export function registerSettings() {
         scope: "world",
         type: String,
         choices: BUTLER.DEFAULT_CONFIG.concentrator.notifyEndConcentration,
+        config: false,
+        onChange: s => {}
+    });
+
+    Sidekick.registerSetting(BUTLER.SETTING_KEYS.concentrator.hideNpcConcentration, {
+        name: `${BUTLER.NAME}.SETTINGS.CONCENTRATOR.HideNPCConcentrationN`,
+        hint: `${BUTLER.NAME}.SETTINGS.CONCENTRATOR.HideNPCConcentrationH`,
+        scope: "world",
+        type: Boolean,
+        default: false,
         config: false,
         onChange: s => {}
     });

@@ -52,6 +52,7 @@ export class Signal {
             // Execute housekeeping
             Sidekick.handlebarsHelpers();
             Sidekick.jQueryHelpers();
+            Sidekick.loadTemplates();
             registerSettings();
 
             // Instantiate gadget classes
@@ -94,7 +95,7 @@ export class Signal {
             game.socket.on(`module.${BUTLER.NAME}`, Signal._onSocket);
             EnhancedConditions._onReady();
             Concentrator._onReady();
-            MigrationHelper._onReady();            
+            MigrationHelper._onReady();          
         });
 
         /* -------------------------------------------- */
@@ -114,6 +115,7 @@ export class Signal {
             }
             Concentrator._onUpdateActor(actor, updateData, options, userId);
             Triggler._onUpdateActor(actor, updateData, options, userId);
+            HideNPCNames._onUpdateActor(actor, updateData, options, userId);
         });
 
         Hooks.on("createActiveEffect", (effect, options, userId) => {
@@ -143,6 +145,7 @@ export class Signal {
             EnhancedConditions._onUpdateToken(tokenDocument, updateData, options, userId);
             Concentrator._onUpdateToken(tokenDocument, updateData, options, userId);
             Triggler._onUpdateToken(tokenDocument, updateData, options, userId);
+            HideNPCNames._onUpdateToken(tokenDocument, updateData, options, userId);
         });
 
         /* ------------------ Combat ------------------ */
@@ -197,6 +200,10 @@ export class Signal {
         });
 
         /* ------------------- Chat ------------------- */
+
+        Hooks.on("renderChatLog", (app, html, data) => {
+            EnhancedConditions._onRenderChatLog(app, html, data);
+        });
 
         Hooks.on("renderChatMessage", (app, html, data) => {
             HideNPCNames._onRenderChatMessage(app, html, data);

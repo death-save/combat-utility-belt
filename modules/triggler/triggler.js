@@ -11,24 +11,18 @@ export class Triggler {
      * Creates a button for the Condition Lab
      * @param {Object} html the html element where the button will be created
      */
-    static _createTrigglerButton(html) {
+    static async _createTrigglerButton(html) {
         if (!game.user.isGM) {
             return;
         }
 
         const cubDiv = html.find("#combat-utility-belt");
-
-        const trigglerButton = $(
-            `<button id="triggler-form" data-action="triggler">
-                    <i class="fas fa-angle-double-right"></i><i class="fas fa-angle-double-left"></i> ${DEFAULT_CONFIG.triggler.form.title}
-                </button>`
-        );
+        const trigglerButton = await renderTemplate(DEFAULT_CONFIG.triggler.templatePaths.trigglerButton);
+        const $button = $(trigglerButton);
         
-        cubDiv.append(trigglerButton);
+        cubDiv.append($button);
 
-        trigglerButton.click(ev => {
-            new TrigglerForm().render(true);
-        });
+        $button.on("click", (event) => new TrigglerForm().render(true));
     }
 
     /**

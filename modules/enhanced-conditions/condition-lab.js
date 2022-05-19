@@ -4,6 +4,8 @@ import { EnhancedConditions } from "./enhanced-conditions.js";
 import { TrigglerForm } from "../triggler/triggler-form.js";
 import { DraggableList } from "../utils/draggable-list.js";
 import EnhancedEffectConfig from "./enhanced-effect-config.js";
+import EnhancedConditionMacroConfig from "./enhanced-condition-macro.js";
+import EnhancedConditionTriggerConfig from "./enhanced-condition-trigger.js";
 
 /**
  * Form application for managing mapping of Conditions to Icons and JournalEntries
@@ -17,7 +19,10 @@ export class ConditionLab extends FormApplication {
         this.mapType = null;
         this.initialMap = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.map);
         this.map = null;
+        this.displayedMap = null;
         this.maps = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.defaultMaps);
+        this.filterValue = "";
+        this.sortDirection = "";
     }
 
     /**
@@ -30,7 +35,7 @@ export class ConditionLab extends FormApplication {
             template: BUTLER.DEFAULT_CONFIG.enhancedConditions.templates.conditionLab,
             classes: ["sheet"],
             width: 1025,
-            height: 725,
+            height: 700,
             resizable: true,
             closeOnSubmit: false,
             scrollY: ["ol.condition-lab"],
@@ -51,7 +56,12 @@ export class ConditionLab extends FormApplication {
     /**
      * Prepare data for form rendering
      */
-    async prepareData() {
+    prepareData() {
+        const sortDirection = this.sortDirection;
+        const sortTitle = game.i18n.localize(`${BUTLER.NAME}.ENHANCED_CONDITIONS.ConditionLab.SortAnchorTitle${sortDirection ? `_${sortDirection}` : ""}`);
+        const filterTitle = game.i18n.localize(`${BUTLER.NAME}.ENHANCED_CONDITIONS.ConditionLab.FilterInputTitle`);
+        const filterValue = this.filterValue;
+
         const defaultMaps = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.defaultMaps);
         const mappedSystems = Object.keys(defaultMaps) || [];
         const mapTypeChoices = BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes;
@@ -67,67 +77,60 @@ export class ConditionLab extends FormApplication {
 
         const mapType = this.mapType = (this.mapType || this.initialMapType || "other");
         const system = this.system || game.system.id;
-        let conditionMap = this.map ? this.map : this.map = duplicate(this.initialMap);
+        let conditionMap = this.map ? this.map : (this.map = duplicate(this.initialMap));
         const triggers = Sidekick.getSetting(BUTLER.SETTING_KEYS.triggler.triggers).map(t => {
             return [t.id, t.text]
         });
 
         const isDefault = this.mapType === Sidekick.getKeyByValue(BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes, BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes.default);
         const outputChatSetting = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.outputChat);
+        const disableChatOutput = isDefault || !outputChatSetting;
 
         // Transform data for each Condition Mapping entry to ensure it will display correctly
         conditionMap.forEach((entry, index, map) => {
             // Check if the row exists in the saved map
             const existingEntry = this.initialMap.find(e => e.id === entry.id) ?? null;
             entry.isNew = !existingEntry;
+            entry.isChanged = this._hasEntryChanged(entry, existingEntry, index);
 
             // Set the Output to Chat checkbox
             entry.options = entry.options ?? {};
             entry.options.outputChat = entry?.options?.outputChat;
-            entry.enrichedReference = entry.referenceId ? TextEditor.enrichHTML(entry.referenceId) : "";
-
-            // @todo #357 extract this into a function
-            const propsToCheck = [
-                "name",
-                "icon",
-                "options",
-                "referenceId",
-                "applyTrigger",
-                "removeTrigger",
-                "activeEffect"
-            ];
-            entry.isChanged = entry.isNew || (index != this.initialMap?.indexOf(existingEntry));
-
-            if (!entry.isChanged) {
-                for (const prop of propsToCheck) {
-                    if (existingEntry[prop] && !entry[prop]) {
-                        entry.isChanged = true;
-                        break;
-                    } else if (existingEntry && (JSON.stringify(existingEntry[prop]) != JSON.stringify(entry[prop]))) {
-                        entry.isChanged = true;
-                        break;
-                    }
-                }
-            }
+            entry.enrichedReference = entry.referenceId ? TextEditor.enrichHTML(entry.referenceId) : "";   
         });
+
+        // Pre-apply any filter value
+        this.displayedMap = filterValue ? this._filterMapByName(conditionMap, filterValue) : foundry.utils.duplicate(conditionMap);
+        
+        // Sort the displayed map based on the sort direction
+        if (sortDirection) {
+            this.displayedMap = this._sortMapByName(this.displayedMap, sortDirection);
+        }
+
+        const displayedMap = this.displayedMap;
 
         let unsavedMap = false;
         if (mapType != this.initialMapType || conditionMap?.length != this.initialMap?.length || conditionMap.some(c => c.isNew || c.isChanged)) {
             unsavedMap = true;
         }
-
-        const disableChatOutput = isDefault || !outputChatSetting;
         
+        // Prepare final data object for template
         const data = {
+            sortTitle,
+            sortDirection,
+            filterTitle,
+            filterValue,
             mapTypeChoices,
             mapType,
             conditionMap,
+            displayedMap,
             triggers,
             isDefault,
             disableChatOutput,
             unsavedMap
         }
         
+        this.data = data;
         return data;
     }
 
@@ -135,7 +138,7 @@ export class ConditionLab extends FormApplication {
      * Gets data for the template render
      */
     getData() {
-        return this.data || this.prepareData();
+        return this.prepareData();
     }
 
     /**
@@ -158,8 +161,6 @@ export class ConditionLab extends FormApplication {
         let conditions = [];
         let icons = [];
         let references = [];
-        let applyTriggers = [];
-        let removeTriggers = [];
         let optionsOverlay = [];
         let optionsRemove = [];
         let optionsOutputChat = [];
@@ -174,8 +175,6 @@ export class ConditionLab extends FormApplication {
         const idRegex = new RegExp(/^id/, "i");
         const iconRegex = new RegExp("icon", "i");
         const referenceRegex = new RegExp("reference", "i");
-        const applyTriggerRegex = new RegExp("apply-trigger", "i");
-        const removeTriggerRegex = new RegExp("remove-trigger", "i");
         const optionsOverlayRegex = new RegExp("options-overlay", "i");
         const optionsRemoveRegex = new RegExp("options-remove-others", "i");
         const optionsOutputChatRegex = new RegExp("options-output-chat", "i");
@@ -202,10 +201,6 @@ export class ConditionLab extends FormApplication {
                 icons[row] = formData[e];
             } else if (e.match(referenceRegex)) {
                 references[row] = formData[e]; 
-            } else if (e.match(applyTriggerRegex)) {
-                applyTriggers[row] = formData[e];
-            } else if (e.match(removeTriggerRegex)) {
-                removeTriggers[row] = formData[e];
             } else if (e.match(optionsOverlayRegex)) {
                 optionsOverlay[row] = formData[e];
             } else if (e.match(optionsRemoveRegex)) {
@@ -224,15 +219,20 @@ export class ConditionLab extends FormApplication {
             const name = conditions[i];
             const existingCondition = (existingMap && id) ? existingMap.find(c => c.id === id) : null;
             const activeEffect = existingCondition ? existingCondition.activeEffect : null;
+            const applyTrigger = existingCondition ? existingCondition.applyTrigger : null;
+            const removeTrigger = existingCondition ? existingCondition.removeTrigger : null;
+            const macros = existingCondition ? existingCondition.macros : null;
+
 
             const condition = {
                 id,
                 name,
                 icon: icons[i],
                 referenceId: references[i],
-                applyTrigger: applyTriggers[i],
-                removeTrigger: removeTriggers[i],
+                applyTrigger,
+                removeTrigger,
                 activeEffect,
+                macros,
                 options: {
                     overlay: optionsOverlay[i],
                     removeOthers: optionsRemove[i],
@@ -422,6 +422,10 @@ export class ConditionLab extends FormApplication {
         const restoreDefaultsButton = html.find("button[class='restore-defaults']");
         const resetFormButton = html.find("button[name='reset']");
         const saveCloseButton = html.find("button[name='save-close']");
+        const filterInput = html.find("input[name='filter-list']");
+        const sortButton = html.find("a.sort-list");
+        const macroConfigButton = html.find("button.macro-config");
+        const triggerConfigButton = html.find("button.trigger-config");
 
         inputs.on("change", event => this._onChangeInputs(event));
         mapTypeSelector.on("change", event => this._onChangeMapType(event));
@@ -433,6 +437,10 @@ export class ConditionLab extends FormApplication {
         restoreDefaultsButton.on("click", async event => this._onRestoreDefaults(event));
         resetFormButton.on("click", event => this._onResetForm(event));
         saveCloseButton.on("click", event => this._onSaveClose(event));
+        filterInput.on("input", (event) => this._onChangeFilter(event));
+        sortButton.on("click", (event) => this._onClickSortButton(event));
+        macroConfigButton.on("click", (event) => this._onClickMacroConfig(event));
+        triggerConfigButton.on("click", (event) => this._onClickTriggerConfig(event));
 
         super.activateListeners(html);     
     }
@@ -444,15 +452,56 @@ export class ConditionLab extends FormApplication {
      */
     async _onChangeInputs(event) {
         const name = event.target.name;
+
+        if (name.startsWith("filter-list")) {
+            return;
+        }
+
         this.map = this.updatedMap;
 
         if (name.startsWith("icon-path")) {
-            return this._onChangeIconPath(event);
+            this._onChangeIconPath(event);
         } else if (name.startsWith("reference-id")) {
-            return this._onChangeReferenceId(event);
+            this._onChangeReferenceId(event);
         } else {
-            this.render();
+            //this.render();
         }
+
+        const hasChanged = this._hasMapChanged();
+
+        if (hasChanged) return this.render();
+    }
+
+    /**
+     * 
+     */
+    async _onChangeFilter(event) {
+        const input = event.target;
+        const inputValue = input?.value;
+        this.filterValue = inputValue ?? "";
+        this.displayedMap = this._filterMapByName(this.map, this.filterValue);
+
+        this.displayedRowIds = this.displayedMap.map(r => r.id);
+
+        const conditionRowEls = this._element[0].querySelectorAll("li.row");
+        for (const el of conditionRowEls) {
+            const conditionId = el.dataset.conditionId;
+            if (this.displayedRowIds.includes(conditionId)) {
+                el.classList.remove("hidden");
+            } else {
+                el.classList.add("hidden");
+            }
+        }
+    }
+
+    /**
+     * Filter the given map by the name property using the supplied filter value
+     * @param {*} map 
+     * @param {*} filter 
+     * @returns 
+     */
+    _filterMapByName(map, filter) {
+        return map.filter(c => c.name.toLowerCase().includes(filter.toLowerCase()));
     }
 
     /**
@@ -479,6 +528,7 @@ export class ConditionLab extends FormApplication {
                 break;
         }
 
+        this.data = null;
         this.render();
     }
 
@@ -616,6 +666,7 @@ export class ConditionLab extends FormApplication {
 
         this.mapType = newMapType;
         this.map = newMap;
+        this.data = null;
         
         this.render();
     }
@@ -690,6 +741,46 @@ export class ConditionLab extends FormApplication {
         newMap.splice(newIndex, 0, ...mappingRow);
         this.map = newMap;
         this.render();
+    }
+
+    /**
+     * Sort button handler
+     * @param {*} event 
+     */
+    _onClickSortButton(event) {
+        const sortDirection = this.sortDirection;
+        //const newSortDirection = sortDirection === "asc" ? "desc" : "asc";
+        switch (sortDirection) {
+            case "":
+                this.sortDirection = "asc";
+                break;
+
+            case "asc":
+                this.sortDirection = "desc";
+                break;
+
+            case "desc":
+                this.sortDirection = "";
+                break;
+
+            default:
+                break;
+        }
+
+        return this.render();        
+    }
+
+    /**
+     * Sorts the given map by the name property
+     * @param {Array} map 
+     * @param {*} direction 
+     * @returns 
+     */
+    _sortMapByName(map, direction) {
+        return map.sort((a, b) => {
+            if (direction === "desc") return b.name.localeCompare(a.name);
+            return a.name.localeCompare(b.name);
+        });
     }
 
     /**
@@ -789,5 +880,118 @@ export class ConditionLab extends FormApplication {
             targetInput.value = link;
             this._onChangeReferenceId(event);
         }
+    }
+
+    /**
+     * Macro Config button click handler
+     * @param {*} event 
+     * @returns 
+     */
+    _onClickMacroConfig(event) {
+        const rowLi = event.target.closest("li");
+        const conditionId = rowLi ? rowLi.dataset.conditionId : null;
+
+        if (!conditionId) return;
+
+        const condition = this.map.find(c => c.id === conditionId);
+
+        new EnhancedConditionMacroConfig(condition).render(true);
+    }
+
+    /**
+     * Trigger Config button click handler
+     * @param {*} event 
+     * @returns 
+     */
+     _onClickTriggerConfig(event) {
+        const rowLi = event.target.closest("li");
+        const conditionId = rowLi ? rowLi.dataset.conditionId : null;
+
+        if (!conditionId) return;
+
+        const condition = this.map.find(c => c.id === conditionId);
+
+        new EnhancedConditionTriggerConfig(condition).render(true);
+    }
+
+    /**
+     * Checks the updatedMap property against the initial map
+     */
+    _hasMapChanged() {
+        let hasChanged = false;
+
+        const propsToCheck = [
+            "name",
+            "icon",
+            "options",
+            "referenceId",
+            "applyTrigger",
+            "removeTrigger",
+            "activeEffect"
+        ];
+
+        const conditionMap = this.updatedMap;
+
+        conditionMap.forEach((entry, index, array) => {
+            // Check if the row exists in the saved map
+            const existingEntry = this.initialMap.find(e => e.id === entry.id) ?? null;
+            entry.isNew = !existingEntry;
+
+            // If row is new or if its index has changed, it is also changed
+            entry.isChanged = entry.isNew || (index != this.initialMap?.indexOf(existingEntry));
+
+            // If it's not changed, test the tracked properties until a change is found
+            if (!entry.isChanged) {
+                // for (const prop of propsToCheck) {
+                //     if (this._hasPropertyChanged(prop, existingEntry, entry)) {
+                //         entry.isChanged = true;
+                //         hasChanged = true;
+                //         break;
+                //     }
+                // }
+                entry.isChanged = foundry.utils.isObjectEmpty(foundry.utils.diffObject(existingEntry, entry));
+                hasChanged = true;
+            }
+        });
+
+        return hasChanged;
+    }
+
+    _hasEntryChanged(entry, existingEntry, index) {
+        const propsToCheck = [
+            "name",
+            "icon",
+            "options",
+            "referenceId",
+            "applyTrigger",
+            "removeTrigger",
+            "activeEffect"
+        ];
+
+        const hasChanged = entry.isNew 
+            || (index != this.initialMap?.indexOf(existingEntry))
+            //|| !foundry.utils.isObjectEmpty(foundry.utils.diffObject(existingEntry, entry));
+            || propsToCheck.some(p => this._hasPropertyChanged(p, existingEntry, entry));
+
+        return hasChanged;
+    }
+
+    /**
+     * Checks a given propertyName on an original and comparison object to see if it has changed
+     * @param {*} propertyName 
+     * @param {*} original 
+     * @param {*} comparison 
+     * @returns 
+     */
+    _hasPropertyChanged(propertyName, original, comparison) {
+        let propertyChanged = false;
+
+        if ((original[propertyName] && !comparison[propertyName]) 
+            || (original && (JSON.stringify(original[propertyName]) != JSON.stringify(comparison[[propertyName]])))
+        ) {
+            propertyChanged = true;
+        }
+
+        return propertyChanged;
     }
 }
