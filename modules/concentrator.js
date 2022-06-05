@@ -74,17 +74,16 @@ export class Concentrator {
 
         const conditionName = Sidekick.getSetting(SETTING_KEYS.concentrator.conditionName);
         const isAlreadyConcentrating = EnhancedConditions.hasCondition(conditionName, actor, {warn: false});
-        const notifyDoubleSetting = Sidekick.getSetting(SETTING_KEYS.concentrator.notifyDouble);
         const spell = {
             id: item?.id ?? "",
             name: item?.name ?? game.i18n.localize(`${NAME}.CONCENTRATOR.UnknownSpell`)
         };
 
         let sendMessage = Sidekick.getSetting(SETTING_KEYS.concentrator.notifyConcentration);
-        const suppressNotifyDouble = typeof notifyDoubleSetting === "string" && (notifyDoubleSetting.localeCompare(DEFAULT_CONFIG.concentrator.notifyDouble.none, undefined, {sensitivity: "accent"}) === 0);
+        
 
         // If the actor/token-actor is already Concentrating, and the notification setting is enabled, fire a notification
-        if (isAlreadyConcentrating && !suppressNotifyDouble) {
+        if (isAlreadyConcentrating && Concentrator._shouldSendMessage("double")) {
             await Concentrator._displayChat("double", actor, {newSpell: spell});
             sendMessage = DEFAULT_CONFIG.concentrator.notifyConcentration.none;
         }
@@ -218,7 +217,7 @@ export class Concentrator {
         if (!condition || condition?.name !== concentrationConditionName) return;
 
         const sendMessage = Sidekick.getSetting(SETTING_KEYS.concentrator.notifyEndConcentration);
-        Concentrator._endConcentration(actor, {sendMessage});
+        Concentrator._endConcentration(actor, {reason: "delete_effect"});
     }
 
     /**
@@ -281,14 +280,17 @@ export class Concentrator {
         const isConcentrating = Concentrator._isConcentrating(entity);
         const displayPrompt = Sidekick.getSetting(SETTING_KEYS.concentrator.prompt);
 
-        if (!entity || !isConcentrating || (!displayPrompt && !outputChat)) return;
+        if (!entity || !isConcentrating || !displayPrompt) return;
 
         const damageAmount = getProperty(options, `${NAME}.${FLAGS.concentrator.damageAmount}`);
         const isDead = getProperty(options, `${NAME}.${FLAGS.concentrator.isDead}`);
         const dc = Concentrator._calculateDC(damageAmount);
 
         if (isDead) return Concentrator._processDeath(entity);
-        Concentrator._displayChat("check", entity, {dc});
+
+        if (Concentrator._shouldSendMessage("check")) {
+            Concentrator._displayChat("check", entity, {dc});
+        }
 
         if (displayPrompt) {
             return Concentrator._determinePromptedUsers(entity.uuid, dc);
@@ -309,9 +311,7 @@ export class Concentrator {
 
         if (!actor) return;
 
-        Concentrator._endConcentration(actor, {sendMessage:DEFAULT_CONFIG.concentrator.notifyEndConcentration.none});
-
-        return Concentrator._displayChat("death", entity);
+        return Concentrator._endConcentration(actor, {reason: "dead"});
     }
 
     /**
@@ -427,9 +427,8 @@ export class Concentrator {
             const total = betterRoll ? Concentrator.getBetterRollsTotal(betterRoll) : message.roll?.total;
 
             if (autoEndConcentration && (dc && total && total < dc)) {
-                ui.notifications.notify("Concentration check failed!");
-                const sendMessage = Sidekick.getSetting(SETTING_KEYS.concentrator.notifyEndConcentration);
-                Concentrator._endConcentration(actor, {sendMessage});
+                //ui.notifications.notify("Concentration check failed!");
+                Concentrator._endConcentration(actor, {reason: "failed_check"});
             }
         });
     }
@@ -474,28 +473,28 @@ export class Concentrator {
 
         switch (type) {
             case "start":
-                content =  game.i18n.format(`${NAME}.CONCENTRATOR.Messages.StartConcentration`, {entityName: entity.name, spellName})
-                isWhisper = Sidekick.getSetting(SETTING_KEYS.concentrator.notifyConcentration) === DEFAULT_CONFIG.concentrator.notifyConcentration.gm;
+                content =  game.i18n.format(`${NAME}.CONCENTRATOR.Messages.StartConcentration`, {entityName: entity.name, spellName});
+                isWhisper = Sidekick.getSetting(SETTING_KEYS.concentrator.notifyConcentration) === Sidekick.getKeyByValue(DEFAULT_CONFIG.concentrator.notifyConcentration, DEFAULT_CONFIG.concentrator.notifyConcentration.gm);
                 break;
 
             case "check":
                 content = game.i18n.format(`${NAME}.CONCENTRATOR.Messages.ConcentrationTested`, {entityName: entity.name, dc, spellName});
-                isWhisper = Sidekick.getSetting(SETTING_KEYS.concentrator.notifyConcentrationCheck) === DEFAULT_CONFIG.concentrator.notifyConcentrationCheck.gm;
+                isWhisper = Sidekick.getSetting(SETTING_KEYS.concentrator.notifyConcentrationCheck) === Sidekick.getKeyByValue(DEFAULT_CONFIG.concentrator.notifyConcentrationCheck, DEFAULT_CONFIG.concentrator.notifyConcentrationCheck.gm);
                 break;
 
             case "dead":
                 content = game.i18n.format(`${NAME}.CONCENTRATOR.Messages.Incapacitated`, {entityName: entity.name, spellName});
-                isWhisper = Sidekick.getSetting(SETTING_KEYS.concentrator.notifyEndConcentration) === DEFAULT_CONFIG.concentrator.notifyConcentrationEnd.gm;
+                isWhisper = Sidekick.getSetting(SETTING_KEYS.concentrator.notifyEndConcentration) === Sidekick.getKeyByValue(DEFAULT_CONFIG.concentrator.notifyEndConcentration, DEFAULT_CONFIG.concentrator.notifyEndConcentration.gm);
                 break;
 
             case "double":
                 content =  game.i18n.format(`${NAME}.CONCENTRATOR.Messages.DoubleConcentration`, {entityName: entity.name, oldSpellName: spellName, newSpellName: newSpell.name})
-                isWhisper = Sidekick.getSetting(SETTING_KEYS.concentrator.notifyDouble) === DEFAULT_CONFIG.concentrator.notifyDouble.gm;
+                isWhisper = Sidekick.getSetting(SETTING_KEYS.concentrator.notifyDouble) === Sidekick.getKeyByValue(DEFAULT_CONFIG.concentrator.notifyDouble, DEFAULT_CONFIG.concentrator.notifyDouble.gm);
                 break;
 
             case "end":
                 content = game.i18n.format(`${NAME}.CONCENTRATOR.Messages.EndConcentration`, {entityName: entity.name, spellName})
-                isWhisper = Sidekick.getSetting(SETTING_KEYS.concentrator.notifyEndConcentration) === DEFAULT_CONFIG.concentrator.notifyEndConcentration.gm;
+                isWhisper = Sidekick.getSetting(SETTING_KEYS.concentrator.notifyEndConcentration) === Sidekick.getKeyByValue(DEFAULT_CONFIG.concentrator.notifyEndConcentration, DEFAULT_CONFIG.concentrator.notifyEndConcentration.gm);
                 break;
             
             default:
@@ -527,9 +526,7 @@ export class Concentrator {
 
         if (!actor) return;
 
-        const suppressMessage = typeof sendMessage === "string" && (sendMessage.localeCompare(DEFAULT_CONFIG.concentrator.notifyConcentration.none, undefined, {sensitivity: "accent"}) === 0);
-
-        if (!suppressMessage) {
+        if (Concentrator._shouldSendMessage("start")) {
             Concentrator._displayChat("start", actor, {newSpell: spell});
         }
         
@@ -547,7 +544,7 @@ export class Concentrator {
      * @param {*} options 
      * @returns 
      */
-    static async _endConcentration(entity, {sendMessage=DEFAULT_CONFIG.concentrator.notifyEndConcentration.none}={}) {
+    static async _endConcentration(entity, {reason=null}={}) {
         const isActor = entity instanceof Actor;
         const isToken = entity instanceof Token || entity instanceof TokenDocument;
         const actor = isActor ? entity : (isToken ? entity.actor : null);
@@ -567,10 +564,11 @@ export class Concentrator {
             EnhancedConditions.removeCondition(conditionName, actor, {warn: false});
         }
         
-        const suppressMessage = typeof sendMessage === "string" && (sendMessage.localeCompare(DEFAULT_CONFIG.concentrator.notifyEndConcentration.none, undefined, {sensitivity: "accent"}) === 0);
+        
 
-        if (!suppressMessage && flag) {
-            Concentrator._displayChat("end", entity);
+        if (flag && Concentrator._shouldSendMessage("end")) {
+            const messageType = (reason == "dead") ? "dead" : "end";
+            Concentrator._displayChat(messageType, entity);
         }
 
         return actor.unsetFlag(NAME, FLAGS.concentrator.concentrationSpell);
@@ -716,6 +714,55 @@ export class Concentrator {
         }
 
         return rollEntry.entries[0]?.total;
+    }
+
+    /**
+     * Checks setting for a given Concentration event and determines whether a message should be sent
+     * @param {*} eventType 
+     */
+    static _shouldSendMessage(eventType) {
+        let shouldSend = false;
+        let setting;
+        let keyNone;
+
+        switch (eventType) {
+            case 'start':
+                keyNone = Sidekick.getKeyByValue(DEFAULT_CONFIG.concentrator.notifyConcentration, DEFAULT_CONFIG.concentrator.notifyConcentration.none);
+                setting = Sidekick.getSetting(SETTING_KEYS.concentrator.notifyConcentration);
+                if ((setting && keyNone) && setting !== keyNone) {
+                    shouldSend = true;
+                }
+                break;
+
+            case 'check':
+                keyNone = Sidekick.getKeyByValue(DEFAULT_CONFIG.concentrator.notifyConcentrationCheck, DEFAULT_CONFIG.concentrator.notifyConcentrationCheck.none);
+                setting = Sidekick.getSetting(SETTING_KEYS.concentrator.notifyConcentrationCheck);
+                if ((setting && keyNone) && setting !== keyNone) {
+                    shouldSend = true;
+                }
+                break;
+
+            case 'double':
+                keyNone = Sidekick.getKeyByValue(DEFAULT_CONFIG.concentrator.notifyDouble, DEFAULT_CONFIG.concentrator.notifyDouble.none)
+                setting = Sidekick.getSetting(SETTING_KEYS.concentrator.notifyDouble);
+                if ((setting && keyNone) && setting !== keyNone) {
+                    shouldSend = true;
+                }
+                break;
+            
+            case 'end':
+                keyNone = Sidekick.getKeyByValue(DEFAULT_CONFIG.concentrator.notifyEndConcentration, DEFAULT_CONFIG.concentrator.notifyEndConcentration.none)
+                setting = Sidekick.getSetting(SETTING_KEYS.concentrator.notifyEndConcentration);
+                if ((setting && keyNone) && setting !== keyNone) {
+                    shouldSend = true;
+                }
+                break;
+
+            default:
+                break;
+        }
+
+        return shouldSend;
     }
 
     /**
