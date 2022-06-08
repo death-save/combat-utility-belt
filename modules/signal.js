@@ -212,8 +212,17 @@ export class Signal {
         });
         
         Hooks.on("renderDialog", (app, html, data) => {
-            if (app.title === game.i18n.localize("COMBAT.EndTitle")) {
-                GiveXP._onRenderDialog(app, html, data);
+            switch (app.title) {
+                case game.i18n.localize("COMBAT.EndTitle"):
+                    GiveXP._onRenderDialog(app, html, data);
+                    break;
+                
+                case game.i18n.localize(`${BUTLER.NAME}.ENHANCED_CONDITIONS.ConditionLab.SortDirectionSave.Title`):
+                    ConditionLab._onRenderDialog(app, html, data);
+                    break;
+
+                default:
+                    break;
             }
         });
         

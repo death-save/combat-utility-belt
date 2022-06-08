@@ -427,7 +427,8 @@ export const SETTING_KEYS = {
         outputChat: "conditionsOutputToChat",
         outputCombat: "conditionsOutputDuringCombat",
         suppressPreventativeSaveReminder: "conditionsSuppressPreventativeSaveReminder",
-        migrationVersion: "enhancedConditionsMigrationVersion"
+        migrationVersion: "enhancedConditionsMigrationVersion",
+        showSortDirectionDialog: "showSortDirectionDialog"
     },
     giveXP: {
         enable: "enableGiveXP",

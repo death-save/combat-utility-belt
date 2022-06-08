@@ -431,9 +431,9 @@ export class EnhancedConditions {
                 break;
         }
 
-        const macroIds = macros.length ? macros.filter(m => m.id).map(m => m.id) : null;
+        const macroIds = macros?.length ? macros.filter(m => m.id).map(m => m.id) : null;
 
-        if (macroIds.length) EnhancedConditions._processMacros(macroIds, actor);
+        if (macroIds?.length) EnhancedConditions._processMacros(macroIds, actor);
     }
 
     /**
