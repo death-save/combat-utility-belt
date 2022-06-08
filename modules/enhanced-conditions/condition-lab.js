@@ -560,7 +560,7 @@ export class ConditionLab extends FormApplication {
                 break;
             
             case "other":
-                this.map = [];
+                this.map = this.initialMapType == "other" ? this.initialMap : [];
                 break;
         
             default:
