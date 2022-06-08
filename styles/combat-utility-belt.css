@@ -112,6 +112,10 @@ a.add-temporary {
   padding-left: 20px;
 }
 
+#cub-condition-lab div.condition-list-controls {
+    flex: 2;
+}
+
 #cub-condition-lab div.condition-list-controls .sort i {
     font-size: x-large;
 }
@@ -337,6 +341,7 @@ a.add-temporary {
     background: rgba(0, 0, 0, 0.05);
     height: 100%;
     padding: 4px 2px;
+    font-size: small;
 }
 
 #cub-condition-lab .condition-text-input {
