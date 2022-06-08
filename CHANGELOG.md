@@ -1,11 +1,20 @@
 # Changelog
 
 ## [Known Issues]
-1. ~~Enhanced Conditions chat output for linked Tokens and Actors is not aggregated, so you may see multiple messages when many conditions are added/removed from an Actor/Token.~~
-2. Overlay Effects added to a token will trigger the matching non-Overlay Condition to output to chat. The reverse is also true.
-3. Chat log may not re-render when Hide Names settings are changed. This may cause the old name to still show in the log for players. Advise players to reload Foundry if you change these settings mid-session.
-4. The Default/Inferred Condition Lab Mappings for game systems may not correctly import all data. Importing the map from the CUB Condition Maps folder imports correctly.
-5. **PF2e users**: PF2e is not currently supported by Enhanced Conditions due to the customisation of the effects framework implemented by the system.
+1. Overlay Effects added to a token will trigger the matching non-Overlay Condition to output to chat. The reverse is also true.
+2. Chat log may not re-render when Hide Names settings are changed. This may cause the old name to still show in the log for players. Advise players to reload Foundry if you change these settings mid-session.
+3. The Default/Inferred Condition Lab Mappings for game systems may not correctly import all data. Importing the map from the CUB Condition Maps folder imports correctly.
+4. **PF2e users**: PF2e is not currently supported by Enhanced Conditions due to the customisation of the effects framework implemented by the system.
+
+## [1.9.1] - 2022-06-07
+### ✨ Enhanced Conditions
+- Sorting then saving the Condition Lab no longer causes a loss of data (eg. active effects)
+- Fixed an error that occurred when no Macros exist (thanks @strongpauly 🎉)
+- Changing from the `Other/Imported` Condition Lab Map Type to another (eg. `Default`) and then back no longer clears previous mapping
+- Minor changes to Condition Lab styling
+
+### 💭 Concentrator
+- Concentrator now respects chat visibility settings (eg. setting Concentration Check to `GM & Owner/s` will only display to those users)
 
 ## [1.9.0] - 2022-05-18
 > This update adds compatibility for Foundry VTT v9.269
