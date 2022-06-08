@@ -46,7 +46,7 @@ export class ConditionLab extends FormApplication {
     /**
      * Get updated map by combining existing in-memory map with current formdata
      */
-     get updatedMap() {
+    get updatedMap() {
         const submitData = this._buildSubmitData();
         const mergedMap = this._processFormData(submitData);
         const updatedMap = EnhancedConditions._prepareMap(mergedMap);
@@ -145,7 +145,8 @@ export class ConditionLab extends FormApplication {
      * Enriches submit data with existing map to ensure continuity
      */
     _buildSubmitData() {
-        const data = this.map?.reduce((acc, entry, index) => {
+        const map = this.sortDirection ? this._sortMapByName(this.map) : this.map;
+        const data = map?.reduce((acc, entry, index) => {
             acc[`id-${index}`] = entry.id;
             return acc;
         }, {}) ?? {};
@@ -274,6 +275,29 @@ export class ConditionLab extends FormApplication {
      * @param {Object} formData 
      */
     async _updateObject(event, formData) {
+        const showDialogSetting = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.showSortDirectionDialog);
+
+        if (this.sortDirection && showDialogSetting) {
+            await Dialog.confirm({
+                title: game.i18n.localize(`${BUTLER.NAME}.ENHANCED_CONDITIONS.ConditionLab.SortDirectionSave.Title`),
+                content: game.i18n.localize(`${BUTLER.NAME}.ENHANCED_CONDITIONS.ConditionLab.SortDirectionSave.Content`),
+                yes: ($html) => {
+                    const checkbox = $html[0].querySelector("input[name='dont-show-again']");
+                    if (checkbox.checked) {
+                        Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.showSortDirectionDialog, false);
+                    }
+                    this._saveMapping(formData);
+                },
+                no: () => {
+                    return;
+                }
+            });
+        } else {
+            this._saveMapping(formData);
+        }
+    } 
+
+    async _saveMapping(formData) {
         const mapType = formData["map-type"];
         let newMap = this.updatedMap;
         const defaultMapType = Sidekick.getKeyByValue(BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes, BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes.default);
@@ -291,9 +315,11 @@ export class ConditionLab extends FormApplication {
 
         this.map = this.initialMap = preparedMap;
         this.unsaved = false;
+        this.filterValue = "";
+        this.sortDirection = "";
 
         ui.notifications.info(game.i18n.localize("ENHANCED_CONDITIONS.Lab.SaveSuccess"));
-        this.render();
+        this.render(true);
     }
 
     /**
@@ -401,6 +427,19 @@ export class ConditionLab extends FormApplication {
      */
      static _onRender(app, html, data) {
         ui.cub.conditionLab = app;
+    }
+    
+    /**
+     * Render dialog hook handler
+     * @param {*} app 
+     * @param {jQuery} html 
+     * @param {*} data 
+     */
+    static async _onRenderDialog(app, html, data) {
+        const contentDiv = html[0].querySelector("div.dialog-content");
+        const checkbox = `<div class="form-group"><label class="dont-show-again-checkbox">${game.i18n.localize(`${BUTLER.NAME}.ENHANCED_CONDITIONS.ConditionLab.SortDirectionSave.CheckboxText`)}<input type="checkbox" name="dont-show-again"></label></div>`;
+        contentDiv.insertAdjacentHTML("beforeend", checkbox);
+        await app.setPosition({height: app.position.height + 25});
     }
 
     /* -------------------------------------------- */

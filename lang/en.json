@@ -14,7 +14,12 @@
                 "FilterButtonTitle": "Apply Filter",
                 "SortAnchorTitle": "Sort by Name - unsorted (click to change)",
                 "SortAnchorTitle_asc": "Sort by Name - A to Z (click to change)",
-                "SortAnchorTitle_desc": "Sort by Name - Z to A (click to change)"
+                "SortAnchorTitle_desc": "Sort by Name - Z to A (click to change)",
+                "SortDirectionSave": {
+                    "Title": "Save Mapping with Sort Direction?",
+                    "Content": "<p>Click 'Yes' to save the Condition Lab map with the current sort direction. Click 'No' to cancel Saving.</p>",
+                    "CheckboxText": "Don't show this again"
+                }
             },
             "ChatCard": {
                 "Heading": "Enhanced Conditions",
@@ -86,7 +91,9 @@
             },
             "ENHANCED_CONDITIONS": {
                 "MigrationVersionN": "Migration Version",
-                "MigrationVersionH": "Version of CUB for which migration was last performed"
+                "MigrationVersionH": "Version of CUB for which migration was last performed",
+                "ShowSortDirectionDialogN": "Show Condition Lab Sort Direction Save Dialog",
+                "ShowSortDirectionDialogH": "Whether or not to show the confirmation dialog for saving the sort direction."
             }
         },
         "TRIGGLER": {

@@ -340,6 +340,16 @@ export function registerSettings() {
         onChange: s => {}
     });
 
+    Sidekick.registerSetting(BUTLER.SETTING_KEYS.enhancedConditions.showSortDirectionDialog, {
+        name: "SETTINGS.EnhancedConditions.ShowSortDirectionSaveDialogN",
+        hint: "SETTINGS.EnhancedConditions.ShowSortDirectionSaveDialogN",
+        scope: "world",
+        type: Boolean,
+        config: false,
+        default: true,
+        onChange: s => {}
+    });
+
     /* -------------------------------------------- */
     /*                    GiveXP                    */
     /* -------------------------------------------- */
