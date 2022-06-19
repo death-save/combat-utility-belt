@@ -780,7 +780,7 @@ export class Concentrator {
 
         switch (desiredVisibility) {
             case visibilityGmOwner:
-                whisperRecipients = game.users.filter(u => u.isGM || ownerIds.includes(u.id)).map(u => u.id);
+                whisperRecipients = game.users.filter(u => u.isGM || ownerIds?.includes(u.id)).map(u => u.id);
                 break;
 
             case visibilityAll:        
