@@ -1,5 +1,8 @@
 <form autocomplete="off" onsubmit="event.preventDefault();">
-    <h2><i class="fas fa-flask"></i> {{localize "ENHANCED_CONDITIONS.Lab.Title"}}</h2>
+    <h2>
+        <i class="fas fa-flask"></i> {{localize "ENHANCED_CONDITIONS.Lab.Title"}}
+        {{#if unsavedMap}} <strong> {{localize "ENHANCED_CONDITIONS.Lab.MappingType.Unsaved"}}</strong>{{/if}}
+    </h2>
     <div class="flexrow">
         {{!-- List Controls --}}
         <div class="flexrow condition-list-controls">
@@ -21,7 +24,7 @@
             </div>
         </div>
         <div class="form-group">
-            <label>{{localize "ENHANCED_CONDITIONS.Lab.MappingType.Label"}}{{#if unsavedMap}} <strong>{{localize "ENHANCED_CONDITIONS.Lab.MappingType.Unsaved"}}</strong>{{/if}}</label>
+            <label>{{localize "ENHANCED_CONDITIONS.Lab.MappingType.Label"}}</label>
             <select name="map-type" class="map-type" title="">
                 {{#select mapType}}
                 {{#each mapTypeChoices as |label name|}}
