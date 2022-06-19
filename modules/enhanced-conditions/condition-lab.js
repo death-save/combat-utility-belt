@@ -457,7 +457,7 @@ export class ConditionLab extends FormApplication {
         const triggerAnchor = html.find("a[class='trigger']");
         const addRowAnchor = html.find("a[name='add-row']");
         const removeRowAnchor = html.find("a[class='remove-row']");
-        const changeOrderAnchor = html.find(".change-order a");
+        const changeOrderAnchor = html.find(".row-controls a.move-up, .row-controls a.move-down");
         const restoreDefaultsButton = html.find("button[class='restore-defaults']");
         const resetFormButton = html.find("button[name='reset']");
         const saveCloseButton = html.find("button[name='save-close']");
