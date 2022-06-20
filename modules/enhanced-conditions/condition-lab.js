@@ -96,7 +96,10 @@ export class ConditionLab extends FormApplication {
             // Set the Output to Chat checkbox
             entry.options = entry.options ?? {};
             entry.options.outputChat = entry?.options?.outputChat;
-            entry.enrichedReference = entry.referenceId ? TextEditor.enrichHTML(entry.referenceId) : "";   
+            entry.enrichedReference = entry.referenceId ? TextEditor.enrichHTML(entry.referenceId) : "";
+
+            // Default all entries to show
+            entry.hidden = entry.hidden ?? false;
         });
 
         // Pre-apply any filter value
@@ -315,7 +318,6 @@ export class ConditionLab extends FormApplication {
 
         this.map = this.initialMap = preparedMap;
         this.unsaved = false;
-        this.filterValue = "";
         this.sortDirection = "";
 
         ui.notifications.info(game.i18n.localize("ENHANCED_CONDITIONS.Lab.SaveSuccess"));
@@ -512,15 +514,15 @@ export class ConditionLab extends FormApplication {
     }
 
     /**
-     * 
+     * Filter input change handler
      */
-    async _onChangeFilter(event) {
+    _onChangeFilter(event) {
         const input = event.target;
         const inputValue = input?.value;
         this.filterValue = inputValue ?? "";
         this.displayedMap = this._filterMapByName(this.map, this.filterValue);
 
-        this.displayedRowIds = this.displayedMap.map(r => r.id);
+        this.displayedRowIds = this.displayedMap.filter(r => !r.hidden).map(r => r.id);
 
         const conditionRowEls = this._element[0].querySelectorAll("li.row");
         for (const el of conditionRowEls) {
@@ -534,13 +536,13 @@ export class ConditionLab extends FormApplication {
     }
 
     /**
-     * Filter the given map by the name property using the supplied filter value
-     * @param {*} map 
-     * @param {*} filter 
-     * @returns 
+     * Filter the given map by the name property using the supplied filter value, marking filtered entries as "hidden"
+     * @param {Array} map 
+     * @param {String} filter 
+     * @returns filteredMap
      */
     _filterMapByName(map, filter) {
-        return map.filter(c => c.name.toLowerCase().includes(filter.toLowerCase()));
+        return map.map((c) => ({...c, hidden: !c.name.toLowerCase().includes(filter.toLowerCase())}));
     }
 
     /**
