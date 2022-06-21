@@ -341,8 +341,8 @@ export function registerSettings() {
     });
 
     Sidekick.registerSetting(BUTLER.SETTING_KEYS.enhancedConditions.showSortDirectionDialog, {
-        name: "SETTINGS.EnhancedConditions.ShowSortDirectionSaveDialogN",
-        hint: "SETTINGS.EnhancedConditions.ShowSortDirectionSaveDialogN",
+        name: `${BUTLER.NAME}.SETTINGS.ENHANCED_CONDITIONS.ShowSortDirectionDialogN`,
+        hint: `${BUTLER.NAME}.SETTINGS.ENHANCED_CONDITIONS.ShowSortDirectionDialogH`,
         scope: "world",
         type: Boolean,
         config: false,
