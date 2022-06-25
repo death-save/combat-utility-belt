@@ -6,6 +6,14 @@
 3. The Default/Inferred Condition Lab Mappings for game systems may not correctly import all data. Importing the map from the CUB Condition Maps folder imports correctly.
 4. **PF2e users**: PF2e is not currently supported by Enhanced Conditions due to the customisation of the effects framework implemented by the system.
 
+## [1.9.2] - 2022-06-25
+### ✨ Enhanced Conditions
+- The Condition Lab reorder buttons work again
+- Condition Lab filter would cause data loss if the mapping was saved after filtering. Filtering is now purely visual (as it should've been).
+
+### 💭 Concentrator
+- Concentrator chat messages were not being sent to the GM in some cases. Increased the GM chat log spam by fixing that issue.
+
 ## [1.9.1] - 2022-06-07
 ### ✨ Enhanced Conditions
 - Sorting then saving the Condition Lab no longer causes a loss of data (eg. active effects)
