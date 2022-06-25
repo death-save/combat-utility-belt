@@ -1375,7 +1375,8 @@ export class EnhancedConditions {
      * Checks if the provided Entity (Actor or Token) has the given condition
      * @param {String | Array} conditionName  the name/s of the condition or conditions to check for
      * @param {Actor | Token | Array} entities  the entity or entities to check (Actor/s or Token/s)
-     * @param {Boolean} options.warn  output notifications
+     * @param {Object} [options]  options object  
+     * @param {Boolean} [options.warn]  whether or not to output notifications
      * @returns {Boolean} hasCondition  Returns true if one or more of the provided entities has one or more of the provided conditions
      * @example
      * // Check for the "Blinded" condition on Actor "Bob"
