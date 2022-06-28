@@ -235,7 +235,7 @@ export const DEFAULT_CONFIG = {
             macroConfig: `${PATH}/templates/enhanced-condition-macro-config.hbs`,
             triggerConfig: `${PATH}/templates/enhanced-condition-trigger-config.hbs`
         },
-        migrationVersion: null
+        migrationVersion: ""
     },
     giveXP: {
         enable: false,
