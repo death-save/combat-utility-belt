@@ -990,7 +990,7 @@ export class ConditionLab extends FormApplication {
                 //         break;
                 //     }
                 // }
-                entry.isChanged = foundry.utils.isObjectEmpty(foundry.utils.diffObject(existingEntry, entry));
+                entry.isChanged = foundry.utils.isEmpty(foundry.utils.diffObject(existingEntry, entry));
                 hasChanged = true;
             }
         });
