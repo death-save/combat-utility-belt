@@ -167,7 +167,8 @@ export class HideNPCNames {
     static async _onRenderChatMessage(message, html, data) {
         const enable = Sidekick.getSetting(SETTING_KEYS.hideNames.enable);
         const name = data?.alias ?? null;
-        const speaker = message.data.speaker;
+        //const speaker = message.data.speaker;
+        const speaker = message.speaker;
 
         if (!enable || !name || !speaker) return;
 
