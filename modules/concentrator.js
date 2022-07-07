@@ -37,7 +37,7 @@ export class Concentrator {
      */
     static async _onRenderChatMessage(app, html, data) {
         const enableConcentrator = Sidekick.getSetting(SETTING_KEYS.concentrator.enable);
-        const actor = ChatMessage.getSpeakerActor(app.data?.speaker);
+        const actor = ChatMessage.getSpeakerActor(app.speaker);
         const gmUser = Sidekick.getFirstGM();
 
         if (!enableConcentrator || game.userId !== gmUser?.id || !actor) return;
@@ -68,7 +68,7 @@ export class Concentrator {
         const isSpell = item ? item.type === "spell" : false;
 
         // If it is, check if it requires concentration
-        const isConcentration = concentrationDiv.length ? true : (isSpell ? !!getProperty(item, `data.data.components.concentration`) : false);
+        const isConcentration = concentrationDiv.length ? true : (isSpell ? !!getProperty(item, `system.components.concentration`) : false);
 
         if (!isConcentration) return;
 
@@ -109,8 +109,8 @@ export class Concentrator {
         // Update handled in token hooks
         if (actor.isToken) return true;
 
-        const newHealth = getProperty(update, `data.${Sidekick.getSetting(SETTING_KEYS.concentrator.healthAttribute)}.value`);
-        const oldHealth = getProperty(actor, `data.data.${Sidekick.getSetting(SETTING_KEYS.concentrator.healthAttribute)}.value`);
+        const newHealth = getProperty(update, `system.${Sidekick.getSetting(SETTING_KEYS.concentrator.healthAttribute)}.value`);
+        const oldHealth = getProperty(actor, `system.${Sidekick.getSetting(SETTING_KEYS.concentrator.healthAttribute)}.value`);
 
         const damageTaken = Concentrator._wasDamageTaken(newHealth, oldHealth);
         options[NAME] = options[NAME] ?? {};
@@ -153,14 +153,14 @@ export class Concentrator {
      * @param {*} options 
      */
     static _onPreUpdateToken(token, update, options, userId){
-        if (token.data.actorLink) return true;
+        if (token.actorLink) return true;
         
         const enableConcentrator = Sidekick.getSetting(SETTING_KEYS.concentrator.enable);
 
         if (!enableConcentrator) return true;
 
-        const newHealth = getProperty(update, `actorData.data.${Sidekick.getSetting(SETTING_KEYS.concentrator.healthAttribute)}.value`);
-        const oldHealth = getProperty(token, `actor.data.data.${Sidekick.getSetting(SETTING_KEYS.concentrator.healthAttribute)}.value`);
+        const newHealth = getProperty(update, `actorData.system.${Sidekick.getSetting(SETTING_KEYS.concentrator.healthAttribute)}.value`);
+        const oldHealth = getProperty(token, `actor.system.${Sidekick.getSetting(SETTING_KEYS.concentrator.healthAttribute)}.value`);
         
         const damageTaken = Concentrator._wasDamageTaken(newHealth, oldHealth);
 
@@ -417,9 +417,9 @@ export class Concentrator {
         });
 
         Hooks.once("createChatMessage", (message, options, userId) => {
-            const includesSaveText = message.data.flavor?.includes(game.i18n.format("DND5E.SavePromptTitle", {ability: CONFIG.DND5E.abilities[ability]}));
+            const includesSaveText = message.flavor?.includes(game.i18n.format("DND5E.SavePromptTitle", {ability: CONFIG.DND5E.abilities[ability]}));
             // Support BetterRolls5e
-            const betterRoll = message.data?.flags?.betterrolls5e;
+            const betterRoll = message?.flags?.betterrolls5e;
             
             if (!message.isRoll && (!includesSaveText || !betterRoll)) return;
 
