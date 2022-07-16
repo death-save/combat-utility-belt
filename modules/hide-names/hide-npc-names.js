@@ -415,4 +415,30 @@ export class HideNPCNames {
             other: "Other"
         }
     }
+
+    /**
+     * Exposure of the static function to support
+     * intermodule compability
+     * 
+     * For a given actor, find out if there is a replacement name and return it
+     * @param {*} actor 
+     * @returns {String} replacementName
+     */
+    getReplacementName(actor)
+    {
+        return HideNPCNames.getReplacementName(actor);
+    }
+
+    /**
+     * Exposure of the static function to support
+     * intermodule compability
+     * 
+     * Checks an actor to see if its name should be replaced
+     * @param {*} actor 
+     * @returns {Boolean} shouldReplace
+     */
+    shouldReplaceName(actor)
+    {
+        return HideNPCNames.shouldReplaceName(actor);
+    }
 }
