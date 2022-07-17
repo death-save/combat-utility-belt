@@ -396,7 +396,7 @@ export function registerSettings() {
         hint: "SETTINGS.HideNames.HidePartsH",
         scope: "world",
         type: Boolean,
-        default: BUTLER.DEFAULT_CONFIG.hideNames.hideParts,
+        default: BUTLER.DEFAULT_CONFIG.hideNames.hideNameParts,
         config: false,
         onChange: s => {
             ui.combat.render();
