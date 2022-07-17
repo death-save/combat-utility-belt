@@ -110,7 +110,7 @@ export class PanSelect {
 
         if (!actor) return;
 
-        const actorPermission = actor ? (actor.data.permission[game.userId] || 0) : null;
+        const actorPermission = actor ? (actor.data.ownership[game.userId] || 0) : null;
 
         if (actorPermission === null) {
             return;
@@ -144,7 +144,7 @@ export class PanSelect {
                 }
         }
 
-        return PanSelect._panToToken(token.data);
+        return PanSelect._panToToken(token);
     }
 
     /**
@@ -265,7 +265,7 @@ export class PanSelect {
      */
     static _checkObserverDeselect(token) {
         const actor = token?.actor;
-        const actorPermission = actor ? actor.data.permission[game.userId] || 0 : null;
+        const actorPermission = actor ? actor.data.ownership[game.userId] || 0 : null;
 
         if (actorPermission === null) {
             return;
