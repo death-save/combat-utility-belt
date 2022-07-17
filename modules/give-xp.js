@@ -57,7 +57,7 @@ export class GiveXP {
                 img: turn.img
             };
 
-            switch (turn.token.data.disposition) {
+            switch (turn.token.disposition) {
                 case -1:
                     hostiles.push(turnData);
                     continue;
@@ -166,7 +166,7 @@ export class GiveXP {
         const xpModifier = +html.find("#xp-modifier").val();
         
         if (selectedFriendlyTokens.length !== 0 && selectedHostileTokens.length !== 0) {
-            const totalXp = selectedHostileTokens.reduce((total, token) => total + token.actor.data.data.details.xp.value, 0) * xpModifier;
+            const totalXp = selectedHostileTokens.reduce((total, token) => total + token.actor.system.details.xp.value, 0) * xpModifier;
             const perFriendly = Math.floor(totalXp / selectedFriendlyTokens.length);
 
             for (const friendly of selectedFriendlyTokens) {
@@ -181,7 +181,7 @@ export class GiveXP {
                 </ul>
             `);
 
-            let levelUps = selectedFriendlyTokens.filter(({actor}) => actor.data.data.details.xp.value >= actor.data.data.details.xp.max);
+            let levelUps = selectedFriendlyTokens.filter(({actor}) => actor.system.details.xp.value >= actor.system.details.xp.max);
             if (levelUps.length) {
                 await this.outputToChat(`
                     <p><strong>Level ups!</strong></p>
@@ -217,7 +217,7 @@ export class GiveXP {
      */
     static async applyXP(actor, amount) {
         return await actor.update({
-            "data.details.xp.value": actor.data.data.details.xp.value + amount
+            "data.details.xp.value": actor.system.details.xp.value + amount
         });
     }
     
