@@ -58,7 +58,7 @@ export class HideNPCNames {
     static _updateEntityMessages(entity) {
         const isToken = entity instanceof Token || entity instanceof TokenDocument;
 
-        const messages = game.messages.contents.filter(m => m.logged && m.data?.speaker?.[isToken ? "token" : "actor"] === entity.id);
+        const messages = game.messages.contents.filter(m => m.logged && m.speaker?.[isToken ? "token" : "actor"] === entity.id);
 
         for (const message of messages) {
             ui.chat.updateMessage(message);
@@ -167,7 +167,6 @@ export class HideNPCNames {
     static async _onRenderChatMessage(message, html, data) {
         const enable = Sidekick.getSetting(SETTING_KEYS.hideNames.enable);
         const name = data?.alias ?? null;
-        //const speaker = message.data.speaker;
         const speaker = message.speaker;
 
         if (!enable || !name || !speaker) return;
@@ -251,7 +250,7 @@ export class HideNPCNames {
     static _onVinoPrepareChatDisplayData(chatDisplayData) {
         const enable = Sidekick.getSetting(SETTING_KEYS.hideNames.enable);
         const name = chatDisplayData?.name;
-        const speaker = chatDisplayData.message?.data?.speaker;
+        const speaker = chatDisplayData.message?.speaker;
 
         if (!enable || !chatDisplayData || !name || !speaker) return;
 
@@ -361,7 +360,7 @@ export class HideNPCNames {
         const chatMessageLi = icon?.closest("li.chat-message");
         const messageId = chatMessageLi?.dataset.messageId;
         const message = game.messages.get(messageId);
-        const speaker = message?.data.speaker;        
+        const speaker = message?.speaker;        
         const actorId = speaker?.actor;
         const tokenId = speaker?.token;
 
@@ -381,7 +380,7 @@ export class HideNPCNames {
      * @returns {Boolean} shouldReplace
      */
     static shouldReplaceName(actor) {
-        const dispositionEnum = actor.isToken ? actor.token.data.disposition : actor.data.token.disposition;
+        const dispositionEnum = actor.isToken ? actor.token.disposition : actor.data.token.disposition;
         const disposition = Sidekick.getKeyByValue(CONST.TOKEN_DISPOSITIONS, dispositionEnum);
         const dispositionEnableSetting = Sidekick.getSetting(SETTING_KEYS.hideNames[`enable${disposition.titleCase()}`]);
         const actorEnableFlag = actor.getFlag(NAME, FLAGS.hideNames.enable);
@@ -396,7 +395,7 @@ export class HideNPCNames {
      * @returns {String} replacementName
      */
     static getReplacementName(actor) {
-        const dispositionEnum = actor.isToken ? actor.token.data.disposition : actor.data.token.disposition;
+        const dispositionEnum = actor.isToken ? actor.token.disposition : actor.data.token.disposition;
         const disposition = Sidekick.getKeyByValue(CONST.TOKEN_DISPOSITIONS, dispositionEnum);
         const replacementSetting = Sidekick.getSetting(SETTING_KEYS.hideNames[`${disposition.toLowerCase()}NameReplacement`]);
         const replacementFlag = actor.getFlag(NAME, FLAGS.hideNames.replacementName);
