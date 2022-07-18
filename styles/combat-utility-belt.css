@@ -434,7 +434,13 @@ a.add-temporary {
 .cub-puter-crt .terminal select {
     color: lime;
     background: black;
-    font-family: 'Courier New', Courier, monospace
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.cub-puter-crt .terminal select option {
+  color: inherit;
+  background: inherit;
+  font-family: inherit;
 }
 
 @keyframes flicker {
