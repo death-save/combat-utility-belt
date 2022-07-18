@@ -52,7 +52,7 @@ export class RerollInitiative {
 
         const combatantIds = rerollTemp ? 
             combat.combatants.map(c => c.id) : 
-            combat.combatants.filter(c => !hasProperty(c, `data.flags.${NAME}.${FLAGS.temporaryCombatants.temporaryCombatant}`)).map(c => c.id);
+            combat.combatants.filter(c => !hasProperty(c, `flags.${NAME}.${FLAGS.temporaryCombatants.temporaryCombatant}`)).map(c => c.id);
 
         const rollOptions = RerollInitiative.getRollInitiativeOptions();
         await combat.rollInitiative(combatantIds, rollOptions);
