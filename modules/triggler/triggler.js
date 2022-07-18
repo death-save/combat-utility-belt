@@ -32,7 +32,7 @@ export class Triggler {
      */
     static async _executeTrigger(trigger, target) {
         const actor = target instanceof Actor ? target : (target instanceof TokenDocument || target instanceof Token) ? target.actor : null;
-        const token = target instanceof TokenDocument ? target : target instanceof Token ? target.data : null;
+        const token = target instanceof TokenDocument ? target : target instanceof Token ? target.document : null;
         const conditionMap = Sidekick.getSetting(SETTING_KEYS.enhancedConditions.map);
         const matchedApplyConditions = conditionMap.filter(m => m.applyTrigger === trigger.id);
         const matchedRemoveConditions = conditionMap.filter(m => m.removeTrigger === trigger.id);
@@ -73,9 +73,9 @@ export class Triggler {
          * Avoid issues with Multi-Level Tokens by ignoring clone tokens
          * @see Issue #491
          */
-        if(entity.data?.flags 
-            && ("multilevel-tokens" in entity.data.flags) 
-            && ("stoken" in entity.data.flags["multilevel-tokens"])) {
+        if(entity.flags 
+            && ("multilevel-tokens" in entity.flags) 
+            && ("stoken" in entity.flags["multilevel-tokens"])) {
                 return;
         }
 
@@ -101,11 +101,11 @@ export class Triggler {
                 matchString2;
 
             if (triggerType === "simple") {
-                // example : actorData.data.attributes.hp.value or actorData.data.status.isShaken
-                matchString1 = `${entryPoint1}.${trigger.category}${trigger.attribute ? `.${trigger.attribute}` : ``}${trigger.property1 ? `.${trigger.property1}` : ``}`;
+                // example : actorData.system.attributes.hp.value or actorData.data.status.isShaken
+                matchString1 = `${entryPoint1}${entryPoint1 ? `.` : ``}${trigger.category}${trigger.attribute ? `.${trigger.attribute}` : ``}${trigger.property1 ? `.${trigger.property1}` : ``}`;
 
-                // example: actor.data.data.hp.max -- note this is unlikely to be in the update data
-                matchString2 = `${entryPoint2}.${trigger.category}${trigger.attribute ? `.${trigger.attribute}` : ``}${trigger.property2 ? `.${trigger.property2}` : ``}`;
+                // example: actor.system.hp.max -- note this is unlikely to be in the update data
+                matchString2 = `${entryPoint2}${entryPoint2 ? `.` : ``}${trigger.category}${trigger.attribute ? `.${trigger.attribute}` : ``}${trigger.property2 ? `.${trigger.property2}` : ``}`;
             }
 
             if (triggerType === "advanced") {
@@ -267,8 +267,8 @@ export class Triggler {
             return;
         }
 
-        const dataProp = `data`;
-        const dataDataProp = `data.data`;
+        const dataProp = `system`;
+        const dataDataProp = `system`;
 
         Triggler._processUpdate(actor, update, dataProp, dataDataProp);
     }
@@ -285,8 +285,8 @@ export class Triggler {
             return;
         }
 
-        const actorDataProp = `actorData.data`;
-        const actorProp = `actor.data.data`;
+        const actorDataProp = `actorData.system`;
+        const actorProp = `actor.system`;
         
         Triggler._processUpdate(token, update, actorDataProp, actorProp);
     }
