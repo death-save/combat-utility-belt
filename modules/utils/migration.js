@@ -3,7 +3,7 @@ import { EnhancedConditions } from "../enhanced-conditions/enhanced-conditions.j
 
 export default class MigrationHelper {
     static async _onReady() {
-        const cubVersion = game.modules.get(NAME)?.data?.version;
+        const cubVersion = game.modules.get(NAME)?.version;
 
         await EnhancedConditions._migrationHelper(cubVersion);
     }
