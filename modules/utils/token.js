@@ -139,10 +139,10 @@ export class TokenUtility {
         w = (w / 2) * multiplier;
 
         let tex = await loadTexture(src, {fallback: 'icons/svg/hazard.svg'});
-        let icon = this.hud.effects.addChild(new PIXI.Sprite(tex));
+        let icon = this.effects.addChild(new PIXI.Sprite(tex));
         icon.width = icon.height = w;
         //const nr = Math.floor(this.data.height * 5);
-        const nr = Math.floor(this.data.height * divisor);
+        const nr = Math.floor(this.document.height * divisor);
         icon.x = Math.floor(i / nr) * w;
         icon.y = (i % nr) * w;
         if ( tint ) icon.tint = tint;
