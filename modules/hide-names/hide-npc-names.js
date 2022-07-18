@@ -26,7 +26,7 @@ export class HideNPCNames {
     static _onUpdateActor(actor, update, options, user) {
         const gadgetEnabled = Sidekick.getSetting(SETTING_KEYS.hideNames.enable);
 
-        if (!gadgetEnabled || !foundry.utils.hasProperty(update, `data.flags.${NAME}.${FLAGS.hideNames.enable}`)) {
+        if (!gadgetEnabled || !foundry.utils.hasProperty(update, `flags.${NAME}.${FLAGS.hideNames.enable}`)) {
             return;
         }
 
