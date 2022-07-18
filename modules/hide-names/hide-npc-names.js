@@ -380,7 +380,7 @@ export class HideNPCNames {
      * @returns {Boolean} shouldReplace
      */
     static shouldReplaceName(actor) {
-        const dispositionEnum = actor.isToken ? actor.token.disposition : actor.data.token.disposition;
+        const dispositionEnum = actor.isToken ? actor.token.disposition : actor.prototypeToken.disposition;
         const disposition = Sidekick.getKeyByValue(CONST.TOKEN_DISPOSITIONS, dispositionEnum);
         const dispositionEnableSetting = Sidekick.getSetting(SETTING_KEYS.hideNames[`enable${disposition.titleCase()}`]);
         const actorEnableFlag = actor.getFlag(NAME, FLAGS.hideNames.enable);
@@ -395,7 +395,7 @@ export class HideNPCNames {
      * @returns {String} replacementName
      */
     static getReplacementName(actor) {
-        const dispositionEnum = actor.isToken ? actor.token.disposition : actor.data.token.disposition;
+        const dispositionEnum = actor.isToken ? actor.token.disposition : actor.prototypeToken.disposition;
         const disposition = Sidekick.getKeyByValue(CONST.TOKEN_DISPOSITIONS, dispositionEnum);
         const replacementSetting = Sidekick.getSetting(SETTING_KEYS.hideNames[`${disposition.toLowerCase()}NameReplacement`]);
         const replacementFlag = actor.getFlag(NAME, FLAGS.hideNames.replacementName);
