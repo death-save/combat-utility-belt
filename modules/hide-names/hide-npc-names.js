@@ -190,7 +190,7 @@ export class HideNPCNames {
             const senderName = html.find("header").children().first();
             const title = `${shouldReplace ? `${game.i18n.localize(`${NAME}.HIDE_NAMES.MessageIcon.Title.NameHiddenPrefix`)} ${replacementName} ${game.i18n.localize(`${NAME}.HIDE_NAMES.MessageIcon.Title.NameHiddenSuffix`)}` : game.i18n.localize(`${NAME}.HIDE_NAMES.MessageIcon.Title.NameNotHidden`)}`;
             const $icon = $(
-                `<a class="hide-name"><span class="fa-stack fa-1x hidden" title="${title}"><i class="fas fa-mask fa-stack-1x"></i>
+                `<a class="hide-name"><span class="fa-stack fa-1x" title="${title}"><i class="fas fa-mask fa-stack-1x"></i>
                 ${!shouldReplace ? `<i class="fas fa-slash fa-stack-1x"></i>` : ""}</span></a>`
             );
             $icon.on("click", (event) => this._onClickChatMessageIcon(event));
