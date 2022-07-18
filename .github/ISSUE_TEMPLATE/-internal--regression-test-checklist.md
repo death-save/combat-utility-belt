@@ -104,11 +104,6 @@ assignees: eclarke12
 - [ ] Pass
 (Pass/Fail notes)
 
-## Actor - Misc
-### Initiative from sheet works
-- [ ] Pass
-(Pass/Fail notes)
-
 ## Combat - Misc
 ### Edit tracked resource works
 - [ ] Pass
