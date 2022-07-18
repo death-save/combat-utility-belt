@@ -97,6 +97,6 @@ export class TrackerUtility {
 
         if (!actor) return;
 
-        return await actor.update({["data." + resource]: event.target.value});
+        return await actor.update({["system." + resource]: event.target.value});
     }
 }
