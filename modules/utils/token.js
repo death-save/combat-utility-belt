@@ -41,7 +41,7 @@ export class TokenUtility {
         const actor = token?.actor;
         const autoRollHP = Sidekick.getSetting(SETTING_KEYS.tokenUtility.autoRollHP);
 
-        if (actor && token?.data?.disposition === -1 && autoRollHP && !actor?.hasPlayerOwner) {
+        if (actor && token?.disposition === -1 && autoRollHP && !actor?.hasPlayerOwner) {
             return true;
         }
 
@@ -69,10 +69,10 @@ export class TokenUtility {
      * @param {*} actor
      */
     static async rollHP(actor, newFormula=null) {
-        const formula = newFormula || getProperty(actor, "data.data.attributes.hp.formula");
+        const formula = newFormula || getProperty(actor, "system.attributes.hp.formula");
 
         if (!formula) {
-            const maxHP = getProperty(actor, "data.data.attributes.hp.max");
+            const maxHP = getProperty(actor, "system.attributes.hp.max");
             return maxHP ?? 0;
         }
 
