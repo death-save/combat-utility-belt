@@ -97,6 +97,10 @@
                 "MigrationVersionH": "Version of CUB for which migration was last performed",
                 "ShowSortDirectionDialogN": "Show Condition Lab Sort Direction Save Dialog",
                 "ShowSortDirectionDialogH": "Whether or not to show the confirmation dialog for saving the sort direction."
+            },
+            "MIGHTY_SUMMONER": {
+                "PromptGMN": "Prompt GM For Mighty Summoner",
+                "PromptGMH": "Specify whether GMs should receive the Mighty Summoner prompt when tokens are placed. Note: due to the way permissions work in Foundry, any actor with the feat will cause the GM to be prompted for every token dropped if this setting is checked."
             }
         },
         "TEMPORARY_COMBATANTS": {

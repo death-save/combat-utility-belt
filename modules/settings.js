@@ -681,6 +681,16 @@ export function registerSettings() {
         onChange: s => {}
     });
 
+    Sidekick.registerSetting(BUTLER.SETTING_KEYS.tokenUtility.mightySummonerPromptGm, {
+        name: `${BUTLER.NAME}.SETTINGS.MIGHTY_SUMMONER.PromptGMN`,
+        hint: `${BUTLER.NAME}.SETTINGS.MIGHTY_SUMMONER.PromptGMH`,
+        default: BUTLER.DEFAULT_CONFIG.mightySummoner.promptGm,
+        scope: "world",
+        type: Boolean,
+        config: false,
+        onChange: s => {}
+    });
+
     /* -------------------------------------------- */
     /*                    Triggler                  */
     /* -------------------------------------------- */ 

@@ -1,4 +1,3 @@
-import { NAME, FLAGS } from "./butler.js";
 import { TokenUtility } from "./utils/token.js";
 import { ActorUtility } from "./utils/actor.js";
 
@@ -22,9 +21,9 @@ export class MightySummoner {
         if (!owners) {
             return;
         }
-
+        
         const ownedActors = owners.map(owner => {
-            const actors = game.actors.contents.filter(a => hasProperty(a, `data.ownership.${owner}`));
+            const actors = game.actors.contents.filter(a => hasProperty(a, `ownership.${owner}`));
             return actors;
         }).flat();
 

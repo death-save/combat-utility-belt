@@ -22,8 +22,10 @@ export class TokenUtility {
         }
 
         const summonerFeat = Sidekick.getSetting(SETTING_KEYS.tokenUtility.mightySummonerFeat);
+        const promptGmSetting = Sidekick.getSetting(SETTING_KEYS.tokenUtility.mightySummonerPromptGm);
+        const shouldPromptUser = (!game.user.isGM || (game.user.isGM && promptGmSetting)) ? true : false;
 
-        if (mightySummonerSetting && MightySummoner._checkForFeat(actor, summonerFeat)) {
+        if (mightySummonerSetting && MightySummoner._checkForFeat(actor, summonerFeat) && shouldPromptUser) {
             return MightySummoner._createDialog(token);
         }
 
