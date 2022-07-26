@@ -445,4 +445,13 @@ export class Sidekick {
         }
         return owners;
     }
+
+    static consoleMessage(type, source, {objects=[], message="", subStr=[]}) {
+        const msg = `${BUTLER.TITLE} | ${source} :: ${message}`;
+        const params = [];
+        if (objects && objects.length) params.push(objects);
+        if (msg) params.push(msg);
+        if (subStr && subStr.length) params.push(subStr);
+        return console[type](...params);
+    }
 }

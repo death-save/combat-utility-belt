@@ -1114,6 +1114,17 @@ export class EnhancedConditions {
     /* -------------------------------------------- */
 
     /**
+     * Apply the named condition to the provided entities (Actors or Tokens)
+     * @deprecated
+     * @param  {...any} params 
+     * @see EnhancedConditions#addCondition
+     */
+    static async applyCondition(...params) {
+        Sidekick.consoleMessage("warn", BUTLER.GADGETS.enhancedConditions.name, {message: game.i18n.localize(`${BUTLER.NAME}.ENHANCED_CONDITIONS.Warnings.ApplyCondition`)});
+        return EnhancedConditions.addCondition(...params);
+    }
+
+    /**
      * Applies the named condition to the provided entities (Actors or Tokens)
      * @param {String[] | String} conditionName  the name of the condition to add
      * @param {(Actor[] | Token[] | Actor | Token)} [entities=null] one or more Actors or Tokens to apply the Condition to

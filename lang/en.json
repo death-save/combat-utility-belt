@@ -42,6 +42,9 @@
                 "RemoveHeading": "Remove Trigger",
                 "Description": "Triggers that Apply or Remove this Condition",
                 "SelectNone": "--No Trigger--"
+            },
+            "Warnings": {
+                "ApplyCondition": "applyCondition was replaced with addCondition. Please update your code."
             }
         },
         "CONCENTRATOR": {
