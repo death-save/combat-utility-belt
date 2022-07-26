@@ -1453,10 +1453,10 @@ export class EnhancedConditions {
      * @param {Boolean} options.warn  whether or not to raise warnings on errors
      * @example 
      * // Remove Condition named "Blinded" from an Actor named Bob
-     * game.cub.removeConditions("Blinded", game.actors.getName("Bob"));
+     * game.cub.removeCondition("Blinded", game.actors.getName("Bob"));
      * @example 
      * // Remove Condition named "Charmed" from the currently controlled Token, but don't show any warnings if it fails.
-     * game.cub.removeConditions("Charmed", {warn=false});
+     * game.cub.removeCondition("Charmed", {warn=false});
      */
     static async removeCondition(conditionName, entities=null, {warn=true}={}) {
         if (!entities) {
