@@ -22,7 +22,8 @@
                 }
             },
             "ChatCard": {
-                "Heading": "Enhanced Conditions",
+                "Heading": "Enhanced Condition Changes",
+                "HeadingActive": "Active Enhanced Conditions",
                 "Title": {
                     "Added": "Added",
                     "Removed": "Removed",

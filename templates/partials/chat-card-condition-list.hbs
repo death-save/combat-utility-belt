@@ -1,4 +1,6 @@
 <li class="flexrow" id="condition-{{@index}}" data-condition-name="{{condition.name}}" data-condition-id="{{condition.id}}" data-timestamp={{timestamp}} data-change-type="{{type.title}}">
+    {{#if type.active}}
+    {{else}}
     <div class="add-remove">
         <span class="add-remove-icon" title="{{type.title}} {{timeSince timestamp}}">
             {{#if type.removed}}<i class="fas fa-minus"></i>
@@ -6,6 +8,7 @@
             {{/if}}
         </span>
     </div>
+    {{/if}}
     <div class="condition-icon">
         <img src="{{condition.icon}}" class="condition-icon chat-message" title="{{condition.name}}">
     </div>

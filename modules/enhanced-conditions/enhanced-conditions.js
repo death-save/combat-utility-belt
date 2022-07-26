@@ -494,7 +494,7 @@ export class EnhancedConditions {
         //const token = token || this.currentToken;
         const chatType = CONST.CHAT_MESSAGE_TYPES.OTHER;
         const speaker = isActorEntity ? ChatMessage.getSpeaker({actor: entity}) : ChatMessage.getSpeaker({token: entity});
-        const timestamp = Date.now();
+        const timestamp = type.active ? null : Date.now();
 
         // iterate over the entries and mark any with references for use in the template
         entries.forEach((v, i, a) => {
@@ -507,7 +507,7 @@ export class EnhancedConditions {
             }
         });
 
-        const chatCardHeading = game.i18n.localize(`${BUTLER.NAME}.ENHANCED_CONDITIONS.ChatCard.Heading`);
+        const chatCardHeading = game.i18n.localize(type.active ? `${BUTLER.NAME}.ENHANCED_CONDITIONS.ChatCard.HeadingActive` : `${BUTLER.NAME}.ENHANCED_CONDITIONS.ChatCard.Heading`);
 
         const templateData = {
             chatCardHeading,
@@ -530,7 +530,7 @@ export class EnhancedConditions {
         const recentTimestamp = Date.now() <= lastMessage?.timestamp + 30000;
         const enhancedConditionsDiv = lastMessage?.content.match("enhanced-conditions");
 
-        if (enhancedConditionsDiv && sameSpeaker && recentTimestamp) {
+        if (!type.active && enhancedConditionsDiv && sameSpeaker && recentTimestamp) {
             let newContent = "";
             for (const condition of entries) {
                 const newRow = await renderTemplate(BUTLER.DEFAULT_CONFIG.enhancedConditions.templates.chatConditionsPartial, {condition, type, timestamp});
