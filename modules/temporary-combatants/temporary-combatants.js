@@ -17,7 +17,7 @@ export class TemporaryCombatants {
         }
 
         const combatantList = html.find("#combat-tracker.directory-list");
-        const listItemHtml = `<div class="flexrow"><a class="add-temporary"><i class="fa fa-plus"></i> Add Temporary Combatant</a></div>`;
+        const listItemHtml = `<div class="flexrow"><a class="add-temporary"><i class="fa fa-plus"></i> ${game.i18n.localize(`${NAME}.TEMPORARY_COMBATANTS.AddTempCombatant`)}</a></div>`;
 
         if (!game.combat || !combatantList.length) {
             return;
@@ -46,16 +46,20 @@ export class TemporaryCombatants {
      * @param {*} combatants 
      * @param {*} scene 
      */
-    static _removeTemporaryCombatants(combatants, scene) {
+    static async _removeTemporaryCombatants(combatants) {
         const tempCombatants = combatants.filter(c => c.getFlag(NAME, FLAGS.temporaryCombatants.temporaryCombatant));
         
-        const tokens = tempCombatants.map(c => c.tokenId);
-        const actors = tempCombatants.map(c => c.actor.Id);
-        const tokenClass = getDocumentName("Token");
-
-        if (tokenClass && tokenIds) {
-            tokenClass.deleteDocuments(tokenIds);
+        const tokens = combatants.filter(c => c.token).map(c => c.token) ?? [];
+        const sceneIds = new Set(tokens.map(t => t.parent.id));
+        const actorIds = tempCombatants.filter(c => c.actor).map(c => c.actor.Id);
+        
+        for (const sceneId of sceneIds) {
+            const scene = game.scenes.get(sceneId);
+            if (!scene) continue;
+            const tokenIds = tokens.filter(t => t.sceneId == scene.Id).map(t => t.id);
+            scene.deleteEmbeddedDocuments("Token", tokenIds);
         }
+        
         
         if (actorIds) {
             Actor.deleteDocuments(actorIds);
@@ -66,12 +70,19 @@ export class TemporaryCombatants {
     /**
      * Removes a single temporary combatant created by this module
      * @param {*} combatant 
-     * @param {*} scene 
      */
-    static _removeTemporaryCombatant(combatant, scene) {
+    static async _removeTemporaryCombatant(combatant) {
         if (!combatant.getFlag(NAME, FLAGS.temporaryCombatants.temporaryCombatant)) return;
 
-        combatant.actor?.delete();
-        combatant.token?.delete();
+        const actor = combatant.actor;
+        const token = combatant.token;
+
+        if (actor && game.actors.get(actor.id)) {
+            await actor.delete();
+        }
+
+        if (token && token.parent) {
+            await token.parent.deleteEmbeddedDocuments("Token", [token.id]);
+        }        
     }
 }

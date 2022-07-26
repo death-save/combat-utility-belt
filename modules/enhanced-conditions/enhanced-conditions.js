@@ -1294,7 +1294,7 @@ export class EnhancedConditions {
         for (let entity of entities) {
             const actor = entity instanceof Actor ? entity : (entity instanceof Token || entity instanceof TokenDocument) ? entity.actor : null;
 
-            const effects = actor.effects.contents;
+            const effects = actor?.effects.contents;
 
             if (!effects) continue;
 

@@ -96,6 +96,12 @@
                 "ShowSortDirectionDialogH": "Whether or not to show the confirmation dialog for saving the sort direction."
             }
         },
+        "TEMPORARY_COMBATANTS": {
+            "Form": {
+                "Title": "Create Temporary Combatant"
+            },
+            "AddTempCombatant": "Add Temporary Combatant"
+        },
         "TRIGGLER": {
             "ButtonTitle": "Open Triggler"
         },

@@ -18,7 +18,7 @@ export class TrackerUtility {
         const tempCombatants = combat.combatants.filter(c => hasProperty(c, `flags.${BUTLER.NAME}.${BUTLER.FLAGS.temporaryCombatants.temporaryCombatant}`));
 
         if (enableTempCombatants && tempCombatants.length) {
-            TemporaryCombatants._removeTemporaryCombatants(tempCombatants, combat.scene);
+            TemporaryCombatants._removeTemporaryCombatants(tempCombatants);
         }  
     }
 
@@ -32,7 +32,7 @@ export class TrackerUtility {
         const tempCombatantFlag = combatant?.token?.getFlag(BUTLER.NAME, BUTLER.FLAGS.temporaryCombatants.temporaryCombatant);
 
         if (tempCombatantFlag){
-            TemporaryCombatants._removeTemporaryCombatant(combatant, combat.scene);
+            TemporaryCombatants._removeTemporaryCombatant(combatant);
         }
     }
 
