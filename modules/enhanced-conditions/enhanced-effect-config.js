@@ -11,9 +11,19 @@ export default class EnhancedEffectConfig extends ActiveEffectConfig {
      * @inheritdoc
      */
     getData(options) {
-        const data = super.getData(options);
-
-        return data;
+        const effect = this.object.toObject();
+        return {
+            effect: effect, // Backwards compatibility
+            data: this.object.toObject(),
+            // Manually set effect type
+            isActorEffect: true,
+            isItemEffect: false,
+            submitText: "EFFECT.Submit",
+            modes: Object.entries(CONST.ACTIVE_EFFECT_MODES).reduce((obj, e) => {
+                obj[e[1]] = game.i18n.localize("EFFECT.MODE_"+e[0]);
+                return obj;
+            }, {})
+        };
     }
 
     /**
@@ -22,7 +32,7 @@ export default class EnhancedEffectConfig extends ActiveEffectConfig {
      * @override
      */
     async _updateObject(event, formData) {
-        const conditionIdFlag = getProperty(this.object.data.flags, `${NAME}.${FLAGS.enhancedConditions.conditionId}`);
+        const conditionIdFlag = getProperty(this.object.flags, `${NAME}.${FLAGS.enhancedConditions.conditionId}`);
         if (!conditionIdFlag) return;
 
         // find the matching condition row
@@ -38,11 +48,8 @@ export default class EnhancedEffectConfig extends ActiveEffectConfig {
         // update the effect data
         
         condition.activeEffect = condition.activeEffect ? mergeObject(condition.activeEffect, formData) : formData;
-
-        this.object.data = this.object.data ? mergeObject(this.object.data, formData) : formData;
-
-    
         
+        this.object.updateSource(formData);
         if (this._state == 2) await this.render();
         if (ui.cub.conditionLab) {
             ui.cub.conditionLab.map = ui.cub.conditionLab.updatedMap;
