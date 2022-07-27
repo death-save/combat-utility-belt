@@ -108,16 +108,20 @@ export class Concentrator {
 
         // Update handled in token hooks
         if (actor.isToken) return true;
-
+        
+        const newTempHealth = getProperty(update, `system.${Sidekick.getSetting(SETTING_KEYS.concentrator.healthAttribute)}.temp`);
+        const oldTempHealth = getProperty(actor, `system.${Sidekick.getSetting(SETTING_KEYS.concentrator.healthAttribute)}.temp`);
+        const tempDamageTaken = Concentrator._wasDamageTaken(newTempHealth, oldTempHealth);
+        
         const newHealth = getProperty(update, `system.${Sidekick.getSetting(SETTING_KEYS.concentrator.healthAttribute)}.value`);
         const oldHealth = getProperty(actor, `system.${Sidekick.getSetting(SETTING_KEYS.concentrator.healthAttribute)}.value`);
-
         const damageTaken = Concentrator._wasDamageTaken(newHealth, oldHealth);
+        
         options[NAME] = options[NAME] ?? {};
 
-        if (damageTaken) {
+        if (tempDamageTaken || damageTaken) {
             options[NAME][FLAGS.concentrator.damageTaken] = true;
-            options[NAME][FLAGS.concentrator.damageAmount] = Concentrator._calculateDamage(newHealth, oldHealth);
+            options[NAME][FLAGS.concentrator.damageAmount] = tempDamageTaken ? Concentrator._calculateDamage(newTempHealth, oldTempHealth) : Concentrator._calculateDamage(newHealth, oldHealth);
             options[NAME][FLAGS.concentrator.isDead] = newHealth <= 0;
         }
 
@@ -159,15 +163,20 @@ export class Concentrator {
 
         if (!enableConcentrator) return true;
 
+        const newTempHealth = getProperty(update, `actorData.system.${Sidekick.getSetting(SETTING_KEYS.concentrator.healthAttribute)}.temp`);
+        const oldTempHealth = getProperty(token, `actor.system.${Sidekick.getSetting(SETTING_KEYS.concentrator.healthAttribute)}.temp`);
+        
+        const tempDamageTaken = Concentrator._wasDamageTaken(newTempHealth, oldTempHealth);
+
         const newHealth = getProperty(update, `actorData.system.${Sidekick.getSetting(SETTING_KEYS.concentrator.healthAttribute)}.value`);
         const oldHealth = getProperty(token, `actor.system.${Sidekick.getSetting(SETTING_KEYS.concentrator.healthAttribute)}.value`);
         
         const damageTaken = Concentrator._wasDamageTaken(newHealth, oldHealth);
 
-        if (damageTaken) {
+        if (tempDamageTaken || damageTaken) {
             const cubOption = options[NAME] = options[NAME] ?? {};
             cubOption[FLAGS.concentrator.damageTaken] = true;
-            cubOption[FLAGS.concentrator.damageAmount] = Concentrator._calculateDamage(newHealth, oldHealth);
+            cubOption[FLAGS.concentrator.damageAmount] = tempDamageTaken ? Concentrator._calculateDamage(newTempHealth, oldTempHealth) : Concentrator._calculateDamage(newHealth, oldHealth);
             cubOption[FLAGS.concentrator.isDead] = newHealth <= 0;
         }
 
