@@ -76,7 +76,7 @@ export class HideNPCNames {
 
         if (!enableSetting) return;
         
-        const disposition = app.object.data.token.disposition;
+        const disposition = app.object.prototypeToken.disposition;
                 
         const enableHostile = Sidekick.getSetting(SETTING_KEYS.hideNames.enableHostile);
         const enableNeutral = Sidekick.getSetting(SETTING_KEYS.hideNames.enableNeutral);
