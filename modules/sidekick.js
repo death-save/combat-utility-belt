@@ -437,7 +437,7 @@ export class Sidekick {
      * @returns 
      */
     static getDocumentOwners(document) {
-        const permissions = document.data?.ownership;
+        const permissions = document.ownership ?? document.data?.ownership;
         if (!permissions) return null;
         const owners = [];
         for (const userId in permissions) {
