@@ -5,6 +5,26 @@
 2. Chat log may not re-render when Hide Names settings are changed. This may cause the old name to still show in the log for players. Advise players to reload Foundry if you change these settings mid-session.
 3. The Default/Inferred Condition Lab Mappings for game systems may not correctly import all data. Importing the map from the CUB Condition Maps folder imports correctly.
 4. **PF2e users**: PF2e is not currently supported by Enhanced Conditions due to the customisation of the effects framework implemented by the system.
+## [1.10.0] - 2022-07-27
+> This update adds compatibility for Foundry VTT v10.275 (v10-testing 1)
+
+### ✨ Enhanced Conditions
+- Macros executed by Conditions correctly pass the actor/token
+- Added a shim for the deprecated API function `applyCondition` that points to the correct method: `addCondition`
+
+### 💭 Concentrator
+- Concentrator now fires when temporary HP is damaged
+
+### 😷  Hide Names
+- Added API access to Hide Names functionality (thanks @Autmor ! 🎉).
+> Check [API Docs](./API.md) for more details
+
+### 🕰️Temporary Combatants
+- Temporary Combatants no longer require an actor or token
+> The existing Temporary Combatants folder can safely be deleted from your Actor directory
+
+### Misc Token
+- Added a setting for Mighty Summoner that allows the GM to opt-out of receiving Mighty Summoner prompts
 
 ## [1.9.2] - 2022-06-25
 ### ✨ Enhanced Conditions
