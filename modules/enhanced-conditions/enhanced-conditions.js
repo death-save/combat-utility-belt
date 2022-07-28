@@ -656,8 +656,8 @@ export class EnhancedConditions {
             const macro = game.macros.get(macroId);
             if (!macro) continue;
 
-            const options = isToken ? {token: entity} : (isActor ? {actor: entity} : null);
-            await macro.execute(macroId, options);
+            const scope = isToken ? {token: entity} : (isActor ? {actor: entity} : null);
+            await macro.execute(scope);
         }
     }
 
