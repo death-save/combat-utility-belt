@@ -396,7 +396,7 @@ export function registerSettings() {
         hint: "SETTINGS.HideNames.HidePartsH",
         scope: "world",
         type: Boolean,
-        default: BUTLER.DEFAULT_CONFIG.hideNames.hideParts,
+        default: BUTLER.DEFAULT_CONFIG.hideNames.hideNameParts,
         config: false,
         onChange: s => {
             ui.combat.render();
@@ -677,6 +677,16 @@ export function registerSettings() {
         default: BUTLER.DEFAULT_CONFIG.mightySummoner.featName,
         scope: "world",
         type: String,
+        config: false,
+        onChange: s => {}
+    });
+
+    Sidekick.registerSetting(BUTLER.SETTING_KEYS.tokenUtility.mightySummonerPromptGm, {
+        name: `${BUTLER.NAME}.SETTINGS.MIGHTY_SUMMONER.PromptGMN`,
+        hint: `${BUTLER.NAME}.SETTINGS.MIGHTY_SUMMONER.PromptGMH`,
+        default: BUTLER.DEFAULT_CONFIG.mightySummoner.promptGm,
+        scope: "world",
+        type: Boolean,
         config: false,
         onChange: s => {}
     });

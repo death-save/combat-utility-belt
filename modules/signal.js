@@ -81,9 +81,13 @@ export class Signal {
             game.cub.getConditions = EnhancedConditions.getConditions;
             game.cub.getConditionEffects = EnhancedConditions.getConditionEffects;
             game.cub.hasCondition = EnhancedConditions.hasCondition;
+            game.cub.applyCondition = EnhancedConditions.applyCondition;
             game.cub.addCondition = EnhancedConditions.addCondition;
             game.cub.removeCondition = EnhancedConditions.removeCondition;
             game.cub.removeAllConditions = EnhancedConditions.removeAllConditions;
+
+            game.cub.hideNames.getReplacementName = HideNPCNames.getReplacementName;
+            game.cub.hideNames.shouldReplaceName = HideNPCNames.shouldReplaceName;
 
         });
 

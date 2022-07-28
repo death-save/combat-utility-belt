@@ -1,30 +1,28 @@
 {
-  "name": "combat-utility-belt",
+  "id": "combat-utility-belt",
   "title": "Combat Utility Belt",
   "description": "Adds various combat-focused features",
-  "version": "1.9.2",
-  "author": "Evan Clarke [errational#2007]",
+  "version": "1.10.0",
   "authors": [
     {
       "name": "Evan Clarke",
       "url": "https://patreon.com/deathsave",
+      "email": "cub@deathsave.dev",
       "discord": "errational#2007",
       "twitter": "@death_save_dev",
       "reddit": "u/etherboy12"
     }
   ],
-  "minimumCoreVersion": "9.235",
-  "compatibleCoreVersion": "9.269",
   "url": "https://github.com/death-save/combat-utility-belt",
   "bugs": "https://github.com/death-save/combat-utility-belt/issues",
   "readme": "https://github.com/death-save/combat-utility-belt/wiki",
   "manifest": "https://github.com/death-save/combat-utility-belt/releases/latest/download/module.json",
   "download": "https://github.com/death-save/combat-utility-belt/releases/latest/download/module.zip",
   "scripts": [
-    "./library/typewriterjs/core.js"
+    "library/typewriterjs/core.js"
   ],
   "esmodules": [
-    "./combat-utility-belt.js"
+    "combat-utility-belt.js"
   ],
   "languages": [
     {
@@ -67,27 +65,27 @@
       "name": "Polski",
       "path": "lang/pl.json"
     }
-  ], 
+  ],
   "packs": [
     {
       "name": "conditionsdnd5e",
       "label": "Conditions (D&D5e)",
       "system": "dnd5e",
-      "module": "combat-utility-belt",
-      "path": "./packs/conditionsdnd5e.db",
-      "type": "JournalEntry"
+      "path": "packs/conditionsdnd5e.db",
+      "type": "JournalEntry",
+      "private": false
     },
     {
       "name": "conditionsarchmage",
       "label": "Conditions (13th Age)",
       "system": "archmage",
-      "module": "combat-utility-belt",
-      "path": "./packs/conditionsarchmage.db",
-      "type": "JournalEntry"
+      "path": "packs/conditionsarchmage.db",
+      "type": "JournalEntry",
+      "private": false
     }
   ],
   "styles" : [
-    "./styles/combat-utility-belt.css"
+    "styles/combat-utility-belt.css"
   ],
   "media": [
     {
@@ -102,5 +100,11 @@
   "flags": {
     "allowBugReporter": true
   },
-  "socket": true
+  "socket": true,
+  "compatibility": {
+    "minimum": "10.270",
+    "verified": "10.275"
+  },
+  "name": "combat-utility-belt",
+  "minimumCoreVersion": "10.270"
 }

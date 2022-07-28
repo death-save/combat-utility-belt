@@ -1,4 +1,3 @@
-import { NAME, FLAGS } from "./butler.js";
 import { TokenUtility } from "./utils/token.js";
 import { ActorUtility } from "./utils/actor.js";
 
@@ -17,14 +16,14 @@ export class MightySummoner {
         }
         
         // If the supplied actor doesn't have the feat, check the other actors owned by the actor's owner
-        const owners = Object.keys(actor.data.permission).filter(p => p !== "default" && actor.data.permission[p] === CONST.DOCUMENT_PERMISSION_LEVELS.OWNER);
+        const owners = Object.keys(actor.data.ownership).filter(p => p !== "default" && actor.data.ownership[p] === CONST.DOCUMENT_PERMISSION_LEVELS.OWNER);
 
         if (!owners) {
             return;
         }
-
+        
         const ownedActors = owners.map(owner => {
-            const actors = game.actors.contents.filter(a => hasProperty(a, `data.permission.${owner}`));
+            const actors = game.actors.contents.filter(a => hasProperty(a, `ownership.${owner}`));
             return actors;
         }).flat();
 
@@ -67,7 +66,7 @@ export class MightySummoner {
      * @param {*} actor 
      */
     static _calculateHPFormula(actor) {
-        const formula = getProperty(actor, "data.data.attributes.hp.formula");
+        const formula = getProperty(actor, "system.attributes.hp.formula");
         const match = formula.match(/\d+/)[0];
         if (!match) {
             return;

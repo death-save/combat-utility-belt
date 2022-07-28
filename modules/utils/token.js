@@ -8,7 +8,7 @@ export class TokenUtility {
      * @param {*} token 
      * @param {*} options 
      * @param {*} userId 
-     * @returns 
+     * @returns {MightySummoner._createDialog | TokenUtility._processHPUpdate}
      */
     static async _onCreateToken(token, options, userId) {
         const actor = token.actor;
@@ -22,8 +22,10 @@ export class TokenUtility {
         }
 
         const summonerFeat = Sidekick.getSetting(SETTING_KEYS.tokenUtility.mightySummonerFeat);
+        const promptGmSetting = Sidekick.getSetting(SETTING_KEYS.tokenUtility.mightySummonerPromptGm);
+        const shouldPromptUser = (!game.user.isGM || (game.user.isGM && promptGmSetting)) ? true : false;
 
-        if (mightySummonerSetting && MightySummoner._checkForFeat(actor, summonerFeat)) {
+        if (mightySummonerSetting && MightySummoner._checkForFeat(actor, summonerFeat) && shouldPromptUser) {
             return MightySummoner._createDialog(token);
         }
 
@@ -35,13 +37,13 @@ export class TokenUtility {
     /**
      * Checks if the given token HP should be rolled
      * @param {*} token 
-     * @returns 
+     * @returns {Boolean}
      */
     static _shouldRollHP(token) {
         const actor = token?.actor;
         const autoRollHP = Sidekick.getSetting(SETTING_KEYS.tokenUtility.autoRollHP);
 
-        if (actor && token?.data?.disposition === -1 && autoRollHP && !actor?.hasPlayerOwner) {
+        if (actor && token?.disposition === -1 && autoRollHP && !actor?.hasPlayerOwner) {
             return true;
         }
 
@@ -52,7 +54,7 @@ export class TokenUtility {
      * Rolls for HP then updates the given token
      * @param {*} token 
      * @param {*} actor 
-     * @returns 
+     * @returns {TokenDocument.update}
      */
     static async _processHPUpdate(token, actor=null, formula=null) {
         actor = actor ?? token?.actor;
@@ -69,10 +71,10 @@ export class TokenUtility {
      * @param {*} actor
      */
     static async rollHP(actor, newFormula=null) {
-        const formula = newFormula || getProperty(actor, "data.data.attributes.hp.formula");
+        const formula = newFormula || getProperty(actor, "system.attributes.hp.formula");
 
         if (!formula) {
-            const maxHP = getProperty(actor, "data.data.attributes.hp.max");
+            const maxHP = getProperty(actor, "system.attributes.hp.max");
             return maxHP ?? 0;
         }
 
@@ -139,10 +141,10 @@ export class TokenUtility {
         w = (w / 2) * multiplier;
 
         let tex = await loadTexture(src, {fallback: 'icons/svg/hazard.svg'});
-        let icon = this.hud.effects.addChild(new PIXI.Sprite(tex));
+        let icon = this.effects.addChild(new PIXI.Sprite(tex));
         icon.width = icon.height = w;
         //const nr = Math.floor(this.data.height * 5);
-        const nr = Math.floor(this.data.height * divisor);
+        const nr = Math.floor(this.document.height * divisor);
         icon.x = Math.floor(i / nr) * w;
         icon.y = (i % nr) * w;
         if ( tint ) icon.tint = tint;

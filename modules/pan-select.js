@@ -11,7 +11,6 @@ export class PanSelect {
      * @param {*} update 
      * @param {*} options 
      * @param {*} userId 
-     * @returns 
      */
     static _onPreUpdateCombat(combat, update, options, userId) {
         const enablePan = Sidekick.getSetting(BUTLER.SETTING_KEYS.panSelect.enablePan);
@@ -31,8 +30,7 @@ export class PanSelect {
      * @param {*} combat 
      * @param {*} update 
      * @param {*} options 
-     * @param {*} userId 
-     * @returns 
+     * @param {*} userId
      */
     static _onUpdateCombat(combat, update, options, userId) {
         const combatant = update.turn ? combat.turns[update.turn] : combat.combatant;
@@ -110,7 +108,7 @@ export class PanSelect {
 
         if (!actor) return;
 
-        const actorPermission = actor ? (actor.data.permission[game.userId] || 0) : null;
+        const actorPermission = actor ? (actor.data.ownership[game.userId] || 0) : null;
 
         if (actorPermission === null) {
             return;
@@ -144,7 +142,7 @@ export class PanSelect {
                 }
         }
 
-        return PanSelect._panToToken(token.data);
+        return PanSelect._panToToken(token);
     }
 
     /**
@@ -265,7 +263,7 @@ export class PanSelect {
      */
     static _checkObserverDeselect(token) {
         const actor = token?.actor;
-        const actorPermission = actor ? actor.data.permission[game.userId] || 0 : null;
+        const actorPermission = actor ? actor.data.ownership[game.userId] || 0 : null;
 
         if (actorPermission === null) {
             return;

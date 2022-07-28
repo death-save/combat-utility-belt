@@ -108,12 +108,12 @@ export class EnhancedConditions {
         const cubOption = options[BUTLER.NAME] = options[BUTLER.NAME] ?? {};
 
         if (hasProperty(update, "actorData.effects")) {
-            cubOption.existingEffects = token.data.actorData.effects ?? [];
+            cubOption.existingEffects = token.actorData.effects ?? [];
             cubOption.updateEffects = update.actorData.effects ?? [];
         }
 
         if (hasProperty(update, "overlayEffect")) {
-            cubOption.existingOverlay = token.data.overlayEffect ?? null;
+            cubOption.existingOverlay = token.overlayEffect ?? null;
             cubOption.updateOverlay = update.overlayEffect ?? null;
         }
 
@@ -322,7 +322,7 @@ export class EnhancedConditions {
 
             if (!message) return;
 
-            const actor = ChatMessage.getSpeakerActor(message.data?.speaker);
+            const actor = ChatMessage.getSpeakerActor(message.speaker);
 
             EnhancedConditions.removeCondition(conditionName, actor, {warn: false});
         });
@@ -336,7 +336,7 @@ export class EnhancedConditions {
 
             if (!message) return;
 
-            const speaker = message?.data?.speaker;
+            const speaker = message?.speaker;
 
             if (!speaker) return;
 
@@ -365,7 +365,6 @@ export class EnhancedConditions {
      * @param {*} app 
      * @param {*} html 
      * @param {*} data 
-     * @returns 
      */
     static async _onRenderCombatTracker(app, html, data) {
         const enabled = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.enable);
@@ -494,7 +493,7 @@ export class EnhancedConditions {
         //const token = token || this.currentToken;
         const chatType = CONST.CHAT_MESSAGE_TYPES.OTHER;
         const speaker = isActorEntity ? ChatMessage.getSpeaker({actor: entity}) : ChatMessage.getSpeaker({token: entity});
-        const timestamp = Date.now();
+        const timestamp = type.active ? null : Date.now();
 
         // iterate over the entries and mark any with references for use in the template
         entries.forEach((v, i, a) => {
@@ -507,7 +506,7 @@ export class EnhancedConditions {
             }
         });
 
-        const chatCardHeading = game.i18n.localize(`${BUTLER.NAME}.ENHANCED_CONDITIONS.ChatCard.Heading`);
+        const chatCardHeading = game.i18n.localize(type.active ? `${BUTLER.NAME}.ENHANCED_CONDITIONS.ChatCard.HeadingActive` : `${BUTLER.NAME}.ENHANCED_CONDITIONS.ChatCard.Heading`);
 
         const templateData = {
             chatCardHeading,
@@ -523,20 +522,20 @@ export class EnhancedConditions {
 
         // if the last message Enhanced conditions, append instead of making a new one
         const lastMessage = game.messages.contents[game.messages.contents.length - 1];
-        const lastMessageSpeaker = lastMessage?.data.speaker;
+        const lastMessageSpeaker = lastMessage?.speaker;
         const sameSpeaker = isActorEntity ? lastMessageSpeaker?.actor === speaker.actor : lastMessageSpeaker?.token === speaker.token;
         
         // hard code the recent timestamp to 30s for now
-        const recentTimestamp = Date.now() <= lastMessage?.data.timestamp + 30000;
-        const enhancedConditionsDiv = lastMessage?.data.content.match("enhanced-conditions");
+        const recentTimestamp = Date.now() <= lastMessage?.timestamp + 30000;
+        const enhancedConditionsDiv = lastMessage?.content.match("enhanced-conditions");
 
-        if (enhancedConditionsDiv && sameSpeaker && recentTimestamp) {
+        if (!type.active && enhancedConditionsDiv && sameSpeaker && recentTimestamp) {
             let newContent = "";
             for (const condition of entries) {
                 const newRow = await renderTemplate(BUTLER.DEFAULT_CONFIG.enhancedConditions.templates.chatConditionsPartial, {condition, type, timestamp});
                 newContent += newRow;
             }
-            const existingContent = lastMessage.data.content;
+            const existingContent = lastMessage.content;
             const ulEnd = existingContent?.indexOf(`</ul>`);
             if (!ulEnd) return;
             const content = existingContent.slice(0, ulEnd) + newContent + existingContent.slice(ulEnd);
@@ -582,7 +581,7 @@ export class EnhancedConditions {
         // loop through tokens, and if there's matching combatants, add them to the update
         for (const token of tokens) {
             
-            const combatants = combat ? combat.combatants?.contents?.filter(c => c.data.tokenId === token.id && c.data.defeated != markDefeated) : [];
+            const combatants = combat ? combat.combatants?.contents?.filter(c => c.tokenId === token.id && c.defeated != markDefeated) : [];
 
             if (!combatants.length) return;
 
@@ -656,8 +655,8 @@ export class EnhancedConditions {
             const macro = game.macros.get(macroId);
             if (!macro) continue;
 
-            const options = isToken ? {token: entity} : (isActor ? {actor: entity} : null);
-            await macro.execute(macroId, options);
+            const scope = isToken ? {token: entity} : (isActor ? {actor: entity} : null);
+            await macro.execute(scope);
         }
     }
 
@@ -1114,6 +1113,17 @@ export class EnhancedConditions {
     /* -------------------------------------------- */
 
     /**
+     * Apply the named condition to the provided entities (Actors or Tokens)
+     * @deprecated
+     * @param  {...any} params 
+     * @see EnhancedConditions#addCondition
+     */
+    static async applyCondition(...params) {
+        Sidekick.consoleMessage("warn", BUTLER.GADGETS.enhancedConditions.name, {message: game.i18n.localize(`${BUTLER.NAME}.ENHANCED_CONDITIONS.Warnings.ApplyCondition`)});
+        return EnhancedConditions.addCondition(...params);
+    }
+
+    /**
      * Applies the named condition to the provided entities (Actors or Tokens)
      * @param {String[] | String} conditionName  the name of the condition to add
      * @param {(Actor[] | Token[] | Actor | Token)} [entities=null] one or more Actors or Tokens to apply the Condition to
@@ -1206,7 +1216,7 @@ export class EnhancedConditions {
                     // Scenario 2: if duplicates are allowed, and existing conditions should be replaced, add any existing conditions to update
                     if (replaceExisting) {
                         for (const matchedCondition of matchedConditionEffects) {
-                            updateEffects.push({id: matchedCondition.data.id, ...effect});
+                            updateEffects.push({id: matchedCondition.id, ...effect});
                         }
                     }
                     
@@ -1294,7 +1304,7 @@ export class EnhancedConditions {
         for (let entity of entities) {
             const actor = entity instanceof Actor ? entity : (entity instanceof Token || entity instanceof TokenDocument) ? entity.actor : null;
 
-            const effects = actor.effects.contents;
+            const effects = actor?.effects.contents;
 
             if (!effects) continue;
 
@@ -1442,10 +1452,10 @@ export class EnhancedConditions {
      * @param {Boolean} options.warn  whether or not to raise warnings on errors
      * @example 
      * // Remove Condition named "Blinded" from an Actor named Bob
-     * game.cub.removeConditions("Blinded", game.actors.getName("Bob"));
+     * game.cub.removeCondition("Blinded", game.actors.getName("Bob"));
      * @example 
      * // Remove Condition named "Charmed" from the currently controlled Token, but don't show any warnings if it fails.
-     * game.cub.removeConditions("Charmed", {warn=false});
+     * game.cub.removeCondition("Charmed", {warn=false});
      */
     static async removeCondition(conditionName, entities=null, {warn=true}={}) {
         if (!entities) {

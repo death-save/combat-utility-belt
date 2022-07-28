@@ -37,7 +37,7 @@ export class Concentrator {
      */
     static async _onRenderChatMessage(app, html, data) {
         const enableConcentrator = Sidekick.getSetting(SETTING_KEYS.concentrator.enable);
-        const actor = ChatMessage.getSpeakerActor(app.data?.speaker);
+        const actor = ChatMessage.getSpeakerActor(app.speaker);
         const gmUser = Sidekick.getFirstGM();
 
         if (!enableConcentrator || game.userId !== gmUser?.id || !actor) return;
@@ -68,7 +68,7 @@ export class Concentrator {
         const isSpell = item ? item.type === "spell" : false;
 
         // If it is, check if it requires concentration
-        const isConcentration = concentrationDiv.length ? true : (isSpell ? !!getProperty(item, `data.data.components.concentration`) : false);
+        const isConcentration = concentrationDiv.length ? true : (isSpell ? !!getProperty(item, `system.components.concentration`) : false);
 
         if (!isConcentration) return;
 
@@ -108,16 +108,20 @@ export class Concentrator {
 
         // Update handled in token hooks
         if (actor.isToken) return true;
-
-        const newHealth = getProperty(update, `data.${Sidekick.getSetting(SETTING_KEYS.concentrator.healthAttribute)}.value`);
-        const oldHealth = getProperty(actor, `data.data.${Sidekick.getSetting(SETTING_KEYS.concentrator.healthAttribute)}.value`);
-
+        
+        const newTempHealth = getProperty(update, `system.${Sidekick.getSetting(SETTING_KEYS.concentrator.healthAttribute)}.temp`);
+        const oldTempHealth = getProperty(actor, `system.${Sidekick.getSetting(SETTING_KEYS.concentrator.healthAttribute)}.temp`);
+        const tempDamageTaken = Concentrator._wasDamageTaken(newTempHealth, oldTempHealth);
+        
+        const newHealth = getProperty(update, `system.${Sidekick.getSetting(SETTING_KEYS.concentrator.healthAttribute)}.value`);
+        const oldHealth = getProperty(actor, `system.${Sidekick.getSetting(SETTING_KEYS.concentrator.healthAttribute)}.value`);
         const damageTaken = Concentrator._wasDamageTaken(newHealth, oldHealth);
+        
         options[NAME] = options[NAME] ?? {};
 
-        if (damageTaken) {
+        if (tempDamageTaken || damageTaken) {
             options[NAME][FLAGS.concentrator.damageTaken] = true;
-            options[NAME][FLAGS.concentrator.damageAmount] = Concentrator._calculateDamage(newHealth, oldHealth);
+            options[NAME][FLAGS.concentrator.damageAmount] = tempDamageTaken ? Concentrator._calculateDamage(newTempHealth, oldTempHealth) : Concentrator._calculateDamage(newHealth, oldHealth);
             options[NAME][FLAGS.concentrator.isDead] = newHealth <= 0;
         }
 
@@ -153,21 +157,26 @@ export class Concentrator {
      * @param {*} options 
      */
     static _onPreUpdateToken(token, update, options, userId){
-        if (token.data.actorLink) return true;
+        if (token.actorLink) return true;
         
         const enableConcentrator = Sidekick.getSetting(SETTING_KEYS.concentrator.enable);
 
         if (!enableConcentrator) return true;
 
-        const newHealth = getProperty(update, `actorData.data.${Sidekick.getSetting(SETTING_KEYS.concentrator.healthAttribute)}.value`);
-        const oldHealth = getProperty(token, `actor.data.data.${Sidekick.getSetting(SETTING_KEYS.concentrator.healthAttribute)}.value`);
+        const newTempHealth = getProperty(update, `actorData.system.${Sidekick.getSetting(SETTING_KEYS.concentrator.healthAttribute)}.temp`);
+        const oldTempHealth = getProperty(token, `actor.system.${Sidekick.getSetting(SETTING_KEYS.concentrator.healthAttribute)}.temp`);
+        
+        const tempDamageTaken = Concentrator._wasDamageTaken(newTempHealth, oldTempHealth);
+
+        const newHealth = getProperty(update, `actorData.system.${Sidekick.getSetting(SETTING_KEYS.concentrator.healthAttribute)}.value`);
+        const oldHealth = getProperty(token, `actor.system.${Sidekick.getSetting(SETTING_KEYS.concentrator.healthAttribute)}.value`);
         
         const damageTaken = Concentrator._wasDamageTaken(newHealth, oldHealth);
 
-        if (damageTaken) {
+        if (tempDamageTaken || damageTaken) {
             const cubOption = options[NAME] = options[NAME] ?? {};
             cubOption[FLAGS.concentrator.damageTaken] = true;
-            cubOption[FLAGS.concentrator.damageAmount] = Concentrator._calculateDamage(newHealth, oldHealth);
+            cubOption[FLAGS.concentrator.damageAmount] = tempDamageTaken ? Concentrator._calculateDamage(newTempHealth, oldTempHealth) : Concentrator._calculateDamage(newHealth, oldHealth);
             cubOption[FLAGS.concentrator.isDead] = newHealth <= 0;
         }
 
@@ -274,7 +283,7 @@ export class Concentrator {
      * Processes a damage event for Concentration purposes
      * @param {*} entity
      * @param {*} options 
-     * @returns 
+     * @returns {Concentrator._processDeath | Concentrator._determinePromptedUsers}
      */
     static _processDamage(entity, options) {
         const isConcentrating = Concentrator._isConcentrating(entity);
@@ -417,9 +426,9 @@ export class Concentrator {
         });
 
         Hooks.once("createChatMessage", (message, options, userId) => {
-            const includesSaveText = message.data.flavor?.includes(game.i18n.format("DND5E.SavePromptTitle", {ability: CONFIG.DND5E.abilities[ability]}));
+            const includesSaveText = message.flavor?.includes(game.i18n.format("DND5E.SavePromptTitle", {ability: CONFIG.DND5E.abilities[ability]}));
             // Support BetterRolls5e
-            const betterRoll = message.data?.flags?.betterrolls5e;
+            const betterRoll = message?.flags?.betterrolls5e;
             
             if (!message.isRoll && (!includesSaveText || !betterRoll)) return;
 
@@ -514,7 +523,7 @@ export class Concentrator {
      * @param {*} spell 
      * @param {*} conditionName 
      * @param {*} options 
-     * @returns 
+     * @returns {Actor.setFlag}
      */
     static async _startConcentration(entity, spell, conditionName, {sendMessage=DEFAULT_CONFIG.concentrator.notifyConcentration.none}={}) {
         const isActor = entity instanceof Actor;
@@ -542,7 +551,7 @@ export class Concentrator {
      * Processes end of Concentration
      * @param {*} entity 
      * @param {*} options 
-     * @returns 
+     * @returns {Actor.unsetFlag}
      */
     static async _endConcentration(entity, {reason=null}={}) {
         const isActor = entity instanceof Actor;
@@ -670,7 +679,7 @@ export class Concentrator {
     /**
      * Calculates a Concentration DC based on a damage amount
      * @param {*} damage 
-     * @returns 
+     * @returns {Number}
      */
     static _calculateDC(damage) {
         const halfDamage = Math.floor(damage / 2);
@@ -769,7 +778,7 @@ export class Concentrator {
      * Finds whisper recipients for given entity and desired visibility
      * @param {*} entity 
      * @param {*} desiredVisibility 
-     * @returns 
+     * @returns {Array}
      */
     static _getWhisperRecipients(entity, desiredVisibility) {
         let whisperRecipients = [];

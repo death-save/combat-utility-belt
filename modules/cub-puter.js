@@ -35,7 +35,7 @@ export class CUBPuter extends FormApplication {
      * Passes data to the template on render
      */
     getData() {
-        const moduleVersion = game.modules.get(NAME)?.data?.version;
+        const moduleVersion = game.modules.get(NAME)?.version;
         const username = game.user.name;
         const gadgets = GADGETS;
         const config = Sidekick.getSetting(SETTING_KEYS.cubPuter.config);
@@ -362,7 +362,7 @@ export class CUBPuter extends FormApplication {
         const header = html.find("header");
         header.addClass("terminal");
         const appTitle = header.find(`:contains("${app.title}")`);
-        appTitle.append(` -- cubOS v${game.modules.get(NAME).data.version}`);
+        appTitle.append(` -- cubOS v${game.modules.get(NAME).version}`);
         const consoleDiv = html.find("div.console-panel");
         const gadgetSelect = html.find("div.gadget-select");
         const infoDiv = html.find("div.information-panel");
@@ -381,7 +381,7 @@ export class CUBPuter extends FormApplication {
             `Salutations fleshy meat-bag who identifies as ${game.user.name}. I hope you are feeling cold and callous today because it's going to be a bloodbath!`
         ];
 
-        const startup = config.startup ? `> Starting cubOS v${game.modules.get(NAME).data.version}` : ``;
+        const startup = config.startup ? `> Starting cubOS v${game.modules.get(NAME).version}` : ``;
         const loginPrompt = config.startup ? `> Login: ` : ``;
         const loginInput = config.startup ? username : ``;
         const passwordPrompt = config.startup ? `<br/> > Password: ` : ``;

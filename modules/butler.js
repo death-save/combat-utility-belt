@@ -235,7 +235,7 @@ export const DEFAULT_CONFIG = {
             macroConfig: `${PATH}/templates/enhanced-condition-macro-config.hbs`,
             triggerConfig: `${PATH}/templates/enhanced-condition-trigger-config.hbs`
         },
-        migrationVersion: null
+        migrationVersion: ""
     },
     giveXP: {
         enable: false,
@@ -272,7 +272,8 @@ export const DEFAULT_CONFIG = {
     },
     mightySummoner: {
         enable: false,
-        featName: "Mighty Summoner"
+        featName: "Mighty Summoner",
+        promptGm: false
     },
     panSelect: {
         enablePan: false,
@@ -445,10 +446,6 @@ export const SETTING_KEYS = {
         hideFooter: "hideFooter",
         hideParts: "hideNameParts"
     },
-    mightySummoner: {
-        enable: "enableMightySummoner",
-        featName: "mightySummonerFeatName"
-    },
     panSelect: {
         enablePan: "enablePan",
         panGM: "panGM",
@@ -472,6 +469,7 @@ export const SETTING_KEYS = {
     tokenUtility: {
         mightySummoner: "enableMightySummoner",
         mightySummonerFeat: "mightySummonerFeatName",
+        mightySummonerPromptGm: "mightySummonerPromptGm",
         autoRollHP: "autoRollHP",
         hideAutoRoll: "hideAutoRollHP",
         effectSize: "effectSize"
