@@ -10,7 +10,7 @@
 </div><br/>
 
 ![https://img.shields.io/endpoint?url=https://foundryshields.com/version?url=https%3A%2F%2Fraw.githubusercontent.com%2Fdeath-save%2Fcombat-utility-belt%2Fmaster%2Fmodule.json](https://img.shields.io/endpoint?url=https://foundryshields.com/version?url=https%3A%2F%2Fraw.githubusercontent.com%2Fdeath-save%2Fcombat-utility-belt%2Fmaster%2Fmodule.json)<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-29-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-30-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 ![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/death-save/combat-utility-belt) 
@@ -194,6 +194,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
   </tr>
   <tr>
     <td align="center"><a href="https://github.com/Autmor"><img src="https://avatars.githubusercontent.com/u/66399049?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Autmor</b></sub></a><br /><a href="https://github.com/death-save/combat-utility-belt/commits?author=Autmor" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/MichalGolaszewski"><img src="https://avatars.githubusercontent.com/u/46850235?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Michał Gołaszewski</b></sub></a><br /><a href="#translation-MichalGolaszewski" title="Translation">🌍</a></td>
   </tr>
 </table>
 
