@@ -11,7 +11,6 @@ export class PanSelect {
      * @param {*} update 
      * @param {*} options 
      * @param {*} userId 
-     * @returns 
      */
     static _onPreUpdateCombat(combat, update, options, userId) {
         const enablePan = Sidekick.getSetting(BUTLER.SETTING_KEYS.panSelect.enablePan);
@@ -31,8 +30,7 @@ export class PanSelect {
      * @param {*} combat 
      * @param {*} update 
      * @param {*} options 
-     * @param {*} userId 
-     * @returns 
+     * @param {*} userId
      */
     static _onUpdateCombat(combat, update, options, userId) {
         const combatant = update.turn ? combat.turns[update.turn] : combat.combatant;

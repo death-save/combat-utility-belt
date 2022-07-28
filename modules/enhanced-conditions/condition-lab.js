@@ -489,7 +489,7 @@ export class ConditionLab extends FormApplication {
     /**
      * Input change handler
      * @param {*} event 
-     * @returns 
+     * @returns {Application.render}
      */
     async _onChangeInputs(event) {
         const name = event.target.name;
@@ -807,7 +807,7 @@ export class ConditionLab extends FormApplication {
      * Sorts the given map by the name property
      * @param {Array} map 
      * @param {*} direction 
-     * @returns 
+     * @returns {Array}
      */
     _sortMapByName(map, direction) {
         return map.sort((a, b) => {
@@ -918,7 +918,6 @@ export class ConditionLab extends FormApplication {
     /**
      * Macro Config button click handler
      * @param {*} event 
-     * @returns 
      */
     _onClickMacroConfig(event) {
         const rowLi = event.target.closest("li");
@@ -934,7 +933,6 @@ export class ConditionLab extends FormApplication {
     /**
      * Trigger Config button click handler
      * @param {*} event 
-     * @returns 
      */
      _onClickTriggerConfig(event) {
         const rowLi = event.target.closest("li");
@@ -1014,7 +1012,7 @@ export class ConditionLab extends FormApplication {
      * @param {*} propertyName 
      * @param {*} original 
      * @param {*} comparison 
-     * @returns 
+     * @returns {Boolean}
      */
     _hasPropertyChanged(propertyName, original, comparison) {
         let propertyChanged = false;

@@ -283,7 +283,7 @@ export class Concentrator {
      * Processes a damage event for Concentration purposes
      * @param {*} entity
      * @param {*} options 
-     * @returns 
+     * @returns {Concentrator._processDeath | Concentrator._determinePromptedUsers}
      */
     static _processDamage(entity, options) {
         const isConcentrating = Concentrator._isConcentrating(entity);
@@ -523,7 +523,7 @@ export class Concentrator {
      * @param {*} spell 
      * @param {*} conditionName 
      * @param {*} options 
-     * @returns 
+     * @returns {Actor.setFlag}
      */
     static async _startConcentration(entity, spell, conditionName, {sendMessage=DEFAULT_CONFIG.concentrator.notifyConcentration.none}={}) {
         const isActor = entity instanceof Actor;
@@ -551,7 +551,7 @@ export class Concentrator {
      * Processes end of Concentration
      * @param {*} entity 
      * @param {*} options 
-     * @returns 
+     * @returns {Actor.unsetFlag}
      */
     static async _endConcentration(entity, {reason=null}={}) {
         const isActor = entity instanceof Actor;
@@ -679,7 +679,7 @@ export class Concentrator {
     /**
      * Calculates a Concentration DC based on a damage amount
      * @param {*} damage 
-     * @returns 
+     * @returns {Number}
      */
     static _calculateDC(damage) {
         const halfDamage = Math.floor(damage / 2);
@@ -778,7 +778,7 @@ export class Concentrator {
      * Finds whisper recipients for given entity and desired visibility
      * @param {*} entity 
      * @param {*} desiredVisibility 
-     * @returns 
+     * @returns {Array}
      */
     static _getWhisperRecipients(entity, desiredVisibility) {
         let whisperRecipients = [];

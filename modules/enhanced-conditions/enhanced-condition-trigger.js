@@ -51,7 +51,6 @@ export default class EnhancedConditionTriggerConfig extends FormApplication {
      * Update Object on Form Submission
      * @param {*} event 
      * @param {*} formData 
-     * @returns 
      */
     async _updateObject(event, formData) {
         this.object.macros = [];

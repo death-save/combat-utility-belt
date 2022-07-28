@@ -365,7 +365,6 @@ export class EnhancedConditions {
      * @param {*} app 
      * @param {*} html 
      * @param {*} data 
-     * @returns 
      */
     static async _onRenderCombatTracker(app, html, data) {
         const enabled = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.enable);

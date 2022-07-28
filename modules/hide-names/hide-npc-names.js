@@ -51,9 +51,8 @@ export class HideNPCNames {
     }
 
     /**
-     * 
+     * Updates Chat Messages related to a specific entity (eg. actor or token)
      * @param {*} entity 
-     * @returns 
      */
     static _updateEntityMessages(entity) {
         const isToken = entity instanceof Token || entity instanceof TokenDocument;
@@ -352,7 +351,6 @@ export class HideNPCNames {
     /**
      * Chat Message Icon click handler
      * @param {*} event 
-     * @returns 
      */
     static async _onClickChatMessageIcon(event) {
         const icon = event.target;

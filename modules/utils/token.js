@@ -8,7 +8,7 @@ export class TokenUtility {
      * @param {*} token 
      * @param {*} options 
      * @param {*} userId 
-     * @returns 
+     * @returns {MightySummoner._createDialog | TokenUtility._processHPUpdate}
      */
     static async _onCreateToken(token, options, userId) {
         const actor = token.actor;
@@ -37,7 +37,7 @@ export class TokenUtility {
     /**
      * Checks if the given token HP should be rolled
      * @param {*} token 
-     * @returns 
+     * @returns {Boolean}
      */
     static _shouldRollHP(token) {
         const actor = token?.actor;
@@ -54,7 +54,7 @@ export class TokenUtility {
      * Rolls for HP then updates the given token
      * @param {*} token 
      * @param {*} actor 
-     * @returns 
+     * @returns {TokenDocument.update}
      */
     static async _processHPUpdate(token, actor=null, formula=null) {
         actor = actor ?? token?.actor;

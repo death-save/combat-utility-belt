@@ -43,7 +43,7 @@ export class Sidekick {
      * @param {*} key 
      * @param {*} value 
      * @param {*} awaitResult 
-     * @returns 
+     * @returns {Promise | ClientSetting}
      */
     static setSetting(key, value, awaitResult=false) {
         if (!awaitResult) {
@@ -61,7 +61,7 @@ export class Sidekick {
      * Register a single setting using the provided key and setting data
      * @param {*} key 
      * @param {*} metadata 
-     * @returns 
+     * @returns {ClientSettings.register}
      */
     static registerSetting(key, metadata) {
         return game.settings.register(BUTLER.NAME, key, metadata);
@@ -71,7 +71,7 @@ export class Sidekick {
      * Register a menu setting using the provided key and setting data
      * @param {*} key 
      * @param {*} metadata 
-     * @returns 
+     * @returns {ClientSettings.registerMenu}
      */
     static registerMenu(key, metadata) {
         return game.settings.registerMenu(BUTLER.NAME, key, metadata);
@@ -80,7 +80,7 @@ export class Sidekick {
     /**
      * Register all provided setting data
      * @param {*} settingsData 
-     * @returns 
+     * @returns {Array}
      */
     static registerAllSettings(settingsData) {
         return Object.keys(settingsData).forEach((key) => Sidekick.registerSetting(key, settingsData[key]));
@@ -308,7 +308,7 @@ export class Sidekick {
     /**
      * Get text nodes in a given element
      * @param {*} el 
-     * @returns 
+     * @returns {jQuery}
      */
     static getTextNodesIn(el) {
         return $(el).find(":not(iframe)").addBack().contents().filter((i, e) => e.nodeType == 3 && /\S/.test(e.nodeValue));
@@ -391,7 +391,7 @@ export class Sidekick {
      * Filters an array down to just its duplicate elements based on the property specified
      * @param {*} arrayToCheck 
      * @param {*} filterProperty 
-     * @returns 
+     * @returns {Array}
      */
     static findArrayDuplicates(arrayToCheck, filterProperty) {
         const lookup = arrayToCheck.reduce((a, e) => {
@@ -406,7 +406,7 @@ export class Sidekick {
      * Returns true for each array element that is a duplicate based on the property specified
      * @param {*} arrayToCheck 
      * @param {*} filterProperty 
-     * @returns 
+     * @returns {Boolean}
      */
     static identifyArrayDuplicatesByProperty(arrayToCheck, filterProperty) {
         const seen = new Set();
@@ -434,7 +434,7 @@ export class Sidekick {
     /**
      * Retrieves all the owners of a given document
      * @param {*} document 
-     * @returns 
+     * @returns {Array}
      */
     static getDocumentOwners(document) {
         const permissions = document.ownership ?? document.data?.ownership;
