@@ -85,6 +85,9 @@ export class Signal {
             game.cub.removeCondition = EnhancedConditions.removeCondition;
             game.cub.removeAllConditions = EnhancedConditions.removeAllConditions;
 
+            game.cub.hideNames.getReplacementName = HideNPCNames.getReplacementName;
+            game.cub.hideNames.shouldReplaceName = HideNPCNames.shouldReplaceName;
+
         });
 
         Hooks.on("canvasInit", () => {
