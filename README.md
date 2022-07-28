@@ -141,7 +141,7 @@ Firstly thank you to all my [patrons](https://patreon.com/deathsave), you make m
 
 Secondly I want to shout out the awesome contributors for this module (see: [contributors](#contributors-)). Whether it's code, translations, or bugs/suggestions, without your help Combat Utility Belt would not be as awesome as it is! 
 
-I would also like to acknowledge that many of the functions found in the Combat Utility Belt are inspired by [Roll20 API scripts](https://github.com/RobinKuiper/Roll20APIScripts) written by Robin Kuiper (namely the Combat Tracker, Death Tracker and StatusInfo ones).
+I would also like to acknowledge that many of the functions found in the Combat Utility Belt are inspired by [Roll20 API scripts](https://github.com/RobinKuiper/Roll20APIScripts) written by @RobinKuiper (namely the Combat Tracker, Death Tracker and StatusInfo ones).
 
 Concentration icon made by [Freepik](https://www.flaticon.com/authors/freepik) from [Flat Icon](www.flaticon.com)
 
