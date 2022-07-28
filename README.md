@@ -9,7 +9,7 @@
 <a href="https://www.youtube.com/channel/UCxhr66d1sjfXU4SQ5MEqPvg" title="YouTube"><img height="32" width="32" src="https://cdn.jsdelivr.net/npm/simple-icons@v4/icons/youtube.svg" /></a></span>
 </div><br/>
 
-![https://img.shields.io/endpoint?url=https://foundryshields.com/version?url=https%3A%2F%2Fraw.githubusercontent.com%2Fdeath-save%2Fcombat-utility-belt%2Fmaster%2Fmodule.json](https://img.shields.io/endpoint?url=https://foundryshields.com/version?url=https%3A%2F%2Fraw.githubusercontent.com%2Fdeath-save%2Fcombat-utility-belt%2Fmaster%2Fmodule.json)<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+![https://img.shields.io/endpoint?url=https%3A%2F%2Ffoundryshields.com%2Fversion%3Fstyle%3Dflat%26url%3Dhttps%3A%2F%2Fraw.githubusercontent.com%2Fdeath-save%2Fcombat-utility-belt%2Fmaster%2Fmodule.json](https://img.shields.io/endpoint?url=https%3A%2F%2Ffoundryshields.com%2Fversion%3Fstyle%3Dflat%26url%3Dhttps%3A%2F%2Fraw.githubusercontent.com%2Fdeath-save%2Fcombat-utility-belt%2Fmaster%2Fmodule.json)<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 [![All Contributors](https://img.shields.io/badge/all_contributors-30-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
