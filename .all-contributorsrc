@@ -260,7 +260,17 @@
       "contributions": [
         "code"
       ]
-   }],
+    },
+    {
+      "login": "Autmor",
+      "name": "Autmor",
+      "avatar_url": "https://avatars.githubusercontent.com/u/66399049?v=4",
+      "profile": "https://github.com/Autmor",
+      "contributions": [
+        "code"
+      ]
+    }
+  ],
   "contributorsPerLine": 7,
   "projectName": "combat-utility-belt",
   "projectOwner": "death-save",
