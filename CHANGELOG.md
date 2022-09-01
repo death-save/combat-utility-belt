@@ -5,6 +5,15 @@
 2. Chat log may not re-render when Hide Names settings are changed. This may cause the old name to still show in the log for players. Advise players to reload Foundry if you change these settings mid-session.
 3. The Default/Inferred Condition Lab Mappings for game systems may not correctly import all data. Importing the map from the CUB Condition Maps folder imports correctly.
 4. **PF2e users**: PF2e is not currently supported by Enhanced Conditions due to the customisation of the effects framework implemented by the system.
+
+## [1.10.1] - 2022-08-31
+> Hotfix for issue [#702](https://github.com/death-save/combat-utility-belt/issues/702) in Foundry VTT v10.283
+
+> Note: full compatibility with Foundry VTT versions greater than v10.275 is **not** verified.
+
+### Misc Token
+- Fixed an issue related to Token Status Effect sizing that prevented scenes from loading when a token was present on the canvas.
+
 ## [1.10.0] - 2022-07-27
 > This update adds compatibility for Foundry VTT v10.275 (v10-testing 1)
 
