@@ -94,6 +94,8 @@ export class EnhancedConditions {
         }
 
         game.cub.enhancedConditions.supported = true;
+
+
     }
 
     /**
@@ -898,6 +900,8 @@ export class EnhancedConditions {
         const activeConditionEffects = EnhancedConditions._prepareStatusEffects(activeConditionMap);
 
         if (removeDefaultEffects) {
+            CONFIG.specialStatusEffects.BLIND = 'combat-utility-belt.blinded'
+            CONFIG.specialStatusEffects.INVISIBLE = 'combat-utility-belt.invisible'
             return CONFIG.statusEffects = activeConditionEffects ?? [];
         } 
         
