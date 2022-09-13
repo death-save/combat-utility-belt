@@ -19,7 +19,8 @@
                     "Title": "Save Mapping with Sort Direction?",
                     "Content": "<p>Click 'Yes' to save the Condition Lab map with the current sort direction. Click 'No' to cancel Saving.</p>",
                     "CheckboxText": "Don't show this again"
-                }
+                },
+                "BadReference": "Could not build a link to the dropped content (actor, item, journal etc)"
             },
             "ChatCard": {
                 "Heading": "Enhanced Condition Changes",

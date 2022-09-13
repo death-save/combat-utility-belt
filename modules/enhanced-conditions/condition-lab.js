@@ -623,15 +623,15 @@ export class ConditionLab extends FormApplication {
      * Reference Link change handler
      * @param {*} event 
      */
-    _onChangeReferenceId(event) {
+    async _onChangeReferenceId(event) {
         event.preventDefault();
         
         const input = event.currentTarget ?? event.target;
 
         // Update the enriched link
-        const $linkDiv = $(input.nextElementSibling);
+        const $linkDiv = $(input.parentElement.nextElementSibling);
         const $link = $linkDiv.first();   
-        const newLink = TextEditor.enrichHTML(input.value);
+        const newLink = await TextEditor.enrichHTML(input.value, {async: true});
 
         if (!$link.length) {
             $linkDiv.append(newLink);
@@ -889,29 +889,14 @@ export class ConditionLab extends FormApplication {
 
     async _onDrop(event) {
         event.preventDefault();
-	    const data = JSON.parse(event.dataTransfer.getData('text/plain'));
-	    if ( !data?.id ) return;
+        const eventData = TextEditor.getDragEventData(event);
+        const link = await TextEditor.getContentLink(eventData);
         const targetInput = event.currentTarget;
-
-	    // Case 1 - Document from Compendium Pack
-        if ( data.pack ) {
-            const pack = game.packs.get(data.pack);
-            if (!pack) return;
-            const entity = await pack.getDocument(data.id);
-            const link = `@Compendium[${data.pack}.${data.id}]{${entity.name}}`;
+        if (link) {
             targetInput.value = link;
-            this._onChangeReferenceId(event);
-        }
-
-        // Case 2 - Document from World
-        else if ( data.type ) {
-            const config = CONFIG[data.type];
-            if ( !config ) return false;
-            const entity = config.collection.instance.get(data.id);
-            if ( !entity ) return false;
-            const link = `@${data.type}[${entity.id}]{${entity.name}}`;
-            targetInput.value = link;
-            this._onChangeReferenceId(event);
+            return targetInput.dispatchEvent(new Event("change"));
+        } else {
+            return ui.notifications.error(game.i18n.localize(`${NAME}.ENHANCED_CONDITIONS.ConditionLab.BadReference`));
         }
     }
 
