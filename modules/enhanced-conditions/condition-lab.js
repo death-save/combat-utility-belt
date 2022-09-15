@@ -254,21 +254,20 @@ export class ConditionLab extends FormApplication {
     /**
      * Restore defaults for a mapping
      */
-    async _restoreDefaults() {
+    async _restoreDefaults({clearCache=false}={}) {
         const system = this.system;
         let defaultMaps = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.defaultMaps);
+        
         const defaultMapType = Sidekick.getKeyByValue(BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes, BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes.default);
         const otherMapType = Sidekick.getKeyByValue(BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes, BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes.other);
-
-        if (this.mapType === defaultMapType) {
+        if (clearCache) {
             defaultMaps = await EnhancedConditions._loadDefaultMaps();
+            Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.defaultMaps, defaultMaps);
         }
+        const tempMap = (this.mapType != otherMapType && defaultMaps && defaultMaps[system]) ? defaultMaps[system] : [];
 
-        //const defaultMap = defaultMaps[system] || [];
-        const defaultMap = EnhancedConditions._prepareMap(EnhancedConditions.getDefaultMap(system));
         // If the mapType is other then the map should be empty, otherwise it's the default map for the system
-        this.map = this.mapType === otherMapType ? [] : defaultMap;
-        //Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.map, this.map, true);
+        this.map = tempMap;
         this.render(true);
     }
 
@@ -432,14 +431,31 @@ export class ConditionLab extends FormApplication {
     }
     
     /**
-     * Render dialog hook handler
+     * Render save dialog hook handler
      * @param {*} app 
      * @param {jQuery} html 
      * @param {*} data 
      */
-    static async _onRenderDialog(app, html, data) {
+    static async _onRenderSaveDialog(app, html, data) {
         const contentDiv = html[0].querySelector("div.dialog-content");
         const checkbox = `<div class="form-group"><label class="dont-show-again-checkbox">${game.i18n.localize(`${BUTLER.NAME}.ENHANCED_CONDITIONS.ConditionLab.SortDirectionSave.CheckboxText`)}<input type="checkbox" name="dont-show-again"></label></div>`;
+        contentDiv.insertAdjacentHTML("beforeend", checkbox);
+        await app.setPosition({height: app.position.height + 25});
+    }
+
+    /**
+     * Render restore defaults hook handler
+     * @param {*} app 
+     * @param {*} html 
+     * @param {*} data 
+     */
+    static async _onRenderRestoreDefaultsDialog(app, html, data) {
+        if (game.cub.conditionLab.mapType !== Sidekick.getKeyByValue(BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes, BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes.default)) {
+            return;
+        }
+
+        const contentDiv = html[0].querySelector("div.dialog-content");
+        const checkbox = `<div class="form-group"><label class="clear-cache-checkbox">${game.i18n.localize(`${BUTLER.NAME}.ENHANCED_CONDITIONS.ConditionLab.RestoreDefaultClearCache.CheckboxText`)}<input type="checkbox" name="clear-cache"></label></div>`;
         contentDiv.insertAdjacentHTML("beforeend", checkbox);
         await app.setPosition({height: app.position.height + 25});
     }
@@ -831,7 +847,11 @@ export class ConditionLab extends FormApplication {
                 yes: {
                     icon: `<i class="fas fa-check"></i>`,
                     label: game.i18n.localize("WORDS.Yes"),
-                    callback: () => this._restoreDefaults()
+                    callback: ($html) => {
+                        const checkbox = $html[0].querySelector("input[name='clear-cache']");
+                        const clearCache = checkbox?.checked;
+                        this._restoreDefaults({clearCache});
+                    }
                 },
                 no: {
                     icon: `<i class="fas fa-times"></i>`,

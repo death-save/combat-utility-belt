@@ -20,7 +20,10 @@
                     "Content": "<p>Click 'Yes' to save the Condition Lab map with the current sort direction. Click 'No' to cancel Saving.</p>",
                     "CheckboxText": "Don't show this again"
                 },
-                "BadReference": "Could not build a link to the dropped content (actor, item, journal etc)"
+                "BadReference": "Could not build a link to the dropped content (actor, item, journal etc)",
+                "RestoreDefaultClearCache": {
+                     "CheckboxText": "Clear cache and reload defaults from module folder?"
+                }
             },
             "ChatCard": {
                 "Heading": "Enhanced Condition Changes",
