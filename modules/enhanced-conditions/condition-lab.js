@@ -96,7 +96,8 @@ export class ConditionLab extends FormApplication {
             // Set the Output to Chat checkbox
             entry.options = entry.options ?? {};
             entry.options.outputChat = entry?.options?.outputChat;
-            entry.enrichedReference = entry.referenceId ? TextEditor.enrichHTML(entry.referenceId) : "";
+            // @TODO #711
+            entry.enrichedReference = entry.referenceId ? TextEditor.enrichHTML(entry.referenceId, {async: false}) : "";
 
             // Default all entries to show
             entry.hidden = entry.hidden ?? false;
