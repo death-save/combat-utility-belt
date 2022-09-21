@@ -56,7 +56,7 @@ export class ConditionLab extends FormApplication {
     /**
      * Prepare data for form rendering
      */
-    prepareData() {
+    async prepareData() {
         const sortDirection = this.sortDirection;
         const sortTitle = game.i18n.localize(`${BUTLER.NAME}.ENHANCED_CONDITIONS.ConditionLab.SortAnchorTitle${sortDirection ? `_${sortDirection}` : ""}`);
         const filterTitle = game.i18n.localize(`${BUTLER.NAME}.ENHANCED_CONDITIONS.ConditionLab.FilterInputTitle`);
@@ -86,22 +86,22 @@ export class ConditionLab extends FormApplication {
         const outputChatSetting = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.outputChat);
         const disableChatOutput = isDefault || !outputChatSetting;
 
-        // Transform data for each Condition Mapping entry to ensure it will display correctly
-        conditionMap.forEach((entry, index, map) => {
+        for (let i = 0; i < conditionMap.length; i++) {
+            const entry = conditionMap[i];
             // Check if the row exists in the saved map
             const existingEntry = this.initialMap.find(e => e.id === entry.id) ?? null;
             entry.isNew = !existingEntry;
-            entry.isChanged = this._hasEntryChanged(entry, existingEntry, index);
+            entry.isChanged = this._hasEntryChanged(entry, existingEntry, i);
 
             // Set the Output to Chat checkbox
             entry.options = entry.options ?? {};
             entry.options.outputChat = entry?.options?.outputChat;
             // @TODO #711
-            entry.enrichedReference = entry.referenceId ? TextEditor.enrichHTML(entry.referenceId, {async: false}) : "";
+            entry.enrichedReference = entry.referenceId ? await TextEditor.enrichHTML(entry.referenceId, {async: true, documents: true}) : "";
 
             // Default all entries to show
             entry.hidden = entry.hidden ?? false;
-        });
+        }
 
         // Pre-apply any filter value
         this.displayedMap = filterValue ? this._filterMapByName(conditionMap, filterValue) : foundry.utils.duplicate(conditionMap);
@@ -141,8 +141,8 @@ export class ConditionLab extends FormApplication {
     /**
      * Gets data for the template render
      */
-    getData() {
-        return this.prepareData();
+    async getData() {
+        return await this.prepareData();
     }
 
     /**
@@ -648,7 +648,7 @@ export class ConditionLab extends FormApplication {
         // Update the enriched link
         const $linkDiv = $(input.parentElement.nextElementSibling);
         const $link = $linkDiv.first();   
-        const newLink = await TextEditor.enrichHTML(input.value, {async: true});
+        const newLink = await TextEditor.enrichHTML(input.value, {async: true, documents: true});
 
         if (!$link.length) {
             $linkDiv.append(newLink);
