@@ -199,6 +199,10 @@ export const DEFAULT_CONFIG = {
             id: "cub-enhanced-condition-trigger-config",
             title: "CUB Enhanced Condition - Trigger Config"
         },
+        optionConfig: {
+            id: "cub-enhanced-condition-option-config",
+            title: "CUB Enhanced Condition - Option Config"
+        },
         title: "Enhanced Conditions",
         mapTypes: {
             default: "System - Default",
@@ -233,9 +237,18 @@ export const DEFAULT_CONFIG = {
             chatConditionsPartial: `${PATH}/templates/partials/chat-card-condition-list.hbs`,
             importDialog: `${PATH}/templates/import-conditions.html`,
             macroConfig: `${PATH}/templates/enhanced-condition-macro-config.hbs`,
-            triggerConfig: `${PATH}/templates/enhanced-condition-trigger-config.hbs`
+            triggerConfig: `${PATH}/templates/enhanced-condition-trigger-config.hbs`,
+            optionConfig: `${PATH}/templates/enhanced-condition-option-config.hbs`
         },
-        migrationVersion: ""
+        migrationVersion: "",
+        specialStatusEffects: {
+            blinded: {
+                optionProperty: "blindToken"
+            },
+            invisible: {
+                optionProperty: "markInvisible"
+            }
+        }
     },
     giveXP: {
         enable: false,

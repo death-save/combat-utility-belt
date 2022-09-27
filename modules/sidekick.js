@@ -454,4 +454,18 @@ export class Sidekick {
         if (subStr && subStr.length) params.push(subStr);
         return console[type](...params);
     }
+
+    /**
+     * Converts the given string to camelCase using the provided delimiter to break up words
+     * @param {String} string 
+     * @param {String} delimiter 
+     * @returns the converted string
+     * @example Sidekick.toCamelCase("my-cool-string", "-") // returns "myCoolString"
+     */
+    static toCamelCase(string, delimiter) {
+        const stringParts = string.split(delimiter);
+        return stringParts instanceof Array ? stringParts.reduce((camelString, part, index) => {
+            return camelString += index > 0 ? Sidekick.toTitleCase(part) : part;
+        }, "") : stringParts;
+    }
 }

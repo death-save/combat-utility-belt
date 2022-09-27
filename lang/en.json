@@ -23,6 +23,9 @@
                 "BadReference": "Could not build a link to the dropped content (actor, item, journal etc)",
                 "RestoreDefaultClearCache": {
                      "CheckboxText": "Clear cache and reload defaults from module folder?"
+                },
+                "Buttons": {
+                    "Options": "Options"
                 }
             },
             "ChatCard": {
@@ -47,6 +50,26 @@
                 "RemoveHeading": "Remove Trigger",
                 "Description": "Triggers that Apply or Remove this Condition",
                 "SelectNone": "--No Trigger--"
+            },
+            "OptionConfig": {
+                "Heading": "Options",
+                "Description": "General options for this Condition",
+                "SpecialStatusEffects": {
+                    "Heading": "Special Status Effects",
+                    "Description": "Special Effects applied using native Foundry functionality."
+                },
+                "BlindToken": {
+                    "Label": "Blind Token",
+                    "Notes": "When applied, this Condition will also cause the token to be blinded"
+                },
+                "MarkInvisible": {
+                    "Label": "Mark Invisible",
+                    "Notes": "When applied, this Condition will cause the affected Token to marked as Invisible"
+                },
+                "SpecialStatusEffectOverride": {
+                    "Title": "Override Existing Condition for this Status Effect?",
+                    "Content": "Another Condition ({existingCondition}) is already setup to apply this special Status Effect: {statusEffect}. If you click 'Yes' and Save this Condition's Options you will override that existing mapping."
+                }
             },
             "Warnings": {
                 "ApplyCondition": "applyCondition was replaced with addCondition. Please update your code."
