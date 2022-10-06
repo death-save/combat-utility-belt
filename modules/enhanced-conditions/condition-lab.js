@@ -207,14 +207,6 @@ export class ConditionLab extends FormApplication {
                 icons[row] = formData[e];
             } else if (e.match(referenceRegex)) {
                 references[row] = formData[e]; 
-            } else if (e.match(optionsOverlayRegex)) {
-                optionsOverlay[row] = formData[e];
-            } else if (e.match(optionsRemoveRegex)) {
-                optionsRemove[row] = formData[e];
-            } else if (e.match(optionsOutputChatRegex)) {
-                optionsOutputChat[row] = formData[e];
-            } else if (e.match(optionsDefeatedRegex)) {
-                optionsDefeated[row] = formData[e];
             }
         }
 
@@ -228,7 +220,7 @@ export class ConditionLab extends FormApplication {
             const applyTrigger = existingCondition ? existingCondition.applyTrigger : null;
             const removeTrigger = existingCondition ? existingCondition.removeTrigger : null;
             const macros = existingCondition ? existingCondition.macros : null;
-
+            const options = existingCondition ? existingCondition.options : {};
 
             const condition = {
                 id,
@@ -239,12 +231,7 @@ export class ConditionLab extends FormApplication {
                 removeTrigger,
                 activeEffect,
                 macros,
-                options: {
-                    overlay: optionsOverlay[i],
-                    removeOthers: optionsRemove[i],
-                    outputChat: optionsOutputChat[i],
-                    markDefeated: optionsDefeated[i]
-                }
+                options
             };
 
             newMap.push(condition);
@@ -290,18 +277,23 @@ export class ConditionLab extends FormApplication {
                     if (checkbox.checked) {
                         Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.showSortDirectionDialog, false);
                     }
-                    this._saveMapping(formData);
+                    this._processFormUpdate(formData);
                 },
                 no: () => {
                     return;
                 }
             });
         } else {
-            this._saveMapping(formData);
+            this._processFormUpdate(formData);
         }
     } 
 
-    async _saveMapping(formData) {
+    /**
+     * Process Condition Lab formdata and then save changes
+     * @param {*} formData 
+     * @returns this._saveMapping()
+     */
+    async _processFormUpdate(formData) {
         const mapType = formData["map-type"];
         let newMap = this.updatedMap;
         const defaultMapType = Sidekick.getKeyByValue(BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes, BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes.default);
@@ -311,12 +303,30 @@ export class ConditionLab extends FormApplication {
             newMap = mergeObject(newMap, defaultMap);
         }
 
+        return this._saveMapping(newMap, mapType);
+    }
+
+    /**
+     * Saves a given map and option map type to storage
+     * @param {*} newMap 
+     * @param {*} mapType 
+     * @returns 
+     */
+    async _saveMapping(newMap, mapType=this.mapType) {
         this.mapType = this.initialMapType = mapType;
         const preparedMap = EnhancedConditions._prepareMap(newMap);
 
-        Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.mapType, mapType, true);
-        Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.map, preparedMap, true);
+        await Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.mapType, mapType, true);
+        await Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.map, preparedMap, true);
 
+        return this._finaliseSave(preparedMap);
+    }
+
+    /**
+     * Performs final steps after saving mapping
+     * @param {*} preparedMap 
+     */
+    async _finaliseSave(preparedMap) {
         this.map = this.initialMap = preparedMap;
         this.unsaved = false;
         this.sortDirection = "";

@@ -442,7 +442,9 @@ export const SETTING_KEYS = {
         outputCombat: "conditionsOutputDuringCombat",
         suppressPreventativeSaveReminder: "conditionsSuppressPreventativeSaveReminder",
         migrationVersion: "enhancedConditionsMigrationVersion",
-        showSortDirectionDialog: "showSortDirectionDialog"
+        showSortDirectionDialog: "showSortDirectionDialog",
+        defaultSpecialStatusEffects: "defaultSpecialStatusEffects",
+        specialStatusEffectMapping: "specialStatusEffectMapping"
     },
     giveXP: {
         enable: "enableGiveXP",

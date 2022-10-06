@@ -68,8 +68,9 @@
                 },
                 "SpecialStatusEffectOverride": {
                     "Title": "Override Existing Condition for this Status Effect?",
-                    "Content": "Another Condition ({existingCondition}) is already setup to apply this special Status Effect: {statusEffect}. If you click 'Yes' and Save this Condition's Options you will override that existing mapping."
-                }
+                    "Content": "Another Condition ({existingCondition}) is already setup to apply this special Status Effect: {statusEffect}. <p>If you click 'Yes' and Save this Condition's Options you will override that existing mapping.</p>"
+                },
+                "SaveNote": "Note: Clicking Save will Save Condition Lab Mapping"
             },
             "Warnings": {
                 "ApplyCondition": "applyCondition was replaced with addCondition. Please update your code."
@@ -146,6 +147,9 @@
             "Name": "Name",
             "Reference": "Reference",
             "Save": "Save"
+        },
+        "PHRASES": {
+            "SaveAndClose": "Save and Close"
         }
     },
     "GADGET_DESCRIPTIONS.AwardXP": "Provides an end of combat prompt to distribute XP from defeated hostile combatants.",

@@ -112,18 +112,71 @@ export default class EnhancedConditionOptionConfig extends FormApplication {
      */
     async _updateObject(event, formData) {
         this.object.options = {};
+        const specialStatusEffectMapping = Sidekick.getSetting(SETTING_KEYS.enhancedConditions.specialStatusEffectMapping);
+        const map = game.cub.conditionLab.map;
+        const newMap = foundry.utils.deepClone(map);
+        let conditionIndex = newMap.findIndex(c => c.id === this.object.id);
 
         for (const field in formData) {
+            const value = formData[field];
+            const element = event.target?.querySelector(`input[name="${field}"]`);
             const propertyName = Sidekick.toCamelCase(field, "-");
-            this.object.options[propertyName] = formData[field];
+            const specialStatusEffect = this.getSpecialStatusEffectByField(field);
+            
+            if (specialStatusEffect) {
+
+                const existingMapping = foundry.utils.getProperty(specialStatusEffectMapping, specialStatusEffect);
+                if (existingMapping === `${NAME}.${this.object.id}` && value === false) {
+                    this.setSpecialStatusEffectMapping(specialStatusEffect);
+                } else if (existingMapping !== `${NAME}.${this.object.id}` && value === true) {
+                    this.setSpecialStatusEffectMapping(specialStatusEffect, this.object.id);
+                    if (existingMapping) {
+                        const existingId = existingMapping.replace(`${NAME}.`, "");
+                        const existingConditionIndex = newMap.findIndex(c => c.id === existingId);
+                        const existingCondition = newMap[existingConditionIndex];
+                        const options = existingCondition?.options;
+                        options[propertyName] = false;
+                        newMap[existingConditionIndex] = existingCondition;
+                    }
+                    
+                }
+            }
+
+            this.object.options[propertyName] = value;
         }
 
-        const map = game.cub.conditions;
-        const newMap = foundry.utils.duplicate(map);
-
-        let conditionIndex = newMap.findIndex(c => c.id === this.object.id);
         newMap[conditionIndex] = this.object;
-        await Sidekick.setSetting(SETTING_KEYS.enhancedConditions.map, newMap);
-        this.render();
+        await game.cub.conditionLab._saveMapping(newMap);
+        await this.close();
+    }
+
+    /**
+     * Get the enum for a special status effect based on the field name
+     * @param {*} field 
+     * @returns {String} enum for the special status effect 
+     */
+    getSpecialStatusEffectByField(field) {
+        switch (field) {
+            case "blind-token":
+                return "BLIND";
+
+            case 'mark-invisible':
+                return "INVISIBLE";
+        
+            default:
+                break;
+        }
+    }
+
+    /**
+     * Sets the special status effect to the provided condition Id
+     * @param {*} effect 
+     * @param {*} conditionId 
+     */
+    setSpecialStatusEffectMapping(effect, conditionId=null) {
+        if (!CONFIG.specialStatusEffects.hasOwnProperty(effect)) return;
+        
+        CONFIG.specialStatusEffects[effect] = conditionId ? `${NAME}.${conditionId}` : "";
+        Sidekick.setSetting(SETTING_KEYS.enhancedConditions.specialStatusEffectMapping, CONFIG.specialStatusEffects);
     }
 }
