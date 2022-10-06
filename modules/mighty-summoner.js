@@ -16,7 +16,7 @@ export class MightySummoner {
         }
         
         // If the supplied actor doesn't have the feat, check the other actors owned by the actor's owner
-        const owners = Object.keys(actor.data.ownership).filter(p => p !== "default" && actor.data.ownership[p] === CONST.DOCUMENT_PERMISSION_LEVELS.OWNER);
+        const owners = Object.keys(actor.ownership).filter(p => p !== "default" && actor.ownership[p] === CONST.DOCUMENT_PERMISSION_LEVELS.OWNER);
 
         if (!owners) {
             return;
