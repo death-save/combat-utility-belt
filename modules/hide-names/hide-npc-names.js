@@ -75,21 +75,23 @@ export class HideNPCNames {
 
         if (!enableSetting) return;
         
-        const disposition = app.object.prototypeToken.disposition;
-                
-        const enableHostile = Sidekick.getSetting(SETTING_KEYS.hideNames.enableHostile);
-        const enableNeutral = Sidekick.getSetting(SETTING_KEYS.hideNames.enableNeutral);
-        const enableFriendly = Sidekick.getSetting(SETTING_KEYS.hideNames.enableFriendly);
+        const appEl = html[0].tagName.toLowerCase() == "form" ? html[0].closest("div.app") : html[0];
+        const existingButton = appEl.querySelector("a.cub-hide-name");
 
-        const formButtonHtml = `<a style="flex: 0" title="${game.i18n.localize("HIDE_NAMES.ActorSheetButton")}"><i class="fas fa-mask"></i></a>`;
+        if (existingButton) return;
 
-        const button = $(formButtonHtml);
-        const header = html.find("header.window-header");
-        const title = header.length ? header.find(".window-title") : html.closest(".app").find(".window-title");
+        const buttonEl = document.createElement("a");
+        buttonEl?.classList.add("cub-hide-name");
+        buttonEl?.setAttribute("style", "flex: 0; margin: 0");
+        buttonEl?.setAttribute("title", game.i18n.localize("HIDE_NAMES.ActorSheetButton"));
+        buttonEl?.addEventListener("click", (event) => {new HideNPCNamesActorForm(app.object).render(true)});
 
-        title.prepend(button);
-        
-        button.on("click", event => new HideNPCNamesActorForm(app.object).render(true));
+        const iconEl = document.createElement("i");
+        iconEl?.classList.add("fas", "fa-mask");
+        if (iconEl) buttonEl?.append(iconEl);
+
+        const headerEl = appEl?.querySelector("header.window-header");
+        headerEl?.prepend(buttonEl);
     }
 
     /**
