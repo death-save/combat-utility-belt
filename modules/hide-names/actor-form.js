@@ -14,7 +14,7 @@ export class HideNPCNamesActorForm extends FormApplication {
     static get defaultOptions() {
         return mergeObject(super.defaultOptions, {
             id: DEFAULT_CONFIG.hideNames.actorForm.id,
-            title: DEFAULT_CONFIG.hideNames.actorForm.title,
+            title: game.i18n.localize(`${NAME}.${"HIDE_NAMES.ActorForm.Title"}`),
             template: `${PATH}/templates/actor-hide-name.hbs`,
             classes: ["sheet"],
             width: "auto",
