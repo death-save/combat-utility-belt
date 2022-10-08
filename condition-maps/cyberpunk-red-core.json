@@ -1,0 +1,1093 @@
+{
+  "system": "cyberpunk-red-core",
+  "map": [
+    {
+      "id": "rlwo5d6rzwl5rnup",
+      "name": "Brain Injury",
+      "icon": "systems/cyberpunk-red-core/icons/compendium/status/brain_injury.svg",
+      "referenceId": "@Compendium[cyberpunk-red-core.criticalInjuriesHead.HOXIQFd3CQ2Ri2hp]{Brain Injury}",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": true,
+        "markDefeated": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"cyberpunk-red-core.criticalInjuriesHead\" data-id=\"HOXIQFd3CQ2Ri2hp\"><i class=\"fas fa-suitcase\"></i> Brain Injury</a>",
+      "isChanged": false
+    },
+    {
+      "id": "1c511e8ffgka88s8",
+      "name": "Broken Arm",
+      "icon": "systems/cyberpunk-red-core/icons/compendium/status/broken_arm.svg",
+      "referenceId": "@Compendium[cyberpunk-red-core.criticalInjuriesBody.Y65igO9rtakP4qSs]{Broken Arm}",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": true,
+        "markDefeated": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"cyberpunk-red-core.criticalInjuriesBody\" data-id=\"Y65igO9rtakP4qSs\"><i class=\"fas fa-suitcase\"></i> Broken Arm</a>",
+      "isChanged": false
+    },
+    {
+      "id": "6b8a18hfuncb852d",
+      "name": "Broken Jaw",
+      "icon": "systems/cyberpunk-red-core/icons/compendium/status/broken_jaw.svg",
+      "referenceId": "@Compendium[cyberpunk-red-core.criticalInjuriesHead.VWmTqmsW6S5v51FO]{Broken Jaw}",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": true,
+        "markDefeated": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"cyberpunk-red-core.criticalInjuriesHead\" data-id=\"VWmTqmsW6S5v51FO\"><i class=\"fas fa-suitcase\"></i> Broken Jaw</a>",
+      "isChanged": false
+    },
+    {
+      "id": "j7kn9yowq85hgp0h",
+      "name": "Broken Leg",
+      "icon": "systems/cyberpunk-red-core/icons/compendium/status/broken_leg.svg",
+      "referenceId": "@Compendium[cyberpunk-red-core.criticalInjuriesBody.wFa4CYYjB0z48E4P]{Broken Leg}",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": true,
+        "markDefeated": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"cyberpunk-red-core.criticalInjuriesBody\" data-id=\"wFa4CYYjB0z48E4P\"><i class=\"fas fa-suitcase\"></i> Broken Leg</a>",
+      "isChanged": false
+    },
+    {
+      "id": "l8m53qffuwmzidco",
+      "name": "Broken Ribs",
+      "icon": "systems/cyberpunk-red-core/icons/compendium/status/broken_ribs.svg",
+      "referenceId": "@Compendium[cyberpunk-red-core.criticalInjuriesBody.MQpiPgEtPaIe6MJ6]{Broken Ribs}",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": true,
+        "markDefeated": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"cyberpunk-red-core.criticalInjuriesBody\" data-id=\"MQpiPgEtPaIe6MJ6\"><i class=\"fas fa-suitcase\"></i> Broken Ribs</a>",
+      "isChanged": false
+    },
+    {
+      "id": "bbjmpwk9nkloxo1i",
+      "name": "Aspyhixiating",
+      "icon": "systems/cyberpunk-red-core/icons/compendium/status/asphyxiating.svg",
+      "referenceId": "",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": true,
+        "markDefeated": false
+      },
+      "isNew": false,
+      "enrichedReference": "",
+      "isChanged": false
+    },
+    {
+      "id": "ifnqllhgdsb6uvik",
+      "name": "Collapsed Lung",
+      "icon": "systems/cyberpunk-red-core/icons/compendium/status/collapsed_lung.svg",
+      "referenceId": "@Compendium[cyberpunk-red-core.criticalInjuriesBody.26hssKM4ILPVUMXE]{Collapsed Lung}",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": true,
+        "markDefeated": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"cyberpunk-red-core.criticalInjuriesBody\" data-id=\"26hssKM4ILPVUMXE\"><i class=\"fas fa-suitcase\"></i> Collapsed Lung</a>",
+      "isChanged": false
+    },
+    {
+      "id": "r8rypvez57qayd87",
+      "name": "Concussion",
+      "icon": "systems/cyberpunk-red-core/icons/compendium/status/concussion.svg",
+      "referenceId": "@Compendium[cyberpunk-red-core.criticalInjuriesHead.PwA31cXBSKwIKxSh]{Concussion}",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": true,
+        "markDefeated": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"cyberpunk-red-core.criticalInjuriesHead\" data-id=\"PwA31cXBSKwIKxSh\"><i class=\"fas fa-suitcase\"></i> Concussion</a>",
+      "isChanged": false
+    },
+    {
+      "id": "dn5kn3vv2w5ubbgd",
+      "name": "Cracked Skull",
+      "icon": "systems/cyberpunk-red-core/icons/compendium/status/cracked_skull.svg",
+      "referenceId": "@Compendium[cyberpunk-red-core.criticalInjuriesHead.Ud6fPc0b1t4H1I5F]{Cracked Skull}",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": true,
+        "markDefeated": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"cyberpunk-red-core.criticalInjuriesHead\" data-id=\"Ud6fPc0b1t4H1I5F\"><i class=\"fas fa-suitcase\"></i> Cracked Skull</a>",
+      "isChanged": false
+    },
+    {
+      "id": "ha81vqrxpyi7uoji",
+      "name": "Crushed Fingers",
+      "icon": "systems/cyberpunk-red-core/icons/compendium/status/crushed_fingers.svg",
+      "referenceId": "@Compendium[cyberpunk-red-core.criticalInjuriesBody.F9oDUif9QWCYZDs9]{Crushed Fingers}",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": true,
+        "markDefeated": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"cyberpunk-red-core.criticalInjuriesBody\" data-id=\"F9oDUif9QWCYZDs9\"><i class=\"fas fa-suitcase\"></i> Crushed Fingers</a>",
+      "isChanged": false
+    },
+    {
+      "id": "pchk7c8458idejld",
+      "name": "Crushed Windpipe",
+      "icon": "systems/cyberpunk-red-core/icons/compendium/status/crushed_windpipe.svg",
+      "referenceId": "@Compendium[cyberpunk-red-core.criticalInjuriesHead.mVE8ovTniNKFs9Y7]{Crushed Windpipe}",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": true,
+        "markDefeated": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"cyberpunk-red-core.criticalInjuriesHead\" data-id=\"mVE8ovTniNKFs9Y7\"><i class=\"fas fa-suitcase\"></i> Crushed Windpipe</a>",
+      "isChanged": false
+    },
+    {
+      "id": "mxc9c9eicoi9skk1",
+      "name": "Damaged Ear",
+      "icon": "systems/cyberpunk-red-core/icons/compendium/status/damaged_ear.svg",
+      "referenceId": "@Compendium[cyberpunk-red-core.criticalInjuriesHead.qoegLCfpEOQifeZq]{Damaged Eye}",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": true,
+        "markDefeated": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"cyberpunk-red-core.criticalInjuriesHead\" data-id=\"qoegLCfpEOQifeZq\"><i class=\"fas fa-suitcase\"></i> Damaged Eye</a>",
+      "isChanged": false
+    },
+    {
+      "id": "yta05y93xenyzrco",
+      "name": "Damaged Eye",
+      "icon": "systems/cyberpunk-red-core/icons/compendium/status/damaged_eye.svg",
+      "referenceId": "@Compendium[cyberpunk-red-core.criticalInjuriesHead.qoegLCfpEOQifeZq]{Damaged Eye}",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": true,
+        "markDefeated": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"cyberpunk-red-core.criticalInjuriesHead\" data-id=\"qoegLCfpEOQifeZq\"><i class=\"fas fa-suitcase\"></i> Damaged Eye</a>",
+      "isChanged": false
+    },
+    {
+      "id": "yayc4q2rzmofp27w",
+      "name": "Dismembered Hand",
+      "icon": "systems/cyberpunk-red-core/icons/compendium/status/dismembered_hand.svg",
+      "referenceId": "@Compendium[cyberpunk-red-core.criticalInjuriesBody.I92IfgREUEOXojRm]{Dismembered Hand}",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": true,
+        "markDefeated": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"cyberpunk-red-core.criticalInjuriesBody\" data-id=\"I92IfgREUEOXojRm\"><i class=\"fas fa-suitcase\"></i> Dismembered Hand</a>",
+      "isChanged": false
+    },
+    {
+      "id": "q9dsx9ocwnanvksd",
+      "name": "Dismembered Leg",
+      "icon": "systems/cyberpunk-red-core/icons/compendium/status/dismembered_leg.svg",
+      "referenceId": "@Compendium[cyberpunk-red-core.criticalInjuriesBody.hKr3MyTtIL63qEgL]{Dismembered Leg}",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": true,
+        "markDefeated": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"cyberpunk-red-core.criticalInjuriesBody\" data-id=\"hKr3MyTtIL63qEgL\"><i class=\"fas fa-suitcase\"></i> Dismembered Leg</a>",
+      "isChanged": false
+    },
+    {
+      "id": "3mjislz7ud67vuc2",
+      "name": "Dismembered Arm",
+      "icon": "systems/cyberpunk-red-core/icons/compendium/status/dismembered_arm.svg",
+      "referenceId": "@Compendium[cyberpunk-red-core.criticalInjuriesBody.9N6yHeVwiGg2MkeL]{Dismembered Arm}",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": true,
+        "markDefeated": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"cyberpunk-red-core.criticalInjuriesBody\" data-id=\"9N6yHeVwiGg2MkeL\"><i class=\"fas fa-suitcase\"></i> Dismembered Arm</a>",
+      "isChanged": false
+    },
+    {
+      "id": "rd2fh4knrle6g0jb",
+      "name": "Foreign Object (Body)",
+      "icon": "systems/cyberpunk-red-core/icons/compendium/status/foreign_object_body.svg",
+      "referenceId": "@Compendium[cyberpunk-red-core.criticalInjuriesBody.wBGiueeYYDnCe0dY]{Foreign Object}",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": true,
+        "markDefeated": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"cyberpunk-red-core.criticalInjuriesBody\" data-id=\"wBGiueeYYDnCe0dY\"><i class=\"fas fa-suitcase\"></i> Foreign Object</a>",
+      "isChanged": false
+    },
+    {
+      "id": "hi6fv5ley2vmw3js",
+      "name": "Foreign Object (Head)",
+      "icon": "systems/cyberpunk-red-core/icons/compendium/status/foreign_object_head.svg",
+      "referenceId": "@Compendium[cyberpunk-red-core.criticalInjuriesHead.xfzYp9N5c6jEKiBR]{Foreign Object (H)}",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": true,
+        "markDefeated": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"cyberpunk-red-core.criticalInjuriesHead\" data-id=\"xfzYp9N5c6jEKiBR\"><i class=\"fas fa-suitcase\"></i> Foreign Object (H)</a>",
+      "isChanged": false
+    },
+    {
+      "id": "f5pcs5mhpguz8ioz",
+      "name": "Lost Ear",
+      "icon": "systems/cyberpunk-red-core/icons/compendium/status/lost_ear.svg",
+      "referenceId": "@Compendium[cyberpunk-red-core.criticalInjuriesHead.q7yxRKUMzOf9o5qO]{Lost Ear}",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": true,
+        "markDefeated": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"cyberpunk-red-core.criticalInjuriesHead\" data-id=\"q7yxRKUMzOf9o5qO\"><i class=\"fas fa-suitcase\"></i> Lost Ear</a>",
+      "isChanged": false
+    },
+    {
+      "id": "im7kok2vim8e8roc",
+      "name": "Lost Eye",
+      "icon": "systems/cyberpunk-red-core/icons/compendium/status/lost_eye.svg",
+      "referenceId": "@Compendium[cyberpunk-red-core.criticalInjuriesHead.vysFvuTpuG2aDDIz]{Lost Eye}",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": true,
+        "markDefeated": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"cyberpunk-red-core.criticalInjuriesHead\" data-id=\"vysFvuTpuG2aDDIz\"><i class=\"fas fa-suitcase\"></i> Lost Eye</a>",
+      "isChanged": false
+    },
+    {
+      "id": "f04iqysbe4tf0pjl",
+      "name": "Spinal Injury",
+      "icon": "systems/cyberpunk-red-core/icons/compendium/status/spinal_injury.svg",
+      "referenceId": "@Compendium[cyberpunk-red-core.criticalInjuriesBody.pQ2F7FsQvZJyZGXe]{Spinal Injury}",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": true,
+        "markDefeated": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"cyberpunk-red-core.criticalInjuriesBody\" data-id=\"pQ2F7FsQvZJyZGXe\"><i class=\"fas fa-suitcase\"></i> Spinal Injury</a>",
+      "isChanged": false
+    },
+    {
+      "id": "gkd2d8obp14x7v3v",
+      "name": "Torn Muscle",
+      "icon": "systems/cyberpunk-red-core/icons/compendium/status/torn_muscle.svg",
+      "referenceId": "@Compendium[cyberpunk-red-core.criticalInjuriesBody.Z3iVuSFtma3Bx7SX]{Torn Muscle}",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": true,
+        "markDefeated": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"cyberpunk-red-core.criticalInjuriesBody\" data-id=\"Z3iVuSFtma3Bx7SX\"><i class=\"fas fa-suitcase\"></i> Torn Muscle</a>",
+      "isChanged": false
+    },
+    {
+      "id": "63wi2ivkwfjom9xc",
+      "name": "Whiplash",
+      "icon": "systems/cyberpunk-red-core/icons/compendium/status/whiplash.svg",
+      "referenceId": "@Compendium[cyberpunk-red-core.criticalInjuriesHead.R35z4TNiP0LuO2Ii]{Whiplash}",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": true,
+        "markDefeated": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"cyberpunk-red-core.criticalInjuriesHead\" data-id=\"R35z4TNiP0LuO2Ii\"><i class=\"fas fa-suitcase\"></i> Whiplash</a>",
+      "isChanged": false
+    },
+    {
+      "id": "wfw28h6jga0i8zgv",
+      "name": "Blinded",
+      "icon": "systems/cyberpunk-red-core/icons/compendium/status/blinded.svg",
+      "referenceId": "",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": true,
+        "markDefeated": false
+      },
+      "isNew": false,
+      "enrichedReference": "",
+      "isChanged": false
+    },
+    {
+      "id": "3i5twkh0722lw1bz",
+      "name": "Choking 1",
+      "icon": "systems/cyberpunk-red-core/icons/compendium/status/choking1.svg",
+      "referenceId": "",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": true,
+        "markDefeated": false
+      },
+      "isNew": false,
+      "enrichedReference": "",
+      "isChanged": false
+    },
+    {
+      "id": "8g65kc038fh7av9k",
+      "name": "Choking 2",
+      "icon": "systems/cyberpunk-red-core/icons/compendium/status/choking2.svg",
+      "referenceId": "",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": true,
+        "markDefeated": false
+      },
+      "isNew": false,
+      "enrichedReference": "",
+      "isChanged": false
+    },
+    {
+      "id": "i9lhfsg6nroemjmz",
+      "name": "Cover",
+      "icon": "systems/cyberpunk-red-core/icons/compendium/status/cover.svg",
+      "referenceId": "",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": true,
+        "markDefeated": false
+      },
+      "isNew": false,
+      "enrichedReference": "",
+      "isChanged": false
+    },
+    {
+      "id": "97lm663ujoiyi4ws",
+      "name": "Deafened",
+      "icon": "systems/cyberpunk-red-core/icons/compendium/status/deafened.svg",
+      "referenceId": "",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": true,
+        "markDefeated": false
+      },
+      "isNew": false,
+      "enrichedReference": "",
+      "isChanged": false
+    },
+    {
+      "id": "lmhs96pr253w90n4",
+      "name": "Drowning",
+      "icon": "systems/cyberpunk-red-core/icons/compendium/status/drowning.svg",
+      "referenceId": "",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": true,
+        "markDefeated": false
+      },
+      "isNew": false,
+      "enrichedReference": "",
+      "isChanged": false
+    },
+    {
+      "id": "3l6yrmvd37862mll",
+      "name": "EMP",
+      "icon": "systems/cyberpunk-red-core/icons/compendium/status/emp.svg",
+      "referenceId": "",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": true,
+        "markDefeated": false
+      },
+      "isNew": false,
+      "enrichedReference": "",
+      "isChanged": false
+    },
+    {
+      "id": "2qjqodwoik320rv0",
+      "name": "Falling",
+      "icon": "systems/cyberpunk-red-core/icons/compendium/status/falling.svg",
+      "referenceId": "",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": true,
+        "markDefeated": false
+      },
+      "isNew": false,
+      "enrichedReference": "",
+      "isChanged": false
+    },
+    {
+      "id": "977k9i8t8wr8aa6z",
+      "name": "Grappled",
+      "icon": "systems/cyberpunk-red-core/icons/compendium/status/grappled.svg",
+      "referenceId": "",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": true,
+        "markDefeated": false
+      },
+      "isNew": false,
+      "enrichedReference": "",
+      "isChanged": false
+    },
+    {
+      "id": "2mda0usivu7xim3a",
+      "name": "Hidden",
+      "icon": "systems/cyberpunk-red-core/icons/compendium/status/hidden.svg",
+      "referenceId": "",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": true,
+        "markDefeated": false
+      },
+      "isNew": false,
+      "enrichedReference": "",
+      "isChanged": false
+    },
+    {
+      "id": "vpl0b3fq6oblr3pp",
+      "name": "Human Shield",
+      "icon": "systems/cyberpunk-red-core/icons/compendium/status/human_shield.svg",
+      "referenceId": "",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": true,
+        "markDefeated": false
+      },
+      "isNew": false,
+      "enrichedReference": "",
+      "isChanged": false
+    },
+    {
+      "id": "t4bv2jj1sxi5sxxy",
+      "name": "Iron Grip",
+      "icon": "systems/cyberpunk-red-core/icons/compendium/status/iron_grip.svg",
+      "referenceId": "",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": true,
+        "markDefeated": false
+      },
+      "isNew": false,
+      "enrichedReference": "",
+      "isChanged": false
+    },
+    {
+      "id": "qjcbxa38bqqz4lap",
+      "name": "Netrunning",
+      "icon": "systems/cyberpunk-red-core/icons/compendium/status/netrunning.svg",
+      "referenceId": "",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": true,
+        "markDefeated": false
+      },
+      "isNew": false,
+      "enrichedReference": "",
+      "isChanged": false
+    },
+    {
+      "id": "r4mbggwd1jmrvhjt",
+      "name": "On Fire (Mild)",
+      "icon": "systems/cyberpunk-red-core/icons/compendium/status/on_fire_mild.svg",
+      "referenceId": "",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": true,
+        "markDefeated": false
+      },
+      "isNew": false,
+      "enrichedReference": "",
+      "isChanged": false
+    },
+    {
+      "id": "y4y0rvsz17aj0r4g",
+      "name": "On Fire (Strong)",
+      "icon": "systems/cyberpunk-red-core/icons/compendium/status/on_fire_strong.svg",
+      "referenceId": "",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": true,
+        "markDefeated": false
+      },
+      "isNew": false,
+      "enrichedReference": "",
+      "isChanged": false
+    },
+    {
+      "id": "ss6oigx5fylz0luk",
+      "name": "On Fire (Deadly)",
+      "icon": "systems/cyberpunk-red-core/icons/compendium/status/on_fire_deadly.svg",
+      "referenceId": "",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": true,
+        "markDefeated": false
+      },
+      "isNew": false,
+      "enrichedReference": "",
+      "isChanged": false
+    },
+    {
+      "id": "e73pyhdrc41isg7f",
+      "name": "Prone",
+      "icon": "systems/cyberpunk-red-core/icons/compendium/status/prone.svg",
+      "referenceId": "",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": true,
+        "markDefeated": false
+      },
+      "isNew": false,
+      "enrichedReference": "",
+      "isChanged": false
+    },
+    {
+      "id": "qrncrx71vi0kvn12",
+      "name": "Radiation (Low)",
+      "icon": "systems/cyberpunk-red-core/icons/compendium/status/radiation_low.svg",
+      "referenceId": "",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": true,
+        "markDefeated": false
+      },
+      "isNew": false,
+      "enrichedReference": "",
+      "isChanged": false
+    },
+    {
+      "id": "vaciaiw08jooz1hf",
+      "name": "Radiation (High)",
+      "icon": "systems/cyberpunk-red-core/icons/compendium/status/radiation_high.svg",
+      "referenceId": "",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": true,
+        "markDefeated": false
+      },
+      "isNew": false,
+      "enrichedReference": "",
+      "isChanged": false
+    },
+    {
+      "id": "dhrzzu7ymy7u7mnc",
+      "name": "Readied Action",
+      "icon": "systems/cyberpunk-red-core/icons/compendium/status/readied_action.svg",
+      "referenceId": "",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": true,
+        "markDefeated": false
+      },
+      "isNew": false,
+      "enrichedReference": "",
+      "isChanged": false
+    },
+    {
+      "id": "pd7p69lbketdc8by",
+      "name": "Suppressed",
+      "icon": "systems/cyberpunk-red-core/icons/compendium/status/suppressed.svg",
+      "referenceId": "",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": true,
+        "markDefeated": false
+      },
+      "isNew": false,
+      "enrichedReference": "",
+      "isChanged": false
+    },
+    {
+      "id": "ryid3sas6sker81g",
+      "name": "Antibiotics",
+      "icon": "systems/cyberpunk-red-core/icons/compendium/status/antibiotics.svg",
+      "referenceId": "@Compendium[cyberpunk-red-core.gear-items.ONQ3dWthjX07cTkZ]{Antibiotic}",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": true,
+        "markDefeated": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"cyberpunk-red-core.gear-items\" data-id=\"ONQ3dWthjX07cTkZ\"><i class=\"fas fa-suitcase\"></i> Antibiotic</a>",
+      "isChanged": false
+    },
+    {
+      "id": "dx5p60wq8zh7owm1",
+      "name": "Quick Fix",
+      "icon": "systems/cyberpunk-red-core/icons/compendium/status/quickfix.svg",
+      "referenceId": "",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": true,
+        "markDefeated": false
+      },
+      "isNew": false,
+      "enrichedReference": "",
+      "isChanged": false
+    },
+    {
+      "id": "tv6gytm9auf2gme1",
+      "name": "Rapidetox",
+      "icon": "systems/cyberpunk-red-core/icons/compendium/status/rapiddetox.svg",
+      "referenceId": "@Compendium[cyberpunk-red-core.gear-items.FQV7o7Iur7OLp29T]{Rapidetox}",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": true,
+        "markDefeated": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"cyberpunk-red-core.gear-items\" data-id=\"FQV7o7Iur7OLp29T\"><i class=\"fas fa-suitcase\"></i> Rapidetox</a>",
+      "isChanged": false
+    },
+    {
+      "id": "fzy4hp04ibv72v7f",
+      "name": "Speed Heal",
+      "icon": "systems/cyberpunk-red-core/icons/compendium/status/speedheal.svg",
+      "referenceId": "@Compendium[cyberpunk-red-core.gear-items.xU0QGRmoxUThJFa0]{Speedheal}",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": true,
+        "markDefeated": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"cyberpunk-red-core.gear-items\" data-id=\"xU0QGRmoxUThJFa0\"><i class=\"fas fa-suitcase\"></i> Speedheal</a>",
+      "isChanged": false
+    },
+    {
+      "id": "a8tnrz5ivb76ikea",
+      "name": "Stim",
+      "icon": "systems/cyberpunk-red-core/icons/compendium/status/stim.svg",
+      "referenceId": "@Compendium[cyberpunk-red-core.gear-items.mDKFZNHnDyKpRZ6t]{Stim}",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": true,
+        "markDefeated": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"cyberpunk-red-core.gear-items\" data-id=\"mDKFZNHnDyKpRZ6t\"><i class=\"fas fa-suitcase\"></i> Stim</a>",
+      "isChanged": false
+    },
+    {
+      "id": "54253hylkpdymvxl",
+      "name": "Surge",
+      "icon": "systems/cyberpunk-red-core/icons/compendium/status/surge.svg",
+      "referenceId": "@Compendium[cyberpunk-red-core.gear-items.GxmaWDigmJBehElg]{Surge}",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": true,
+        "markDefeated": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"cyberpunk-red-core.gear-items\" data-id=\"GxmaWDigmJBehElg\"><i class=\"fas fa-suitcase\"></i> Surge</a>",
+      "isChanged": false
+    },
+    {
+      "id": "idja1i8m5hhz8ama",
+      "name": "Black Lace",
+      "icon": "systems/cyberpunk-red-core/icons/compendium/status/black_lace.svg",
+      "referenceId": "@Compendium[cyberpunk-red-core.gear-items.YM6LoMggRdgKeFWu]{Black Lace}",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": true,
+        "markDefeated": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"cyberpunk-red-core.gear-items\" data-id=\"YM6LoMggRdgKeFWu\"><i class=\"fas fa-suitcase\"></i> Black Lace</a>",
+      "isChanged": false
+    },
+    {
+      "id": "k0nv7f1qm82pj28q",
+      "name": "Black Lace Acciction",
+      "icon": "systems/cyberpunk-red-core/icons/compendium/status/black_lace_addiction.svg",
+      "referenceId": "@Compendium[cyberpunk-red-core.gear-items.YM6LoMggRdgKeFWu]{Black Lace}",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": true,
+        "markDefeated": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"cyberpunk-red-core.gear-items\" data-id=\"YM6LoMggRdgKeFWu\"><i class=\"fas fa-suitcase\"></i> Black Lace</a>",
+      "isChanged": false
+    },
+    {
+      "id": "ms4wgzm5hmji55py",
+      "name": "Blue Glass",
+      "icon": "systems/cyberpunk-red-core/icons/compendium/status/blue_glass.svg",
+      "referenceId": "@Compendium[cyberpunk-red-core.gear-items.9JXs8jJt5KveoEhd]{Blue Glass}",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": true,
+        "markDefeated": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"cyberpunk-red-core.gear-items\" data-id=\"9JXs8jJt5KveoEhd\"><i class=\"fas fa-suitcase\"></i> Blue Glass</a>",
+      "isChanged": false
+    },
+    {
+      "id": "bhl2fsrzn4or72f5",
+      "name": "Blue Glass Addiciton",
+      "icon": "systems/cyberpunk-red-core/icons/compendium/status/blue_glass_addiction.svg",
+      "referenceId": "@Compendium[cyberpunk-red-core.gear-items.9JXs8jJt5KveoEhd]{Blue Glass}",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": true,
+        "markDefeated": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"cyberpunk-red-core.gear-items\" data-id=\"9JXs8jJt5KveoEhd\"><i class=\"fas fa-suitcase\"></i> Blue Glass</a>",
+      "isChanged": false
+    },
+    {
+      "id": "vc6wdch7hgjnyceg",
+      "name": "Boost",
+      "icon": "systems/cyberpunk-red-core/icons/compendium/status/boost.svg",
+      "referenceId": "@Compendium[cyberpunk-red-core.gear-items.DonKYCvKHcYYJLeh]{Boost}",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": true,
+        "markDefeated": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"cyberpunk-red-core.gear-items\" data-id=\"DonKYCvKHcYYJLeh\"><i class=\"fas fa-suitcase\"></i> Boost</a>",
+      "isChanged": false
+    },
+    {
+      "id": "y444oapg2pl9wiwk",
+      "name": "Boost Addiction",
+      "icon": "systems/cyberpunk-red-core/icons/compendium/status/boost_addiction.svg",
+      "referenceId": "",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": true,
+        "markDefeated": false
+      },
+      "isNew": false,
+      "enrichedReference": "",
+      "isChanged": false
+    },
+    {
+      "id": "s2kb8cl4soikifa9",
+      "name": "Smash",
+      "icon": "systems/cyberpunk-red-core/icons/compendium/status/smash.svg",
+      "referenceId": "@Compendium[cyberpunk-red-core.gear-items.nl5UiiaoesK0BMb4]{Smash}",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": true,
+        "markDefeated": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"cyberpunk-red-core.gear-items\" data-id=\"nl5UiiaoesK0BMb4\"><i class=\"fas fa-suitcase\"></i> Smash</a>",
+      "isChanged": false
+    },
+    {
+      "id": "ed97q4btoj3ggpip",
+      "name": "Smash Addicition",
+      "icon": "systems/cyberpunk-red-core/icons/compendium/status/smash_addiciton.svg",
+      "referenceId": "",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": true,
+        "markDefeated": false
+      },
+      "isNew": false,
+      "enrichedReference": "",
+      "isChanged": false
+    },
+    {
+      "id": "bsixucw55vezxc66",
+      "name": "Synthcoke",
+      "icon": "systems/cyberpunk-red-core/icons/compendium/status/synthcoke.svg",
+      "referenceId": "@Compendium[cyberpunk-red-core.gear-items.sriAGF37AooS3nT2]{Synthcoke}",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": true,
+        "markDefeated": false
+      },
+      "isNew": false,
+      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"cyberpunk-red-core.gear-items\" data-id=\"sriAGF37AooS3nT2\"><i class=\"fas fa-suitcase\"></i> Synthcoke</a>",
+      "isChanged": false
+    },
+    {
+      "id": "xwk3lj08yk83j02b",
+      "name": "Synthcoke Addiction",
+      "icon": "systems/cyberpunk-red-core/icons/compendium/status/synthcoke_addiciton.svg",
+      "referenceId": "",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": true,
+        "markDefeated": false
+      },
+      "isNew": false,
+      "enrichedReference": "",
+      "isChanged": false
+    },
+    {
+      "id": "r4kadyvk4trrgh8p",
+      "name": "Unconcious",
+      "icon": "systems/cyberpunk-red-core/icons/compendium/status/unconcious.svg",
+      "referenceId": "",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": true,
+        "markDefeated": false
+      },
+      "isNew": false,
+      "enrichedReference": "",
+      "isChanged": false
+    },
+    {
+      "id": "yv1wu4spb4e8ifln",
+      "name": "Lightly Wounded",
+      "icon": "systems/cyberpunk-red-core/icons/compendium/status/wounded_lightly.svg",
+      "referenceId": "",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": true,
+        "markDefeated": false
+      },
+      "isNew": false,
+      "enrichedReference": "",
+      "isChanged": false
+    },
+    {
+      "id": "7vks8vi85yhkf3qv",
+      "name": "Seriously Wounded",
+      "icon": "systems/cyberpunk-red-core/icons/compendium/status/wounded_seriously.svg",
+      "referenceId": "",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": true,
+        "markDefeated": false
+      },
+      "isNew": false,
+      "enrichedReference": "",
+      "isChanged": false
+    },
+    {
+      "id": "5q9esrzjvgqvppsq",
+      "name": "Mortally Wounded",
+      "icon": "systems/cyberpunk-red-core/icons/compendium/status/wounded_mortally.svg",
+      "referenceId": "",
+      "applyTrigger": "",
+      "removeTrigger": "",
+      "options": {
+        "overlay": false,
+        "removeOthers": false,
+        "outputChat": true,
+        "markDefeated": false
+      },
+      "isNew": false,
+      "enrichedReference": "",
+      "isChanged": false
+    }
+  ]
+}
