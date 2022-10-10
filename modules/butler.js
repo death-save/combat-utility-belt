@@ -109,6 +109,10 @@ export const KNOWN_GAME_SYSTEMS = {
         healthAttribute: "",
         initiative: ""
     },
+    cpredcore: {
+        id: "cyberpunk-red-core",
+        name: "Cyberpunk Red Core"
+    },
     other: {
         id: "other",
         name: "Custom/Other",

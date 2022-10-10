@@ -5,7 +5,7 @@
       "id": "rlwo5d6rzwl5rnup",
       "name": "Brain Injury",
       "icon": "systems/cyberpunk-red-core/icons/compendium/status/brain_injury.svg",
-      "referenceId": "@Compendium[cyberpunk-red-core.criticalInjuriesHead.HOXIQFd3CQ2Ri2hp]{Brain Injury}",
+      "referenceId": "@UUID[Compendium.cyberpunk-red-core.criticalInjuriesHead.oi3MEn9Y8zdbooNe]{Brain Injury}",
       "applyTrigger": "",
       "removeTrigger": "",
       "options": {
@@ -13,10 +13,7 @@
         "removeOthers": false,
         "outputChat": true,
         "markDefeated": false
-      },
-      "isNew": false,
-      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"cyberpunk-red-core.criticalInjuriesHead\" data-id=\"HOXIQFd3CQ2Ri2hp\"><i class=\"fas fa-suitcase\"></i> Brain Injury</a>",
-      "isChanged": false
+      }
     },
     {
       "id": "1c511e8ffgka88s8",
@@ -30,10 +27,7 @@
         "removeOthers": false,
         "outputChat": true,
         "markDefeated": false
-      },
-      "isNew": false,
-      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"cyberpunk-red-core.criticalInjuriesBody\" data-id=\"Y65igO9rtakP4qSs\"><i class=\"fas fa-suitcase\"></i> Broken Arm</a>",
-      "isChanged": false
+      }
     },
     {
       "id": "6b8a18hfuncb852d",
@@ -47,16 +41,13 @@
         "removeOthers": false,
         "outputChat": true,
         "markDefeated": false
-      },
-      "isNew": false,
-      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"cyberpunk-red-core.criticalInjuriesHead\" data-id=\"VWmTqmsW6S5v51FO\"><i class=\"fas fa-suitcase\"></i> Broken Jaw</a>",
-      "isChanged": false
+      }
     },
     {
       "id": "j7kn9yowq85hgp0h",
       "name": "Broken Leg",
       "icon": "systems/cyberpunk-red-core/icons/compendium/status/broken_leg.svg",
-      "referenceId": "@Compendium[cyberpunk-red-core.criticalInjuriesBody.wFa4CYYjB0z48E4P]{Broken Leg}",
+      "referenceId": "@UUID[Compendium.cyberpunk-red-core.criticalInjuriesBody.yBy9rlhgZeaWGtHh]{Broken Leg}",
       "applyTrigger": "",
       "removeTrigger": "",
       "options": {
@@ -64,10 +55,7 @@
         "removeOthers": false,
         "outputChat": true,
         "markDefeated": false
-      },
-      "isNew": false,
-      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"cyberpunk-red-core.criticalInjuriesBody\" data-id=\"wFa4CYYjB0z48E4P\"><i class=\"fas fa-suitcase\"></i> Broken Leg</a>",
-      "isChanged": false
+      }
     },
     {
       "id": "l8m53qffuwmzidco",
@@ -81,10 +69,7 @@
         "removeOthers": false,
         "outputChat": true,
         "markDefeated": false
-      },
-      "isNew": false,
-      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"cyberpunk-red-core.criticalInjuriesBody\" data-id=\"MQpiPgEtPaIe6MJ6\"><i class=\"fas fa-suitcase\"></i> Broken Ribs</a>",
-      "isChanged": false
+      }
     },
     {
       "id": "bbjmpwk9nkloxo1i",
@@ -98,16 +83,13 @@
         "removeOthers": false,
         "outputChat": true,
         "markDefeated": false
-      },
-      "isNew": false,
-      "enrichedReference": "",
-      "isChanged": false
+      }
     },
     {
       "id": "ifnqllhgdsb6uvik",
       "name": "Collapsed Lung",
       "icon": "systems/cyberpunk-red-core/icons/compendium/status/collapsed_lung.svg",
-      "referenceId": "@Compendium[cyberpunk-red-core.criticalInjuriesBody.26hssKM4ILPVUMXE]{Collapsed Lung}",
+      "referenceId": "@UUID[Compendium.cyberpunk-red-core.criticalInjuriesBody.RAZcouFe0FS1VN1o]{Collapsed Lung}",
       "applyTrigger": "",
       "removeTrigger": "",
       "options": {
@@ -115,16 +97,13 @@
         "removeOthers": false,
         "outputChat": true,
         "markDefeated": false
-      },
-      "isNew": false,
-      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"cyberpunk-red-core.criticalInjuriesBody\" data-id=\"26hssKM4ILPVUMXE\"><i class=\"fas fa-suitcase\"></i> Collapsed Lung</a>",
-      "isChanged": false
+      }
     },
     {
       "id": "r8rypvez57qayd87",
       "name": "Concussion",
       "icon": "systems/cyberpunk-red-core/icons/compendium/status/concussion.svg",
-      "referenceId": "@Compendium[cyberpunk-red-core.criticalInjuriesHead.PwA31cXBSKwIKxSh]{Concussion}",
+      "referenceId": "@UUID[Compendium.cyberpunk-red-core.criticalInjuriesHead.yyVVirrpH1O0DMYB]{Concussion}",
       "applyTrigger": "",
       "removeTrigger": "",
       "options": {
@@ -132,16 +111,13 @@
         "removeOthers": false,
         "outputChat": true,
         "markDefeated": false
-      },
-      "isNew": false,
-      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"cyberpunk-red-core.criticalInjuriesHead\" data-id=\"PwA31cXBSKwIKxSh\"><i class=\"fas fa-suitcase\"></i> Concussion</a>",
-      "isChanged": false
+      }
     },
     {
       "id": "dn5kn3vv2w5ubbgd",
       "name": "Cracked Skull",
       "icon": "systems/cyberpunk-red-core/icons/compendium/status/cracked_skull.svg",
-      "referenceId": "@Compendium[cyberpunk-red-core.criticalInjuriesHead.Ud6fPc0b1t4H1I5F]{Cracked Skull}",
+      "referenceId": "@UUID[Compendium.cyberpunk-red-core.criticalInjuriesHead.jcOCxBFrKo5oBmOy]{Cracked Skull}",
       "applyTrigger": "",
       "removeTrigger": "",
       "options": {
@@ -149,16 +125,13 @@
         "removeOthers": false,
         "outputChat": true,
         "markDefeated": false
-      },
-      "isNew": false,
-      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"cyberpunk-red-core.criticalInjuriesHead\" data-id=\"Ud6fPc0b1t4H1I5F\"><i class=\"fas fa-suitcase\"></i> Cracked Skull</a>",
-      "isChanged": false
+      }
     },
     {
       "id": "ha81vqrxpyi7uoji",
       "name": "Crushed Fingers",
       "icon": "systems/cyberpunk-red-core/icons/compendium/status/crushed_fingers.svg",
-      "referenceId": "@Compendium[cyberpunk-red-core.criticalInjuriesBody.F9oDUif9QWCYZDs9]{Crushed Fingers}",
+      "referenceId": "@UUID[Compendium.cyberpunk-red-core.criticalInjuriesBody.IKKcCgHU1lBJ4wVd]{Crushed Fingers}",
       "applyTrigger": "",
       "removeTrigger": "",
       "options": {
@@ -166,10 +139,7 @@
         "removeOthers": false,
         "outputChat": true,
         "markDefeated": false
-      },
-      "isNew": false,
-      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"cyberpunk-red-core.criticalInjuriesBody\" data-id=\"F9oDUif9QWCYZDs9\"><i class=\"fas fa-suitcase\"></i> Crushed Fingers</a>",
-      "isChanged": false
+      }
     },
     {
       "id": "pchk7c8458idejld",
@@ -183,10 +153,7 @@
         "removeOthers": false,
         "outputChat": true,
         "markDefeated": false
-      },
-      "isNew": false,
-      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"cyberpunk-red-core.criticalInjuriesHead\" data-id=\"mVE8ovTniNKFs9Y7\"><i class=\"fas fa-suitcase\"></i> Crushed Windpipe</a>",
-      "isChanged": false
+      }
     },
     {
       "id": "mxc9c9eicoi9skk1",
@@ -200,10 +167,7 @@
         "removeOthers": false,
         "outputChat": true,
         "markDefeated": false
-      },
-      "isNew": false,
-      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"cyberpunk-red-core.criticalInjuriesHead\" data-id=\"qoegLCfpEOQifeZq\"><i class=\"fas fa-suitcase\"></i> Damaged Eye</a>",
-      "isChanged": false
+      }
     },
     {
       "id": "yta05y93xenyzrco",
@@ -217,16 +181,13 @@
         "removeOthers": false,
         "outputChat": true,
         "markDefeated": false
-      },
-      "isNew": false,
-      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"cyberpunk-red-core.criticalInjuriesHead\" data-id=\"qoegLCfpEOQifeZq\"><i class=\"fas fa-suitcase\"></i> Damaged Eye</a>",
-      "isChanged": false
+      }
     },
     {
       "id": "yayc4q2rzmofp27w",
       "name": "Dismembered Hand",
       "icon": "systems/cyberpunk-red-core/icons/compendium/status/dismembered_hand.svg",
-      "referenceId": "@Compendium[cyberpunk-red-core.criticalInjuriesBody.I92IfgREUEOXojRm]{Dismembered Hand}",
+      "referenceId": "@UUID[Compendium.cyberpunk-red-core.criticalInjuriesBody.xmlFB3X2q2NAklfn]{Dismembered Hand}",
       "applyTrigger": "",
       "removeTrigger": "",
       "options": {
@@ -234,16 +195,13 @@
         "removeOthers": false,
         "outputChat": true,
         "markDefeated": false
-      },
-      "isNew": false,
-      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"cyberpunk-red-core.criticalInjuriesBody\" data-id=\"I92IfgREUEOXojRm\"><i class=\"fas fa-suitcase\"></i> Dismembered Hand</a>",
-      "isChanged": false
+      }
     },
     {
       "id": "q9dsx9ocwnanvksd",
       "name": "Dismembered Leg",
       "icon": "systems/cyberpunk-red-core/icons/compendium/status/dismembered_leg.svg",
-      "referenceId": "@Compendium[cyberpunk-red-core.criticalInjuriesBody.hKr3MyTtIL63qEgL]{Dismembered Leg}",
+      "referenceId": "@UUID[Compendium.cyberpunk-red-core.criticalInjuriesBody.vRhxMWgOHYROHeHm]{Dismembered Leg}",
       "applyTrigger": "",
       "removeTrigger": "",
       "options": {
@@ -251,10 +209,7 @@
         "removeOthers": false,
         "outputChat": true,
         "markDefeated": false
-      },
-      "isNew": false,
-      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"cyberpunk-red-core.criticalInjuriesBody\" data-id=\"hKr3MyTtIL63qEgL\"><i class=\"fas fa-suitcase\"></i> Dismembered Leg</a>",
-      "isChanged": false
+      }
     },
     {
       "id": "3mjislz7ud67vuc2",
@@ -268,16 +223,13 @@
         "removeOthers": false,
         "outputChat": true,
         "markDefeated": false
-      },
-      "isNew": false,
-      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"cyberpunk-red-core.criticalInjuriesBody\" data-id=\"9N6yHeVwiGg2MkeL\"><i class=\"fas fa-suitcase\"></i> Dismembered Arm</a>",
-      "isChanged": false
+      }
     },
     {
       "id": "rd2fh4knrle6g0jb",
       "name": "Foreign Object (Body)",
       "icon": "systems/cyberpunk-red-core/icons/compendium/status/foreign_object_body.svg",
-      "referenceId": "@Compendium[cyberpunk-red-core.criticalInjuriesBody.wBGiueeYYDnCe0dY]{Foreign Object}",
+      "referenceId": "@UUID[Compendium.cyberpunk-red-core.criticalInjuriesBody.xTQ2T50UGNY8DrHl]{Foreign Object}",
       "applyTrigger": "",
       "removeTrigger": "",
       "options": {
@@ -285,10 +237,7 @@
         "removeOthers": false,
         "outputChat": true,
         "markDefeated": false
-      },
-      "isNew": false,
-      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"cyberpunk-red-core.criticalInjuriesBody\" data-id=\"wBGiueeYYDnCe0dY\"><i class=\"fas fa-suitcase\"></i> Foreign Object</a>",
-      "isChanged": false
+      }
     },
     {
       "id": "hi6fv5ley2vmw3js",
@@ -302,10 +251,7 @@
         "removeOthers": false,
         "outputChat": true,
         "markDefeated": false
-      },
-      "isNew": false,
-      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"cyberpunk-red-core.criticalInjuriesHead\" data-id=\"xfzYp9N5c6jEKiBR\"><i class=\"fas fa-suitcase\"></i> Foreign Object (H)</a>",
-      "isChanged": false
+      }
     },
     {
       "id": "f5pcs5mhpguz8ioz",
@@ -319,10 +265,7 @@
         "removeOthers": false,
         "outputChat": true,
         "markDefeated": false
-      },
-      "isNew": false,
-      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"cyberpunk-red-core.criticalInjuriesHead\" data-id=\"q7yxRKUMzOf9o5qO\"><i class=\"fas fa-suitcase\"></i> Lost Ear</a>",
-      "isChanged": false
+      }
     },
     {
       "id": "im7kok2vim8e8roc",
@@ -336,10 +279,7 @@
         "removeOthers": false,
         "outputChat": true,
         "markDefeated": false
-      },
-      "isNew": false,
-      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"cyberpunk-red-core.criticalInjuriesHead\" data-id=\"vysFvuTpuG2aDDIz\"><i class=\"fas fa-suitcase\"></i> Lost Eye</a>",
-      "isChanged": false
+      }
     },
     {
       "id": "f04iqysbe4tf0pjl",
@@ -353,10 +293,7 @@
         "removeOthers": false,
         "outputChat": true,
         "markDefeated": false
-      },
-      "isNew": false,
-      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"cyberpunk-red-core.criticalInjuriesBody\" data-id=\"pQ2F7FsQvZJyZGXe\"><i class=\"fas fa-suitcase\"></i> Spinal Injury</a>",
-      "isChanged": false
+      }
     },
     {
       "id": "gkd2d8obp14x7v3v",
@@ -370,16 +307,13 @@
         "removeOthers": false,
         "outputChat": true,
         "markDefeated": false
-      },
-      "isNew": false,
-      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"cyberpunk-red-core.criticalInjuriesBody\" data-id=\"Z3iVuSFtma3Bx7SX\"><i class=\"fas fa-suitcase\"></i> Torn Muscle</a>",
-      "isChanged": false
+      }
     },
     {
       "id": "63wi2ivkwfjom9xc",
       "name": "Whiplash",
       "icon": "systems/cyberpunk-red-core/icons/compendium/status/whiplash.svg",
-      "referenceId": "@Compendium[cyberpunk-red-core.criticalInjuriesHead.R35z4TNiP0LuO2Ii]{Whiplash}",
+      "referenceId": "@UUID[Compendium.cyberpunk-red-core.criticalInjuriesHead.e5wyX6r4Tem6bNwQ]{Whiplash}",
       "applyTrigger": "",
       "removeTrigger": "",
       "options": {
@@ -387,10 +321,7 @@
         "removeOthers": false,
         "outputChat": true,
         "markDefeated": false
-      },
-      "isNew": false,
-      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"cyberpunk-red-core.criticalInjuriesHead\" data-id=\"R35z4TNiP0LuO2Ii\"><i class=\"fas fa-suitcase\"></i> Whiplash</a>",
-      "isChanged": false
+      }
     },
     {
       "id": "wfw28h6jga0i8zgv",
@@ -404,10 +335,7 @@
         "removeOthers": false,
         "outputChat": true,
         "markDefeated": false
-      },
-      "isNew": false,
-      "enrichedReference": "",
-      "isChanged": false
+      }
     },
     {
       "id": "3i5twkh0722lw1bz",
@@ -421,10 +349,7 @@
         "removeOthers": false,
         "outputChat": true,
         "markDefeated": false
-      },
-      "isNew": false,
-      "enrichedReference": "",
-      "isChanged": false
+      }
     },
     {
       "id": "8g65kc038fh7av9k",
@@ -438,10 +363,7 @@
         "removeOthers": false,
         "outputChat": true,
         "markDefeated": false
-      },
-      "isNew": false,
-      "enrichedReference": "",
-      "isChanged": false
+      }
     },
     {
       "id": "i9lhfsg6nroemjmz",
@@ -455,10 +377,7 @@
         "removeOthers": false,
         "outputChat": true,
         "markDefeated": false
-      },
-      "isNew": false,
-      "enrichedReference": "",
-      "isChanged": false
+      }
     },
     {
       "id": "97lm663ujoiyi4ws",
@@ -472,10 +391,7 @@
         "removeOthers": false,
         "outputChat": true,
         "markDefeated": false
-      },
-      "isNew": false,
-      "enrichedReference": "",
-      "isChanged": false
+      }
     },
     {
       "id": "lmhs96pr253w90n4",
@@ -489,10 +405,7 @@
         "removeOthers": false,
         "outputChat": true,
         "markDefeated": false
-      },
-      "isNew": false,
-      "enrichedReference": "",
-      "isChanged": false
+      }
     },
     {
       "id": "3l6yrmvd37862mll",
@@ -506,10 +419,7 @@
         "removeOthers": false,
         "outputChat": true,
         "markDefeated": false
-      },
-      "isNew": false,
-      "enrichedReference": "",
-      "isChanged": false
+      }
     },
     {
       "id": "2qjqodwoik320rv0",
@@ -523,10 +433,7 @@
         "removeOthers": false,
         "outputChat": true,
         "markDefeated": false
-      },
-      "isNew": false,
-      "enrichedReference": "",
-      "isChanged": false
+      }
     },
     {
       "id": "977k9i8t8wr8aa6z",
@@ -540,10 +447,7 @@
         "removeOthers": false,
         "outputChat": true,
         "markDefeated": false
-      },
-      "isNew": false,
-      "enrichedReference": "",
-      "isChanged": false
+      }
     },
     {
       "id": "2mda0usivu7xim3a",
@@ -557,10 +461,7 @@
         "removeOthers": false,
         "outputChat": true,
         "markDefeated": false
-      },
-      "isNew": false,
-      "enrichedReference": "",
-      "isChanged": false
+      }
     },
     {
       "id": "vpl0b3fq6oblr3pp",
@@ -574,10 +475,7 @@
         "removeOthers": false,
         "outputChat": true,
         "markDefeated": false
-      },
-      "isNew": false,
-      "enrichedReference": "",
-      "isChanged": false
+      }
     },
     {
       "id": "t4bv2jj1sxi5sxxy",
@@ -591,10 +489,7 @@
         "removeOthers": false,
         "outputChat": true,
         "markDefeated": false
-      },
-      "isNew": false,
-      "enrichedReference": "",
-      "isChanged": false
+      }
     },
     {
       "id": "qjcbxa38bqqz4lap",
@@ -608,10 +503,7 @@
         "removeOthers": false,
         "outputChat": true,
         "markDefeated": false
-      },
-      "isNew": false,
-      "enrichedReference": "",
-      "isChanged": false
+      }
     },
     {
       "id": "r4mbggwd1jmrvhjt",
@@ -625,10 +517,7 @@
         "removeOthers": false,
         "outputChat": true,
         "markDefeated": false
-      },
-      "isNew": false,
-      "enrichedReference": "",
-      "isChanged": false
+      }
     },
     {
       "id": "y4y0rvsz17aj0r4g",
@@ -642,10 +531,7 @@
         "removeOthers": false,
         "outputChat": true,
         "markDefeated": false
-      },
-      "isNew": false,
-      "enrichedReference": "",
-      "isChanged": false
+      }
     },
     {
       "id": "ss6oigx5fylz0luk",
@@ -659,10 +545,7 @@
         "removeOthers": false,
         "outputChat": true,
         "markDefeated": false
-      },
-      "isNew": false,
-      "enrichedReference": "",
-      "isChanged": false
+      }
     },
     {
       "id": "e73pyhdrc41isg7f",
@@ -676,10 +559,7 @@
         "removeOthers": false,
         "outputChat": true,
         "markDefeated": false
-      },
-      "isNew": false,
-      "enrichedReference": "",
-      "isChanged": false
+      }
     },
     {
       "id": "qrncrx71vi0kvn12",
@@ -693,10 +573,7 @@
         "removeOthers": false,
         "outputChat": true,
         "markDefeated": false
-      },
-      "isNew": false,
-      "enrichedReference": "",
-      "isChanged": false
+      }
     },
     {
       "id": "vaciaiw08jooz1hf",
@@ -710,10 +587,7 @@
         "removeOthers": false,
         "outputChat": true,
         "markDefeated": false
-      },
-      "isNew": false,
-      "enrichedReference": "",
-      "isChanged": false
+      }
     },
     {
       "id": "dhrzzu7ymy7u7mnc",
@@ -727,10 +601,7 @@
         "removeOthers": false,
         "outputChat": true,
         "markDefeated": false
-      },
-      "isNew": false,
-      "enrichedReference": "",
-      "isChanged": false
+      }
     },
     {
       "id": "pd7p69lbketdc8by",
@@ -744,16 +615,13 @@
         "removeOthers": false,
         "outputChat": true,
         "markDefeated": false
-      },
-      "isNew": false,
-      "enrichedReference": "",
-      "isChanged": false
+      }
     },
     {
       "id": "ryid3sas6sker81g",
       "name": "Antibiotics",
       "icon": "systems/cyberpunk-red-core/icons/compendium/status/antibiotics.svg",
-      "referenceId": "@Compendium[cyberpunk-red-core.gear-items.ONQ3dWthjX07cTkZ]{Antibiotic}",
+      "referenceId": "@UUID[Compendium.cyberpunk-red-core.drugs-items.ags0aoY9ViaGvTIb]{Antibiotic}",
       "applyTrigger": "",
       "removeTrigger": "",
       "options": {
@@ -761,10 +629,7 @@
         "removeOthers": false,
         "outputChat": true,
         "markDefeated": false
-      },
-      "isNew": false,
-      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"cyberpunk-red-core.gear-items\" data-id=\"ONQ3dWthjX07cTkZ\"><i class=\"fas fa-suitcase\"></i> Antibiotic</a>",
-      "isChanged": false
+      }
     },
     {
       "id": "dx5p60wq8zh7owm1",
@@ -778,16 +643,13 @@
         "removeOthers": false,
         "outputChat": true,
         "markDefeated": false
-      },
-      "isNew": false,
-      "enrichedReference": "",
-      "isChanged": false
+      }
     },
     {
       "id": "tv6gytm9auf2gme1",
       "name": "Rapidetox",
       "icon": "systems/cyberpunk-red-core/icons/compendium/status/rapiddetox.svg",
-      "referenceId": "@Compendium[cyberpunk-red-core.gear-items.FQV7o7Iur7OLp29T]{Rapidetox}",
+      "referenceId": "@UUID[Compendium.cyberpunk-red-core.drugs-items.fRtXPlBcWvtgtNTf]{Rapidetox}",
       "applyTrigger": "",
       "removeTrigger": "",
       "options": {
@@ -795,16 +657,13 @@
         "removeOthers": false,
         "outputChat": true,
         "markDefeated": false
-      },
-      "isNew": false,
-      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"cyberpunk-red-core.gear-items\" data-id=\"FQV7o7Iur7OLp29T\"><i class=\"fas fa-suitcase\"></i> Rapidetox</a>",
-      "isChanged": false
+      }
     },
     {
       "id": "fzy4hp04ibv72v7f",
       "name": "Speed Heal",
       "icon": "systems/cyberpunk-red-core/icons/compendium/status/speedheal.svg",
-      "referenceId": "@Compendium[cyberpunk-red-core.gear-items.xU0QGRmoxUThJFa0]{Speedheal}",
+      "referenceId": "@UUID[Compendium.cyberpunk-red-core.drugs-items.3xF0I3J9RnSxf4Ux]{Speedheal}",
       "applyTrigger": "",
       "removeTrigger": "",
       "options": {
@@ -812,16 +671,13 @@
         "removeOthers": false,
         "outputChat": true,
         "markDefeated": false
-      },
-      "isNew": false,
-      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"cyberpunk-red-core.gear-items\" data-id=\"xU0QGRmoxUThJFa0\"><i class=\"fas fa-suitcase\"></i> Speedheal</a>",
-      "isChanged": false
+      }
     },
     {
       "id": "a8tnrz5ivb76ikea",
       "name": "Stim",
       "icon": "systems/cyberpunk-red-core/icons/compendium/status/stim.svg",
-      "referenceId": "@Compendium[cyberpunk-red-core.gear-items.mDKFZNHnDyKpRZ6t]{Stim}",
+      "referenceId": "@UUID[Compendium.cyberpunk-red-core.drugs-items.r21n9rFplUOtnjHM]{Stim}",
       "applyTrigger": "",
       "removeTrigger": "",
       "options": {
@@ -829,16 +685,13 @@
         "removeOthers": false,
         "outputChat": true,
         "markDefeated": false
-      },
-      "isNew": false,
-      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"cyberpunk-red-core.gear-items\" data-id=\"mDKFZNHnDyKpRZ6t\"><i class=\"fas fa-suitcase\"></i> Stim</a>",
-      "isChanged": false
+      }
     },
     {
       "id": "54253hylkpdymvxl",
       "name": "Surge",
       "icon": "systems/cyberpunk-red-core/icons/compendium/status/surge.svg",
-      "referenceId": "@Compendium[cyberpunk-red-core.gear-items.GxmaWDigmJBehElg]{Surge}",
+      "referenceId": "@UUID[Compendium.cyberpunk-red-core.drugs-items.82sXoExwFlRIWesU]{Surge}",
       "applyTrigger": "",
       "removeTrigger": "",
       "options": {
@@ -846,16 +699,13 @@
         "removeOthers": false,
         "outputChat": true,
         "markDefeated": false
-      },
-      "isNew": false,
-      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"cyberpunk-red-core.gear-items\" data-id=\"GxmaWDigmJBehElg\"><i class=\"fas fa-suitcase\"></i> Surge</a>",
-      "isChanged": false
+      }
     },
     {
       "id": "idja1i8m5hhz8ama",
       "name": "Black Lace",
       "icon": "systems/cyberpunk-red-core/icons/compendium/status/black_lace.svg",
-      "referenceId": "@Compendium[cyberpunk-red-core.gear-items.YM6LoMggRdgKeFWu]{Black Lace}",
+      "referenceId": "@UUID[Compendium.cyberpunk-red-core.drugs-items.6BM5WFyCyIM8lZib]{Black Lace}",
       "applyTrigger": "",
       "removeTrigger": "",
       "options": {
@@ -863,16 +713,13 @@
         "removeOthers": false,
         "outputChat": true,
         "markDefeated": false
-      },
-      "isNew": false,
-      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"cyberpunk-red-core.gear-items\" data-id=\"YM6LoMggRdgKeFWu\"><i class=\"fas fa-suitcase\"></i> Black Lace</a>",
-      "isChanged": false
+      }
     },
     {
       "id": "k0nv7f1qm82pj28q",
-      "name": "Black Lace Acciction",
+      "name": "Black Lace Addiction",
       "icon": "systems/cyberpunk-red-core/icons/compendium/status/black_lace_addiction.svg",
-      "referenceId": "@Compendium[cyberpunk-red-core.gear-items.YM6LoMggRdgKeFWu]{Black Lace}",
+      "referenceId": "@UUID[Compendium.cyberpunk-red-core.drugs-items.6BM5WFyCyIM8lZib]{Black Lace}",
       "applyTrigger": "",
       "removeTrigger": "",
       "options": {
@@ -880,16 +727,13 @@
         "removeOthers": false,
         "outputChat": true,
         "markDefeated": false
-      },
-      "isNew": false,
-      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"cyberpunk-red-core.gear-items\" data-id=\"YM6LoMggRdgKeFWu\"><i class=\"fas fa-suitcase\"></i> Black Lace</a>",
-      "isChanged": false
+      }
     },
     {
       "id": "ms4wgzm5hmji55py",
       "name": "Blue Glass",
       "icon": "systems/cyberpunk-red-core/icons/compendium/status/blue_glass.svg",
-      "referenceId": "@Compendium[cyberpunk-red-core.gear-items.9JXs8jJt5KveoEhd]{Blue Glass}",
+      "referenceId": "@UUID[Compendium.cyberpunk-red-core.drugs-items.UrKzMiFp4xFOLNIC]{Blue Glass}",
       "applyTrigger": "",
       "removeTrigger": "",
       "options": {
@@ -897,16 +741,13 @@
         "removeOthers": false,
         "outputChat": true,
         "markDefeated": false
-      },
-      "isNew": false,
-      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"cyberpunk-red-core.gear-items\" data-id=\"9JXs8jJt5KveoEhd\"><i class=\"fas fa-suitcase\"></i> Blue Glass</a>",
-      "isChanged": false
+      }
     },
     {
       "id": "bhl2fsrzn4or72f5",
-      "name": "Blue Glass Addiciton",
+      "name": "Blue Glass Addiction",
       "icon": "systems/cyberpunk-red-core/icons/compendium/status/blue_glass_addiction.svg",
-      "referenceId": "@Compendium[cyberpunk-red-core.gear-items.9JXs8jJt5KveoEhd]{Blue Glass}",
+      "referenceId": "@UUID[Compendium.cyberpunk-red-core.drugs-items.UrKzMiFp4xFOLNIC]{Blue Glass}",
       "applyTrigger": "",
       "removeTrigger": "",
       "options": {
@@ -914,16 +755,13 @@
         "removeOthers": false,
         "outputChat": true,
         "markDefeated": false
-      },
-      "isNew": false,
-      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"cyberpunk-red-core.gear-items\" data-id=\"9JXs8jJt5KveoEhd\"><i class=\"fas fa-suitcase\"></i> Blue Glass</a>",
-      "isChanged": false
+      }
     },
     {
       "id": "vc6wdch7hgjnyceg",
       "name": "Boost",
       "icon": "systems/cyberpunk-red-core/icons/compendium/status/boost.svg",
-      "referenceId": "@Compendium[cyberpunk-red-core.gear-items.DonKYCvKHcYYJLeh]{Boost}",
+      "referenceId": "@UUID[Compendium.cyberpunk-red-core.drugs-items.ut8jpew6V3q58ivX]{Boost}",
       "applyTrigger": "",
       "removeTrigger": "",
       "options": {
@@ -931,16 +769,13 @@
         "removeOthers": false,
         "outputChat": true,
         "markDefeated": false
-      },
-      "isNew": false,
-      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"cyberpunk-red-core.gear-items\" data-id=\"DonKYCvKHcYYJLeh\"><i class=\"fas fa-suitcase\"></i> Boost</a>",
-      "isChanged": false
+      }
     },
     {
       "id": "y444oapg2pl9wiwk",
       "name": "Boost Addiction",
       "icon": "systems/cyberpunk-red-core/icons/compendium/status/boost_addiction.svg",
-      "referenceId": "",
+      "referenceId": "@UUID[Compendium.cyberpunk-red-core.drugs-items.ut8jpew6V3q58ivX]{Boost}",
       "applyTrigger": "",
       "removeTrigger": "",
       "options": {
@@ -948,16 +783,13 @@
         "removeOthers": false,
         "outputChat": true,
         "markDefeated": false
-      },
-      "isNew": false,
-      "enrichedReference": "",
-      "isChanged": false
+      }
     },
     {
       "id": "s2kb8cl4soikifa9",
       "name": "Smash",
       "icon": "systems/cyberpunk-red-core/icons/compendium/status/smash.svg",
-      "referenceId": "@Compendium[cyberpunk-red-core.gear-items.nl5UiiaoesK0BMb4]{Smash}",
+      "referenceId": "@UUID[Compendium.cyberpunk-red-core.drugs-items.PRLDaeBVeMuBBIeO]{Smash}",
       "applyTrigger": "",
       "removeTrigger": "",
       "options": {
@@ -965,10 +797,7 @@
         "removeOthers": false,
         "outputChat": true,
         "markDefeated": false
-      },
-      "isNew": false,
-      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"cyberpunk-red-core.gear-items\" data-id=\"nl5UiiaoesK0BMb4\"><i class=\"fas fa-suitcase\"></i> Smash</a>",
-      "isChanged": false
+      }
     },
     {
       "id": "ed97q4btoj3ggpip",
@@ -982,16 +811,13 @@
         "removeOthers": false,
         "outputChat": true,
         "markDefeated": false
-      },
-      "isNew": false,
-      "enrichedReference": "",
-      "isChanged": false
+      }
     },
     {
       "id": "bsixucw55vezxc66",
       "name": "Synthcoke",
       "icon": "systems/cyberpunk-red-core/icons/compendium/status/synthcoke.svg",
-      "referenceId": "@Compendium[cyberpunk-red-core.gear-items.sriAGF37AooS3nT2]{Synthcoke}",
+      "referenceId": "@UUID[Compendium.cyberpunk-red-core.drugs-items.CyYpPh89G7IYyryM]{Synthcoke}",
       "applyTrigger": "",
       "removeTrigger": "",
       "options": {
@@ -1001,14 +827,15 @@
         "markDefeated": false
       },
       "isNew": false,
-      "enrichedReference": "<a class=\"entity-link content-link\" draggable=\"true\" data-pack=\"cyberpunk-red-core.gear-items\" data-id=\"sriAGF37AooS3nT2\"><i class=\"fas fa-suitcase\"></i> Synthcoke</a>",
-      "isChanged": false
+      "isChanged": false,
+      "enrichedReference": "<a class=\"content-link\" draggable=\"true\" data-uuid=\"Compendium.cyberpunk-red-core.drugs-items.CyYpPh89G7IYyryM\" data-id=\"CyYpPh89G7IYyryM\" data-type=\"Item\" data-pack=\"cyberpunk-red-core.drugs-items\" data-tooltip=\"Drug Item\"><i class=\"fas fa-suitcase\"></i>Synthcoke</a>",
+      "hidden": false
     },
     {
       "id": "xwk3lj08yk83j02b",
       "name": "Synthcoke Addiction",
       "icon": "systems/cyberpunk-red-core/icons/compendium/status/synthcoke_addiciton.svg",
-      "referenceId": "",
+      "referenceId": "@UUID[Compendium.cyberpunk-red-core.drugs-items.CyYpPh89G7IYyryM]{Synthcoke}",
       "applyTrigger": "",
       "removeTrigger": "",
       "options": {
@@ -1016,10 +843,7 @@
         "removeOthers": false,
         "outputChat": true,
         "markDefeated": false
-      },
-      "isNew": false,
-      "enrichedReference": "",
-      "isChanged": false
+      }
     },
     {
       "id": "r4kadyvk4trrgh8p",
@@ -1033,10 +857,7 @@
         "removeOthers": false,
         "outputChat": true,
         "markDefeated": false
-      },
-      "isNew": false,
-      "enrichedReference": "",
-      "isChanged": false
+      }
     },
     {
       "id": "yv1wu4spb4e8ifln",
@@ -1050,10 +871,7 @@
         "removeOthers": false,
         "outputChat": true,
         "markDefeated": false
-      },
-      "isNew": false,
-      "enrichedReference": "",
-      "isChanged": false
+      }
     },
     {
       "id": "7vks8vi85yhkf3qv",
@@ -1067,10 +885,7 @@
         "removeOthers": false,
         "outputChat": true,
         "markDefeated": false
-      },
-      "isNew": false,
-      "enrichedReference": "",
-      "isChanged": false
+      }
     },
     {
       "id": "5q9esrzjvgqvppsq",
@@ -1084,10 +899,7 @@
         "removeOthers": false,
         "outputChat": true,
         "markDefeated": false
-      },
-      "isNew": false,
-      "enrichedReference": "",
-      "isChanged": false
+      }
     }
   ]
 }
