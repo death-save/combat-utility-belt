@@ -103,7 +103,7 @@
   "socket": true,
   "compatibility": {
     "minimum": "10.270",
-    "verified": "10.275"
+    "verified": "10.287"
   },
   "name": "combat-utility-belt",
   "minimumCoreVersion": "10.270"
