@@ -77,14 +77,16 @@ export class EnhancedConditions {
         if (enable) {
             if (game.user.isGM) {
                 EnhancedConditions._backupCoreEffects();
+                EnhancedConditions._backupCoreSpecialStatusEffects();
                 // If the reminder is not suppressed, advise users to save the Condition Lab
                 const suppressPreventativeSaveReminder = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.suppressPreventativeSaveReminder);
                 if (!suppressPreventativeSaveReminder) {
                     EnhancedConditions._preventativeSaveReminder();
                 }
             }
-
+            const specialStatusEffectMap = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.specialStatusEffectMapping);
             if (conditionMap.length) EnhancedConditions._updateStatusEffects(conditionMap);
+            if (specialStatusEffectMap) foundry.utils.mergeObject(CONFIG.specialStatusEffects, specialStatusEffectMap);
             setInterval(EnhancedConditions.updateConditionTimestamps, 15000);
         }
 
@@ -823,6 +825,17 @@ export class EnhancedConditions {
             Object.freeze(CONFIG.defaultStatusEffects);
         }
         Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.coreEffects, CONFIG.defaultStatusEffects);
+    }
+
+    /**
+     * Duplicate the core special status effect mappings, freeze the duplicate then store a copy in settings
+     */
+     static _backupCoreSpecialStatusEffects() {
+        CONFIG.defaultSpecialStatusEffects = CONFIG.defaultSpecialStatusEffects || foundry.utils.duplicate(CONFIG.specialStatusEffects);
+        if (!Object.isFrozen(CONFIG.defaultSpecialStatusEffects)) {
+            Object.freeze(CONFIG.defaultSpecialStatusEffects);
+        }
+        Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.defaultSpecialStatusEffects, CONFIG.defaultSpecialStatusEffects);
     }
 
     /**

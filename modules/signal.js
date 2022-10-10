@@ -222,7 +222,11 @@ export class Signal {
                     break;
                 
                 case game.i18n.localize(`${BUTLER.NAME}.ENHANCED_CONDITIONS.ConditionLab.SortDirectionSave.Title`):
-                    ConditionLab._onRenderDialog(app, html, data);
+                    ConditionLab._onRenderSaveDialog(app, html, data);
+                    break;
+                
+                case game.i18n.localize(`ENHANCED_CONDITIONS.Lab.RestoreDefaultsTitle`):
+                    ConditionLab._onRenderRestoreDefaultsDialog(app, html, data);
                     break;
 
                 default:

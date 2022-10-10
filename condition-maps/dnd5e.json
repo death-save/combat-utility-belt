@@ -4,122 +4,108 @@
         {
             "name":"Blinded", 
             "icon": "modules/combat-utility-belt/icons/blinded.svg",
-            "referenceId": "@Compendium[dnd5e.rules.995mfaI3z7WtY7vK]",
-            "referenceType": "compendium.journalEntry"
+            "referenceId": "@UUID[Compendium.dnd5e.rules.w7eitkpD7QQTB6j0.JournalEntryPage.0b8N4FymGGfbZGpJ]{Blinded}",
+            "options": {
+                "blindToken": true
+            }
         },
         {
             "name":"Charmed",
             "icon": "modules/combat-utility-belt/icons/charmed.svg", 
-            "referenceId": "@Compendium[dnd5e.rules.H8aTFVG3YFAkQ3TK]",
-            "referenceType": "compendium.journalEntry"
+            "referenceId": "@UUID[Compendium.dnd5e.rules.w7eitkpD7QQTB6j0.JournalEntryPage.zZaEBrKkr66OWJvD]{Charmed}"
         },
         {
             "name": "Concentrating",
             "icon": "modules/combat-utility-belt/icons/concentrating.svg",
-            "referenceId": "@Compendium[combat-utility-belt.conditionsdnd5e.nSoKejZfahbxfggp]",
-            "referenceType": "compendium.journalEntry"
+            "referenceId": "@UUID[Compendium.dnd5e.rules.QvPDSUsAiEn3hD8s.JournalEntryPage.wre9ECSVuEyJBYhr#concentration]{Concentration}"
         },
         {
             "name": "Deafened", 
             "icon": "modules/combat-utility-belt/icons/deafened.svg", 
-            "referenceId" : "@Compendium[dnd5e.rules.XnDPIa0MLWhGvuQg]",
-            "referenceType": "compendium.journalEntry"
+            "referenceId" : "@UUID[Compendium.dnd5e.rules.w7eitkpD7QQTB6j0.JournalEntryPage.6G8JSjhn701cBITY]{Deafened}"
         },
         {
             "name":"Exhaustion 1",
             "icon":"modules/combat-utility-belt/icons/exhaustion1.svg",
-            "referenceId": "@Compendium[dnd5e.rules.apBZudO4UA1wj7aC]",
-            "referenceType": "compendium.journalEntry"
+            "referenceId": "@UUID[Compendium.dnd5e.rules.w7eitkpD7QQTB6j0.JournalEntryPage.cspWveykstnu3Zcv]{Exhaustion}"
         },
         {
             "name":"Exhaustion 2",
             "icon":"modules/combat-utility-belt/icons/exhaustion2.svg",
-            "referenceId": "@Compendium[dnd5e.rules.apBZudO4UA1wj7aC]",
-            "referenceType": "compendium.journalEntry"
+            "referenceId": "@UUID[Compendium.dnd5e.rules.w7eitkpD7QQTB6j0.JournalEntryPage.cspWveykstnu3Zcv]{Exhaustion 2}"
         },
         {
             "name":"Exhaustion 3",
             "icon":"modules/combat-utility-belt/icons/exhaustion3.svg",
-            "referenceId": "@Compendium[dnd5e.rules.apBZudO4UA1wj7aC]",
-            "referenceType": "compendium.journalEntry"
+            "referenceId": "@UUID[Compendium.dnd5e.rules.w7eitkpD7QQTB6j0.JournalEntryPage.cspWveykstnu3Zcv]{Exhaustion 3}"
         },
         {
             "name":"Exhaustion 4",
             "icon":"modules/combat-utility-belt/icons/exhaustion4.svg",
-            "referenceId": "@Compendium[dnd5e.rules.apBZudO4UA1wj7aC]",
-            "referenceType": "compendium.journalEntry"
+            "referenceId": "@UUID[Compendium.dnd5e.rules.w7eitkpD7QQTB6j0.JournalEntryPage.cspWveykstnu3Zcv]{Exhaustion 4}"
         },
         {
             "name":"Exhaustion 5",
             "icon":"modules/combat-utility-belt/icons/exhaustion5.svg",
-            "referenceId": "@Compendium[dnd5e.rules.apBZudO4UA1wj7aC]",
-            "referenceType": "compendium.journalEntry"
+            "referenceId": "@UUID[Compendium.dnd5e.rules.w7eitkpD7QQTB6j0.JournalEntryPage.cspWveykstnu3Zcv]{Exhaustion 5}"
         },
         {
             "name":"Frightened",
             "icon":"modules/combat-utility-belt/icons/frightened.svg",
-            "referenceId": "@Compendium[dnd5e.rules.pAcHCDJBhybiVzMF]",
-            "referenceType": "compendium.journalEntry"
+            "referenceId": "@UUID[Compendium.dnd5e.rules.w7eitkpD7QQTB6j0.JournalEntryPage.oreoyaFKnvZCrgij]{Frightened}"
         },
         {
             "name":"Grappled",
             "icon":"modules/combat-utility-belt/icons/grappled.svg",
-            "referenceId": "@Compendium[dnd5e.rules.b4UvTt9P3As79cwm]",
-            "referenceType": "compendium.journalEntry"
+            "referenceId": "@UUID[Compendium.dnd5e.rules.w7eitkpD7QQTB6j0.JournalEntryPage.gYDAhd02ryUmtwZn]{Grappled}"
         },
         {
             "name":"Incapacitated",
             "icon":"modules/combat-utility-belt/icons/incapacitated.svg",
-            "referenceId": "@Compendium[dnd5e.rules.tUYvSkhggFcMpVw5]",
-            "referenceType": "compendium.journalEntry"
+            "referenceId": "@UUID[Compendium.dnd5e.rules.w7eitkpD7QQTB6j0.JournalEntryPage.TpkZgLfxCmSndmpb]{Incapacitated}"
         },
         {
             "name":"Invisible",
             "icon":"modules/combat-utility-belt/icons/invisible.svg",
-            "referenceId": "@Compendium[dnd5e.rules.hMWCeXenROGuhF1K]",
-            "referenceType": "compendium.journalEntry"
+            "referenceId": "@UUID[Compendium.dnd5e.rules.w7eitkpD7QQTB6j0.JournalEntryPage.3UU5GCTVeRDbZy9u]{Invisible}",
+            "options": {
+                "markInvisible": true
+            }
         },
         {
             "name":"Paralyzed",
             "icon":"modules/combat-utility-belt/icons/paralyzed.svg",
-            "referenceId": "@Compendium[dnd5e.rules.BJaVW22yVYe7dtzq]",
-            "referenceType": "compendium.journalEntry"
+            "referenceId": "@UUID[Compendium.dnd5e.rules.w7eitkpD7QQTB6j0.JournalEntryPage.xnSV5hLJIMaTABXP]{Paralyzed}"
         },
         {
             "name":"Petrified",
             "icon":"modules/combat-utility-belt/icons/petrified.svg",
-            "referenceId": "@Compendium[dnd5e.rules.1XcKtGnKprqX6fa2]",
-            "referenceType": "compendium.journalEntry"
+            "referenceId": "@UUID[Compendium.dnd5e.rules.w7eitkpD7QQTB6j0.JournalEntryPage.xaNDaW6NwQTgHSmi]{Petrified}"
         },
         {
             "name":"Poisoned",
             "icon":"modules/combat-utility-belt/icons/poisoned.svg",
-            "referenceId": "@Compendium[dnd5e.rules.prcOUhkWEVppFVbg]",
-            "referenceType": "compendium.journalEntry"
+            "referenceId": "@UUID[Compendium.dnd5e.rules.w7eitkpD7QQTB6j0.JournalEntryPage.lq3TRI6ZlED8ABMx]{Poisoned}"
         },
         {
             "name":"Prone",
             "icon":"modules/combat-utility-belt/icons/prone.svg",
-            "referenceId": "@Compendium[dnd5e.rules.ZkXz0qdkNBkKE6tN]",
-            "referenceType": "compendium.journalEntry"
+            "referenceId": "@UUID[Compendium.dnd5e.rules.w7eitkpD7QQTB6j0.JournalEntryPage.y0TkcdyoZlOTmAFT]{Prone}"
         },
         {
             "name":"Restrained",
             "icon":"modules/combat-utility-belt/icons/restrained.svg",
-            "referenceId": "@Compendium[dnd5e.rules.QRKWz3p6v9Rl1Tzh]",
-            "referenceType": "compendium.journalEntry"
+            "referenceId": "@UUID[Compendium.dnd5e.rules.w7eitkpD7QQTB6j0.JournalEntryPage.cSVcyZyNe2iG1fIc]{Restrained}"
         },
         {
             "name":"Stunned",
             "icon":"modules/combat-utility-belt/icons/stunned.svg",
-            "referenceId": "@Compendium[dnd5e.rules.TiD5vnNql12Wh3Pn]",
-            "referenceType": "compendium.journalEntry"
+            "referenceId": "@UUID[Compendium.dnd5e.rules.w7eitkpD7QQTB6j0.JournalEntryPage.ZyZMUwA2rboh4ObS]{Stunned}"
         },
         {
             "name":"Unconscious",
             "icon":"icons/svg/unconscious.svg",
-            "referenceId": "@Compendium[dnd5e.rules.MOk1rkF0DeJlcC4l]",
-            "referenceType": "compendium.journalEntry",
+            "referenceId": "@UUID[Compendium.dnd5e.rules.w7eitkpD7QQTB6j0.JournalEntryPage.UWw13ISmMxDzmwbd]{Unconscious}",
             "options": {
                 "overlay": true
             }

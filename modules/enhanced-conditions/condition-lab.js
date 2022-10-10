@@ -6,6 +6,7 @@ import { DraggableList } from "../utils/draggable-list.js";
 import EnhancedEffectConfig from "./enhanced-effect-config.js";
 import EnhancedConditionMacroConfig from "./enhanced-condition-macro.js";
 import EnhancedConditionTriggerConfig from "./enhanced-condition-trigger.js";
+import EnhancedConditionOptionConfig from "./enhanced-condition-option.js";
 
 /**
  * Form application for managing mapping of Conditions to Icons and JournalEntries
@@ -56,7 +57,7 @@ export class ConditionLab extends FormApplication {
     /**
      * Prepare data for form rendering
      */
-    prepareData() {
+    async prepareData() {
         const sortDirection = this.sortDirection;
         const sortTitle = game.i18n.localize(`${BUTLER.NAME}.ENHANCED_CONDITIONS.ConditionLab.SortAnchorTitle${sortDirection ? `_${sortDirection}` : ""}`);
         const filterTitle = game.i18n.localize(`${BUTLER.NAME}.ENHANCED_CONDITIONS.ConditionLab.FilterInputTitle`);
@@ -86,21 +87,22 @@ export class ConditionLab extends FormApplication {
         const outputChatSetting = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.outputChat);
         const disableChatOutput = isDefault || !outputChatSetting;
 
-        // Transform data for each Condition Mapping entry to ensure it will display correctly
-        conditionMap.forEach((entry, index, map) => {
+        for (let i = 0; i < conditionMap.length; i++) {
+            const entry = conditionMap[i];
             // Check if the row exists in the saved map
             const existingEntry = this.initialMap.find(e => e.id === entry.id) ?? null;
             entry.isNew = !existingEntry;
-            entry.isChanged = this._hasEntryChanged(entry, existingEntry, index);
+            entry.isChanged = this._hasEntryChanged(entry, existingEntry, i);
 
             // Set the Output to Chat checkbox
             entry.options = entry.options ?? {};
             entry.options.outputChat = entry?.options?.outputChat;
-            entry.enrichedReference = entry.referenceId ? TextEditor.enrichHTML(entry.referenceId) : "";
+            // @TODO #711
+            entry.enrichedReference = entry.referenceId ? await TextEditor.enrichHTML(entry.referenceId, {async: true, documents: true}) : "";
 
             // Default all entries to show
             entry.hidden = entry.hidden ?? false;
-        });
+        }
 
         // Pre-apply any filter value
         this.displayedMap = filterValue ? this._filterMapByName(conditionMap, filterValue) : foundry.utils.duplicate(conditionMap);
@@ -140,8 +142,8 @@ export class ConditionLab extends FormApplication {
     /**
      * Gets data for the template render
      */
-    getData() {
-        return this.prepareData();
+    async getData() {
+        return await this.prepareData();
     }
 
     /**
@@ -205,14 +207,6 @@ export class ConditionLab extends FormApplication {
                 icons[row] = formData[e];
             } else if (e.match(referenceRegex)) {
                 references[row] = formData[e]; 
-            } else if (e.match(optionsOverlayRegex)) {
-                optionsOverlay[row] = formData[e];
-            } else if (e.match(optionsRemoveRegex)) {
-                optionsRemove[row] = formData[e];
-            } else if (e.match(optionsOutputChatRegex)) {
-                optionsOutputChat[row] = formData[e];
-            } else if (e.match(optionsDefeatedRegex)) {
-                optionsDefeated[row] = formData[e];
             }
         }
 
@@ -226,7 +220,7 @@ export class ConditionLab extends FormApplication {
             const applyTrigger = existingCondition ? existingCondition.applyTrigger : null;
             const removeTrigger = existingCondition ? existingCondition.removeTrigger : null;
             const macros = existingCondition ? existingCondition.macros : null;
-
+            const options = existingCondition ? existingCondition.options : {};
 
             const condition = {
                 id,
@@ -237,12 +231,7 @@ export class ConditionLab extends FormApplication {
                 removeTrigger,
                 activeEffect,
                 macros,
-                options: {
-                    overlay: optionsOverlay[i],
-                    removeOthers: optionsRemove[i],
-                    outputChat: optionsOutputChat[i],
-                    markDefeated: optionsDefeated[i]
-                }
+                options
             };
 
             newMap.push(condition);
@@ -254,21 +243,20 @@ export class ConditionLab extends FormApplication {
     /**
      * Restore defaults for a mapping
      */
-    async _restoreDefaults() {
+    async _restoreDefaults({clearCache=false}={}) {
         const system = this.system;
         let defaultMaps = Sidekick.getSetting(BUTLER.SETTING_KEYS.enhancedConditions.defaultMaps);
+        
         const defaultMapType = Sidekick.getKeyByValue(BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes, BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes.default);
         const otherMapType = Sidekick.getKeyByValue(BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes, BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes.other);
-
-        if (this.mapType === defaultMapType) {
+        if (clearCache) {
             defaultMaps = await EnhancedConditions._loadDefaultMaps();
+            Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.defaultMaps, defaultMaps);
         }
+        const tempMap = (this.mapType != otherMapType && defaultMaps && defaultMaps[system]) ? defaultMaps[system] : [];
 
-        //const defaultMap = defaultMaps[system] || [];
-        const defaultMap = EnhancedConditions._prepareMap(EnhancedConditions.getDefaultMap(system));
         // If the mapType is other then the map should be empty, otherwise it's the default map for the system
-        this.map = this.mapType === otherMapType ? [] : defaultMap;
-        //Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.map, this.map, true);
+        this.map = tempMap;
         this.render(true);
     }
 
@@ -289,18 +277,23 @@ export class ConditionLab extends FormApplication {
                     if (checkbox.checked) {
                         Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.showSortDirectionDialog, false);
                     }
-                    this._saveMapping(formData);
+                    this._processFormUpdate(formData);
                 },
                 no: () => {
                     return;
                 }
             });
         } else {
-            this._saveMapping(formData);
+            this._processFormUpdate(formData);
         }
     } 
 
-    async _saveMapping(formData) {
+    /**
+     * Process Condition Lab formdata and then save changes
+     * @param {*} formData 
+     * @returns this._saveMapping()
+     */
+    async _processFormUpdate(formData) {
         const mapType = formData["map-type"];
         let newMap = this.updatedMap;
         const defaultMapType = Sidekick.getKeyByValue(BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes, BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes.default);
@@ -310,12 +303,30 @@ export class ConditionLab extends FormApplication {
             newMap = mergeObject(newMap, defaultMap);
         }
 
+        return this._saveMapping(newMap, mapType);
+    }
+
+    /**
+     * Saves a given map and option map type to storage
+     * @param {*} newMap 
+     * @param {*} mapType 
+     * @returns 
+     */
+    async _saveMapping(newMap, mapType=this.mapType) {
         this.mapType = this.initialMapType = mapType;
         const preparedMap = EnhancedConditions._prepareMap(newMap);
 
-        Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.mapType, mapType, true);
-        Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.map, preparedMap, true);
+        await Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.mapType, mapType, true);
+        await Sidekick.setSetting(BUTLER.SETTING_KEYS.enhancedConditions.map, preparedMap, true);
 
+        return this._finaliseSave(preparedMap);
+    }
+
+    /**
+     * Performs final steps after saving mapping
+     * @param {*} preparedMap 
+     */
+    async _finaliseSave(preparedMap) {
         this.map = this.initialMap = preparedMap;
         this.unsaved = false;
         this.sortDirection = "";
@@ -432,14 +443,31 @@ export class ConditionLab extends FormApplication {
     }
     
     /**
-     * Render dialog hook handler
+     * Render save dialog hook handler
      * @param {*} app 
      * @param {jQuery} html 
      * @param {*} data 
      */
-    static async _onRenderDialog(app, html, data) {
+    static async _onRenderSaveDialog(app, html, data) {
         const contentDiv = html[0].querySelector("div.dialog-content");
         const checkbox = `<div class="form-group"><label class="dont-show-again-checkbox">${game.i18n.localize(`${BUTLER.NAME}.ENHANCED_CONDITIONS.ConditionLab.SortDirectionSave.CheckboxText`)}<input type="checkbox" name="dont-show-again"></label></div>`;
+        contentDiv.insertAdjacentHTML("beforeend", checkbox);
+        await app.setPosition({height: app.position.height + 25});
+    }
+
+    /**
+     * Render restore defaults hook handler
+     * @param {*} app 
+     * @param {*} html 
+     * @param {*} data 
+     */
+    static async _onRenderRestoreDefaultsDialog(app, html, data) {
+        if (game.cub.conditionLab.mapType !== Sidekick.getKeyByValue(BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes, BUTLER.DEFAULT_CONFIG.enhancedConditions.mapTypes.default)) {
+            return;
+        }
+
+        const contentDiv = html[0].querySelector("div.dialog-content");
+        const checkbox = `<div class="form-group"><label class="clear-cache-checkbox">${game.i18n.localize(`${BUTLER.NAME}.ENHANCED_CONDITIONS.ConditionLab.RestoreDefaultClearCache.CheckboxText`)}<input type="checkbox" name="clear-cache"></label></div>`;
         contentDiv.insertAdjacentHTML("beforeend", checkbox);
         await app.setPosition({height: app.position.height + 25});
     }
@@ -467,6 +495,7 @@ export class ConditionLab extends FormApplication {
         const sortButton = html.find("a.sort-list");
         const macroConfigButton = html.find("button.macro-config");
         const triggerConfigButton = html.find("button.trigger-config");
+        const optionConfigButton = html.find("button.option-config");
 
         inputs.on("change", event => this._onChangeInputs(event));
         mapTypeSelector.on("change", event => this._onChangeMapType(event));
@@ -482,6 +511,7 @@ export class ConditionLab extends FormApplication {
         sortButton.on("click", (event) => this._onClickSortButton(event));
         macroConfigButton.on("click", (event) => this._onClickMacroConfig(event));
         triggerConfigButton.on("click", (event) => this._onClickTriggerConfig(event));
+        optionConfigButton.on("click", (event) => this._onClickOptionConfig(event));
 
         super.activateListeners(html);     
     }
@@ -623,15 +653,15 @@ export class ConditionLab extends FormApplication {
      * Reference Link change handler
      * @param {*} event 
      */
-    _onChangeReferenceId(event) {
+    async _onChangeReferenceId(event) {
         event.preventDefault();
         
         const input = event.currentTarget ?? event.target;
 
         // Update the enriched link
-        const $linkDiv = $(input.nextElementSibling);
+        const $linkDiv = $(input.parentElement.nextElementSibling);
         const $link = $linkDiv.first();   
-        const newLink = TextEditor.enrichHTML(input.value);
+        const newLink = await TextEditor.enrichHTML(input.value, {async: true, documents: true});
 
         if (!$link.length) {
             $linkDiv.append(newLink);
@@ -831,7 +861,11 @@ export class ConditionLab extends FormApplication {
                 yes: {
                     icon: `<i class="fas fa-check"></i>`,
                     label: game.i18n.localize("WORDS.Yes"),
-                    callback: () => this._restoreDefaults()
+                    callback: ($html) => {
+                        const checkbox = $html[0].querySelector("input[name='clear-cache']");
+                        const clearCache = checkbox?.checked;
+                        this._restoreDefaults({clearCache});
+                    }
                 },
                 no: {
                     icon: `<i class="fas fa-times"></i>`,
@@ -889,29 +923,14 @@ export class ConditionLab extends FormApplication {
 
     async _onDrop(event) {
         event.preventDefault();
-	    const data = JSON.parse(event.dataTransfer.getData('text/plain'));
-	    if ( !data?.id ) return;
+        const eventData = TextEditor.getDragEventData(event);
+        const link = await TextEditor.getContentLink(eventData);
         const targetInput = event.currentTarget;
-
-	    // Case 1 - Document from Compendium Pack
-        if ( data.pack ) {
-            const pack = game.packs.get(data.pack);
-            if (!pack) return;
-            const entity = await pack.getDocument(data.id);
-            const link = `@Compendium[${data.pack}.${data.id}]{${entity.name}}`;
+        if (link) {
             targetInput.value = link;
-            this._onChangeReferenceId(event);
-        }
-
-        // Case 2 - Document from World
-        else if ( data.type ) {
-            const config = CONFIG[data.type];
-            if ( !config ) return false;
-            const entity = config.collection.instance.get(data.id);
-            if ( !entity ) return false;
-            const link = `@${data.type}[${entity.id}]{${entity.name}}`;
-            targetInput.value = link;
-            this._onChangeReferenceId(event);
+            return targetInput.dispatchEvent(new Event("change"));
+        } else {
+            return ui.notifications.error(game.i18n.localize(`${NAME}.ENHANCED_CONDITIONS.ConditionLab.BadReference`));
         }
     }
 
@@ -943,6 +962,21 @@ export class ConditionLab extends FormApplication {
         const condition = this.map.find(c => c.id === conditionId);
 
         new EnhancedConditionTriggerConfig(condition).render(true);
+    }
+
+    /**
+     * Option Config button click handler
+     * @param {*} event 
+     */
+    _onClickOptionConfig(event) {
+        const rowLi = event.target.closest("li");
+        const conditionId = rowLi ? rowLi.dataset.conditionId : null;
+
+        if (!conditionId) return;
+
+        const condition = this.map.find(c => c.id === conditionId);
+
+        new EnhancedConditionOptionConfig(condition).render(true);
     }
 
     /**

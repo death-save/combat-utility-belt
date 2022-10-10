@@ -16,14 +16,14 @@
                             <div class="condition">
                                 <div class="wrapper-rel">
                                     <label for="condition-{{@index}}" class="inset-label">{{localize "combat-utility-belt.WORDS.Name"}}</label>
-                                    <input type="text" name="condition-{{@index}}" title="Condition" value="{{condition.name}}" class="condition condition-text-input" placeholder="Condition Name" data-dtype="String" {{#if ../isDefault}}disabled{{/if}}>
+                                    <input type="text" name="condition-{{@index}}" title="Condition" value="{{condition.name}}" class="condition condition-text-input" placeholder="Condition Name" data-dtype="String" {{#if isDefault}}disabled{{/if}}>
                                 </div>
                             </div>
                         </div>
                         <div class="flexrow condition-lab text-entry reference">
                             <div class="wrapper-rel">
                                 <label for="reference-item-{{@index}}" class="inset-label">{{localize "combat-utility-belt.WORDS.Reference"}}</label>
-                                <input type="text" name="reference-item-{{@index}}" value="{{condition.referenceId}}" title="Condition Reference" placeholder="{{localize "combat-utility-belt.ENHANCED_CONDITIONS.ConditionLab.NoReference"}}">
+                                <input type="text" name="reference-item-{{@index}}" value="{{condition.referenceId}}" title="Condition Reference" placeholder="{{localize "combat-utility-belt.ENHANCED_CONDITIONS.ConditionLab.NoReference"}}" {{#if isDefault}}disabled{{/if}}>
                             </div>
                             <div class="enriched-link">{{{condition.enrichedReference}}}</div>
                         </div>
@@ -33,9 +33,9 @@
                 <div class="flexrow path">
                     <div class="wrapper-rel">
                         <label for="icon-path-{{@index}}" class="inset-label">{{localize "combat-utility-belt.WORDS.Icon"}}</label>
-                        <input type="text" name="icon-path-{{@index}}" title="Status Icon Path" class="icon-path condition-text-input" value="{{condition.icon}}" placeholder="/icons/example.svg" data-dtype="String" {{#if ../isDefault}}disabled{{/if}}>
+                        <input type="text" name="icon-path-{{@index}}" title="Status Icon Path" class="icon-path condition-text-input" value="{{condition.icon}}" placeholder="/icons/example.svg" data-dtype="String" {{#if isDefault}}disabled{{/if}}>
                     </div>
-                    <button type="button" name="file-picker-{{@index}}" class="file-picker" data-type="image" data-target="icon-path-{{@index}}" title="Browse Files" tabindex="-1" {{#if ../isDefault}}hidden{{/if}}>
+                    <button type="button" name="file-picker-{{@index}}" class="file-picker" data-type="image" data-target="icon-path-{{@index}}" title="Browse Files" tabindex="-1" {{#if isDefault}}hidden{{/if}}>
                             <i class="fas fa-file-import fa-fw"></i>
                         </button>
                 </div>
@@ -45,15 +45,22 @@
                 <div class="flexrow related-buttons">
                     {{!-- <div class="active-effect"> --}}
                         <button type="button"
+                            name="option-config"
+                            class="option-config"
+                            title="{{condition.optionButtonTitle}}">
+                            <i class="fas fa-cog"></i> {{localize "combat-utility-belt.ENHANCED_CONDITIONS.ConditionLab.Buttons.Options"}}
+                        </button>
+                        <button type="button"
                                 class="active-effect-config"
                                 title="{{#if condition.isNew}}
                                     {{localize "ENHANCED_CONDITIONS.Lab.ActiveEffects.TitleDisabledNew"}}
-                                    {{else if ../isDefault}}{{localize "ENHANCED_CONDITIONS.Lab.ActiveEffects.TitleDisabledDefault"}}
+                                    {{else if isDefault}}{{localize "ENHANCED_CONDITIONS.Lab.ActiveEffects.TitleDisabledDefault"}}
                                     {{else}}{{localize "ENHANCED_CONDITIONS.Lab.ActiveEffects.Title"}}
                                     {{/if}}" 
-                                {{#if (or condition.isNew ../isDefault) }}disabled{{else}}{{/if}}>
+                                {{#if (or condition.isNew isDefault) }}disabled{{else}}{{/if}}>
                             <i class="fas fa-hand-sparkles"></i> Active Effect
                         </button>
+                        <div class="flex-break"></div>
                         <button type="button"
                             class="trigger-config"
                             title="{{condition.triggerButtonTitle}}">
@@ -65,68 +72,8 @@
                             title="{{condition.macroButtonTitle}}">
                             <i class="fas fa-code"></i> Macros
                         </button>
-                    {{!-- </div> --}}
-                            {{!-- <div class="flexrow text-entry trigger">
-
-                    <div class="trigger-icon">
-                        <i class="fas fa-angle-double-right"></i>
-                    </div>
-                    <select name="apply-trigger-{{@index}}" title="Trigger to apply Condition">
-                        {{#select condition.applyTrigger}}
-                        <option value="">--No Apply Trigger Set--</option>
-                        {{#each ../triggers}}
-                            <option value="{{this.[0]}}">{{this.[1]}}</option>
-                        {{/each}}
-                        {{/select}}
-                    </select>                            
-                </div>
-                <div class="flexrow text-entry trigger">
-                    <div class="trigger-icon">
-                        <i class="fas fa-angle-double-left"></i>
-                    </div>
-                    <select name="remove-trigger-{{@index}}" title="Trigger to remove Condition">
-                        {{#select condition.removeTrigger}}
-                        <option value="">--No Remove Trigger Set--</option>
-                        {{#each ../triggers}}
-                            <option value="{{this.[0]}}">{{this.[1]}}</option>
-                        {{/each}}
-                        {{/select}}
-                    </select>                            
-                </div>  --}}
-                </div>      
-                
-                <div class="flexrow options">
-                    {{!-- <p class="notes">{{localize "ENHANCED_CONDITIONS.Lab.Options.Title"}}</p> --}}
-                    <div class="formgroup" title="{{localize "ENHANCED_CONDITIONS.Lab.Options.Overlay.Title"}}">
-                        <input type="checkbox" name="options-overlay-{{@index}}" {{checked condition.options.overlay}} {{#if ../isDefault}}disabled{{/if}}>
-                        <label>
-                            {{localize "ENHANCED_CONDITIONS.Lab.Options.Overlay.Label"}}
-                            <span class="tooltip"><i class="fas fa-question-circle"></i></span>
-                        </label>
-                    </div>
-                    <div class="formgroup" title="{{localize "ENHANCED_CONDITIONS.Lab.Options.RemoveOthers.Title"}}">
-                        <input type="checkbox" name="options-remove-others-{{@index}}" {{checked condition.options.removeOthers}} {{#if ../isDefault}}disabled{{/if}}>
-                        <label>
-                            {{localize "ENHANCED_CONDITIONS.Lab.Options.RemoveOthers.Label"}}
-                            <span class="tooltip"><i class="fas fa-question-circle"></i></span>
-                        </label>
-                    </div>
-                </div>
-                <div class="flexrow options">
-                    <div class="formgroup" title="{{localize "ENHANCED_CONDITIONS.Lab.Options.OutputChat.Title"}}">
-                        <input type="checkbox" name="options-output-chat-{{@index}}" {{checked condition.options.outputChat}} {{#if ../disableChatOutput}}disabled{{/if}}>
-                        <label>
-                            {{localize "ENHANCED_CONDITIONS.Lab.Options.OutputChat.Label"}}
-                            <span class="tooltip"><i class="fas fa-question-circle"></i></span>    
-                        </label>
-                    </div>
-                    <div class="formgroup" title="{{localize "ENHANCED_CONDITIONS.Lab.Options.MarkDefeated.Title"}}">
-                        <input type="checkbox" name="options-mark-defeated-{{@index}}" {{checked condition.options.markDefeated}} {{#if ../isDefault}}disabled{{/if}}>
-                        <label>
-                            {{localize "ENHANCED_CONDITIONS.Lab.Options.MarkDefeated.Label"}}
-                            <span class="tooltip"><i class="fas fa-question-circle"></i></span>
-                        </label>
-                    </div>
+                        
+    
                 </div>
             </div>
             <!--column 4-->                  

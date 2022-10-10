@@ -6,6 +6,22 @@
 3. The Default/Inferred Condition Lab Mappings for game systems may not correctly import all data. Importing the map from the CUB Condition Maps folder imports correctly.
 4. **PF2e users**: PF2e is not currently supported by Enhanced Conditions due to the customisation of the effects framework implemented by the system.
 
+## [1.10.2] - 2022-10-09
+> This update adds compatibility for Foundry VTT v10.287
+### ✨ Enhanced Condition
+- Add support Cyberpunk Red Core game system (thanks @ryanwalder 🎉)
+- Added support for Foundry special status effects (currently Blinded and Invisible)
+- - Accessible from Option Config
+- Replaced Option checkboxes in Condition Lab with Option Config form
+- Fix drag and drop behaviour in Condition Lab
+- Fix reference links not working
+- Add a checkbox to the Restore Defaults dialog to clear the cache and reimport from server files
+- Update references in CUB default and extended dnd5e mappings
+- Disable some buttons in default Condition Lab mappings
+
+### 😷 Hide Names
+- Fix Actor Name duplication when Hide Names is enabled and changes are made to Actor
+
 ## [1.10.1] - 2022-08-31
 > Hotfix for issue [#702](https://github.com/death-save/combat-utility-belt/issues/702) in Foundry VTT v10.283
 

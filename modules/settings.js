@@ -350,6 +350,26 @@ export function registerSettings() {
         onChange: s => {}
     });
 
+    Sidekick.registerSetting(BUTLER.SETTING_KEYS.enhancedConditions.defaultSpecialStatusEffects, {
+        name: `${BUTLER.NAME}.SETTINGS.ENHANCED_CONDITIONS.DefaultSpecialStatusEffectsN`,
+        hint: `${BUTLER.NAME}.SETTINGS.ENHANCED_CONDITIONS.DefaultSpecialStatusEffectsH`,
+        scope: "world",
+        type: Object,
+        default: {},
+        config: false,
+        onChange: () => {}
+    });
+
+    Sidekick.registerSetting(BUTLER.SETTING_KEYS.enhancedConditions.specialStatusEffectMapping, {
+        name: `${BUTLER.NAME}.SETTINGS.ENHANCED_CONDITIONS.SpecialStatusEffectMappingN`,
+        hint: `${BUTLER.NAME}.SETTINGS.ENHANCED_CONDITIONS.SpecialStatusEffectMappingH`,
+        scope: "world",
+        type: Object,
+        default: {},
+        config: false,
+        onChange: () => {}
+    });
+
     /* -------------------------------------------- */
     /*                    GiveXP                    */
     /* -------------------------------------------- */

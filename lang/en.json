@@ -19,6 +19,13 @@
                     "Title": "Save Mapping with Sort Direction?",
                     "Content": "<p>Click 'Yes' to save the Condition Lab map with the current sort direction. Click 'No' to cancel Saving.</p>",
                     "CheckboxText": "Don't show this again"
+                },
+                "BadReference": "Could not build a link to the dropped content (actor, item, journal etc)",
+                "RestoreDefaultClearCache": {
+                     "CheckboxText": "Clear cache and reload defaults from module folder?"
+                },
+                "Buttons": {
+                    "Options": "Options"
                 }
             },
             "ChatCard": {
@@ -43,6 +50,27 @@
                 "RemoveHeading": "Remove Trigger",
                 "Description": "Triggers that Apply or Remove this Condition",
                 "SelectNone": "--No Trigger--"
+            },
+            "OptionConfig": {
+                "Heading": "Options",
+                "Description": "General options for this Condition",
+                "SpecialStatusEffects": {
+                    "Heading": "Special Status Effects",
+                    "Description": "Special Effects applied using native Foundry functionality."
+                },
+                "BlindToken": {
+                    "Label": "Blind Token",
+                    "Notes": "When applied, this Condition will also cause the token to be blinded"
+                },
+                "MarkInvisible": {
+                    "Label": "Mark Invisible",
+                    "Notes": "When applied, this Condition will cause the affected Token to marked as Invisible"
+                },
+                "SpecialStatusEffectOverride": {
+                    "Title": "Override Existing Condition for this Status Effect?",
+                    "Content": "Another Condition ({existingCondition}) is already setup to apply this special Status Effect: {statusEffect}. <p>If you click 'Yes' and Save this Condition's Options you will override that existing mapping.</p>"
+                },
+                "SaveNote": "Note: Clicking Save will Save Condition Lab Mapping"
             },
             "Warnings": {
                 "ApplyCondition": "applyCondition was replaced with addCondition. Please update your code."
@@ -78,6 +106,9 @@
                     "NameHiddenPrefix": "Replacement Name:",
                     "NameHiddenSuffix": "(click to reveal)"
                 }
+            },
+            "ActorForm": {
+                "Title": "Hide Actor Name Config"
             }
         },
         "SETTINGS": {
@@ -119,6 +150,9 @@
             "Name": "Name",
             "Reference": "Reference",
             "Save": "Save"
+        },
+        "PHRASES": {
+            "SaveAndClose": "Save and Close"
         }
     },
     "GADGET_DESCRIPTIONS.AwardXP": "Provides an end of combat prompt to distribute XP from defeated hostile combatants.",

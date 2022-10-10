@@ -1,0 +1,64 @@
+<form data-condition-id="{{condition.id}}">
+    <h2>{{condition.name}} - {{localize "combat-utility-belt.ENHANCED_CONDITIONS.OptionConfig.Heading"}}</h3>
+    <p class="notes">{{localize "combat-utility-belt.ENHANCED_CONDITIONS.OptionConfig.Description"}}</p>
+    {{!-- <div class="flexrow options"> --}}
+        <div class="formgroup" title="{{localize "ENHANCED_CONDITIONS.Lab.Options.Overlay.Title"}}">
+            <input type="checkbox" name="overlay" {{checked condition.options.overlay}} {{#if ../isDefault}}disabled{{/if}}>
+            <label for="overlay">
+                {{localize "ENHANCED_CONDITIONS.Lab.Options.Overlay.Label"}}
+                {{!-- <span class="tooltip"><i class="fas fa-question-circle"></i></span> --}}
+            </label>
+            <p class="notes">{{localize "ENHANCED_CONDITIONS.Lab.Options.Overlay.Title"}}</p>
+        </div>
+        <div class="formgroup" title="{{localize "ENHANCED_CONDITIONS.Lab.Options.RemoveOthers.Title"}}">
+            <input type="checkbox" name="remove-others" {{checked condition.options.removeOthers}} {{#if ../isDefault}}disabled{{/if}}>
+            <label for="remove-others">
+                {{localize "ENHANCED_CONDITIONS.Lab.Options.RemoveOthers.Label"}}
+                {{!-- <span class="tooltip"><i class="fas fa-question-circle"></i></span> --}}
+            </label>
+            <p class="notes">{{localize "ENHANCED_CONDITIONS.Lab.Options.RemoveOthers.Title"}}</p>
+        </div>
+        <div class="formgroup" title="{{localize "ENHANCED_CONDITIONS.Lab.Options.OutputChat.Title"}}">
+            <input type="checkbox" name="output-chat" {{checked condition.options.outputChat}} {{#if ../disableChatOutput}}disabled{{/if}}>
+            <label for="output-chat">
+                {{localize "ENHANCED_CONDITIONS.Lab.Options.OutputChat.Label"}}
+                {{!-- <span class="tooltip"><i class="fas fa-question-circle"></i></span>     --}}
+            </label>
+            <p class="notes">{{localize "ENHANCED_CONDITIONS.Lab.Options.OutputChat.Title"}}</p>
+        </div>
+        <div class="formgroup" title="{{localize "ENHANCED_CONDITIONS.Lab.Options.MarkDefeated.Title"}}">
+            <input type="checkbox" name="mark-defeated" {{checked condition.options.markDefeated}} {{#if ../isDefault}}disabled{{/if}}>
+            <label for="mark-defeated">
+                {{localize "ENHANCED_CONDITIONS.Lab.Options.MarkDefeated.Label"}}
+                {{!-- <span class="tooltip"><i class="fas fa-question-circle"></i></span> --}}
+            </label>
+            <p class="notes">{{localize "ENHANCED_CONDITIONS.Lab.Options.MarkDefeated.Title"}}</p>
+        </div>
+        <h3>{{localize "combat-utility-belt.ENHANCED_CONDITIONS.OptionConfig.SpecialStatusEffects.Heading"}}</h3>
+        <p class="notes">{{localize "combat-utility-belt.ENHANCED_CONDITIONS.OptionConfig.SpecialStatusEffects.Description"}}</p>
+        <div class="formgroup" title="{{localize "combat-utility-belt.ENHANCED_CONDITIONS.OptionConfig.BlindToken.Label"}}">
+            <input type="checkbox" name="blind-token" {{checked condition.options.blindToken}} {{#if ../isDefault}}disabled{{/if}}>
+            <label for="blind-token">
+                {{localize "combat-utility-belt.ENHANCED_CONDITIONS.OptionConfig.BlindToken.Label"}}
+                {{!-- <span class="tooltip"><i class="fas fa-question-circle"></i></span> --}}
+            </label>
+            <p class="notes">{{localize "combat-utility-belt.ENHANCED_CONDITIONS.OptionConfig.BlindToken.Notes"}}</p>
+        </div>
+        <div class="formgroup" title="{{localize "combat-utility-belt.ENHANCED_CONDITIONS.OptionConfig.MarkInvisible.Label"}}">
+            <input type="checkbox" name="mark-invisible" {{checked condition.options.markInvisible}} {{#if ../isDefault}}disabled{{/if}}>
+            <label for="mark-invisible">
+                {{localize "combat-utility-belt.ENHANCED_CONDITIONS.OptionConfig.MarkInvisible.Label"}}
+                {{!-- <span class="tooltip"><i class="fas fa-question-circle"></i></span> --}}
+            </label>
+            <p class="notes">{{localize "combat-utility-belt.ENHANCED_CONDITIONS.OptionConfig.MarkInvisible.Notes"}}</p>
+        </div>
+    {{!-- </div> --}}
+    <br/>    
+    <div class="footer">
+        {{canSave}}
+        <button name="save" class="save" type="submit">
+            <i class="fas fa-save"></i>&nbsp;{{localize "combat-utility-belt.PHRASES.SaveAndClose"}}
+        </button>
+        <p class="notes">{{localize "combat-utility-belt.ENHANCED_CONDITIONS.OptionConfig.SaveNote"}}</p>
+    </div>
+</form>

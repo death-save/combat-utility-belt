@@ -367,6 +367,11 @@ a.add-temporary {
 .triggler-icon {
     display: inline-flex;
 }
+
+#cub-condition-lab .flex-break {
+    flex-basis: 100%;
+    height: 0;
+}
 /* -------------------------------------------- */
 /*                   CUBPUTER                   */
 /* -------------------------------------------- */

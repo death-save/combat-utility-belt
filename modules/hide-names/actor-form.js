@@ -14,7 +14,7 @@ export class HideNPCNamesActorForm extends FormApplication {
     static get defaultOptions() {
         return mergeObject(super.defaultOptions, {
             id: DEFAULT_CONFIG.hideNames.actorForm.id,
-            title: DEFAULT_CONFIG.hideNames.actorForm.title,
+            title: game.i18n.localize(`${NAME}.${"HIDE_NAMES.ActorForm.Title"}`),
             template: `${PATH}/templates/actor-hide-name.hbs`,
             classes: ["sheet"],
             width: "auto",
@@ -29,7 +29,7 @@ export class HideNPCNamesActorForm extends FormApplication {
      */
     getData() {
         const actor = this.actor;
-        const dispositionEnum = actor?.token?.data?.disposition ?? actor?.data?.token?.disposition;
+        const dispositionEnum = actor?.token?.disposition ?? actor?.token?.disposition;
         const disposition = Sidekick.getKeyByValue(CONST.TOKEN_DISPOSITIONS, dispositionEnum);
         const dispositionIcon = DEFAULT_CONFIG.hideNames[`${disposition.toLowerCase()}Icon`];
         const enableSetting = Sidekick.getSetting(SETTING_KEYS.hideNames[`enable${disposition.titleCase()}`]);

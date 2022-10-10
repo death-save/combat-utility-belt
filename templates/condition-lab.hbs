@@ -38,7 +38,7 @@
     
     <ol class="condition-lab list">
         {{#each displayedMap as |condition key|}}
-        {{> "modules/combat-utility-belt/templates/partials/condition-lab-row.hbs" condition=condition key=key isDefault=isDefault conditionMapLength=../displayedMap.length sortDirection=../sortDirection}}
+        {{> "modules/combat-utility-belt/templates/partials/condition-lab-row.hbs" condition=condition key=key isDefault=../isDefault conditionMapLength=../displayedMap.length sortDirection=../sortDirection}}
         {{/each}}
         <div class="flexrow add-row">
             <a name="add-row" title="Add Row">

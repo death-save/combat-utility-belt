@@ -2,7 +2,7 @@
   "id": "combat-utility-belt",
   "title": "Combat Utility Belt",
   "description": "Adds various combat-focused features",
-  "version": "1.10.1",
+  "version": "1.10.2",
   "authors": [
     {
       "name": "Evan Clarke",
@@ -103,7 +103,7 @@
   "socket": true,
   "compatibility": {
     "minimum": "10.270",
-    "verified": "10.275"
+    "verified": "10.287"
   },
   "name": "combat-utility-belt",
   "minimumCoreVersion": "10.270"
