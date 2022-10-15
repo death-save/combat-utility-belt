@@ -803,7 +803,7 @@
       "id": "ed97q4btoj3ggpip",
       "name": "Smash Addicition",
       "icon": "systems/cyberpunk-red-core/icons/compendium/status/smash_addiciton.svg",
-      "referenceId": "",
+      "referenceId": "@UUID[Compendium.cyberpunk-red-core.drugs-items.PRLDaeBVeMuBBIeO]{Smash}",
       "applyTrigger": "",
       "removeTrigger": "",
       "options": {
