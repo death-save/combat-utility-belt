@@ -65,6 +65,7 @@ export const GADGETS = {
 }
 /**
  * Stores information about well known game systems. All other systems will resolve to "other"
+ * Keys must match id
  */
 export const KNOWN_GAME_SYSTEMS = {
     dnd5e: {
@@ -109,7 +110,7 @@ export const KNOWN_GAME_SYSTEMS = {
         healthAttribute: "",
         initiative: ""
     },
-    cpredcore: {
+    "cyberpunk-red-core": {
         id: "cyberpunk-red-core",
         name: "Cyberpunk Red Core"
     },

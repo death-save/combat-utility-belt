@@ -6,6 +6,12 @@
 3. The Default/Inferred Condition Lab Mappings for game systems may not correctly import all data. Importing the map from the CUB Condition Maps folder imports correctly.
 4. **PF2e users**: PF2e is not currently supported by Enhanced Conditions due to the customisation of the effects framework implemented by the system.
 
+## [1.10.3] - 2022-10-15
+> This update adds compatibility for Foundry VTT v10.288
+### ✨ Enhanced Condition
+- Fixed issue with Cyberpunk Red Core mapping not being detected as default
+- Fixed missing reference for Smash Addiction in Cyberpunk Red condition map
+
 ## [1.10.2] - 2022-10-09
 > This update adds compatibility for Foundry VTT v10.287
 ### ✨ Enhanced Condition
