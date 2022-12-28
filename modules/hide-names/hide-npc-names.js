@@ -340,7 +340,7 @@ export class HideNPCNames {
                 const nameHeader = nameDiv.find("h3");
                 const name = nameHeader.text();
                 const replacement = HideNPCNames.getReplacementName(actor);
-                if (!replacement) continue;
+                if (replacement === undefined || replacement === null) continue;
 
                 nameHeader.text(replacement);
                 avatar.attr("title", replacement);
