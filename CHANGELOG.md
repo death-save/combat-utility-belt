@@ -6,6 +6,15 @@
 3. The Default/Inferred Condition Lab Mappings for game systems may not correctly import all data. Importing the map from the CUB Condition Maps folder imports correctly.
 4. **PF2e users**: PF2e is not currently supported by Enhanced Conditions due to the customisation of the effects framework implemented by the system.
 
+## [1.10.4] - 2022-12-27
+> This update adds compatability for Foundry VTT v10.291
+### 😷 Hide Names
+- Fixed issue with Actor form not opening
+- Added ability to have a space or "0" as a replacement name
+
+### 🌍 Translation
+- Updated German translation (thanks @mhilbrunner 🎉)
+
 ## [1.10.3] - 2022-10-15
 > This update adds compatibility for Foundry VTT v10.288
 ### ✨ Enhanced Condition
