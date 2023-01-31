@@ -137,7 +137,7 @@ Trigger the addition or removal of Conditions, and/or the execution of Macros ba
 ---
 
 # Thanks/Attribution
-Firstly thank you to all my [patrons](https://patreon.com/deathsave), you make module development extra special!
+Firstly thank you to all my former Patreon patrons, you helped make module development extra special!
 
 Secondly I want to shout out the awesome contributors for this module (see: [contributors](#contributors-)). Whether it's code, translations, or bugs/suggestions, without your help Combat Utility Belt would not be as awesome as it is! 
 
